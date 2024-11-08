@@ -1,0 +1,93 @@
+# System-specific files
+.DS_Store
+Thumbs.db
+
+# Gradle files
+.gradle/
+build/
+**/build/
+!gradle/wrapper/gradle-wrapper.properties
+.gradle/
+
+# Local configuration file (SDK location, etc.)
+local.properties
+
+# Keystore files (if you're using a custom keystore for signing)
+*.jks
+*.keystore
+
+# Android Studio specific files
+.idea/
+*.iml
+*.hprof
+*.log
+/.cxx/
+.externalNativeBuild/
+*.lock
+*.pyc
+.cache/
+.cxx/
+.DS_Store
+.idea/caches
+.idea/libraries
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+
+# Firebase and Google Services
+google-services.json
+app/google-services.json
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+
+# Android generated files
+captures/
+output.json
+crashlytics/
+crashlytics-build.properties
+
+# NDK and CMake build files
+obj/
+.externalNativeBuild
+/.externalNativeBuild
+
+# Other generated files and build caches
+.gradle/
+**/build/
+**/generated/
+**/.gradle/
+**/.idea/
+
+# Exclude JetBrains files and libraries
+.idea/
+*.iml
+
+# Exclude IntelliJ project-specific files
+.idea/modules.xml
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/gradle.xml
+.idea/libraries
+.idea/assetWizardSettings.xml
+.idea/navEditor.xml
+
+# Exclude all the debug/release APKs and instant-run related files
+*.apk
+*.ap_
+*.cxx
+
+# Ignore Mac OS specific files
+*.DS_Store
+
+# Ignore Windows specific files
+Thumbs.db
+
+# Exclude build folders
+**/build/
+.gradle/
+**/.gradle/
