@@ -8,15 +8,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_below="@id/rollDiceButton"
-        android:src="@drawable/ic_launcher_background"
-        />
+        android:src="@drawable/ic_launcher_background" />
 
-    <Button
-        android:id="@+id/rollDiceButton"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/bottomBar"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Roll !"
-        android:layout_centerInParent="true"
-        android:onClick="rollDice" />
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/rollButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Roll"
+            android:onClick="rollDice" />
+
+        <Spinner
+            android:id="@+id/diceTypeSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:entries="@array/dice_types" />
+    </LinearLayout>
+
 </RelativeLayout>

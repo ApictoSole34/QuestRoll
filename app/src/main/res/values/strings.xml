@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">QusetRoll</string>
+
+    <string-array name="dice_types">
+        <item>d20</item>
+        <item>d12</item>
+        <item>d10</item>
+        <item>d8</item>
+        <item>d6</item>
+        <item>d4</item>
+    </string-array>
+
 </resources>
