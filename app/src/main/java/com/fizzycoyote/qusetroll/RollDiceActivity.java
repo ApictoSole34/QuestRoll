@@ -2,6 +2,10 @@ package com.fizzycoyote.qusetroll;
 
 
 import android.annotation.SuppressLint;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,16 +24,23 @@ import java.util.List;
 import java.util.Map;
 
 
-public class RollDiceActivity extends AppCompatActivity implements DialogManageDice.DiceManageListener {
+public class RollDiceActivity extends AppCompatActivity implements DialogManageDice.DiceManageListener, SensorEventListener {
 
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private Switch showResultSwitch;
+    private Switch shakeToRollSwitch;
     private LinearLayout resultWindow;
     private TextView resultText;
     private RecyclerView diceRecyclerView;
     private DiceAdapter diceAdapter;
     private Map<String, Integer> diceCounts = new HashMap<>();
     private String currentResult = "";
+    private SensorManager sensorManager;
+    private boolean isShakeToRollEnabled = false;
+    private Sensor accelerometer;
+    private long lastShakeTime = 0;
+    private float lastX = 0;
+    private int shakeStep = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +53,18 @@ public class RollDiceActivity extends AppCompatActivity implements DialogManageD
         diceRecyclerView.setLayoutManager(gridLayoutManager);
         Button rollButton = findViewById(R.id.rollButton);
         showResultSwitch = findViewById(R.id.showResultSwitch);
+        shakeToRollSwitch = findViewById(R.id.shakeToRollSwitch);
         resultWindow = findViewById(R.id.resultWindow);
         Button manageDiceButton = findViewById(R.id.manageDiceButton);
         resultText = findViewById(R.id.resultText);
+
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+
+        if (sensorManager != null) {
+            accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        } else {
+            Log.e("RollDiceActivity", "SensorManager is null");
+        }
 
         List<Dice> diceList = new ArrayList<>();
 
@@ -63,11 +83,79 @@ public class RollDiceActivity extends AppCompatActivity implements DialogManageD
             }
         });
 
+        shakeToRollSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            isShakeToRollEnabled = isChecked;
+
+            if (isChecked && accelerometer != null) {
+                sensorManager.registerListener(this, accelerometer,
+                        SensorManager.SENSOR_DELAY_NORMAL);
+            } else {
+                sensorManager.unregisterListener(this);
+            }
+        });
 
         manageDiceButton.setOnClickListener(v -> {
             DialogManageDice dialogManageDice = new DialogManageDice(this, diceCounts, this);
             dialogManageDice.show();
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (accelerometer != null) {
+            sensorManager.registerListener(this, accelerometer,
+                    SensorManager.SENSOR_DELAY_NORMAL);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this);
+    }
+
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            float x = event.values[0];
+            float y = event.values[1];
+            float z = event.values[2];
+
+            float deltaX = Math.abs(x - lastX);
+            lastX = x;
+
+            float shakeThreshold = 2.0f;
+
+            if (deltaX > shakeThreshold) {
+                long currentTime = System.currentTimeMillis();
+                if (currentTime - lastShakeTime > 500) {
+                    lastShakeTime = currentTime;
+
+                    if(x < 0) {
+                        if (shakeStep == 0 || shakeStep == 2){
+                            shakeStep++;
+                        } else {
+                            shakeStep = 0;
+                        }
+                    } else if (x > 0) {
+                        if (shakeStep == 1) {
+                            shakeStep++;
+                        } else {
+                            shakeStep = 0;
+                        }
+                    }
+                    if (shakeStep == 3) {
+                        shakeStep = 0;
+                        rollDice();
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
     @Override
