@@ -1,6 +1,10 @@
 [versions]
 agp = "8.6.0"
+appcompatVersion = "1.4.0"
+compiler = "4.15.1"
+constraintlayout = "2.2.0"
 glide = "4.15.0"
+glideVersion = "4.15.1"
 kotlin = "1.9.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -10,11 +14,25 @@ lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.9.3"
 composeBom = "2024.04.01"
 appcompat = "1.7.0"
+recyclerview = "1.3.2"
+recyclerviewVersion = "1.2.1"
+gridlayout = "1.0.0"
 
 [libraries]
+#noinspection SimilarGradleDependency
+androidx-appcompat-v140 = { module = "androidx.appcompat:appcompat", version.ref = "appcompatVersion" }
+androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+#noinspection SimilarGradleDependency
+androidx-recyclerview-v121 = { module = "androidx.recyclerview:recyclerview", version.ref = "recyclerviewVersion" }
+#noinspection SimilarGradleDependency
 compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
+#noinspection SimilarGradleDependency
+compiler-v4151 = { module = "com.github.bumptech.glide:compiler", version.ref = "compiler" }
+#noinspection SimilarGradleDependency
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+#noinspection SimilarGradleDependency
+glide-v4151 = { module = "com.github.bumptech.glide:glide", version.ref = "glideVersion" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -28,7 +46,11 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+#noinspection SimilarGradleDependency
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+#noinspection SimilarGradleDependency
+androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
+androidx-gridlayout = { group = "androidx.gridlayout", name = "gridlayout", version.ref = "gridlayout" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

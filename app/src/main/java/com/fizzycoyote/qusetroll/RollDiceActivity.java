@@ -1,120 +1,120 @@
 package com.fizzycoyote.qusetroll;
 
 
-import android.graphics.drawable.Drawable;
-import android.widget.AdapterView;
-import android.widget.ImageView;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.Spinner;
-import android.widget.Toast;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.gif.GifDrawable;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.Switch;
+import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
+public class RollDiceActivity extends AppCompatActivity implements DialogManageDice.DiceManageListener {
 
-public class RollDiceActivity  extends AppCompatActivity {
-
-    private ImageView diceImageView;
-    private Dice currentDice;
-    private Spinner diceTypeSpinner;
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    private Switch showResultSwitch;
+    private LinearLayout resultWindow;
+    private TextView resultText;
+    private RecyclerView diceRecyclerView;
+    private DiceAdapter diceAdapter;
+    private Map<String, Integer> diceCounts = new HashMap<>();
+    private String currentResult = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_roll_dice);
+        diceCounts.clear();
 
-        diceImageView = findViewById(R.id.diceImageView);
-        diceTypeSpinner = findViewById(R.id.diceTypeSpinner);
+        diceRecyclerView = findViewById(R.id.diceRecyclerView);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
+        diceRecyclerView.setLayoutManager(gridLayoutManager);
+        Button rollButton = findViewById(R.id.rollButton);
+        showResultSwitch = findViewById(R.id.showResultSwitch);
+        resultWindow = findViewById(R.id.resultWindow);
+        Button manageDiceButton = findViewById(R.id.manageDiceButton);
+        resultText = findViewById(R.id.resultText);
 
-        currentDice = new Dice(20, this);
-        setDiceGif("d20s1");
+        List<Dice> diceList = new ArrayList<>();
 
-        diceTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        diceAdapter = new DiceAdapter(diceList);
+        diceRecyclerView.setAdapter(diceAdapter);
 
-            // Handle item selection
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String selectedDiceType = adapterView.getItemAtPosition(i).toString();
+        manageDiceButton.setOnClickListener(v -> toggleDiceRecyclerView());
+        rollButton.setOnClickListener(v -> rollDice());
 
-                if (selectedDiceType.startsWith("d")) {
-                    selectedDiceType = selectedDiceType.substring(1);
-                }
-
-                int diceType = Integer.parseInt(selectedDiceType);
-                currentDice = new Dice(diceType, RollDiceActivity.this);
-
-                setDiceGif("d" + diceType + "s" + diceType);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
+        showResultSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                resultText.setText(currentResult);
+                resultWindow.setVisibility(View.VISIBLE);
+            } else {
+                resultWindow.setVisibility(View.GONE);
             }
         });
 
+
+        manageDiceButton.setOnClickListener(v -> {
+            DialogManageDice dialogManageDice = new DialogManageDice(this, diceCounts, this);
+            dialogManageDice.show();
+        });
     }
 
+    @Override
+    public void onDiceCountUpdated(Map<String, Integer> updatedDiceCounts) {
+        diceCounts = updatedDiceCounts;
+        List<Dice> updatedList = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : diceCounts.entrySet()) {
+            for (int i = 0; i < entry.getValue(); i++) {
+                try {
+                    int diceType = Integer.parseInt(entry.getKey().substring(1));
+                    updatedList.add(new Dice(diceType));
+                } catch (NumberFormatException e) {
+                    Log.e("RollDiceActivity", "Invalid key: " + entry.getKey(), e);
+                }
+            }
+        }
+        diceAdapter.updateDiceList(updatedList);
+    }
 
-    // Roll the dice and display the result
-    // gif 24.98 1000
-
-
-    // Roll the dice and display the result
-    public void rollDice(View view) {
-        int rollResult = currentDice.roll();
-        int gifResId = currentDice.getGifResourceId(rollResult);
-
-        if (gifResId != 0) {
-            Glide.with(this)
-                    .asGif()
-                    .load(gifResId)
-                    .into(new CustomTarget<GifDrawable>() {
-                        @Override
-                        public void onResourceReady(@NonNull GifDrawable resource, @Nullable Transition<? super GifDrawable> transition) {
-                            resource.setLoopCount(1);
-                            diceImageView.setImageDrawable(resource);
-                            resource.start();
-                        }
-
-                        @Override
-                        public void onLoadCleared(@Nullable Drawable placeholder) {}
-                    });
+    private void toggleDiceRecyclerView() {
+        Log.d("UIVisibility", "Dice RecyclerView: " + diceRecyclerView.getVisibility());
+        if (diceRecyclerView.getVisibility() == View.VISIBLE) {
+            diceRecyclerView.setVisibility(View.GONE);
         } else {
-            Toast.makeText(this, "No GIF found for roll result: " + rollResult, Toast.LENGTH_SHORT).show();
+            diceRecyclerView.setVisibility(View.VISIBLE);
         }
     }
 
-    // Set the dice GIF based on the roll result
-    private void setDiceGif(String gifName) {
-        int gifResId = getResources().getIdentifier(gifName, "drawable", getPackageName());
+    @SuppressLint("NotifyDataSetChanged")
+    private void rollDice() {
+        StringBuilder result = new StringBuilder("Roll resoult: ");
+        for (int i = 0; i < diceAdapter.getItemCount(); i++) {
+            Dice dice = diceAdapter.getItem(i);
+            int rollResult = dice.roll(); // Rzut kostką
+            result.append(dice.getType()).append(" : ").append(rollResult).append(", ");
+        }
 
-        if (gifResId != 0) {
-            Glide.with(this)
-                    .asGif()
-                    .load(gifResId)
-                    .into(new CustomTarget<GifDrawable>() {
-                        @Override
-                        public void onResourceReady(@NonNull GifDrawable resource, @Nullable Transition<? super GifDrawable> transition) {
-                            resource.setLoopCount(1);
-                            diceImageView.setImageDrawable(resource);
-                            resource.stop();
-                        }
+        result.delete(result.length() - 2, result.length());
 
-                        @Override
-                        public void onLoadCleared(@Nullable Drawable placeholder) {}
-                    });
-        } else {
-            Toast.makeText(this, "GIF not found for name: " + gifName, Toast.LENGTH_SHORT).show();
+        currentResult = result.toString();
+
+        diceAdapter.notifyDataSetChanged();
+
+        if (showResultSwitch.isChecked()) {
+            resultText.setText(currentResult);
+            resultWindow.setVisibility(View.VISIBLE);
         }
     }
-
 
 }
-
