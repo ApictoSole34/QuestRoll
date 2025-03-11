@@ -101,7 +101,8 @@ public class RollDiceActivity extends AppCompatActivity implements DialogManageD
         StringBuilder result = new StringBuilder("Roll resoult: ");
         for (int i = 0; i < diceAdapter.getItemCount(); i++) {
             Dice dice = diceAdapter.getItem(i);
-            int rollResult = dice.roll(); // Rzut kostką
+            dice.setAnimationPlayed(false);
+            int rollResult = dice.roll();
             result.append(dice.getType()).append(" : ").append(rollResult).append(", ");
         }
 

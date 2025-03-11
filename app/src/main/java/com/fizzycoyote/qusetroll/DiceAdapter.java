@@ -51,7 +51,7 @@ public class DiceAdapter extends RecyclerView.Adapter<DiceAdapter.DiceViewHolder
         Log.d("DiceAdapter", "Binding dice: " + dice.getType() + ", result: " + dice.getResult() + ", GIF resource: " + gifResource);
 
         if (holder.diceGifImageView != null) {
-            if (dice.isRolled()) { // If the dice has been rolled
+            if (dice.isRolled() && !dice.isAnimationPlayed()) { // If the dice has been rolled
                 Glide.with(holder.itemView.getContext())
                         .asGif()
                         .load(gifResource)
@@ -66,6 +66,7 @@ public class DiceAdapter extends RecyclerView.Adapter<DiceAdapter.DiceViewHolder
                             public boolean onResourceReady(GifDrawable resource, Object model, Target<GifDrawable> target, DataSource dataSource, boolean isFirstResource) {
                                 Log.d("DiceAdapter", "GIF loaded successfully: " + dice.getType() + ", result: " + dice.getResult());
                                 resource.setLoopCount(1);
+                                dice.setAnimationPlayed(true);
                                 return false;
                             }
                         })

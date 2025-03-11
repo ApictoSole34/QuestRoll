@@ -6,11 +6,13 @@ public class Dice {
     private int type;
     private int result;
     private boolean isRolled;
+    private boolean isAnimationPlayed;
 
     public Dice(int type) {
         this.type = type;
         this.result = 1;
         this.isRolled = false;
+        this.isAnimationPlayed = false;
     }
 
     public int getType() {
@@ -29,6 +31,15 @@ public class Dice {
         return isRolled;
     }
 
+    public boolean isAnimationPlayed() {
+        return isAnimationPlayed;
+    }
+
+    public void setAnimationPlayed(boolean animationPlayed) {
+        isAnimationPlayed = animationPlayed;
+
+    }
+
     public int getGifResource(Context context, int rollResult) {
         String gifName = "d" + getType() + "s" + rollResult;
         return context.getResources().getIdentifier(gifName, "drawable", context.getPackageName());
@@ -37,6 +48,7 @@ public class Dice {
     public int roll() {
         this.result = (int) (Math.random() * type) + 1;
         this.isRolled = true;
+        this.isAnimationPlayed = false;
         return result;
     }
 }
