@@ -1,4 +1,4 @@
-package com.fizzycoyote.qusetroll;
+package com.fizzycoyote.qusetroll.feature_dice.ui;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -7,6 +7,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
+
+import com.fizzycoyote.qusetroll.R;
+
 import java.util.HashMap;
 import java.util.Map;
 

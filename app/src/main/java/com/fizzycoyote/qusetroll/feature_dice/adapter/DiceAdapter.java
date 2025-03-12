@@ -1,4 +1,4 @@
-package com.fizzycoyote.qusetroll;
+package com.fizzycoyote.qusetroll.feature_dice.adapter;
 
 import android.annotation.SuppressLint;
 import android.util.Log;
@@ -17,6 +17,8 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.load.resource.gif.GifDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.fizzycoyote.qusetroll.feature_dice.model.Dice;
+import com.fizzycoyote.qusetroll.R;
 
 import java.util.List;
 

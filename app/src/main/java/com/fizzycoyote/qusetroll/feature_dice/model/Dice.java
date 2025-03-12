@@ -1,4 +1,4 @@
-package com.fizzycoyote.qusetroll;
+package com.fizzycoyote.qusetroll.feature_dice.model;
 
 import android.content.Context;
 

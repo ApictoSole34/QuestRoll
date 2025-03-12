@@ -1,4 +1,4 @@
-package com.fizzycoyote.qusetroll;
+package com.fizzycoyote.qusetroll.feature_dice.ui;
 
 
 import android.annotation.SuppressLint;
@@ -17,6 +17,10 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.feature_dice.adapter.DiceAdapter;
+import com.fizzycoyote.qusetroll.feature_dice.model.Dice;
 
 import java.util.ArrayList;
 import java.util.HashMap;

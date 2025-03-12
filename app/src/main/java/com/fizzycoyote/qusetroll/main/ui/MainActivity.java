@@ -1,10 +1,13 @@
-package com.fizzycoyote.qusetroll;
+package com.fizzycoyote.qusetroll.main.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.feature_dice.ui.RollDiceActivity;
 
 public class MainActivity extends AppCompatActivity {
 
