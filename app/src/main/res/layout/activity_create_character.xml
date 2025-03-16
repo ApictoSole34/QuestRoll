@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <EditText
+        android:id="@+id/editTextName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Name"/>
+
+    <EditText
+        android:id="@+id/editTextRace"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Race"/>
+
+    <EditText
+        android:id="@+id/editTextCharacterClass"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Class"/>
+
+    <EditText
+        android:id="@+id/editTextLevel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Level"
+        android:inputType="number"/>
+
+    <EditText
+        android:id="@+id/editTextStrength"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Strength"
+        android:inputType="number"/>
+
+    <EditText
+        android:id="@+id/editTextDexterity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Dexterity"
+        android:inputType="number"/>
+
+    <EditText
+        android:id="@+id/editTextConstitution"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Constitution"
+        android:inputType="number"/>
+
+    <EditText
+        android:id="@+id/editTextIntelligence"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Intelligence"
+        android:inputType="number"/>
+
+    <EditText
+        android:id="@+id/editTextWisdom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Wisdom"
+        android:inputType="number"/>
+
+    <EditText
+        android:id="@+id/editTextCharisma"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Charisma"
+        android:inputType="number"/>
+
+    <Button
+        android:id="@+id/buttonSave"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Save Character"/>
+
+
+</LinearLayout>

@@ -23,6 +23,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".feature_dice.ui.RollDiceActivity" />
+        <activity android:name=".feature_character.ui.list.CharacterListActivity"/>
+        <activity android:name=".feature_character.ui.create.CreateCharacterActivity"/>
+        <activity android:name=".feature_character.ui.edit.EditCharacterActivity"/>
+        <activity android:name=".feature_character.ui.details.CharacterDetailsActivity"/>
     </application>
 
 </manifest>
