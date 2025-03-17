@@ -47,7 +47,7 @@ public class CharacterListActivity extends AppCompatActivity implements Characte
     public void onCharacterClick(CharacterRPG characterRPG) {
         Intent intent = new Intent(this, CharacterDetailsActivity.class);
         intent.putExtra("characterId", characterRPG.getId());
-        startActivity(intent);
+        startActivityForResult(intent, 1);
     }
 
     @SuppressLint("NotifyDataSetChanged")

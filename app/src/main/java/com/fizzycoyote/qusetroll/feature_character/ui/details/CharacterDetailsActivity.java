@@ -21,7 +21,6 @@ import com.fizzycoyote.qusetroll.feature_character.ui.edit.EditCharacterActivity
 public class CharacterDetailsActivity extends AppCompatActivity {
     private TextView textViewName, textViewRace, textViewClass, textViewLevel, textViewStrength, textViewDexterity, textViewConstitution
             , textViewIntelligence, textViewWisdom, textViewCharisma, textViewGameVersion;
-
     private Button buttonManage;
     private CharacterDatabaseHelper dbHelper;
     private int characterId;
@@ -95,7 +94,7 @@ public class CharacterDetailsActivity extends AppCompatActivity {
         buttonEdit.setOnClickListener(v -> {
             Intent intent = new Intent(CharacterDetailsActivity.this, EditCharacterActivity.class);
             intent.putExtra("characterId", characterId);
-            startActivity(intent);
+            startActivityForResult(intent, 1);
             popupWindow.dismiss();
         });
 
@@ -138,6 +137,16 @@ public class CharacterDetailsActivity extends AppCompatActivity {
             popupWindow.dismiss();
             return true;
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1 && resultCode == RESULT_OK) {
+            // Odśwież dane postaci
+            loadCharacterData(characterId);
+        }
     }
 }
 
