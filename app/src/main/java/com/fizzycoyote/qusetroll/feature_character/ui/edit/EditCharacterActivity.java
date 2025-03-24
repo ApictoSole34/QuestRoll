@@ -1,42 +1,38 @@
 package com.fizzycoyote.qusetroll.feature_character.ui.edit;
 
-import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.fizzycoyote.qusetroll.R;
-import com.fizzycoyote.qusetroll.feature_character.data.CharacterDatabaseHelper;
+import com.fizzycoyote.qusetroll.feature_character.base.BaseCharacterActivity;
 import com.fizzycoyote.qusetroll.feature_character.model.CharacterRPG;
+import com.fizzycoyote.qusetroll.feature_character.ui.dialog_image.CharacterImagePickerDialog;
+import com.fizzycoyote.qusetroll.feature_character.ui.dialog_image.adapter.CharacterImagePickerDialogAdapter;
 
-public class EditCharacterActivity extends AppCompatActivity {
-    private EditText editTextName, editTextRace, editTextClass, editTextLevel,editTextStrength,editTextDexterity,editTextConstitution,editTextIntelligence,editTextWisdom,editTextCharisma;
-    private Button buttonSave;
-    private CharacterDatabaseHelper dbHelper;
+import java.io.IOException;
+import java.io.InputStream;
+
+public class EditCharacterActivity extends BaseCharacterActivity {
     private int characterId;
+    private String existingImagePath;
+
+    @Override
+    protected int getLayoutResourceId() {
+        return R.layout.activity_edit_character;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_character);
 
-        editTextName = findViewById(R.id.editTextName);
-        editTextRace = findViewById(R.id.editTextRace);
-        editTextClass = findViewById(R.id.editTextClass);
-        editTextLevel = findViewById(R.id.editTextLevel);
-        editTextStrength = findViewById(R.id.editTextStrength);
-        editTextDexterity = findViewById(R.id.editTextDexterity);
-        editTextConstitution = findViewById(R.id.editTextConstitution);
-        editTextIntelligence = findViewById(R.id.editTextIntelligence);
-        editTextWisdom = findViewById(R.id.editTextWisdom);
-        editTextCharisma = findViewById(R.id.editTextCharisma);
+        existingImagePath = getIntent().getStringExtra("characterMainImagePath");
+        characterMainImagePath = existingImagePath;
 
-        buttonSave = findViewById(R.id.buttonSave);
-
-        dbHelper = new CharacterDatabaseHelper(this);
+        Button buttonSave = findViewById(R.id.buttonSave);
+        buttonSave.setOnClickListener(v -> saveCharacterData());
 
         characterId = getIntent().getIntExtra("characterId", -1);
 
@@ -45,51 +41,52 @@ public class EditCharacterActivity extends AppCompatActivity {
         } else {
             Toast.makeText(this, "Character not found", Toast.LENGTH_SHORT).show();
             finish();
-
         }
-        buttonSave.setOnClickListener(v -> saveCharacterData());
+
+        imageViewCharacter.setOnClickListener(v -> {
+            CharacterImagePickerDialog dialog = new CharacterImagePickerDialog(new CharacterImagePickerDialogAdapter.OnImageClickListener() {
+                @Override
+                public void onImageClick(String imagePath) {
+                    if (imagePath.startsWith("assets://")) {
+                        try {
+                            InputStream is = getAssets().open(imagePath.replace("assets://", ""));
+                            Bitmap bitmap = BitmapFactory.decodeStream(is);
+                            imageViewCharacter.setImageBitmap(bitmap);
+                            characterMainImagePath = imagePath;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+                        imageViewCharacter.setImageBitmap(bitmap);
+                        characterMainImagePath = imagePath;
+                    }
+                }
+
+                @Override
+                public void onAddImageClick() {
+                    openImageChooser();
+                }
+            });
+            dialog.show(getSupportFragmentManager(), "CharacterImagePickerDialog");
+        });
     }
 
-    private void loadCharacterData(int characterId) {
-        CharacterRPG characterRPG = dbHelper.getCharacterById(characterId);
-        if (characterRPG != null) {
-            editTextName.setText(characterRPG.getName());
-            editTextRace.setText(characterRPG.getRace());
-            editTextClass.setText(characterRPG.getCharacterClass());
-            editTextLevel.setText(String.valueOf(characterRPG.getLevel()));
-            editTextStrength.setText(String.valueOf(characterRPG.getStrength()));
-            editTextDexterity.setText(String.valueOf(characterRPG.getDexterity()));
-            editTextConstitution.setText(String.valueOf(characterRPG.getConstitution()));
-            editTextIntelligence.setText(String.valueOf(characterRPG.getIntelligence()));
-            editTextWisdom.setText(String.valueOf(characterRPG.getWisdom()));
-            editTextCharisma.setText(String.valueOf(characterRPG.getCharisma()));
-
-        } else {
-            Toast.makeText(this, "Failed to load character data", Toast.LENGTH_SHORT).show();
-            finish();
+    @Override
+    protected void saveCharacter(CharacterRPG characterRPG) {
+        if (characterMainImagePath == null || characterMainImagePath.isEmpty()) {
+            if (existingImagePath != null && !existingImagePath.isEmpty()) {
+                characterMainImagePath = existingImagePath;
+            } else {
+                characterMainImagePath = "assets://characters_images/hood-8779438_1920.png"; // Domyślny obraz
+            }
         }
-    }
 
-    private void saveCharacterData() {
-        String name = editTextName.getText().toString();
-        String race = editTextRace.getText().toString();
-        String characterClass = editTextClass.getText().toString();
-        int strength = Integer.parseInt(editTextStrength.getText().toString());
-        int dexterity = Integer.parseInt(editTextDexterity.getText().toString());
-        int constitution = Integer.parseInt(editTextConstitution.getText().toString());
-        int intelligence = Integer.parseInt(editTextIntelligence.getText().toString());
-        int wisdom = Integer.parseInt(editTextWisdom.getText().toString());
-        int charisma = Integer.parseInt(editTextCharisma.getText().toString());
-        int level = Integer.parseInt(editTextLevel.getText().toString());
-
-        CharacterRPG characterRPG = new CharacterRPG(name, race, characterClass, level, strength, dexterity, constitution, intelligence, wisdom, charisma, "D&D 5e");
         characterRPG.setId(characterId);
-
+        characterRPG.setCharacterMainImagePath(characterMainImagePath); // Upewnij się, że ścieżka obrazu jest ustawiona
         dbHelper.updateCharacter(characterRPG);
         Toast.makeText(this, "Character updated", Toast.LENGTH_SHORT).show();
         setResult(RESULT_OK);
         finish();
     }
-
-
 }

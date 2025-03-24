@@ -13,10 +13,11 @@ public class CharacterRPG {
     private int wisdom;
     private int charisma;
     private String gameVersion;
+    private String characterMainImagePath;
 
     public CharacterRPG(int id, String name, String race, String characterClass, int level,
                         int strength, int dexterity, int constitution, int intelligence,
-                        int wisdom, int charisma, String gameVersion) {
+                        int wisdom, int charisma, String gameVersion, String characterMainImagePath) {
         this.id = id;
         this.name = name;
         this.race = race;
@@ -29,11 +30,12 @@ public class CharacterRPG {
         this.wisdom = wisdom;
         this.charisma = charisma;
         this.gameVersion = gameVersion;
+        this.characterMainImagePath = characterMainImagePath;
     }
 
     public CharacterRPG(String name, String race, String characterClass, int level,
                         int strength, int dexterity, int constitution, int intelligence,
-                        int wisdom, int charisma, String gameVersion) {
+                        int wisdom, int charisma, String gameVersion, String characterMainImagePath) {
         this.name = name;
         this.race = race;
         this.characterClass = characterClass;
@@ -45,6 +47,7 @@ public class CharacterRPG {
         this.wisdom = wisdom;
         this.charisma = charisma;
         this.gameVersion = gameVersion;
+        this.characterMainImagePath = characterMainImagePath;
     }
 
     public int getId() { return id; }
@@ -59,6 +62,7 @@ public class CharacterRPG {
     public int getWisdom() { return wisdom; }
     public int getCharisma() { return charisma; }
     public String getGameVersion() { return gameVersion; }
+    public String getCharacterMainImagePath() { return characterMainImagePath; }
 
     public void setId(int id) { this.id = id; }
     public void setName(String name) { this.name = name; }
@@ -72,4 +76,5 @@ public class CharacterRPG {
     public void setWisdom(int wisdom) { this.wisdom = wisdom; }
     public void setCharisma(int charisma) { this.charisma = charisma; }
     public void setGameVersion(String gameVersion) { this.gameVersion = gameVersion; }
+    public void setCharacterMainImagePath(String characterMainImagePath) { this.characterMainImagePath = characterMainImagePath; }
 }

@@ -1,11 +1,14 @@
 package com.fizzycoyote.qusetroll.feature_character.ui.details;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -18,12 +21,17 @@ import com.fizzycoyote.qusetroll.feature_character.data.CharacterDatabaseHelper;
 import com.fizzycoyote.qusetroll.feature_character.model.CharacterRPG;
 import com.fizzycoyote.qusetroll.feature_character.ui.edit.EditCharacterActivity;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 public class CharacterDetailsActivity extends AppCompatActivity {
     private TextView textViewName, textViewRace, textViewClass, textViewLevel, textViewStrength, textViewDexterity, textViewConstitution
             , textViewIntelligence, textViewWisdom, textViewCharisma, textViewGameVersion;
     private Button buttonManage;
     private CharacterDatabaseHelper dbHelper;
     private int characterId;
+    private ImageView imageViewCharacter;
+    private CharacterRPG characterRPG;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +50,7 @@ public class CharacterDetailsActivity extends AppCompatActivity {
         textViewCharisma = findViewById(R.id.textViewCharisma);
         textViewGameVersion = findViewById(R.id.textViewGameVersion);
         buttonManage = findViewById(R.id.buttonManage);
+        imageViewCharacter = findViewById(R.id.imageViewCharacter);
 
         dbHelper = new CharacterDatabaseHelper(this);
 
@@ -58,19 +67,46 @@ public class CharacterDetailsActivity extends AppCompatActivity {
     }
 
     private void loadCharacterData(int characterId) {
-        CharacterRPG characterRPG = dbHelper.getCharacterById(characterId);
-        if (characterRPG != null) {
-            textViewName.setText("Name: " + characterRPG.getName());
-            textViewRace.setText("Race " +characterRPG.getRace());
-            textViewClass.setText("Class: " + characterRPG.getCharacterClass());
-            textViewLevel.setText("Level: " + String.valueOf(characterRPG.getLevel()));
-            textViewStrength.setText("Strength: " + String.valueOf(characterRPG.getStrength()));
-            textViewDexterity.setText("Dexterity: " + String.valueOf(characterRPG.getDexterity()));
-            textViewConstitution.setText("Constitution: " + String.valueOf(characterRPG.getConstitution()));
-            textViewIntelligence.setText("Intelligence: " + String.valueOf(characterRPG.getIntelligence()));
-            textViewWisdom.setText("Wisdom: " + String.valueOf(characterRPG.getWisdom()));
-            textViewCharisma.setText("Charisma: " + String.valueOf(characterRPG.getCharisma()));
-            textViewGameVersion.setText(characterRPG.getGameVersion());
+         this.characterRPG = dbHelper.getCharacterById(characterId);
+        if (this.characterRPG != null) {
+            textViewName.setText("Name: " + this.characterRPG.getName());
+            textViewRace.setText("Race " +this.characterRPG.getRace());
+            textViewClass.setText("Class: " + this.characterRPG.getCharacterClass());
+            textViewLevel.setText("Level: " + String.valueOf(this.characterRPG.getLevel()));
+            textViewStrength.setText("Strength: " + String.valueOf(this.characterRPG.getStrength()));
+            textViewDexterity.setText("Dexterity: " + String.valueOf(this.characterRPG.getDexterity()));
+            textViewConstitution.setText("Constitution: " + String.valueOf(this.characterRPG.getConstitution()));
+            textViewIntelligence.setText("Intelligence: " + String.valueOf(this.characterRPG.getIntelligence()));
+            textViewWisdom.setText("Wisdom: " + String.valueOf(this.characterRPG.getWisdom()));
+            textViewCharisma.setText("Charisma: " + String.valueOf(this.characterRPG.getCharisma()));
+            textViewGameVersion.setText(this.characterRPG.getGameVersion());
+
+            String imagePath = this.characterRPG.getCharacterMainImagePath();
+
+            if (imagePath != null && !imagePath.isEmpty()) {
+                if (imagePath.startsWith("assets://")) {
+                    try {
+                        InputStream is = getAssets().open(imagePath.replace("assets://", ""));
+                        Bitmap bitmap = BitmapFactory.decodeStream(is);
+                        imageViewCharacter.setImageBitmap(bitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        imageViewCharacter.setImageResource(R.drawable.default_character_image);
+                        Toast.makeText(this, "Character image not found in assets", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+                    if (bitmap != null) {
+                        imageViewCharacter.setImageBitmap(bitmap);
+                    } else {
+                        imageViewCharacter.setImageResource(R.drawable.default_character_image);
+                        Toast.makeText(this, "Character image not found in internal storage", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            } else {
+                imageViewCharacter.setImageResource(R.drawable.default_character_image);
+                Toast.makeText(this, "No image path provided", Toast.LENGTH_SHORT).show();
+            }
         } else {
             Toast.makeText(this, "Failed to load character data", Toast.LENGTH_SHORT).show();
             finish();
@@ -94,6 +130,10 @@ public class CharacterDetailsActivity extends AppCompatActivity {
         buttonEdit.setOnClickListener(v -> {
             Intent intent = new Intent(CharacterDetailsActivity.this, EditCharacterActivity.class);
             intent.putExtra("characterId", characterId);
+
+            String imagePath = (this.characterRPG != null) ? this.characterRPG.getCharacterMainImagePath() : null;
+            intent.putExtra("characterMainImagePath", imagePath);
+
             startActivityForResult(intent, 1);
             popupWindow.dismiss();
         });
@@ -144,9 +184,7 @@ public class CharacterDetailsActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 1 && resultCode == RESULT_OK) {
-            // Odśwież dane postaci
             loadCharacterData(characterId);
         }
     }
 }
-

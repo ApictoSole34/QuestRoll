@@ -5,6 +5,15 @@
     android:orientation="vertical"
     android:padding="16dp">
 
+    <ImageView
+        android:id="@+id/imageViewCharacter"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/default_character_image"
+        android:clickable="true"
+        android:focusable="true"/>
+
     <EditText
         android:id="@+id/editTextName"
         android:layout_width="match_parent"
@@ -18,7 +27,7 @@
         android:hint="Race"/>
 
     <EditText
-        android:id="@+id/editTextCharacterClass"
+        android:id="@+id/editTextClass"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Class"/>
