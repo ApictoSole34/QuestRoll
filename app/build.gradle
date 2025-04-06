@@ -47,6 +47,8 @@ android {
 }
 
 dependencies {
+
+    implementation libs.ucrop
     implementation libs.glide.v4151
     annotationProcessor libs.compiler.v4151
     implementation libs.androidx.recyclerview

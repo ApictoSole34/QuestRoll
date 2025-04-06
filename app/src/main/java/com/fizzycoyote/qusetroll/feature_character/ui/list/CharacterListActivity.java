@@ -5,7 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fizzycoyote.qusetroll.R;
@@ -28,7 +29,7 @@ public class CharacterListActivity extends AppCompatActivity implements Characte
         setContentView(R.layout.activity_character_list);
 
         recyclerView = findViewById(R.id.recyclerViewCharacters);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         dbHelper = new CharacterDatabaseHelper(this);
         List<CharacterRPG> characterRPGList = dbHelper.getAllCharacters();

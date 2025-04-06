@@ -1,8 +1,12 @@
 package com.fizzycoyote.qusetroll.feature_character.ui.list.adapter;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -11,6 +15,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fizzycoyote.qusetroll.R;
 import com.fizzycoyote.qusetroll.feature_character.model.CharacterRPG;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 public class CharacterAdapter extends RecyclerView.Adapter<CharacterAdapter.CharacterViewHolder> {
@@ -43,6 +49,7 @@ public class CharacterAdapter extends RecyclerView.Adapter<CharacterAdapter.Char
             holder.textViewClass.setText(characterRPG.getCharacterClass());
             holder.textViewLevel.setText("Level " + characterRPG.getLevel());
             holder.textViewGameVersion.setText(characterRPG.getGameVersion());
+            loadMiniature(holder.imageViewMiniature, characterRPG.getCharacterMiniaturePath());
 
             holder.itemView.setOnClickListener(v -> {
                 if (listener != null) {
@@ -55,12 +62,37 @@ public class CharacterAdapter extends RecyclerView.Adapter<CharacterAdapter.Char
             holder.textViewClass.setText("");
             holder.textViewLevel.setText("");
             holder.textViewGameVersion.setText("");
+            holder.imageViewMiniature.setImageResource(R.drawable.ic_add);
 
             holder.itemView.setOnClickListener(v -> {
                 if (listener != null) {
                     listener.onAddCharacterClick();
                 }
             });
+        }
+    }
+
+    private void loadMiniature(ImageView imageView, String miniaturePath) {
+        if (miniaturePath != null) {
+            if (miniaturePath.startsWith("assets://")) {
+                try {
+                    InputStream is = imageView.getContext().getAssets().open(
+                            miniaturePath.replace("assets://", ""));
+                    Bitmap bitmap = BitmapFactory.decodeStream(is);
+                    imageView.setImageBitmap(bitmap);
+                } catch (IOException e) {
+                    imageView.setImageResource(R.drawable.default_character_image);
+                }
+            } else {
+                Bitmap bitmap = BitmapFactory.decodeFile(miniaturePath);
+                if (bitmap != null) {
+                    imageView.setImageBitmap(bitmap);
+                } else {
+                    imageView.setImageResource(R.drawable.default_character_image);
+                }
+            }
+        } else {
+            imageView.setImageResource(R.drawable.default_character_image);
         }
     }
 
@@ -71,6 +103,7 @@ public class CharacterAdapter extends RecyclerView.Adapter<CharacterAdapter.Char
 
     static class CharacterViewHolder extends RecyclerView.ViewHolder {
         TextView textViewName, textViewRace, textViewClass, textViewLevel, textViewGameVersion;
+        ImageView imageViewMiniature;
 
         public CharacterViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -79,6 +112,7 @@ public class CharacterAdapter extends RecyclerView.Adapter<CharacterAdapter.Char
             textViewClass = itemView.findViewById(R.id.textViewClass);
             textViewLevel = itemView.findViewById(R.id.textViewLevel);
             textViewGameVersion = itemView.findViewById(R.id.textViewGameVersion);
+            imageViewMiniature = itemView.findViewById(R.id.imageViewMiniature);
         }
     }
 

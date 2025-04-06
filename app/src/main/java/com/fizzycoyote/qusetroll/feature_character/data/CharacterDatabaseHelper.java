@@ -14,7 +14,7 @@ import java.util.List;
 
 public class CharacterDatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "characters.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private static final String TABLE_NAME = "characters";
     private static final String COLUMN_ID = "id";
     private static final String COLUMN_NAME = "name";
@@ -29,6 +29,7 @@ public class CharacterDatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_CHARISMA = "charisma";
     private static final String COLUMN_GAME_VERSION = "game_version";
     private static final String COLUMN_CHARACTER_MAIN_IMAGE_PATH = "character_main_image_path";
+    private static final String COLUMN_CHARACTER_MINIATURE_PATH = "character_miniature_path";
 
     public CharacterDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -49,7 +50,8 @@ public class CharacterDatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_WISDOM + " INTEGER, " +
                 COLUMN_CHARISMA + " INTEGER, " +
                 COLUMN_GAME_VERSION + " TEXT," +
-                COLUMN_CHARACTER_MAIN_IMAGE_PATH + " TEXT" +
+                COLUMN_CHARACTER_MAIN_IMAGE_PATH + " TEXT," +
+                COLUMN_CHARACTER_MINIATURE_PATH + " TEXT" +
                 ")";
         db.execSQL(createTable);
     }
@@ -76,6 +78,7 @@ public class CharacterDatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_CHARISMA, characterRPG.getCharisma());
         values.put(COLUMN_GAME_VERSION, characterRPG.getGameVersion());
         values.put(COLUMN_CHARACTER_MAIN_IMAGE_PATH, characterRPG.getCharacterMainImagePath());
+        values.put(COLUMN_CHARACTER_MINIATURE_PATH, characterRPG.getCharacterMiniaturePath());
 
         long id = db.insert(TABLE_NAME, null, values);
         db.close();
@@ -103,7 +106,8 @@ public class CharacterDatabaseHelper extends SQLiteOpenHelper {
                         cursor.getInt(cursor.getColumnIndex(COLUMN_WISDOM)),
                         cursor.getInt(cursor.getColumnIndex(COLUMN_CHARISMA)),
                         cursor.getString(cursor.getColumnIndex(COLUMN_GAME_VERSION)),
-                        cursor.getString(cursor.getColumnIndex(COLUMN_CHARACTER_MAIN_IMAGE_PATH))
+                        cursor.getString(cursor.getColumnIndex(COLUMN_CHARACTER_MAIN_IMAGE_PATH)),
+                        cursor.getString(cursor.getColumnIndex(COLUMN_CHARACTER_MINIATURE_PATH))
                 );
                 characterRPG.setId(cursor.getInt(cursor.getColumnIndex(COLUMN_ID)));
                 characters.add(characterRPG);
@@ -132,7 +136,8 @@ public class CharacterDatabaseHelper extends SQLiteOpenHelper {
                     cursor.getInt(cursor.getColumnIndex(COLUMN_WISDOM)),
                     cursor.getInt(cursor.getColumnIndex(COLUMN_CHARISMA)),
                     cursor.getString(cursor.getColumnIndex(COLUMN_GAME_VERSION)),
-                    cursor.getString(cursor.getColumnIndex(COLUMN_CHARACTER_MAIN_IMAGE_PATH))
+                    cursor.getString(cursor.getColumnIndex(COLUMN_CHARACTER_MAIN_IMAGE_PATH)),
+                    cursor.getString(cursor.getColumnIndex(COLUMN_CHARACTER_MINIATURE_PATH))
             );
             characterRPG.setId(cursor.getInt(cursor.getColumnIndex(COLUMN_ID)));
             cursor.close();
@@ -162,6 +167,7 @@ public class CharacterDatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_CHARISMA, characterRPG.getCharisma());
         values.put(COLUMN_GAME_VERSION, characterRPG.getGameVersion());
         values.put(COLUMN_CHARACTER_MAIN_IMAGE_PATH, characterRPG.getCharacterMainImagePath());
+        values.put(COLUMN_CHARACTER_MINIATURE_PATH, characterRPG.getCharacterMiniaturePath());
 
         db.update(TABLE_NAME, values, COLUMN_ID + " = ?", new String[]{String.valueOf(characterRPG.getId())});
         db.close();

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <files-path name="files" path="." />
+    <files-path name="characters_images" path="characters_images/" />
+    <files-path name="characters_miniatures" path="characters_miniatures/" />
+</paths>

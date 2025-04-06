@@ -7,6 +7,14 @@
     android:background="@drawable/character_item_background"
     android:layout_margin="4dp">
 
+    <ImageView
+        android:id="@+id/imageViewMiniature"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:contentDescription="Miniatura postaci"
+        android:scaleType="centerCrop"
+        android:padding="4dp"/>
+
     <TextView
         android:id="@+id/textViewName"
         android:layout_width="wrap_content"

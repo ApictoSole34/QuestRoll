@@ -15,6 +15,7 @@ import com.fizzycoyote.qusetroll.feature_character.base.BaseCharacterActivity;
 import com.fizzycoyote.qusetroll.feature_character.model.CharacterRPG;
 import com.fizzycoyote.qusetroll.feature_character.ui.dialog_image.CharacterImagePickerDialog;
 import com.fizzycoyote.qusetroll.feature_character.ui.dialog_image.adapter.CharacterImagePickerDialogAdapter;
+import com.fizzycoyote.qusetroll.feature_character.ui.dialog_image.helper.CharacterImageHelper;
 import com.fizzycoyote.qusetroll.feature_character.ui.list.CharacterListActivity;
 
 import java.io.IOException;
@@ -34,43 +35,92 @@ public class CreateCharacterActivity extends BaseCharacterActivity {
         Button buttonSave = findViewById(R.id.buttonSave);
         buttonSave.setOnClickListener(v -> saveCharacterData());
 
+        setDefaultMiniatureOnCreate();
+
         imageViewCharacter.setOnClickListener(v -> {
             CharacterImagePickerDialog dialog = new CharacterImagePickerDialog(new CharacterImagePickerDialogAdapter.OnImageClickListener() {
                 @Override
                 public void onImageClick(String imagePath) {
-                    if (imagePath.startsWith("assets://")) {
-                        try {
-                            String assetPath = imagePath.replace("assets://", "");
-                            InputStream is = getAssets().open(assetPath);
-                            Bitmap bitmap = BitmapFactory.decodeStream(is);
-                            imageViewCharacter.setImageBitmap(bitmap);
-                            characterMainImagePath = imagePath;
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-                        if (bitmap != null) {
-                            imageViewCharacter.setImageBitmap(bitmap);
-                            characterMainImagePath = imagePath;
-                        } else {
-                            Toast.makeText(CreateCharacterActivity.this, "Failed to load image", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+                    handleImageSelection(imagePath);
                 }
 
                 @Override
                 public void onAddImageClick() {
-                    Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(intent, PICK_IMAGE_REQUEST);
+                    openImageChooser();
                 }
             });
             dialog.show(getSupportFragmentManager(), "CharacterImagePickerDialog");
         });
     }
 
+    private void handleImageSelection(String imagePath) {
+        if (imagePath.startsWith("assets://")) {
+            try {
+                String assetPath = imagePath.replace("assets://", "");
+                InputStream is = getAssets().open(assetPath);
+                Bitmap bitmap = BitmapFactory.decodeStream(is);
+                imageViewCharacter.setImageBitmap(bitmap);
+                characterMainImagePath = imagePath;
+            } catch (IOException e) {
+                e.printStackTrace();
+                imageViewCharacter.setImageResource(R.drawable.default_character_image);
+            }
+        } else {
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            if (bitmap != null) {
+                imageViewCharacter.setImageBitmap(bitmap);
+                characterMainImagePath = imagePath;
+            } else {
+                Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        characterMiniaturePath = CharacterImageHelper.getMiniaturePathForImage(imagePath);
+        if (characterMiniaturePath != null) {
+            if (characterMiniaturePath.startsWith("assets://")) {
+                try {
+                    String assetPath = characterMiniaturePath.replace("assets://", "");
+                    InputStream isMini = getAssets().open(assetPath);
+                    imageViewMiniature.setImageBitmap(BitmapFactory.decodeStream(isMini));
+                } catch (IOException e) {
+                    setDefaultMiniature();
+                }
+            } else {
+                Bitmap bitmapMini = BitmapFactory.decodeFile(characterMiniaturePath);
+                if (bitmapMini != null) {
+                    imageViewMiniature.setImageBitmap(bitmapMini);
+                } else {
+                    setDefaultMiniature();
+                }
+            }
+        } else {
+            setDefaultMiniature();
+        }
+    }
+
+    private void setDefaultMiniatureOnCreate() {
+        characterMainImagePath = "assets://characters_images/hood-8779438_1920.png";
+        characterMiniaturePath = "assets://characters_miniatures/hood-8779438_1920_mini.png";
+
+        try {
+            InputStream is = getAssets().open("characters_images/hood-8779438_1920_mini.png");
+            Bitmap bitmap = BitmapFactory.decodeStream(is);
+            imageViewMiniature.setImageBitmap(bitmap);
+        } catch (IOException e) {
+            imageViewMiniature.setImageResource(R.drawable.default_character_image);
+        }
+    }
+
     @Override
     protected void saveCharacter(CharacterRPG characterRPG) {
+        if (characterMainImagePath == null || characterMainImagePath.isEmpty()) {
+            characterMainImagePath = "assets://characters_images/hood-8779438_1920.png";
+            characterMiniaturePath = "assets://characters_miniatures/hood-8779438_1920_mini.png";
+        }
+
+        characterRPG.setCharacterMainImagePath(characterMainImagePath);
+        characterRPG.setCharacterMiniaturePath(characterMiniaturePath);
+
         long id = dbHelper.addCharacter(characterRPG);
         if (id != -1) {
             Toast.makeText(this, "Character saved", Toast.LENGTH_SHORT).show();
@@ -82,20 +132,13 @@ public class CreateCharacterActivity extends BaseCharacterActivity {
         }
     }
 
-    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri uri = data.getData();
             characterMainImagePath = getRealPathFromUri(uri);
-
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
-                imageViewCharacter.setImageBitmap(bitmap);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            handleImageSelection(characterMainImagePath);
         }
     }
 

@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.feature_character.ui.dialog_image.helper.CharacterImageHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,6 +39,8 @@ public class CharacterImagePickerDialogAdapter extends RecyclerView.Adapter<Char
 
     @Override
     public void onBindViewHolder(@NonNull ImageViewHolder holder, int position) {
+        holder.itemView.invalidate();
+
         if (position == 0) {
             holder.bindAddButton();
         } else {
@@ -59,20 +62,20 @@ public class CharacterImagePickerDialogAdapter extends RecyclerView.Adapter<Char
             imageView = itemView.findViewById(R.id.imageView);
         }
 
+        private Bitmap loadBitmap(String path) throws IOException {
+            if (path.startsWith("assets://")) {
+                InputStream is = itemView.getContext().getAssets().open(path.replace("assets://", ""));
+                return BitmapFactory.decodeStream(is);
+            }
+            return BitmapFactory.decodeFile(path);
+        }
+
         public void bind(String imagePath) {
-            if (imagePath.startsWith("assets://")) {
-                String assetPath = imagePath.replace("assets://", "");
-                try {
-                    InputStream is = itemView.getContext().getAssets().open(assetPath);
-                    Bitmap bitmap = BitmapFactory.decodeStream(is);
-                    imageView.setImageBitmap(bitmap);
-                    is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            try {
+                Bitmap bitmap = loadBitmap(imagePath);
                 imageView.setImageBitmap(bitmap);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
 
             itemView.setOnClickListener(v -> {
@@ -104,8 +107,10 @@ public class CharacterImagePickerDialogAdapter extends RecyclerView.Adapter<Char
 
         private void deleteImage(String imagePath) {
             File file = new File(imagePath);
-            if (file.delete()) {
+            File miniatureFile = new File(CharacterImageHelper.getMiniaturePathForImage(imagePath));
+            if (file.delete() && miniatureFile.exists()) {
                 imageList.remove(imagePath);
+                miniatureFile.delete();
                 notifyDataSetChanged();
                 Toast.makeText(itemView.getContext(), "Image deleted", Toast.LENGTH_SHORT).show();
             } else {

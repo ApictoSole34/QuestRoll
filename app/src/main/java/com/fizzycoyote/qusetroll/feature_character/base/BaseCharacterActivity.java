@@ -3,9 +3,7 @@ package com.fizzycoyote.qusetroll.feature_character.base;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -14,19 +12,23 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.fizzycoyote.qusetroll.R;
 import com.fizzycoyote.qusetroll.feature_character.data.CharacterDatabaseHelper;
-import com.fizzycoyote.qusetroll.feature_character.helper.CharacterImageHelper;
 import com.fizzycoyote.qusetroll.feature_character.model.CharacterRPG;
+import com.fizzycoyote.qusetroll.feature_character.ui.dialog_image.helper.CharacterImageHelper;
+import com.yalantis.ucrop.UCrop;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
 public abstract class BaseCharacterActivity extends AppCompatActivity {
     protected CharacterDatabaseHelper dbHelper;
     protected static final int PICK_IMAGE_REQUEST = 1;
+    protected static final int UCROP_MINIATURE_REQUEST = 3;
 
-    protected EditText editTextName, editTextRace, editTextClass, editTextLevel, editTextStrength, editTextDexterity, editTextConstitution, editTextIntelligence, editTextWisdom, editTextCharisma;
-    protected ImageView imageViewCharacter;
-    protected String characterMainImagePath;
+    protected EditText editTextName, editTextRace, editTextClass, editTextLevel, editTextStrength, editTextDexterity,
+            editTextConstitution, editTextIntelligence, editTextWisdom, editTextCharisma;
+    protected ImageView imageViewCharacter, imageViewMiniature;
+    protected String characterMainImagePath, characterMiniaturePath;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,9 @@ public abstract class BaseCharacterActivity extends AppCompatActivity {
         editTextWisdom = findViewById(R.id.editTextWisdom);
         editTextCharisma = findViewById(R.id.editTextCharisma);
         imageViewCharacter = findViewById(R.id.imageViewCharacter);
+        imageViewMiniature = findViewById(R.id.imageViewMiniature);
+
+
     }
 
     protected abstract int getLayoutResourceId();
@@ -64,35 +69,72 @@ public abstract class BaseCharacterActivity extends AppCompatActivity {
             editTextWisdom.setText(String.valueOf(characterRPG.getWisdom()));
             editTextCharisma.setText(String.valueOf(characterRPG.getCharisma()));
 
-            String imagePath = characterRPG.getCharacterMainImagePath();
-            if (imagePath != null && !imagePath.isEmpty()) {
-                if (imagePath.startsWith("assets://")) {
+            String mainImagePath = characterRPG.getCharacterMainImagePath();
+            this.characterMainImagePath = mainImagePath;
+            if (mainImagePath != null && !mainImagePath.isEmpty()) {
+                if (mainImagePath.startsWith("assets://")) {
                     try {
-                        InputStream is = getAssets().open(imagePath.replace("assets://", ""));
+                        String assetPath = mainImagePath.replace("assets://", "");
+                        InputStream is = getAssets().open(assetPath);
                         Bitmap bitmap = BitmapFactory.decodeStream(is);
                         imageViewCharacter.setImageBitmap(bitmap);
+                        is.close();
                     } catch (IOException e) {
-                        e.printStackTrace();
                         imageViewCharacter.setImageResource(R.drawable.default_character_image);
-                        Toast.makeText(this, "Failed to load character image from assets", Toast.LENGTH_SHORT).show();
                     }
                 } else {
-                    Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+                    Bitmap bitmap = BitmapFactory.decodeFile(mainImagePath);
                     if (bitmap != null) {
                         imageViewCharacter.setImageBitmap(bitmap);
                     } else {
                         imageViewCharacter.setImageResource(R.drawable.default_character_image);
-                        Toast.makeText(this, "Failed to load image from internal storage", Toast.LENGTH_SHORT).show();
                     }
                 }
             } else {
                 imageViewCharacter.setImageResource(R.drawable.default_character_image);
-                characterMainImagePath = "assets://characters_images/hood-8779438_1920.png";
-                Toast.makeText(this, "No image path provided", Toast.LENGTH_SHORT).show();
             }
-        } else {
-            Toast.makeText(this, "Failed to load character data", Toast.LENGTH_SHORT).show();
-            finish();
+
+            String miniaturePath = characterRPG.getCharacterMiniaturePath();
+            this.characterMiniaturePath = miniaturePath;
+            if (miniaturePath != null && !miniaturePath.isEmpty()) {
+                if (miniaturePath.startsWith("assets://")) {
+                    String assetMiniPath = miniaturePath.replace("assets://", "");
+                    try {
+                        InputStream isMini = getAssets().open(assetMiniPath);
+                        Bitmap bitmapMini = BitmapFactory.decodeStream(isMini);
+                        imageViewMiniature.setImageBitmap(bitmapMini);
+                    } catch (IOException e) {
+                        setDefaultMiniature();
+                    }
+                } else {
+                    File miniatureFile = new File(miniaturePath);
+
+                    if (miniatureFile.exists()) {
+                        Bitmap bitmapMini = BitmapFactory.decodeFile(miniaturePath);
+                        if (bitmapMini != null) {
+                            imageViewMiniature.setImageBitmap(bitmapMini);
+                        } else {
+                            setDefaultMiniature();
+                        }
+                    } else {
+                        setDefaultMiniature();
+                    }
+                }
+            } else {
+                setDefaultMiniature();
+            }
+        }
+    }
+    protected void setDefaultMiniature() {
+        try {
+            InputStream isMini = getAssets().open("characters_miniatures/hood-8779438_1920_mini.png");
+            Bitmap bitmapMini = BitmapFactory.decodeStream(isMini);
+            imageViewMiniature.setImageBitmap(bitmapMini);
+            characterMiniaturePath = "assets://characters_miniatures/hood-8779438_1920_mini.png";
+        } catch (IOException e) {
+            e.printStackTrace();
+            imageViewMiniature.setImageResource(R.drawable.default_character_image);
+            Toast.makeText(this, "Failed to load default miniature", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -109,7 +151,19 @@ public abstract class BaseCharacterActivity extends AppCompatActivity {
         int charisma = Integer.parseInt(editTextCharisma.getText().toString());
         String gameVersion = "D&D 5e";
 
-        String characterMainImagePath = this.characterMainImagePath != null ? this.characterMainImagePath : "assets://characters_images/hood-8779438_1920.png";
+        String characterMainImagePath = this.characterMainImagePath != null ?
+                this.characterMainImagePath : "assets://characters_images/hood-8779438_1920.png";
+
+        String characterMiniaturePath;
+        if (characterMainImagePath.startsWith("assets://")) {
+            characterMiniaturePath = "assets://characters_miniatures/hood-8779438_1920_mini.png";
+        } else {
+            characterMiniaturePath = CharacterImageHelper.getMiniaturePathForImage(characterMainImagePath);
+            if (characterMiniaturePath == null || characterMiniaturePath.isEmpty()) {
+                characterMiniaturePath = "assets://characters_miniatures/hood-8779438_1920_mini.png";
+            }
+        }
+
         CharacterRPG characterRPG = new CharacterRPG(
                 name,
                 race,
@@ -122,10 +176,9 @@ public abstract class BaseCharacterActivity extends AppCompatActivity {
                 wisdom,
                 charisma,
                 gameVersion,
-                characterMainImagePath
+                characterMainImagePath,
+                characterMiniaturePath
         );
-
-        Log.d("BaseCharacterActivity", "Before saving, characterMainImagePath = " + characterMainImagePath);
 
         saveCharacter(characterRPG);
     }
@@ -139,7 +192,27 @@ public abstract class BaseCharacterActivity extends AppCompatActivity {
         startActivityForResult(intent, PICK_IMAGE_REQUEST);
     }
 
-    protected String copyImageToInternalStorage(Uri uri) {
-        return CharacterImageHelper.copyImageToInternalStorage(this, uri);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == UCROP_MINIATURE_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                handleSuccessfulMiniatureUpdate();
+            } else if (resultCode == UCrop.RESULT_ERROR) {
+                handleCropError(data);
+            }
+        }
+    }
+
+    private void handleSuccessfulMiniatureUpdate() {
+        Bitmap bitmap = BitmapFactory.decodeFile(characterMiniaturePath);
+        ImageView miniatureView = findViewById(R.id.imageViewMiniature);
+        miniatureView.setImageBitmap(bitmap);
+    }
+
+    private void handleCropError(Intent data) {
+        Throwable error = UCrop.getError(data);
+        Toast.makeText(this, "Failed to crop image: " + error.getMessage(), Toast.LENGTH_SHORT).show();
     }
 }

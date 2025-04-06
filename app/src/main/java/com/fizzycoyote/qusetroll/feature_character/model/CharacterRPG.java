@@ -14,6 +14,7 @@ public class CharacterRPG {
     private int charisma;
     private String gameVersion;
     private String characterMainImagePath;
+    private String characterMiniaturePath;
 
     public CharacterRPG(int id, String name, String race, String characterClass, int level,
                         int strength, int dexterity, int constitution, int intelligence,
@@ -35,7 +36,7 @@ public class CharacterRPG {
 
     public CharacterRPG(String name, String race, String characterClass, int level,
                         int strength, int dexterity, int constitution, int intelligence,
-                        int wisdom, int charisma, String gameVersion, String characterMainImagePath) {
+                        int wisdom, int charisma, String gameVersion, String characterMainImagePath, String characterMiniaturePath) {
         this.name = name;
         this.race = race;
         this.characterClass = characterClass;
@@ -48,6 +49,7 @@ public class CharacterRPG {
         this.charisma = charisma;
         this.gameVersion = gameVersion;
         this.characterMainImagePath = characterMainImagePath;
+        this.characterMiniaturePath = characterMiniaturePath;
     }
 
     public int getId() { return id; }
@@ -63,6 +65,7 @@ public class CharacterRPG {
     public int getCharisma() { return charisma; }
     public String getGameVersion() { return gameVersion; }
     public String getCharacterMainImagePath() { return characterMainImagePath; }
+    public String getCharacterMiniaturePath() { return characterMiniaturePath; }
 
     public void setId(int id) { this.id = id; }
     public void setName(String name) { this.name = name; }
@@ -77,4 +80,5 @@ public class CharacterRPG {
     public void setCharisma(int charisma) { this.charisma = charisma; }
     public void setGameVersion(String gameVersion) { this.gameVersion = gameVersion; }
     public void setCharacterMainImagePath(String characterMainImagePath) { this.characterMainImagePath = characterMainImagePath; }
+    public void setCharacterMiniaturePath(String characterMiniaturePath) { this.characterMiniaturePath = characterMiniaturePath; }
 }
