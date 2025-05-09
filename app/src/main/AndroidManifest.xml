@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -33,6 +34,10 @@
             android:name=".main.ui.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"/>
+        <activity
+            android:name=".feature_loading.LoadingActivity"
+            android:exported="true"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,9 +49,18 @@
         <activity android:name=".feature_character.ui.create.CreateCharacterActivity"/>
         <activity android:name=".feature_character.ui.edit.EditCharacterActivity"/>
         <activity android:name=".feature_character.ui.details.CharacterDetailsActivity"/>
+        <activity android:name=".feature_language.ui.language_list.LanguageListActivity"/>
+        <activity android:name=".feature_language.ui.language_details.LanguageDetailActivity"/>
+        <activity android:name=".feature_language.ui.language_create.CustomLanguageCreateActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true"
+            android:parentActivityName=".feature_language.ui.language_details.LanguageDetailActivity"/>
+        <meta-data
+            android:name="android.support.PARENT_ACTIVITY"
+            android:value=".feature_language.ui.language_details.LanguageDetailActivity" />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="fullSensor"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
     </application>
 

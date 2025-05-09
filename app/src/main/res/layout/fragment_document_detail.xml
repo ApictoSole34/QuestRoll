@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_doc_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:text="Document Name"/>
+
+        <TextView
+            android:id="@+id/tv_doc_author"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Author:"/>
+
+        <TextView
+            android:id="@+id/tv_doc_license"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="License:"/>
+
+        <TextView
+            android:id="@+id/tv_doc_gamesystem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Game System:"/>
+
+        <TextView
+            android:id="@+id/tv_doc_distance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Distance Unit:"/>
+
+        <TextView
+            android:id="@+id/tv_doc_published"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Published At:"/>
+
+        <TextView
+            android:id="@+id/tv_doc_permalink"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autoLink="web"
+            android:textColorLink="@color/colorPrimary"
+            android:text="Permalink:"/>
+
+        <TextView
+            android:id="@+id/tv_doc_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Description:"/>
+    </LinearLayout>
+</ScrollView>

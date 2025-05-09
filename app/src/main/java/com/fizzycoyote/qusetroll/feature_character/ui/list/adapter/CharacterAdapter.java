@@ -2,7 +2,6 @@ package com.fizzycoyote.qusetroll.feature_character.ui.list.adapter;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;

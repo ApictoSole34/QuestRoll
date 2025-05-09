@@ -8,7 +8,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.fizzycoyote.qusetroll.R;
-import com.fizzycoyote.qusetroll.feature_character.base.BaseCharacterActivity;
+import com.fizzycoyote.qusetroll.feature_character.ui.base.BaseCharacterActivity;
 import com.fizzycoyote.qusetroll.feature_character.model.CharacterRPG;
 import com.fizzycoyote.qusetroll.feature_character.ui.dialog_image.CharacterImagePickerDialog;
 import com.fizzycoyote.qusetroll.feature_character.ui.dialog_image.adapter.CharacterImagePickerDialogAdapter;

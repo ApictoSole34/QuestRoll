@@ -1,0 +1,76 @@
+package com.fizzycoyote.qusetroll.core.local_database;
+
+
+import android.content.Context;
+import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.room.Database;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
+import androidx.sqlite.db.SupportSQLiteDatabase;
+
+import com.fizzycoyote.qusetroll.core.models.open5e.Converters;
+import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherEntity;
+
+@Database(
+        entities = {
+                LicenseEntity.class,
+                PublisherEntity.class,
+                GameSystemEntity.class,
+                DocumentEntity.class,
+                LanguageEntity.class
+        },
+        version = 2,
+        exportSchema = false
+)
+@TypeConverters({Converters.class})
+public abstract class Open5eDatabase extends RoomDatabase {
+    private static volatile Open5eDatabase INSTANCE;
+
+    public abstract DocumentDao documentDao();
+    public abstract GameSystemDao gameSystemDao();
+    public abstract LicenseDao licenseDao();
+    public abstract LanguageDao languageDao();
+    public abstract PublisherDao publisherDao();
+
+    public static Open5eDatabase getInstance(Context context) {
+        if (INSTANCE == null) {
+            synchronized (Open5eDatabase.class) {
+                if (INSTANCE == null) {
+                    INSTANCE = Room.databaseBuilder(
+                                    context.getApplicationContext(),
+                                    Open5eDatabase.class,
+                                    "open5e_database"
+                            )
+                            .addCallback(new Callback() {
+                                @Override
+                                public void onCreate(@NonNull SupportSQLiteDatabase db) {
+                                    super.onCreate(db);
+                                    Log.d("AppDatabase", "onCreate: open5e_database CREATED");
+                                }
+
+                                @Override
+                                public void onOpen(@NonNull SupportSQLiteDatabase db) {
+                                    super.onOpen(db);
+                                    Log.d("AppDatabase", "onOpen: open5e_database OPENED");
+                                }
+                            })
+                            .fallbackToDestructiveMigration()
+                            .build();
+                }
+            }
+        }
+        return INSTANCE;
+    }
+}

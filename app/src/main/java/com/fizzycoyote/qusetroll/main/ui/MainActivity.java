@@ -8,9 +8,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.fizzycoyote.qusetroll.R;
-import com.fizzycoyote.qusetroll.feature_character.ui.create.CreateCharacterActivity;
 import com.fizzycoyote.qusetroll.feature_character.ui.list.CharacterListActivity;
 import com.fizzycoyote.qusetroll.feature_dice.ui.RollDiceActivity;
+import com.fizzycoyote.qusetroll.feature_language.ui.language_list.LanguageListActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,6 +28,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void openCharacterListActivity(View view) {
         Intent intent = new Intent(this, CharacterListActivity.class);
+        startActivity(intent);
+    }
+
+    public void openLanguageListActivity(View view) {
+        Intent intent = new Intent(this, LanguageListActivity.class);
         startActivity(intent);
     }
 }
