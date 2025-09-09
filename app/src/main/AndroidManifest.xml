@@ -17,7 +17,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
+        android:theme="@style/Theme.QuestRoll"
         tools:targetApi="31">
 
         <provider
@@ -51,6 +51,10 @@
         <activity android:name=".feature_character.ui.details.CharacterDetailsActivity"/>
         <activity android:name=".feature_language.ui.language_list.LanguageListActivity"/>
         <activity android:name=".feature_language.ui.language_details.LanguageDetailActivity"/>
+        <activity android:name=".feature_class.ui.ClassListActivity"/>
+        <activity android:name=".feature_class.ui.ClassDetailActivity"/>
+        <activity android:name=".feature_class.ui.ClassCreateActivity"/>
+        <activity android:name=".feature_class.ui.FeatureEditorActivity"/>
         <activity android:name=".feature_language.ui.language_create.CustomLanguageCreateActivity"
             android:windowSoftInputMode="adjustResize"
             android:exported="true"

@@ -14,9 +14,9 @@ public class DocumentMapper {
         for (LicenseDto license : dto.licenses) {
             keys.add(license.key);
         }
+        entity.publisher = dto.publisher != null ? dto.publisher.key : null;
+        entity.gamesystem = dto.gamesystem != null ? dto.gamesystem.key : null;
         entity.licenses = keys;
-        entity.publisher = dto.publisher;
-        entity.gamesystem = dto.gamesystem;
         entity.name = dto.name;
         entity.desc = dto.desc;
         entity.author = dto.author;

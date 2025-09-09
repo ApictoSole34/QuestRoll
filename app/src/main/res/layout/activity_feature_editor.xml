@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Nazwa cechy - prosty EditText -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nazwa cechy"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp"/>
+
+        <EditText
+            android:id="@+id/etFeatureName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Typ cechy - standardowy Spinner -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Typ cechy"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp"/>
+
+        <Spinner
+            android:id="@+id/spinnerFeatureType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/feature_types"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Opis - zwykły wielowierszowy EditText -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Opis cechy"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp"/>
+
+        <EditText
+            android:id="@+id/etFeatureDesc"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:gravity="top"
+            android:inputType="textMultiLine"
+            android:minLines="3"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Reszta pozostaje bez zmian -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Poziomy zdobycia:"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvLevels"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"/>
+
+        <Button
+            android:id="@+id/btnAddLevel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dodaj poziom"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dane tabelaryczne:"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvTableData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"/>
+
+        <Button
+            android:id="@+id/btnAddTableRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Dodaj wiersz"
+            android:layout_marginTop="8dp"/>
+
+        <Button
+            android:id="@+id/btnSaveFeature"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Zapisz cechę"
+            android:layout_marginTop="24dp"/>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

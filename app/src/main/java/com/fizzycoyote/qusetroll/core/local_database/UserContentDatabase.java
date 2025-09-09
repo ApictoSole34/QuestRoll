@@ -8,13 +8,19 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
 import com.fizzycoyote.qusetroll.core.models.custom.CustomConverters;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.CustomCharacterClassDao;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.CustomCharacterClassEntity;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custom_feature.CustomFeatureDao;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custom_feature.CustomFeatureEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_language.CustomLanguageDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_language.CustomLanguageEntity;
 
 
 @Database(
-        entities = {CustomLanguageEntity.class},
-        version = 4,
+        entities = {CustomLanguageEntity.class,
+        CustomCharacterClassEntity.class,
+        CustomFeatureEntity.class},
+        version = 8,
         exportSchema = false
 )
 @TypeConverters({CustomConverters.class})
@@ -22,6 +28,8 @@ public abstract class UserContentDatabase extends RoomDatabase {
     private static volatile UserContentDatabase INSTANCE;
 
     public abstract CustomLanguageDao customLanguageDao();
+    public abstract CustomCharacterClassDao customCharacterClassDao();
+    public abstract CustomFeatureDao customFeatureDao();
 
     public static UserContentDatabase getInstance(Context context) {
         if (INSTANCE == null) {

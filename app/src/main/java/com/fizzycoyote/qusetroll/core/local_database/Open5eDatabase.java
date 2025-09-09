@@ -12,6 +12,18 @@ import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.fizzycoyote.qusetroll.core.models.open5e.Converters;
+import com.fizzycoyote.qusetroll.core.models.open5e.ability.AbilityDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.ability.AbilityEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.ability.skill.SkillDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.ability.skill.SkillEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.character_class.CharacterClassDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.character_class.CharacterClassEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.character_class.feature.FeatureDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.character_class.feature.FeatureEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.character_class.hit_points.HitPointsDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.character_class.hit_points.HitPointsEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.character_class.saving_throw.SavingThrowDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.character_class.saving_throw.SavingThrowEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemDao;
@@ -23,15 +35,25 @@ import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherEntity;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 @Database(
         entities = {
                 LicenseEntity.class,
                 PublisherEntity.class,
                 GameSystemEntity.class,
                 DocumentEntity.class,
-                LanguageEntity.class
+                LanguageEntity.class,
+                AbilityEntity.class,
+                SkillEntity.class,
+                CharacterClassEntity.class,
+                FeatureEntity.class,
+                HitPointsEntity.class,
+                SavingThrowEntity.class
         },
-        version = 2,
+        version = 11,
         exportSchema = false
 )
 @TypeConverters({Converters.class})
@@ -43,6 +65,12 @@ public abstract class Open5eDatabase extends RoomDatabase {
     public abstract LicenseDao licenseDao();
     public abstract LanguageDao languageDao();
     public abstract PublisherDao publisherDao();
+    public abstract AbilityDao abilityDao();
+    public abstract SkillDao skillDao();
+    public abstract CharacterClassDao characterClassDao();
+    public abstract FeatureDao featureDao();
+    public abstract HitPointsDao hitPointsDao();
+    public abstract SavingThrowDao savingThrowDao();
 
     public static Open5eDatabase getInstance(Context context) {
         if (INSTANCE == null) {
@@ -72,5 +100,12 @@ public abstract class Open5eDatabase extends RoomDatabase {
             }
         }
         return INSTANCE;
+    }
+
+    private static final ExecutorService databaseWriteExecutor =
+            Executors.newFixedThreadPool(4);
+
+    public Executor getQueryExecutor() {
+        return databaseWriteExecutor;
     }
 }

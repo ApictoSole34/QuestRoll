@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="4dp">
+
+    <EditText
+        android:id="@+id/etLevel"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:hint="Poziom"
+        android:inputType="number"/>
+
+    <EditText
+        android:id="@+id/etValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:hint="Wartość"/>
+
+    <ImageButton
+        android:id="@+id/btnDelete"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@android:drawable/ic_delete"
+        android:contentDescription="Usuń"/>
+
+</LinearLayout>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="hit_dice_options">
+        <item>D4</item>
+        <item>D6</item>
+        <item>D8</item>
+        <item>D10</item>
+        <item>D12</item>
+    </string-array>
+
+    <string-array name="caster_types">
+        <item>Brak</item>
+        <item>Pełny</item>
+        <item>Połowiczny</item>
+        <item>Trzeci</item>
+    </string-array>
+
+    <string-array name="feature_types">
+        <item>CLASS_FEATURE</item>
+        <item>PROFICIENCIES</item>
+        <item>SPELLCASTING</item>
+        <item>CANTRIPS_KNOWN</item>
+    </string-array>
+</resources>

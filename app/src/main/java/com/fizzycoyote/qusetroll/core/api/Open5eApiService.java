@@ -1,5 +1,7 @@
 package com.fizzycoyote.qusetroll.core.api;
 
+import com.fizzycoyote.qusetroll.core.models.open5e.ability.AbilityResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.character_class.CharacterClassResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageResponse;
@@ -8,7 +10,6 @@ import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherResponse;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
-
 public interface Open5eApiService {
     @GET("documents/")
     Call<DocumentResponse> getDocuments();
@@ -24,4 +25,10 @@ public interface Open5eApiService {
 
     @GET("publishers/")
     Call<PublisherResponse> getPublishers();
+
+    @GET("abilities/")
+    Call<AbilityResponse> getAbilities();
+
+    @GET("classes/")
+    Call<CharacterClassResponse> getCharacterClasses();
 }

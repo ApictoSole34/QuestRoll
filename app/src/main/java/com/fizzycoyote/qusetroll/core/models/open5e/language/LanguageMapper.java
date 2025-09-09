@@ -5,7 +5,7 @@ public class LanguageMapper {
         LanguageEntity entity = new LanguageEntity();
         entity.key = dto.key;
         entity.url = dto.url;
-        entity.document = dto.document;
+        entity.document = dto.document != null ? dto.document.key : null;
         entity.name = dto.name;
         entity.desc = dto.desc;
         entity.isExotic = dto.isExotic;
