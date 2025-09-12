@@ -105,10 +105,14 @@ public class DocumentDetailDialogFragment extends DialogFragment {
 
     private @Nullable String extractKeyFromUrl(@Nullable String url) {
         if (url == null) return null;
+
         String u = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
-        int idx = u.lastIndexOf('/');
-        return idx != -1
-                ? u.substring(idx + 1)
-                : u;
+        String[] parts = u.split("/");
+
+        if (parts.length > 0) {
+            return parts[parts.length - 1];
+        }
+
+        return null;
     }
 }

@@ -76,7 +76,6 @@ public class LanguageDetailActivity extends AppCompatActivity {
         });
 
         viewModel.getDocument().observe(this, doc -> {
-            Log.d("License", "Document loaded: " + (doc != null ? doc.name : "null"));
             CombinedLanguage currentLanguage = viewModel.getLanguage().getValue();
             if (currentLanguage != null) {
                 updateLicenseInfo(currentLanguage, doc);
@@ -106,10 +105,27 @@ public class LanguageDetailActivity extends AppCompatActivity {
             viewModel.loadLanguage(null, initial.getCustomId());
         } else {
             viewModel.loadLanguage(initial.getOpen5eKey(), null);
-            if (initial.getDocumentUrl() != null) {
-                viewModel.loadDocument(initial.getDocumentUrl());
+
+            String documentKey = extractKeyFromUrl(initial.getDocumentUrl());
+            if (documentKey != null) {
+                viewModel.loadDocument(documentKey);
+            } else {
+                Log.e("License", "Could not extract document key from URL");
             }
         }
+    }
+
+    private String extractKeyFromUrl(String url) {
+        if (url == null) return null;
+
+        String u = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
+        String[] parts = u.split("/");
+
+        if (parts.length > 0) {
+            return parts[parts.length - 1];
+        }
+
+        return null;
     }
 
     private void updateMainInfo(CombinedLanguage language) {

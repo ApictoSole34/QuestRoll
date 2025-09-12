@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 
+import androidx.annotation.Nullable;
 import androidx.core.util.Consumer;
 import androidx.lifecycle.LiveData;
 
@@ -134,7 +135,7 @@ private CombinedLanguage mapOpen5eEntity(LanguageEntity entity) {
                 entity.isExotic,
                 entity.isSecret,
                 resolveScriptName(entity.scriptLanguage),
-                entity.url,
+                entity.scriptLanguage,
                 null,
                 entity.document,
                 entity.key,
@@ -162,18 +163,33 @@ private CombinedLanguage mapOpen5eEntity(LanguageEntity entity) {
      *Example: "elvish" → Open5e name, "42" → custom language name
      *Returns "Unknown" if not found
      */
-    public String resolveScriptName(String scriptId) {
-        if (scriptId == null) return null;
+    public String resolveScriptName(String scriptUrlOrKey) {
+        if (scriptUrlOrKey == null) return null;
+
+        String key = scriptUrlOrKey;
+        if (scriptUrlOrKey.startsWith("http")) {
+            key = extractKeyFromUrl(scriptUrlOrKey);
+        }
+
         try {
-            LanguageEntity open5e = open5eDao.getByKey(scriptId);
+            LanguageEntity open5e = open5eDao.getByKey(key);
             if (open5e != null) return open5e.name;
 
-            long customId = Long.parseLong(scriptId);
+            long customId = Long.parseLong(key);
             CustomLanguageEntity custom = customDao.findById(customId);
             return custom != null ? custom.name : "Unknown";
+        } catch (NumberFormatException e) {
+            return "Unknown";
         } catch (Exception e) {
             return "Invalid";
         }
+    }
+
+    private String extractKeyFromUrl(String url) {
+        if (url == null) return null;
+        String u = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
+        String[] parts = u.split("/");
+        return parts.length > 0 ? parts[parts.length - 1] : null;
     }
 
     public LiveData<List<LanguageEntity>> getAllOpen5eLanguages() {

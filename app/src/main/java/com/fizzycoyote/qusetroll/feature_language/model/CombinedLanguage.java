@@ -2,6 +2,7 @@ package com.fizzycoyote.qusetroll.feature_language.model;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import java.util.Objects;
 
@@ -84,7 +85,9 @@ public class CombinedLanguage implements Parcelable {
      */
     public String getScriptKey() {
         if (scriptOpenUrl != null) {
-            String[] parts = scriptOpenUrl.split("/");
+            String url = scriptOpenUrl.endsWith("/") ?
+                    scriptOpenUrl.substring(0, scriptOpenUrl.length() - 1) : scriptOpenUrl;
+            String[] parts = url.split("/");
             return parts.length > 0 ? parts[parts.length - 1] : scriptOpenUrl;
         }
         return scriptCustomKey;
