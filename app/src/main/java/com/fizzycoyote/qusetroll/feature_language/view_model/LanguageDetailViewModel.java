@@ -1,5 +1,7 @@
 package com.fizzycoyote.qusetroll.feature_language.view_model;
 
+import android.util.Log;
+
 import androidx.core.util.Consumer;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -27,10 +29,18 @@ public class LanguageDetailViewModel extends ViewModel {
         );
     }
 
-    public void loadDocument(String url) {
-        repository.getDocumentByUrl(url,
+    public void loadDocument(String key) {
+        if (key == null) {
+            error.postValue("Document key is null");
+            return;
+        }
+
+        repository.getDocumentByKey(key,
                 doc -> document.postValue(doc),
-                e -> error.postValue("License error: " + e.getMessage())
+                e -> {
+                    Log.e("License", "Error loading document", e);
+                    error.postValue("License error: " + e.getMessage());
+                }
         );
     }
 

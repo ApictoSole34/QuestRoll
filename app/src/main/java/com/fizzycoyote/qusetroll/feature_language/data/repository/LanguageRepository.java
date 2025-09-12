@@ -2,6 +2,7 @@ package com.fizzycoyote.qusetroll.feature_language.data.repository;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.core.util.Consumer;
 import androidx.lifecycle.LiveData;
@@ -78,6 +79,25 @@ public class LanguageRepository {
                 DocumentEntity doc = open5eDocumentDao.getByUrl(url);
                 onSuccess.accept(doc);
             } catch (Exception e) {
+                onError.accept(e);
+            }
+        });
+    }
+
+    public void getDocumentByKey(String key,
+                                 Consumer<DocumentEntity> onSuccess,
+                                 Consumer<Exception> onError) {
+        executor.execute(() -> {
+            try {
+                DocumentEntity doc = open5eDocumentDao.getByKey(key);
+
+                if (doc != null) {
+                    onSuccess.accept(doc);
+                } else {
+                    onError.accept(new Exception("Document not found for key: " + key));
+                }
+            } catch (Exception e) {
+                Log.e("License", "Error querying document", e);
                 onError.accept(e);
             }
         });

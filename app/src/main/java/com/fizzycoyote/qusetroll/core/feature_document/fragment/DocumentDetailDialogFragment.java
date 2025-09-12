@@ -1,9 +1,5 @@
 package com.fizzycoyote.qusetroll.core.feature_document.fragment;
 
-import static androidx.core.content.ContentProviderCompat.requireContext;
-
-import static java.security.AccessController.getContext;
-
 import android.app.Dialog;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
@@ -26,19 +22,21 @@ import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseEntity;
 import java.util.concurrent.Executors;
 
 public class DocumentDetailDialogFragment extends DialogFragment {
-    private static final String ARG_URL = "arg_url";
+    private static final String ARG_KEY = "key";
 
-    public static DocumentDetailDialogFragment newInstance(String documentUrl) {
+    public static DocumentDetailDialogFragment newInstance(String key) {
+        DocumentDetailDialogFragment fragment = new DocumentDetailDialogFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_URL, documentUrl);
-        DocumentDetailDialogFragment frag = new DocumentDetailDialogFragment();
-        frag.setArguments(args);
-        return frag;
+
+        args.putString(ARG_KEY, key);
+        fragment.setArguments(args);
+
+        return fragment;
     }
 
     @NonNull @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        String url = requireArguments().getString(ARG_URL);
+        String key = requireArguments().getString(ARG_KEY);
         View view = LayoutInflater.from(getContext())
                 .inflate(R.layout.fragment_document_detail, null);
 
@@ -58,7 +56,7 @@ public class DocumentDetailDialogFragment extends DialogFragment {
 
         Executors.newSingleThreadExecutor().execute(() -> {
             Open5eDatabase db = Open5eDatabase.getInstance(requireContext());
-            DocumentEntity doc = db.documentDao().getByUrl(url);
+            DocumentEntity doc = db.documentDao().getByKey(key);
 
             String name        = doc != null ? doc.name : "—";
             String author      = doc != null && doc.author != null        ? doc.author      : "—";

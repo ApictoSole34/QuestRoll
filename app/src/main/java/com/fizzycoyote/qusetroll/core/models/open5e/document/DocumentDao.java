@@ -10,6 +10,9 @@ import java.util.List;
 @Dao
 public interface DocumentDao {
 
+    @Query("SELECT * FROM documents WHERE `key` = :key LIMIT 1")
+    DocumentEntity getByKey(String key);
+
     @Query("SELECT * FROM documents WHERE url = :url LIMIT 1")
     DocumentEntity getByUrl(String url);
 

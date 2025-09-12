@@ -3,6 +3,7 @@ package com.fizzycoyote.qusetroll.feature_language.ui.language_details;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Button;
@@ -75,6 +76,7 @@ public class LanguageDetailActivity extends AppCompatActivity {
         });
 
         viewModel.getDocument().observe(this, doc -> {
+            Log.d("License", "Document loaded: " + (doc != null ? doc.name : "null"));
             CombinedLanguage currentLanguage = viewModel.getLanguage().getValue();
             if (currentLanguage != null) {
                 updateLicenseInfo(currentLanguage, doc);
@@ -141,17 +143,21 @@ public class LanguageDetailActivity extends AppCompatActivity {
     private void updateLicenseInfo(CombinedLanguage language, DocumentEntity doc) {
         if (language.isCustom()) {
             tvLicense.setVisibility(View.GONE);
+            tvLicense.setOnClickListener(null);
             return;
         }
 
         if (doc != null) {
             tvLicense.setText("License: " + doc.name);
-            tvLicense.setOnClickListener(v -> showLicenseDialog(doc.url));
+            tvLicense.setOnClickListener(v -> showLicenseDialog(doc.key));
             tvLicense.setVisibility(View.VISIBLE);
         } else {
-            tvLicense.setText("License: —");
+            tvLicense.setText("License");
+            tvLicense.setOnClickListener(null);
             tvLicense.setVisibility(View.VISIBLE);
         }
+        tvLicense.setClickable(true);
+        tvLicense.setFocusable(true);
     }
 
     private boolean isSelfReference(CombinedLanguage language) {
@@ -219,8 +225,8 @@ public class LanguageDetailActivity extends AppCompatActivity {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
-    private void showLicenseDialog(String url) {
-        DocumentDetailDialogFragment.newInstance(url)
+    private void showLicenseDialog(String key) {
+        DocumentDetailDialogFragment.newInstance(key)
                 .show(getSupportFragmentManager(), "license_dialog");
     }
 }
