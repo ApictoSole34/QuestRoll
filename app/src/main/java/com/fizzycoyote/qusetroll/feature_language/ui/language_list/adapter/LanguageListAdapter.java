@@ -116,9 +116,15 @@ public class LanguageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             if (lang.isSecret()) flags.append("[Secret]");
             tvFlags.setText(flags.toString());
 
-            tvScript.setText(lang.getScriptLanguageName() != null
-                    ? "Script: " + lang.getScriptLanguageName()
-                    : "");
+            if (lang.getScriptLanguageName() != null &&
+                    !lang.getScriptLanguageName().isEmpty() &&
+                    !lang.getScriptLanguageName().equals(lang.getName())) {
+
+                tvScript.setText("Script: " + lang.getScriptLanguageName());
+                tvScript.setVisibility(View.VISIBLE);
+            } else {
+                tvScript.setVisibility(View.GONE);
+            }
 
             itemView.setOnClickListener(v -> listener.onLanguageClick(lang));
         }
