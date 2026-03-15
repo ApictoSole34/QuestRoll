@@ -1,8 +1,10 @@
 package com.fizzycoyote.qusetroll.feature_class.class_adapter;
 
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -13,19 +15,48 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fizzycoyote.qusetroll.R;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custom_feature.CustomFeatureEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custom_table_data.CustomTableData;
-import com.fizzycoyote.qusetroll.core.models.open5e.Converters;
-import com.fizzycoyote.qusetroll.core.models.open5e.character_class.feature.FeatureEntity;
-import com.fizzycoyote.qusetroll.core.models.open5e.character_class.table_data.TableDataDto;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import io.noties.markwon.Markwon;
 
 public class FeatureAdapter extends RecyclerView.Adapter<FeatureAdapter.ViewHolder> {
+
+    private static final Set<String> HIDDEN_TYPES = new HashSet<>(Arrays.asList(
+            "CLASS_TABLE_DATA",
+            "PROFICIENCY_BONUS"
+    ));
+
     private List<CustomFeatureEntity> features = new ArrayList<>();
+    private final OnFeatureClickListener listener;
+    private boolean deleteEnabled = false;
+    private Markwon markwon;
+
+    public FeatureAdapter(OnFeatureClickListener listener) {
+        this.listener = listener;
+    }
+
+    public interface OnFeatureClickListener {
+        void onEdit(CustomFeatureEntity feature, int index);
+        void onDelete(int index);
+    }
+
+    public void setDeleteEnabled(boolean enabled) {
+        this.deleteEnabled = enabled;
+        notifyDataSetChanged();
+    }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (markwon == null) {
+            markwon = Markwon.create(parent.getContext());
+        }
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_class_feature, parent, false);
         return new ViewHolder(view);
@@ -33,8 +64,7 @@ public class FeatureAdapter extends RecyclerView.Adapter<FeatureAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        CustomFeatureEntity feature = features.get(position);
-        holder.bind(feature);
+        holder.bind(features.get(position), position, listener, markwon, deleteEnabled);
     }
 
     @Override
@@ -43,42 +73,85 @@ public class FeatureAdapter extends RecyclerView.Adapter<FeatureAdapter.ViewHold
     }
 
     public void submitList(List<CustomFeatureEntity> newFeatures) {
-        features = new ArrayList<>(newFeatures);
+        if (newFeatures == null) {
+            features = new ArrayList<>();
+        } else {
+            features = newFeatures.stream()
+                    .filter(f -> f.type == null || !HIDDEN_TYPES.contains(f.type))
+                    .collect(Collectors.toList());
+        }
         notifyDataSetChanged();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView featureName, featureDesc;
+        ImageButton btnDelete;
         TableLayout featureTable;
 
         ViewHolder(View itemView) {
             super(itemView);
             featureName = itemView.findViewById(R.id.tv_feature_name);
             featureDesc = itemView.findViewById(R.id.tv_feature_desc);
+            btnDelete = itemView.findViewById(R.id.btn_delete_feature);
             featureTable = itemView.findViewById(R.id.table_layout);
         }
 
-        void bind(CustomFeatureEntity feature) {
-            featureName.setText(feature.name);
-            featureDesc.setText(feature.description);
-            featureTable.removeAllViews();
+        void bind(CustomFeatureEntity feature, int position,
+                  OnFeatureClickListener listener, Markwon markwon, boolean deleteEnabled) {
 
-            // Bez konwersji przez JSON - bezpośrednio z customTableData
-            for (CustomTableData tableData : feature.customTableData) {
-                TableRow tableRow = new TableRow(itemView.getContext());
+            featureName.setText(feature.name != null ? feature.name : "Unnamed feature");
 
-                TextView level = new TextView(itemView.getContext());
-                level.setText(String.valueOf(tableData.level));
-                level.setPadding(8, 2, 8, 2);
-
-                TextView value = new TextView(itemView.getContext());
-                value.setText(tableData.columnValue);
-                value.setPadding(8, 2, 8, 2);
-
-                tableRow.addView(level);
-                tableRow.addView(value);
-                featureTable.addView(tableRow);
+            if (feature.description != null && !feature.description.isEmpty()) {
+                markwon.setMarkdown(featureDesc, feature.description);
+            } else {
+                featureDesc.setText("");
             }
+
+            if (btnDelete != null) {
+                btnDelete.setVisibility(deleteEnabled ? View.VISIBLE : View.GONE);
+                if (deleteEnabled) {
+                    btnDelete.setOnClickListener(v -> {
+                        if (listener != null) listener.onDelete(position);
+                    });
+                }
+            }
+
+            featureTable.removeAllViews();
+            if (feature.customTableData != null && !feature.customTableData.isEmpty()) {
+                featureTable.setVisibility(View.VISIBLE);
+
+                TableRow header = new TableRow(itemView.getContext());
+                TextView lvlHeader = new TextView(itemView.getContext());
+                TextView valHeader = new TextView(itemView.getContext());
+                lvlHeader.setText("Level");
+                valHeader.setText("Value");
+                lvlHeader.setTypeface(null, Typeface.BOLD);
+                valHeader.setTypeface(null, Typeface.BOLD);
+                lvlHeader.setPadding(8, 4, 8, 4);
+                valHeader.setPadding(8, 4, 8, 4);
+                header.addView(lvlHeader);
+                header.addView(valHeader);
+                featureTable.addView(header);
+
+                for (CustomTableData tableData : feature.customTableData) {
+                    TableRow row = new TableRow(itemView.getContext());
+                    TextView lvl = new TextView(itemView.getContext());
+                    TextView val = new TextView(itemView.getContext());
+                    lvl.setText(String.valueOf(tableData.level));
+                    val.setText(tableData.columnValue);
+                    lvl.setPadding(8, 2, 8, 2);
+                    val.setPadding(8, 2, 8, 2);
+                    row.addView(lvl);
+                    row.addView(val);
+                    featureTable.addView(row);
+                }
+            } else {
+                featureTable.setVisibility(View.GONE);
+            }
+
+            itemView.setOnClickListener(v -> {
+                if (listener != null) listener.onEdit(feature, position);
+            });
         }
     }
 }

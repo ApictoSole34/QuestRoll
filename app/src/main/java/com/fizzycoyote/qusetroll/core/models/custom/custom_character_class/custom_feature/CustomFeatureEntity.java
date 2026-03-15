@@ -11,13 +11,10 @@ import androidx.room.Index;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
-import com.fizzycoyote.qusetroll.core.models.custom.CustomConverters;
+import com.fizzycoyote.qusetroll.core.models.conventers.CustomConverters;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.CustomCharacterClassEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custom_gained_at.CustomGainedAt;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custom_table_data.CustomTableData;
-import com.fizzycoyote.qusetroll.core.models.open5e.Converters;
-import com.fizzycoyote.qusetroll.core.models.open5e.character_class.gained_at.GainedAtDto;
-import com.fizzycoyote.qusetroll.core.models.open5e.character_class.table_data.TableDataDto;
 
 import java.util.ArrayList;
 import java.util.List;

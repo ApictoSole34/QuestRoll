@@ -2,6 +2,7 @@ package com.fizzycoyote.qusetroll.core.models.open5e;
 
 import androidx.room.TypeConverter;
 
+import com.fizzycoyote.qusetroll.core.models.open5e.character_class.gained_at.GainedAt;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.gained_at.GainedAtDto;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.table_data.TableDataDto;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell.CastingOptionDto;
@@ -16,14 +17,21 @@ public class Converters {
     private static final Gson gson = new Gson();
 
     @TypeConverter
-    public static String fromList(List<String> list) {
-        return new Gson().toJson(list);
+    public static List<String> toList(String json) {
+        if (json == null) return Collections.emptyList();
+        Type type = new TypeToken<List<String>>(){}.getType();
+        return gson.fromJson(json, type);
     }
 
     @TypeConverter
-    public static List<String> toList(String json) {
-        Type type = new TypeToken<List<String>>(){}.getType();
-        return new Gson().fromJson(json,type);
+    public static String fromList(List<String> list) {
+        return gson.toJson(list);
+    }
+
+    @TypeConverter
+    public static List<Integer> toIntegerList(String json) {
+        if (json == null) return Collections.emptyList();
+        return gson.fromJson(json, new TypeToken<List<Integer>>(){}.getType());
     }
 
     @TypeConverter
@@ -31,23 +39,25 @@ public class Converters {
         return gson.toJson(list);
     }
 
-    @TypeConverter
-    public static List<Integer> toIntegerList(String json) {
-        return gson.fromJson(json, new TypeToken<List<Integer>>(){}.getType());
-    }
-
     /**
      * Character class feature converters
      */
+    @TypeConverter
+    public static List<GainedAtDto> gainedAtListFromJson(String json) {
+        if (json == null) return Collections.emptyList();
+        Type type = new TypeToken<List<GainedAtDto>>() {}.getType();
+        return gson.fromJson(json, type);
+    }
+
     @TypeConverter
     public static String gainedAtListToJson(List<GainedAtDto> list) {
         return gson.toJson(list);
     }
 
     @TypeConverter
-    public static List<GainedAtDto> jsonToGainedAtList(String json) {
+    public static List<TableDataDto> tableDataListFromJson(String json) {
         if (json == null) return Collections.emptyList();
-        Type type = new TypeToken<List<GainedAtDto>>() {}.getType();
+        Type type = new TypeToken<List<TableDataDto>>() {}.getType();
         return gson.fromJson(json, type);
     }
 
@@ -55,13 +65,5 @@ public class Converters {
     public static String tableDataListToJson(List<TableDataDto> list) {
         return gson.toJson(list);
     }
-
-    @TypeConverter
-    public static List<TableDataDto> jsonToTableDataList(String json) {
-        if (json == null) return Collections.emptyList();
-        Type type = new TypeToken<List<TableDataDto>>() {}.getType();
-        return gson.fromJson(json, type);
-    }
-
 
 }

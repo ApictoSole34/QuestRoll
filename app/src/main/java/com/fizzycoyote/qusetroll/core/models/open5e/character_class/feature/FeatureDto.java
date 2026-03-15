@@ -12,5 +12,5 @@ public class FeatureDto {
     @SerializedName("desc") public String desc;
     @SerializedName("feature_type") public String featureType;
     @SerializedName("gained_at") public List<GainedAtDto> gainedAt;
-    @SerializedName("table_data") public List<TableDataDto> tableData;
+    @SerializedName("data_for_class_table") public List<TableDataDto> tableData;
 }

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:background="?attr/colorSurface">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,100 +12,116 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Nazwa cechy - prosty EditText -->
-        <TextView
+        <!-- Feature Name -->
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Nazwa cechy"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp"/>
+            android:hint="Feature Name"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_marginBottom="12dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etFeatureName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords"
+                android:maxLines="1"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            android:id="@+id/etFeatureName"
+        <!-- Feature Type -->
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
+            android:hint="Feature Type"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_marginBottom="12dp">
+            <AutoCompleteTextView
+                android:id="@+id/actvFeatureType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                android:inputType="none"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Typ cechy - standardowy Spinner -->
-        <TextView
+        <!-- Description -->
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Typ cechy"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp"/>
+            android:hint="Description"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_marginBottom="16dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etFeatureDesc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:minLines="4"
+                android:maxLines="10"
+                android:gravity="top"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <Spinner
-            android:id="@+id/spinnerFeatureType"
+        <!-- Gained At Levels -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/feature_types"
-            android:layout_marginBottom="16dp"/>
-
-        <!-- Opis - zwykły wielowierszowy EditText -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Opis cechy"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp"/>
-
-        <EditText
-            android:id="@+id/etFeatureDesc"
-            android:layout_width="match_parent"
-            android:layout_height="120dp"
-            android:gravity="top"
-            android:inputType="textMultiLine"
-            android:minLines="3"
-            android:layout_marginBottom="16dp"/>
-
-        <!-- Reszta pozostaje bez zmian -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Poziomy zdobycia:"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Gained at Levels"
+                android:textAppearance="?attr/textAppearanceTitleSmall"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAddLevel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Level"
+                style="@style/Widget.MaterialComponents.Button.TextButton"/>
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvLevels"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"/>
+            android:nestedScrollingEnabled="false"
+            android:layout_marginBottom="16dp"/>
 
-        <Button
-            android:id="@+id/btnAddLevel"
+        <!-- Table Data -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Dodaj poziom"
-            android:layout_marginTop="8dp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Dane tabelaryczne:"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp"/>
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Class Table Data"
+                android:textAppearance="?attr/textAppearanceTitleSmall"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAddTableRow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Row"
+                style="@style/Widget.MaterialComponents.Button.TextButton"/>
+        </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvTableData"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"/>
+            android:nestedScrollingEnabled="false"
+            android:layout_marginBottom="24dp"/>
 
-        <Button
-            android:id="@+id/btnAddTableRow"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Dodaj wiersz"
-            android:layout_marginTop="8dp"/>
-
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSaveFeature"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Zapisz cechę"
-            android:layout_marginTop="24dp"/>
+            android:text="Save Feature"
+            android:padding="14dp"
+            android:layout_marginBottom="16dp"/>
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

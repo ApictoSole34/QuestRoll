@@ -5,11 +5,17 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Transaction;
 
 import java.util.List;
 
 @Dao
 public interface CharacterClassDao {
+
+    @Transaction
+    @Query("SELECT * FROM classes WHERE class_key = :classKey")
+    CharacterClassWithDetails getClassWithDetails(String classKey);
+
     @Query("SELECT * FROM classes WHERE subclass_of_key IS NULL")
     LiveData<List<CharacterClassEntity>> getBaseClasses();
 

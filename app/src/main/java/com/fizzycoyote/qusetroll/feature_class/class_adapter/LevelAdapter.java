@@ -17,8 +17,9 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custo
 import java.util.List;
 
 public class LevelAdapter extends RecyclerView.Adapter<LevelAdapter.ViewHolder> {
+
     private List<CustomGainedAt> levels;
-    private OnItemClickListener listener;
+    private final OnItemClickListener listener;
 
     public interface OnItemClickListener {
         void onDeleteClick(int position);
@@ -41,7 +42,6 @@ public class LevelAdapter extends RecyclerView.Adapter<LevelAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         CustomGainedAt level = levels.get(position);
 
-        // Usuń stare TextWatchery aby uniknąć wycieków pamięci
         if (holder.etLevel.getTag() instanceof TextWatcher) {
             holder.etLevel.removeTextChangedListener((TextWatcher) holder.etLevel.getTag());
         }
@@ -53,12 +53,8 @@ public class LevelAdapter extends RecyclerView.Adapter<LevelAdapter.ViewHolder> 
         holder.etDetail.setText(level.details);
 
         TextWatcher levelWatcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
             @Override
             public void afterTextChanged(Editable s) {
                 try {
@@ -70,12 +66,8 @@ public class LevelAdapter extends RecyclerView.Adapter<LevelAdapter.ViewHolder> 
         };
 
         TextWatcher detailWatcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
-
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
             @Override
             public void afterTextChanged(Editable s) {
                 level.details = s.toString();
@@ -117,7 +109,7 @@ public class LevelAdapter extends RecyclerView.Adapter<LevelAdapter.ViewHolder> 
             super(itemView);
             etLevel = itemView.findViewById(R.id.etLevel);
             etDetail = itemView.findViewById(R.id.etDetail);
-            btnDelete = itemView.findViewById(R.id.btnDelete); // Dodaj to!
+            btnDelete = itemView.findViewById(R.id.btnDelete);
         }
     }
 }

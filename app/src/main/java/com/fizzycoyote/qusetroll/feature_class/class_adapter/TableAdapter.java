@@ -16,17 +16,17 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custo
 import java.util.List;
 
 public class TableAdapter extends RecyclerView.Adapter<TableAdapter.ViewHolder> {
-    private List<CustomTableData> tableData;
-    private OnItemClickListener listener;
 
+    private List<CustomTableData> tableData;
+    private final OnItemClickListener listener;
+
+    public interface OnItemClickListener {
+        void onDeleteClick(int position);
+    }
 
     public TableAdapter(List<CustomTableData> tableData, OnItemClickListener listener) {
         this.tableData = tableData;
         this.listener = listener;
-    }
-
-    public interface OnItemClickListener {
-        void onDeleteClick(int position);
     }
 
     public void removeItem(int position) {
@@ -58,6 +58,34 @@ public class TableAdapter extends RecyclerView.Adapter<TableAdapter.ViewHolder> 
         holder.etLevel.setText(String.valueOf(data.level));
         holder.etValue.setText(data.columnValue);
 
+        TextWatcher levelWatcher = new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                try {
+                    data.level = Integer.parseInt(s.toString());
+                } catch (NumberFormatException e) {
+                    data.level = 0;
+                }
+            }
+        };
+
+        TextWatcher valueWatcher = new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                data.columnValue = s.toString();
+            }
+        };
+
+        holder.etLevel.addTextChangedListener(levelWatcher);
+        holder.etValue.addTextChangedListener(valueWatcher);
+
+        holder.etLevel.setTag(levelWatcher);
+        holder.etValue.setTag(valueWatcher);
+
         holder.btnDelete.setOnClickListener(v -> {
             int currentPosition = holder.getAdapterPosition();
             if (currentPosition != RecyclerView.NO_POSITION && listener != null) {
@@ -65,7 +93,6 @@ public class TableAdapter extends RecyclerView.Adapter<TableAdapter.ViewHolder> 
             }
         });
     }
-
 
     @Override
     public int getItemCount() {
@@ -80,7 +107,7 @@ public class TableAdapter extends RecyclerView.Adapter<TableAdapter.ViewHolder> 
             super(itemView);
             etLevel = itemView.findViewById(R.id.etLevel);
             etValue = itemView.findViewById(R.id.etValue);
-            btnDelete = itemView.findViewById(R.id.btnDelete); // Dodaj to
+            btnDelete = itemView.findViewById(R.id.btnDelete);
         }
     }
 }

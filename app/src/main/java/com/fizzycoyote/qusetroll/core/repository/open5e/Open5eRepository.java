@@ -21,8 +21,8 @@ import com.fizzycoyote.qusetroll.core.models.open5e.character_class.hit_points.H
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.hit_points.HitPointsEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.saving_throw.SavingThrowDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.saving_throw.SavingThrowEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.character_class.table_data.TableData;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentDao;
-import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentDto;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentMapper;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentResponse;
@@ -35,7 +35,6 @@ import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageMapper;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseDao;
-import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseDto;
 import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseMapper;
 import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseResponse;
@@ -271,18 +270,8 @@ public class Open5eRepository {
         }, executor);
     }
 
-    private void updateProgress(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
-        int progress = (int) ((completed.incrementAndGet() / (double) total) * 100);
-        result.postValue(Resource.loading(null, progress));
-    }
-
-    private void handleError(String sectionName, Exception e) {
-        Log.e("Repository", "Error loading " + sectionName, e);
-        throw new CompletionException(e);
-    }
-
-
     private void processSingleClass(CharacterClassDto dto) {
+        Log.d("Repository", "🔄 Processing class: " + dto.name);
 
         // another security
         //TODO when api will change update thats !
@@ -305,55 +294,56 @@ public class Open5eRepository {
 
         if(dto.features != null && !dto.features.isEmpty()) {
             List<FeatureEntity> features = CharacterClassMapper.toFeatureEntities(dto.key, dto.features);
+
+            // ⭐⭐⭐ DODAJ TE LOGI ⭐⭐⭐
+            Log.d("Repository", "=== DEBUG TABLE DATA FOR " + dto.name + " ===");
+            int featuresWithTableData = 0;
+            int totalTableEntries = 0;
+
+            for (FeatureEntity feature : features) {
+                if (feature.tableData != null && !feature.tableData.isEmpty()) {
+                    featuresWithTableData++;
+                    totalTableEntries += feature.tableData.size();
+                    Log.d("Repository", "✅ " + feature.name + " (" + feature.featureType + ") has " +
+                            feature.tableData.size() + " table entries");
+
+                    // Log pierwsze kilka wpisów dla debugowania
+                    for (int i = 0; i < Math.min(3, feature.tableData.size()); i++) {
+                        TableData td = feature.tableData.get(i);
+                        Log.d("Repository", "   Level " + td.level + ": " + td.columnValue);
+                    }
+                } else if (feature.tableData == null) {
+                    Log.d("Repository", "❌ " + feature.name + " (" + feature.featureType + ") has NULL tableData");
+                } else {
+                    Log.d("Repository", "⚠️ " + feature.name + " (" + feature.featureType + ") has EMPTY tableData");
+                }
+            }
+
+            Log.d("Repository", "📊 SUMMARY: " + featuresWithTableData + "/" + features.size() +
+                    " features have tableData (" + totalTableEntries + " total entries)");
+
             featureDao.insertFeatures(features);
+            Log.d("Repository", "💾 Saved " + features.size() + " features to database");
+        } else {
+            Log.d("Repository", "❌ " + dto.name + " has no features");
         }
 
         if(dto.savingThrows != null && !dto.savingThrows.isEmpty()) {
             List<SavingThrowEntity> savingThrows = CharacterClassMapper.mapSavingThrows(dto);
-            savingThrowDao.insertSavingThrows(savingThrows);
-        }
-    }
-
-    public LiveData<List<CharacterClassEntity>> getBaseClasses() {
-        return characterClassDao.getBaseClasses();
-    }
-
-    public LiveData<List<CharacterClassEntity>> getSubclasses(String parentKey) {
-        return characterClassDao.getSubclasses(parentKey);
-    }
-
-    public LiveData<Resource<Integer>> getClassCount() {
-        MutableLiveData<Resource<Integer>> result = new MutableLiveData<>();
-        executor.execute(() -> {
-            try {
-                int count = characterClassDao.getClassCount();
-                result.postValue(Resource.success(count));
-            } catch (Exception e) {
-                result.postValue(Resource.error("Count error", 0));
-            }
-        });
-        return result;
-    }
-
-    private DocumentEntity mapDocumentDtoToEntity(DocumentDto dto) {
-        DocumentEntity entity = new DocumentEntity();
-        entity.key = dto.key;
-        entity.url = dto.url;
-        List<String> keys = new ArrayList<>();
-        for (LicenseDto license : dto.licenses) {
-            keys.add(license.key);
+            savingThrowDao.insertAll(savingThrows);
         }
 
-        entity.publisher = dto.publisher != null ? dto.publisher.key : null;
-        entity.gamesystem = dto.gamesystem != null ? dto.gamesystem.key : null;
- 
-        entity.licenses = keys;
-        entity.name = dto.name;
-        entity.desc = dto.desc;
-        entity.author = dto.author;
-        entity.publishedAt = dto.publishedAt;
-        entity.permalink = dto.permalink;
-        entity.distanceUnit = dto.distanceUnit;
-        return entity;
+        Log.d("Repository", "✅ Finished processing " + dto.name);
     }
+
+    private void updateProgress(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
+        int progress = (int) ((completed.incrementAndGet() / (double) total) * 100);
+        result.postValue(Resource.loading(null, progress));
+    }
+
+    private void handleError(String sectionName, Exception e) {
+        Log.e("Repository", "Error loading " + sectionName, e);
+        throw new CompletionException(e);
+    }
+
 }

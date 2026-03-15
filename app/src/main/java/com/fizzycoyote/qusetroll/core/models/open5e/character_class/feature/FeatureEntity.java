@@ -6,8 +6,15 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.Index;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.CharacterClassEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.character_class.gained_at.GainedAt;
+import com.fizzycoyote.qusetroll.core.models.open5e.character_class.gained_at.GainedAtListConverter;
+import com.fizzycoyote.qusetroll.core.models.open5e.character_class.table_data.TableData;
+import com.fizzycoyote.qusetroll.core.models.open5e.character_class.table_data.TableDataListConverter;
+
+import java.util.List;
 
 @Entity(
         tableName = "features",
@@ -32,10 +39,7 @@ public class FeatureEntity {
     public String name;
     public String desc;
     public String featureType;
-
-    @ColumnInfo(name = "gained_at")
-    public String gainedAtJson;
-
-    @ColumnInfo(name = "table_data")
-    public String tableDataJson;
+    public List<GainedAt> gainedAt;
+    public List<TableData> tableData;
 }
+

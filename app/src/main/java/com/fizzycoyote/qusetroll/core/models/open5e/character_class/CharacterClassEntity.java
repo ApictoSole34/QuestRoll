@@ -15,10 +15,17 @@ public class CharacterClassEntity {
     public String key;
 
     public String name;
-    public String document;@Nullable
+    public String document;
+
+    @Nullable
     public String casterType;
-    //@ColumnInfo(name = "subclass_of") @Nullable public String subclassOf;
+
     @ColumnInfo(name = "subclass_of_key")
     @Nullable
     public String subclassOfKey;
+
+    public String hitDice;
+    public String hitDiceName;
+    public String hitPointsAt1stLevel;
+    public String hitPointsAtHigherLevels;
 }

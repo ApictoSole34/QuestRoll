@@ -61,7 +61,6 @@ public class ClassRepository {
             List<CombinedClass> combined = new ArrayList<>();
             Map<String, String> classMap = new HashMap<>();
 
-            // Mapowanie nazw klas
             if (open5e != null) {
                 for (CharacterClassEntity c : open5e) {
                     classMap.put(c.key, c.name);
@@ -75,7 +74,6 @@ public class ClassRepository {
                 }
             }
 
-            // Dodawanie klas Open5e
             if (open5e != null) {
                 for (CharacterClassEntity c : open5e) {
                     combined.add(new CombinedClass(
@@ -88,13 +86,11 @@ public class ClassRepository {
                 }
             }
 
-            // Dodawanie klas customowych
             if (custom != null) {
                 for (CustomCharacterClassWithFeatures c : custom) {
                     String customKey = "custom_" + c.characterClassEntity.id;
                     String parentKey = c.characterClassEntity.subclassOf;
 
-                    // Obsługa customowych rodziców
                     if (parentKey != null && parentKey.startsWith("custom_")) {
                         parentKey = parentKey.replace("custom_", "");
                     }

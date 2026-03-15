@@ -26,12 +26,7 @@ public class SavingThrowEntity {
     @NonNull
     @ColumnInfo(name = "ability_key")
     public String abilityKey;
-
-    @Ignore
-    public SavingThrowEntity(@NonNull String classKey, @NonNull String abilityKey) {
-        this.classKey = classKey;
-        this.abilityKey = abilityKey;
-    }
+    public String abilityName;
 
     public SavingThrowEntity() {}
 }

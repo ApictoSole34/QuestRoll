@@ -17,6 +17,12 @@ public interface CustomCharacterClassDao {
     @Query("SELECT COUNT(*) FROM custom_character_classes WHERE name = :name")
     int countByName(String name);
 
+    @Query("DELETE FROM custom_features WHERE class_id = :classId")
+    void deleteFeaturesForClass(long classId);
+
+    @Query("DELETE FROM custom_character_classes WHERE id = :classId")
+    void deleteClass(long classId);
+
     @Insert
     long insertClass(CustomCharacterClassEntity entity);
 
@@ -26,7 +32,7 @@ public interface CustomCharacterClassDao {
     @Update
     void updateClass(CustomCharacterClassEntity entity);
 
-    @Transaction // Dodaj tę adnotację
+    @Transaction
     @Query("SELECT * FROM custom_character_classes WHERE id = :id")
     CustomCharacterClassWithFeatures getClassWithFeaturesSync(long id);
 

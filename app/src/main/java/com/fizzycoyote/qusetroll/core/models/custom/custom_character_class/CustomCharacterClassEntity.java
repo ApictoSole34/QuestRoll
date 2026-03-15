@@ -31,4 +31,11 @@ public class CustomCharacterClassEntity {
 
     @TypeConverters(Converters.class)
     public List<String> savingThrows;
+
+    //json:
+    @ColumnInfo(name = "resource_data")
+    public String resourceData;
+
+    @ColumnInfo(name = "custom_data")
+    public String customData;
 }

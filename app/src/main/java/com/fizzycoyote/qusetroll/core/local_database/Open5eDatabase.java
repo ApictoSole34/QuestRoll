@@ -20,10 +20,12 @@ import com.fizzycoyote.qusetroll.core.models.open5e.character_class.CharacterCla
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.CharacterClassEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.feature.FeatureDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.feature.FeatureEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.character_class.gained_at.GainedAtListConverter;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.hit_points.HitPointsDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.hit_points.HitPointsEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.saving_throw.SavingThrowDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.saving_throw.SavingThrowEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.character_class.table_data.TableDataListConverter;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemDao;
@@ -53,10 +55,10 @@ import java.util.concurrent.Executors;
                 HitPointsEntity.class,
                 SavingThrowEntity.class
         },
-        version = 11,
+        version = 17,
         exportSchema = false
 )
-@TypeConverters({Converters.class})
+@TypeConverters({GainedAtListConverter.class, TableDataListConverter.class})
 public abstract class Open5eDatabase extends RoomDatabase {
     private static volatile Open5eDatabase INSTANCE;
 
@@ -71,6 +73,7 @@ public abstract class Open5eDatabase extends RoomDatabase {
     public abstract FeatureDao featureDao();
     public abstract HitPointsDao hitPointsDao();
     public abstract SavingThrowDao savingThrowDao();
+
 
     public static Open5eDatabase getInstance(Context context) {
         if (INSTANCE == null) {

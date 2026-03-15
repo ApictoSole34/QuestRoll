@@ -54,7 +54,7 @@ public class ClassAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         if (holder.getItemViewType() == TYPE_CREATE) {
             ((CreateViewHolder)holder).bind(listener);
         } else {
-            int classPosition = position - 1; // Pomijamy pozycję 0
+            int classPosition = position - 1;
             ((ClassViewHolder)holder).bind(classes.get(classPosition), listener);
         }
     }

@@ -1,4 +1,4 @@
-package com.fizzycoyote.qusetroll.core.models.custom;
+package com.fizzycoyote.qusetroll.core.models.conventers;
 
 import androidx.room.TypeConverter;
 

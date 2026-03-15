@@ -2,12 +2,19 @@ package com.fizzycoyote.qusetroll.feature_class.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,6 +35,8 @@ import com.fizzycoyote.qusetroll.feature_class.model.CombinedClass;
 import com.fizzycoyote.qusetroll.feature_class.repository.ClassRepository;
 import com.fizzycoyote.qusetroll.feature_class.view_model.ClassCreateViewModel;
 import com.fizzycoyote.qusetroll.feature_class.view_model.ClassCreateViewModelFactory;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,26 +47,66 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class ClassCreateActivity extends AppCompatActivity {
-    private static final int REQUEST_EDIT_FEATURE = 1001;
+
+    public static final String EXTRA_EDIT_CLASS_ID = "edit_class_id";
+
+    private static final String[] HIT_DICE = {"D6", "D8", "D10", "D12"};
+    private static final String[] CASTER_TYPES = {"NONE", "FULL", "HALF", "THIRD", "WARLOCK"};
+
+    private static final CombinedClass NO_PARENT =
+            new CombinedClass("", "None (base class)", false, null, null);
+
     private ClassCreateViewModel viewModel;
-    private FeatureAdapter adapter;
+    private FeatureAdapter featureAdapter;
 
-    private EditText etClassName;
-    private Spinner spinnerHitDice;
-    private EditText etDescription;
-    private Spinner spinnerCasterType;
-    private Spinner spinnerSubclass;
-    private Button btnSelectSavingThrows;
-    private Button btnAddFeature;
-    private RecyclerView rvFeatures;
-    private Button btnSaveClass;
+    private TextInputEditText etClassName;
+    private TextInputEditText etDescription;
+    private AutoCompleteTextView actvHitDice;
+    private AutoCompleteTextView actvCasterType;
+    private AutoCompleteTextView actvSubclass;
+    private MaterialButton btnSelectSavingThrows;
 
+    private CombinedClass selectedParentClass = null;
+
+    private final ActivityResultLauncher<Intent> featureEditorLauncher =
+            registerForActivityResult(
+                    new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                        if (result.getResultCode() != RESULT_OK || result.getData() == null) return;
+
+                        CustomFeatureEntity feature =
+                                result.getData().getParcelableExtra(FeatureEditorActivity.EXTRA_FEATURE);
+                        int index =
+                                result.getData().getIntExtra(FeatureEditorActivity.EXTRA_FEATURE_INDEX, -1);
+
+                        if (feature == null) return;
+
+                        if (index >= 0) {
+                            viewModel.updateFeature(index, feature);
+                        } else {
+                            viewModel.addFeature(feature);
+                        }
+                    }
+            );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_class_create);
 
+        setupViewModel();
+        initViews();
+        setupStaticDropdowns();
+        setupRecyclerView();
+        setupObservers();
+        setupListeners();
+
+        setTitle(viewModel.isEditMode() ? "Edit Class" : "Create Class");
+    }
+
+    // ── SETUP
+
+    private void setupViewModel() {
         Open5eDatabase open5eDb = Open5eDatabase.getInstance(this);
         UserContentDatabase customDb = UserContentDatabase.getInstance(this);
         Executor executor = Executors.newSingleThreadExecutor();
@@ -68,134 +117,214 @@ public class ClassCreateActivity extends AppCompatActivity {
                 executor
         );
 
-        ClassCreateViewModelFactory factory = new ClassCreateViewModelFactory(repository);
+        long editClassId = getIntent().getLongExtra(
+                EXTRA_EDIT_CLASS_ID, ClassCreateViewModel.NO_ID);
+
+        ClassCreateViewModelFactory factory =
+                new ClassCreateViewModelFactory(repository, editClassId);
         viewModel = new ViewModelProvider(this, factory).get(ClassCreateViewModel.class);
-
-
-        // Inicjalizacja widoków
-        etClassName = findViewById(R.id.etClassName);
-        spinnerHitDice = findViewById(R.id.spinnerHitDice);
-        etDescription = findViewById(R.id.etDescription);
-        spinnerCasterType = findViewById(R.id.spinnerCasterType);
-        spinnerSubclass = findViewById(R.id.spinnerSubclass);
-        btnSelectSavingThrows = findViewById(R.id.btnSelectSavingThrows);
-        btnAddFeature = findViewById(R.id.btnAddFeature);
-        rvFeatures = findViewById(R.id.rvFeatures);
-        btnSaveClass = findViewById(R.id.btnSaveClass);
-
-        viewModel = new ViewModelProvider(this).get(ClassCreateViewModel.class);
-        setupRecyclerView();
-        setupObservers();
-        setupListeners();
     }
 
+    private void initViews() {
+        etClassName = findViewById(R.id.etClassName);
+        etDescription = findViewById(R.id.etDescription);
+        actvHitDice = findViewById(R.id.actvHitDice);
+        actvCasterType = findViewById(R.id.actvCasterType);
+        actvSubclass = findViewById(R.id.actvSubclass);
+        btnSelectSavingThrows = findViewById(R.id.btnSelectSavingThrows);
+    }
 
+    private void setupStaticDropdowns() {
+        actvHitDice.setAdapter(new ArrayAdapter<>(
+                this, android.R.layout.simple_list_item_1, HIT_DICE));
+        actvCasterType.setAdapter(new ArrayAdapter<>(
+                this, android.R.layout.simple_list_item_1, CASTER_TYPES));
+
+        actvHitDice.setText(HIT_DICE[1], false);
+        actvCasterType.setText(CASTER_TYPES[0], false);
+    }
 
     private void setupRecyclerView() {
-        adapter = new FeatureAdapter();
+        RecyclerView rvFeatures = findViewById(R.id.rvFeatures);
+
+        featureAdapter = new FeatureAdapter(new FeatureAdapter.OnFeatureClickListener() {
+            @Override
+            public void onEdit(CustomFeatureEntity feature, int index) {
+                Intent intent = new Intent(ClassCreateActivity.this, FeatureEditorActivity.class);
+                intent.putExtra(FeatureEditorActivity.EXTRA_FEATURE, feature);
+                intent.putExtra(FeatureEditorActivity.EXTRA_FEATURE_INDEX, index);
+                featureEditorLauncher.launch(intent);
+            }
+
+            @Override
+            public void onDelete(int index) {
+                viewModel.removeFeature(index);
+            }
+        });
+
+        featureAdapter.setDeleteEnabled(true);
+
         rvFeatures.setLayoutManager(new LinearLayoutManager(this));
-        rvFeatures.setAdapter(adapter);
+        rvFeatures.setAdapter(featureAdapter);
     }
+
+    // ── OBSERVERS
 
     private void setupObservers() {
         viewModel.getFeatures().observe(this, features ->
-                adapter.submitList(new ArrayList<>(features)));
+                featureAdapter.submitList(new ArrayList<>(features)));
+
+        viewModel.getEditData().observe(this, data -> {
+            if (data == null) return;
+            populateForm(data.characterClassEntity);
+        });
 
         viewModel.getBaseClasses().observe(this, classes -> {
-            ArrayAdapter<CombinedClass> adapter = new ArrayAdapter<>(
-                    this,
-                    android.R.layout.simple_spinner_item,
-                    classes
+            List<CombinedClass> options = new ArrayList<>();
+            options.add(NO_PARENT);
+            options.addAll(classes);
+
+            actvSubclass.setAdapter(buildSubclassAdapter(options));
+
+            if (viewModel.isEditMode() && viewModel.getEditData().getValue() != null) {
+                String parentKey = viewModel.getEditData().getValue()
+                        .characterClassEntity.subclassOf;
+                if (parentKey != null) {
+                    options.stream()
+                            .filter(c -> c != NO_PARENT && parentKey.equals(c.getKey()))
+                            .findFirst()
+                            .ifPresent(parent -> {
+                                selectedParentClass = parent;
+                                actvSubclass.setText(parent.getName(), false);
+                            });
+                } else {
+                    actvSubclass.setText(NO_PARENT.getName(), false);
+                }
+            } else {
+                actvSubclass.setText(NO_PARENT.getName(), false);
+                selectedParentClass = null;
+            }
+
+            actvSubclass.setOnItemClickListener((parent, view, position, id) -> {
+                CombinedClass selected = options.get(position);
+                selectedParentClass = selected == NO_PARENT ? null : selected;
+                actvSubclass.setText(selected.getName(), false);
+            });
+        });
+
+        viewModel.getSelectedSavingThrows().observe(this, selected -> {
+            int count = selected != null ? selected.size() : 0;
+            btnSelectSavingThrows.setText(
+                    count == 0 ? "Select Saving Throws" : count + " saving throws selected"
             );
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinnerSubclass.setAdapter(adapter);
+        });
+
+        viewModel.getSaveResult().observe(this, success -> {
+            if (success == null) return;
+            if (success) {
+                Toast.makeText(this,
+                        viewModel.isEditMode() ? "Class updated!" : "Class saved!",
+                        Toast.LENGTH_SHORT).show();
+                finish();
+            } else {
+                Toast.makeText(this,
+                        "A class with this name already exists.",
+                        Toast.LENGTH_SHORT).show();
+            }
         });
     }
+
+    private void populateForm(CustomCharacterClassEntity entity) {
+        etClassName.setText(entity.name);
+        etDescription.setText(entity.description != null ? entity.description : "");
+        if (entity.hitDice != null) actvHitDice.setText(entity.hitDice, false);
+        if (entity.casterType != null) actvCasterType.setText(entity.casterType, false);
+    }
+
+    // ── LISTENERS
 
     private void setupListeners() {
         btnSelectSavingThrows.setOnClickListener(v -> showSavingThrowsDialog());
 
-        btnAddFeature.setOnClickListener(v -> {
-            CustomFeatureEntity newFeature = new CustomFeatureEntity();
-            Intent intent = new Intent(this, FeatureEditorActivity.class);
-            intent.putExtra("feature", newFeature);
-            startActivityForResult(intent, REQUEST_EDIT_FEATURE);
-        });
+        findViewById(R.id.btnAddFeature).setOnClickListener(v ->
+                featureEditorLauncher.launch(new Intent(this, FeatureEditorActivity.class)));
 
-        btnSaveClass.setOnClickListener(v -> saveClass());
+        MaterialButton btnSave = findViewById(R.id.btnSaveClass);
+        btnSave.setText(viewModel.isEditMode() ? "Update Class" : "Save Class");
+        btnSave.setOnClickListener(v -> saveClass());
     }
 
-
-
-    private void showSavingThrowsDialog() {
-        Open5eDatabase db = Open5eDatabase.getInstance(this);
-        AbilityDao abilityDao = db.abilityDao();
-
-        // Pobierz dane z bazy w tle
-        db.getQueryExecutor().execute(() -> {
-            List<AbilityEntity> abilities = abilityDao.getAllAbilitiesSync();
-            boolean[] checkedItems = new boolean[abilities.size()];
-
-            // Sprawdź wcześniej wybrane opcje
-            Set<String> selected = viewModel.getSelectedSavingThrows().getValue();
-            if (selected != null) {
-                for (int i = 0; i < abilities.size(); i++) {
-                    if (selected.contains(abilities.get(i).key)) {
-                        checkedItems[i] = true;
-                    }
-                }
-            }
-
-            String[] abilityNames = new String[abilities.size()];
-            for (int i = 0; i < abilities.size(); i++) {
-                abilityNames[i] = abilities.get(i).name;
-            }
-
-            // Pokaż dialog na głównym wątku
-            runOnUiThread(() -> {
-                new AlertDialog.Builder(ClassCreateActivity.this)
-                        .setTitle("Select Saving Throws")
-                        .setMultiChoiceItems(abilityNames, checkedItems, (dialog, which, isChecked) -> {})
-                        .setPositiveButton("OK", (d, which) -> {
-                            Set<String> selectedKeys = new HashSet<>();
-                            ListView listView = ((AlertDialog) d).getListView();
-                            for (int i = 0; i < abilities.size(); i++) {
-                                if (listView.isItemChecked(i)) {
-                                    selectedKeys.add(abilities.get(i).key);
-                                }
-                            }
-                            viewModel.setSelectedSavingThrows(selectedKeys);
-                        })
-                        .setNegativeButton("Cancel", null)
-                        .show();
-            });
-        });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_EDIT_FEATURE && resultCode == RESULT_OK) { // Użyj stałej
-            CustomFeatureEntity feature = data.getParcelableExtra("feature");
-            viewModel.addFeature(feature);
-        }
-    }
+    // ── SAVE
 
     private void saveClass() {
-        CustomCharacterClassEntity entity = new CustomCharacterClassEntity();
-        entity.name = etClassName.getText().toString();
-        entity.hitDice = spinnerHitDice.getSelectedItem().toString();
-        entity.description = etDescription.getText().toString();
-        entity.casterType = spinnerCasterType.getSelectedItem().toString();
-        Set<String> selectedThrows = viewModel.getSelectedSavingThrows().getValue();
-        entity.savingThrows = new ArrayList<>(selectedThrows != null ? selectedThrows : new HashSet<>());
+        String name = etClassName.getText() != null
+                ? etClassName.getText().toString().trim() : "";
 
-        CombinedClass parent = (CombinedClass) spinnerSubclass.getSelectedItem();
-        if (parent != null) {
-            entity.subclassOf = parent.getKey();
+        if (name.isEmpty()) {
+            etClassName.setError("Class name is required");
+            return;
         }
 
+        String hitDice = actvHitDice.getText().toString().trim();
+        if (hitDice.isEmpty()) {
+            actvHitDice.setError("Hit dice is required");
+            return;
+        }
+
+        CustomCharacterClassEntity entity = new CustomCharacterClassEntity();
+        entity.name = name;
+        entity.hitDice = hitDice;
+        entity.description = etDescription.getText() != null
+                ? etDescription.getText().toString().trim() : "";
+        entity.casterType = actvCasterType.getText().toString().trim();
+        entity.subclassOf = selectedParentClass != null
+                ? selectedParentClass.getKey() : null;
+
+        Set<String> selectedThrows = viewModel.getSelectedSavingThrows().getValue();
+        entity.savingThrows = new ArrayList<>(
+                selectedThrows != null ? selectedThrows : new HashSet<>()
+        );
+
         viewModel.saveClass(entity);
-        finish();
+    }
+
+    // ── DIALOGS
+    private void showSavingThrowsDialog() {
+        Open5eDatabase db = Open5eDatabase.getInstance(this);
+        db.getQueryExecutor().execute(() -> {
+            List<AbilityEntity> abilities = db.abilityDao().getAllAbilitiesSync();
+            Set<String> alreadySelected = viewModel.getSelectedSavingThrows().getValue();
+
+            boolean[] checkedItems = new boolean[abilities.size()];
+            String[] names = new String[abilities.size()];
+
+            for (int i = 0; i < abilities.size(); i++) {
+                names[i] = abilities.get(i).name;
+                checkedItems[i] = alreadySelected != null
+                        && alreadySelected.contains(abilities.get(i).key);
+            }
+
+            runOnUiThread(() ->
+                    new AlertDialog.Builder(this)
+                            .setTitle("Select Saving Throws")
+                            .setMultiChoiceItems(names, checkedItems,
+                                    (dialog, which, isChecked) -> checkedItems[which] = isChecked)
+                            .setPositiveButton("OK", (dialog, which) -> {
+                                Set<String> result = new HashSet<>();
+                                for (int i = 0; i < abilities.size(); i++) {
+                                    if (checkedItems[i]) result.add(abilities.get(i).key);
+                                }
+                                viewModel.setSelectedSavingThrows(result);
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .show()
+            );
+        });
+    }
+
+    // ── HELPERS
+
+    private ArrayAdapter<CombinedClass> buildSubclassAdapter(List<CombinedClass> options) {
+        return new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, options);
     }
 }
