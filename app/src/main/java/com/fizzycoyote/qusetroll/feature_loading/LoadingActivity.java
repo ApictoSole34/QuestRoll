@@ -51,10 +51,31 @@ public class LoadingActivity extends AppCompatActivity {
                 executor
         );
 
-        observeDataLoading();
+        boolean forceRefresh = getIntent().getBooleanExtra("force_refresh", false);
+        if (forceRefresh) {
+            // Wymuszone odświeżenie z menu — zawsze pobierz
+            startFetching();
+        } else {
+            checkDataAndProceed();
+        }
     }
 
-    private void observeDataLoading() {
+    private void checkDataAndProceed() {
+        Open5eDatabase.getInstance(this).getQueryExecutor().execute(() -> {
+            int classCount = Open5eDatabase.getInstance(this)
+                    .characterClassDao().getCount();
+
+            runOnUiThread(() -> {
+                if (classCount > 0) {
+                    startMainActivity();
+                } else {
+                    startFetching();
+                }
+            });
+        });
+    }
+
+    private void startFetching() {
         repository.refreshAllData().observe(this, resource -> {
             if (resource == null) return;
 
@@ -88,7 +109,7 @@ public class LoadingActivity extends AppCompatActivity {
         new AlertDialog.Builder(this)
                 .setTitle("Error")
                 .setMessage(message)
-                .setPositiveButton("Retry", (d, w) -> observeDataLoading())
+                .setPositiveButton("Retry", (d, w) -> startFetching())
                 .setNegativeButton("Exit", (d, w) -> finish())
                 .show();
     }

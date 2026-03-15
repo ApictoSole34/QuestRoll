@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
@@ -12,6 +13,7 @@ import com.fizzycoyote.qusetroll.feature_character.ui.list.CharacterListActivity
 import com.fizzycoyote.qusetroll.feature_class.ui.ClassListActivity;
 import com.fizzycoyote.qusetroll.feature_dice.ui.RollDiceActivity;
 import com.fizzycoyote.qusetroll.feature_language.ui.language_list.LanguageListActivity;
+import com.fizzycoyote.qusetroll.feature_loading.LoadingActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,25 +22,47 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         setContentView(R.layout.activity_main);
+
+        findViewById(R.id.btnManageData).setOnClickListener(v -> showDataManagementDialog());
     }
 
+    // ── NAVIGATION
+
     public void openRollDiceActivity(View view) {
-        Intent intent = new Intent(this, RollDiceActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(this, RollDiceActivity.class));
     }
 
     public void openCharacterListActivity(View view) {
-        Intent intent = new Intent(this, CharacterListActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(this, CharacterListActivity.class));
     }
 
     public void openLanguageListActivity(View view) {
-        Intent intent = new Intent(this, LanguageListActivity.class);
-        startActivity(intent);
+        startActivity(new Intent(this, LanguageListActivity.class));
     }
 
     public void openClassListActivity(View view) {
-        Intent intent = new Intent(this, ClassListActivity.class);
+        startActivity(new Intent(this, ClassListActivity.class));
+    }
+
+    // ── DATA MANAGEMENT
+
+    private void showDataManagementDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("API Data")
+                .setMessage("Refresh all data from open5e API? This may take a while and requires an internet connection.")
+                .setPositiveButton("Refresh", (d, w) -> openLoadingActivity())
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void openLoadingActivity() {
+        getSharedPreferences("app_prefs", MODE_PRIVATE)
+                .edit()
+                .remove("data_loaded")
+                .apply();
+
+        Intent intent = new Intent(this, LoadingActivity.class);
+        intent.putExtra("force_refresh", true);
         startActivity(intent);
     }
 }

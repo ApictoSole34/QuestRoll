@@ -26,7 +26,7 @@ public interface CharacterClassDao {
     LiveData<List<CharacterClassEntity>> getAllClasses();
 
     @Query("SELECT COUNT(*) FROM classes")
-    int getClassCount();
+    int getCount();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertClass(CharacterClassEntity entity);

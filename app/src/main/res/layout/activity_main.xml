@@ -1,59 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true">
 
-    <Button
-        android:id="@+id/openRollDiceButton"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Roll Dice"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:onClick="openRollDiceActivity" />
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:gravity="center_horizontal">
 
-    <Button
-        android:id="@+id/openCharacterListButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Characters"
-        android:layout_below="@id/openRollDiceButton"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:layout_marginTop="16dp"
-        android:onClick="openCharacterListActivity" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="QuestRoll"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginTop="48dp"
+            android:layout_marginBottom="48dp"/>
 
-    <Button
-        android:id="@+id/openLanguageListActivity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/openCharacterListButton"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="162dp"
-        android:layout_marginTop="21dp"
-        android:layout_marginEnd="161dp"
-        android:layout_marginBottom="206dp"
-        android:onClick="openLanguageListActivity"
-        android:text="LanguageList" />
+        <Button
+            android:id="@+id/openCharacterListButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Characters"
+            android:layout_marginBottom="12dp"
+            android:onClick="openCharacterListActivity"/>
 
-    <Button
-        android:id="@+id/openClassListActivity"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginStart="160dp"
-        android:layout_marginTop="570dp"
-        android:layout_marginEnd="163dp"
-        android:layout_marginBottom="113dp"
-        android:onClick="openClassListActivity"
-        android:text="classes" />
+        <Button
+            android:id="@+id/openClassListActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Classes"
+            android:layout_marginBottom="12dp"
+            android:onClick="openClassListActivity"/>
 
-</RelativeLayout>
+        <Button
+            android:id="@+id/openLanguageListActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Languages"
+            android:layout_marginBottom="12dp"
+            android:onClick="openLanguageListActivity"/>
+
+        <Button
+            android:id="@+id/openRollDiceButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Roll Dice"
+            android:layout_marginBottom="32dp"
+            android:onClick="openRollDiceActivity"/>
+
+        <Button
+            android:id="@+id/btnManageData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:onClick="openManageData"
+            android:text="Manage API Data" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"/>
+
+    </LinearLayout>
+</ScrollView>
