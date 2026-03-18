@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -49,5 +50,17 @@ public class CustomConverters {
         if (json == null) return Collections.emptyList();
         Type type = new TypeToken<List<CustomTableData>>(){}.getType();
         return new Gson().fromJson(json, type);
+    }
+
+    @TypeConverter
+    public static List<String> toStringList(String json) {
+        if (json == null) return new ArrayList<>();
+        Type type = new TypeToken<List<String>>(){}.getType();
+        return new Gson().fromJson(json, type);
+    }
+
+    @TypeConverter
+    public static String fromStringList(List<String> list) {
+        return new Gson().toJson(list);
     }
 }

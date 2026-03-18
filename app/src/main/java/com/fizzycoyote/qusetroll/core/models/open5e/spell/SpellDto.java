@@ -1,5 +1,6 @@
 package com.fizzycoyote.qusetroll.core.models.open5e.spell;
 
+import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentDto;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -7,11 +8,13 @@ import java.util.List;
 
 public class SpellDto implements Serializable {
     @SerializedName("url") public String url;
-    @SerializedName("document") public String document;
     @SerializedName("key") public String key;
+
+    @SerializedName("document") public DocumentDto document;
+    @SerializedName("school") public SchoolDto school;
+    @SerializedName("classes") public List<SpellClassReferenceDto> classes;
     @SerializedName("casting_options") public List<CastingOptionDto> castingOptions;
-    @SerializedName("school") public String school;
-    @SerializedName("classes") public List<String> classes;
+
     @SerializedName("range_unit") public String rangeUnit;
     @SerializedName("shape_size_unit") public String shapeSizeUnit;
     @SerializedName("name") public String name;

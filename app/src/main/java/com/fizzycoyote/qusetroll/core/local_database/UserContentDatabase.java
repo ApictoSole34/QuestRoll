@@ -16,14 +16,20 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custo
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custom_feature.CustomFeatureEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_language.CustomLanguageDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_language.CustomLanguageEntity;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellDao;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellEntity;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellSchoolDao;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellSchoolEntity;
 
 
 @Database(
         entities = {CustomLanguageEntity.class,
         CustomCharacterClassEntity.class,
         CustomFeatureEntity.class,
-        CustomClassProgressionEntity.class},
-        version = 9,
+        CustomClassProgressionEntity.class,
+        CustomSpellEntity.class,
+        CustomSpellSchoolEntity.class},
+        version = 10,
         exportSchema = false
 )
 @TypeConverters({CustomConverters.class})
@@ -34,6 +40,9 @@ public abstract class UserContentDatabase extends RoomDatabase {
     public abstract CustomCharacterClassDao customCharacterClassDao();
     public abstract CustomFeatureDao customFeatureDao();
     public abstract CustomClassProgressionDao customClassProgressionDao();
+    public abstract CustomSpellDao customSpellDao();
+    public abstract CustomSpellSchoolDao customSpellSchoolDao();
+
 
     public static UserContentDatabase getInstance(Context context) {
         if (INSTANCE == null) {

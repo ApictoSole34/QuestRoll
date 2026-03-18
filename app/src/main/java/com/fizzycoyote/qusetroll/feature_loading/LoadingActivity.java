@@ -48,12 +48,13 @@ public class LoadingActivity extends AppCompatActivity {
                 db.featureDao(),
                 db.hitPointsDao(),
                 db.savingThrowDao(),
+                db.spellDao(),
+                db.spellSchoolDao(),
                 executor
         );
 
         boolean forceRefresh = getIntent().getBooleanExtra("force_refresh", false);
         if (forceRefresh) {
-            // Wymuszone odświeżenie z menu — zawsze pobierz
             startFetching();
         } else {
             checkDataAndProceed();
@@ -64,9 +65,11 @@ public class LoadingActivity extends AppCompatActivity {
         Open5eDatabase.getInstance(this).getQueryExecutor().execute(() -> {
             int classCount = Open5eDatabase.getInstance(this)
                     .characterClassDao().getCount();
+            int spellCount = Open5eDatabase.getInstance(this)
+                    .spellDao().getCount();
 
             runOnUiThread(() -> {
-                if (classCount > 0) {
+                if (classCount > 0 && spellCount > 0) {
                     startMainActivity();
                 } else {
                     startFetching();

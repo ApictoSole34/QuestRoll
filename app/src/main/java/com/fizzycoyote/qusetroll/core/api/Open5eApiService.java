@@ -7,8 +7,11 @@ import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemRespon
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.spell.SpellResponse;
 
 import retrofit2.Call;
+import retrofit2.http.Query;
 import retrofit2.http.GET;
 public interface Open5eApiService {
     @GET("documents/")
@@ -31,4 +34,10 @@ public interface Open5eApiService {
 
     @GET("classes/")
     Call<CharacterClassResponse> getCharacterClasses();
+
+    @GET("spells/")
+    Call<SpellResponse> getSpellsPage(@Query("page") int page);
+
+    @GET("spellschools/")
+    Call<SpellSchoolResponse> getSpellSchools();
 }

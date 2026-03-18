@@ -44,6 +44,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".feature_spell.ui.SpellListActivity" />
+        <activity android:name=".feature_spell.ui.SpellDetailActivity" />
+        <activity android:name=".feature_spell.ui.CustomSpellCreateActivity"/>
+        <activity android:name=".feature_spell.ui.CustomSpellDetailActivity"/>
         <activity android:name=".feature_dice.ui.RollDiceActivity" />
         <activity android:name=".feature_character.ui.list.CharacterListActivity"/>
         <activity android:name=".feature_character.ui.create.CreateCharacterActivity"/>

@@ -1,41 +1,56 @@
 package com.fizzycoyote.qusetroll.core.models.open5e.spell;
 
+import com.google.gson.Gson;
+
+import java.util.stream.Collectors;
+
 public class SpellMapper {
+
     public static SpellEntity dtoToEntity(SpellDto dto) {
         SpellEntity e = new SpellEntity();
+
         e.key = dto.key;
-        e.url = dto.url;
-        e.document = dto.document;
-        e.castingOptions = dto.castingOptions;
-        e.school = dto.school;
-        e.classes = dto.classes;
-        e.rangeUnit = dto.rangeUnit;
-        e.shapeSizeUnit = dto.shapeSizeUnit;
         e.name = dto.name;
         e.desc = dto.desc;
         e.level = dto.level;
         e.higherLevel = dto.higherLevel;
-        e.targetType = dto.targetType;
+        e.castingTime = dto.castingTime;
+        e.duration = dto.duration;
         e.rangeText = dto.rangeText;
         e.range = dto.range;
         e.ritual = dto.ritual;
-        e.castingTime = dto.castingTime;
-        e.reactionCondition = dto.reactionCondition;
+        e.concentration = dto.concentration;
         e.verbal = dto.verbal;
         e.somatic = dto.somatic;
         e.material = dto.material;
         e.materialSpecified = dto.materialSpecified;
-        e.materialCost = dto.materialCost;
-        e.materialConsumed = dto.materialConsumed;
+        e.reactionCondition = dto.reactionCondition;
+        e.targetType = dto.targetType;
         e.targetCount = dto.targetCount;
         e.savingThrowAbility = dto.savingThrowAbility;
         e.attackRoll = dto.attackRoll;
         e.damageRoll = dto.damageRoll;
         e.damageTypes = dto.damageTypes;
-        e.duration = dto.duration;
-        e.shapeType = dto.shapeType;
-        e.shapeSize = dto.shapeSize;
-        e.concentration = dto.concentration;
+
+        if (dto.school != null) {
+            e.schoolName = dto.school.name;
+            e.schoolKey = dto.school.key;
+        }
+
+        if (dto.classes != null) {
+            e.classes = dto.classes.stream()
+                    .map(c -> c.name)
+                    .collect(Collectors.toList());
+        }
+
+        if (dto.document != null) {
+            e.documentName = dto.document.name;
+        }
+
+        if (dto.castingOptions != null) {
+            e.castingOptionsJson = new Gson().toJson(dto.castingOptions);
+        }
+
         return e;
     }
 }

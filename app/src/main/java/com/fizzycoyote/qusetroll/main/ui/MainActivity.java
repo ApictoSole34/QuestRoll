@@ -14,6 +14,7 @@ import com.fizzycoyote.qusetroll.feature_class.ui.ClassListActivity;
 import com.fizzycoyote.qusetroll.feature_dice.ui.RollDiceActivity;
 import com.fizzycoyote.qusetroll.feature_language.ui.language_list.LanguageListActivity;
 import com.fizzycoyote.qusetroll.feature_loading.LoadingActivity;
+import com.fizzycoyote.qusetroll.feature_spell.ui.SpellListActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,6 +31,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void openRollDiceActivity(View view) {
         startActivity(new Intent(this, RollDiceActivity.class));
+    }
+
+    public void openSpellListActivity(View view) {
+        startActivity(new Intent(this, SpellListActivity.class));
     }
 
     public void openCharacterListActivity(View view) {

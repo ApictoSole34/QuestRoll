@@ -42,6 +42,14 @@ import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherMapper;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.spell.SpellDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.spell.SpellEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.spell.SpellMapper;
+import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolMapper;
+import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.spell.SpellResponse;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -66,6 +74,8 @@ public class Open5eRepository {
     private final FeatureDao featureDao;
     private final HitPointsDao hitPointsDao;
     private final SavingThrowDao savingThrowDao;
+    private final SpellDao spellDao;
+    private final SpellSchoolDao spellSchoolDao;
     private final Executor executor;
 
     public Open5eRepository(Open5eApiService api,
@@ -80,6 +90,8 @@ public class Open5eRepository {
                             FeatureDao featureDao,
                             HitPointsDao hitPointsDao,
                             SavingThrowDao savingThrowDao,
+                            SpellDao spellDao,
+                            SpellSchoolDao spellSchoolDao,
                             Executor executor) {
         this.api = api;
         this.publisherDao = publisherDao;
@@ -93,6 +105,8 @@ public class Open5eRepository {
         this.featureDao = featureDao;
         this.hitPointsDao = hitPointsDao;
         this.savingThrowDao = savingThrowDao;
+        this.spellDao = spellDao;
+        this.spellSchoolDao = spellSchoolDao;
         this.executor = executor;
     }
 
@@ -102,7 +116,7 @@ public class Open5eRepository {
 
         executor.execute(() -> {
             try {
-                int totalSections = 7;
+                int totalSections = 9;
                 AtomicInteger completed = new AtomicInteger(0);
 
                 List<CompletableFuture<Void>> futures = new ArrayList<>();
@@ -114,6 +128,9 @@ public class Open5eRepository {
                 futures.add(processLanguages(completed, totalSections, result));
                 futures.add(processAbilities(completed, totalSections, result));
                 futures.add(processCharacterClasses(completed, totalSections, result));
+                futures.add(processSpells(completed, totalSections, result));
+                futures.add(processSpellSchools(completed, totalSections, result));
+
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                         .thenRun(() -> result.postValue(Resource.success(true)))
@@ -128,6 +145,59 @@ public class Open5eRepository {
         });
 
         return result;
+    }
+
+    private CompletableFuture<Void> processSpellSchools(AtomicInteger completed, int total,
+                                                        MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                Response<SpellSchoolResponse> response = api.getSpellSchools().execute();
+                if (response.isSuccessful() && response.body() != null) {
+                    List<SpellSchoolEntity> entities = response.body().getResults().stream()
+                            .map(SpellSchoolMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    spellSchoolDao.insertAll(entities);
+                    Log.d("Repository", "✅ Saved " + entities.size() + " spell schools");
+                }
+                updateProgress(completed, total, result);
+            } catch (Exception e) {
+                handleError("Spell Schools", e);
+            }
+        }, executor);
+    }
+
+    private CompletableFuture<Void> processSpells(AtomicInteger completed, int total,
+                                                  MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                spellDao.deleteAll();
+
+                int page = 1;
+                boolean hasMore = true;
+                int totalSaved = 0;
+
+                while (hasMore) {
+                    Response<SpellResponse> response = api.getSpellsPage(page).execute();
+                    if (!response.isSuccessful() || response.body() == null) break;
+
+                    SpellResponse body = response.body();
+                    List<SpellEntity> entities = body.getResults().stream()
+                            .map(SpellMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+
+                    spellDao.insertAll(entities);
+                    totalSaved += entities.size();
+
+                    hasMore = body.next != null;
+                    page++;
+                }
+
+                updateProgress(completed, total, result);
+
+            } catch (Exception e) {
+                handleError("Spells", e);
+            }
+        }, executor);
     }
 
     private CompletableFuture<Void> processPublishers(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
@@ -295,8 +365,7 @@ public class Open5eRepository {
         if(dto.features != null && !dto.features.isEmpty()) {
             List<FeatureEntity> features = CharacterClassMapper.toFeatureEntities(dto.key, dto.features);
 
-            // ⭐⭐⭐ DODAJ TE LOGI ⭐⭐⭐
-            Log.d("Repository", "=== DEBUG TABLE DATA FOR " + dto.name + " ===");
+
             int featuresWithTableData = 0;
             int totalTableEntries = 0;
 
@@ -304,36 +373,19 @@ public class Open5eRepository {
                 if (feature.tableData != null && !feature.tableData.isEmpty()) {
                     featuresWithTableData++;
                     totalTableEntries += feature.tableData.size();
-                    Log.d("Repository", "✅ " + feature.name + " (" + feature.featureType + ") has " +
-                            feature.tableData.size() + " table entries");
 
-                    // Log pierwsze kilka wpisów dla debugowania
                     for (int i = 0; i < Math.min(3, feature.tableData.size()); i++) {
                         TableData td = feature.tableData.get(i);
-                        Log.d("Repository", "   Level " + td.level + ": " + td.columnValue);
                     }
-                } else if (feature.tableData == null) {
-                    Log.d("Repository", "❌ " + feature.name + " (" + feature.featureType + ") has NULL tableData");
-                } else {
-                    Log.d("Repository", "⚠️ " + feature.name + " (" + feature.featureType + ") has EMPTY tableData");
                 }
             }
-
-            Log.d("Repository", "📊 SUMMARY: " + featuresWithTableData + "/" + features.size() +
-                    " features have tableData (" + totalTableEntries + " total entries)");
-
             featureDao.insertFeatures(features);
-            Log.d("Repository", "💾 Saved " + features.size() + " features to database");
-        } else {
-            Log.d("Repository", "❌ " + dto.name + " has no features");
         }
 
         if(dto.savingThrows != null && !dto.savingThrows.isEmpty()) {
             List<SavingThrowEntity> savingThrows = CharacterClassMapper.mapSavingThrows(dto);
             savingThrowDao.insertAll(savingThrows);
         }
-
-        Log.d("Repository", "✅ Finished processing " + dto.name);
     }
 
     private void updateProgress(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {

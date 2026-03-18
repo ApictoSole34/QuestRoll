@@ -9,8 +9,8 @@ public class CastingOptionDto implements Serializable {
     @SerializedName("damage_roll") public String damageRoll;
     @SerializedName("target_count") public Integer targetCount;
     @SerializedName("duration") public String duration;
-    @SerializedName("range") public float range;
+    @SerializedName("range") public String range;
     @SerializedName("concentration") public Boolean concentration;
-    @SerializedName("shape_size") public float shapeSize;
+    @SerializedName("shape_size") public String shapeSize;
 
 }

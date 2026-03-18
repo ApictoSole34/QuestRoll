@@ -36,6 +36,10 @@ import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.spell.SpellDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.spell.SpellEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolEntity;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -53,12 +57,14 @@ import java.util.concurrent.Executors;
                 CharacterClassEntity.class,
                 FeatureEntity.class,
                 HitPointsEntity.class,
-                SavingThrowEntity.class
+                SavingThrowEntity.class,
+                SpellEntity.class,
+                SpellSchoolEntity.class
         },
-        version = 17,
+        version = 20,
         exportSchema = false
 )
-@TypeConverters({GainedAtListConverter.class, TableDataListConverter.class})
+@TypeConverters({GainedAtListConverter.class, TableDataListConverter.class, Converters.class})
 public abstract class Open5eDatabase extends RoomDatabase {
     private static volatile Open5eDatabase INSTANCE;
 
@@ -73,6 +79,8 @@ public abstract class Open5eDatabase extends RoomDatabase {
     public abstract FeatureDao featureDao();
     public abstract HitPointsDao hitPointsDao();
     public abstract SavingThrowDao savingThrowDao();
+    public abstract SpellDao spellDao();
+    public abstract SpellSchoolDao spellSchoolDao();
 
 
     public static Open5eDatabase getInstance(Context context) {
