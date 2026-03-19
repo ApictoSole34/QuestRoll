@@ -48,7 +48,8 @@ public class SpellListActivity extends AppCompatActivity {
                 new SpellListViewModel.Factory(
                         open5eDb.spellDao(),
                         open5eDb.spellSchoolDao(),
-                        customDb.customSpellDao()
+                        customDb.customSpellDao(),
+                        customDb.customSpellSchoolDao()
                 )).get(SpellListViewModel.class);
 
         chipGroupSources = findViewById(R.id.chip_group_sources);
@@ -60,6 +61,10 @@ public class SpellListActivity extends AppCompatActivity {
         viewModel.loadSources();
 
         findViewById(R.id.btnFilter).setOnClickListener(v -> showFilterDialog());
+        findViewById(R.id.btnManageSchools).setOnClickListener(v -> {
+            new CustomSpellSchoolBottomSheet()
+                    .show(getSupportFragmentManager(), "custom_schools");
+        });
         findViewById(R.id.fabCreateSpell).setOnClickListener(v ->
                 startActivity(new Intent(this, CustomSpellCreateActivity.class)));
     }
@@ -178,7 +183,7 @@ public class SpellListActivity extends AppCompatActivity {
     }
 
     private void showFilterDialog() {
-        List<SpellSchoolEntity> schools = viewModel.getSchools().getValue();
+        List<String> allNames = viewModel.getAllSchoolNames().getValue();
         SpellFilter current = viewModel.getFilter().getValue();
         if (current == null) current = new SpellFilter();
 
@@ -201,9 +206,11 @@ public class SpellListActivity extends AppCompatActivity {
         List<String> schoolLabels = new ArrayList<>();
         List<String> schoolKeys = new ArrayList<>();
         schoolLabels.add("All Schools"); schoolKeys.add("");
-        if (schools != null) {
-            for (SpellSchoolEntity s : schools) {
-                schoolLabels.add(s.name); schoolKeys.add(s.slug);
+        if (allNames != null) {
+            for (String name : allNames) {
+                if (name.isEmpty()) continue;
+                schoolLabels.add(name);
+                schoolKeys.add(name.toLowerCase());
             }
         }
         spinnerSchool.setAdapter(new ArrayAdapter<>(this,

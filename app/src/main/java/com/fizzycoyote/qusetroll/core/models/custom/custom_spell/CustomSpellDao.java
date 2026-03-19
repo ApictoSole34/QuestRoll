@@ -30,6 +30,9 @@ public interface CustomSpellDao {
     @Query("SELECT * FROM custom_spells WHERE id = :id")
     CustomSpellEntity getByIdSync(long id);
 
+    @Query("SELECT * FROM custom_spells WHERE school_name = :schoolName")
+    List<CustomSpellEntity> getBySchoolNameSync(String schoolName);
+
     @Query("SELECT COUNT(*) FROM custom_spells WHERE name = :name")
     int countByName(String name);
 }

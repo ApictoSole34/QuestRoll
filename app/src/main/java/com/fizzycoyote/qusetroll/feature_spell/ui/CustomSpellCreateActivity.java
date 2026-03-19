@@ -17,10 +17,12 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomCastingOption;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellSchoolEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolEntity;
 import com.fizzycoyote.qusetroll.feature_spell.adapter.CastingOptionAdapter;
 import com.fizzycoyote.qusetroll.feature_spell.view_model.CustomSpellCreateViewModel;
 import com.google.android.material.button.MaterialButton;
@@ -30,6 +32,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executors;
 
@@ -155,17 +158,25 @@ public class CustomSpellCreateActivity extends AppCompatActivity {
 
         viewModel.getCustomSchools().observe(this, customSchools -> {
             List<String> schoolNames = new ArrayList<>();
-            schoolNames.addAll(Arrays.asList(
-                    "Abjuration", "Conjuration", "Divination", "Enchantment",
-                    "Evocation", "Illusion", "Necromancy", "Transmutation"
-            ));
-            if (customSchools != null) {
-                for (CustomSpellSchoolEntity s : customSchools) {
-                    if (!schoolNames.contains(s.name)) schoolNames.add(s.name);
-                }
-            }
-            actvSchool.setAdapter(new ArrayAdapter<>(this,
-                    android.R.layout.simple_list_item_1, schoolNames));
+
+            Open5eDatabase.getInstance(this).getQueryExecutor().execute(() -> {
+                List<SpellSchoolEntity> open5eSchools =
+                        Open5eDatabase.getInstance(this).spellSchoolDao().getAllSchools();
+
+                runOnUiThread(() -> {
+                    for (SpellSchoolEntity s : open5eSchools) {
+                        schoolNames.add(s.name);
+                    }
+                    if (customSchools != null) {
+                        for (CustomSpellSchoolEntity s : customSchools) {
+                            if (!schoolNames.contains(s.name)) schoolNames.add(s.name);
+                        }
+                    }
+                    Collections.sort(schoolNames);
+                    actvSchool.setAdapter(new ArrayAdapter<>(this,
+                            android.R.layout.simple_list_item_1, schoolNames));
+                });
+            });
         });
 
         viewModel.getSaveResult().observe(this, success -> {
