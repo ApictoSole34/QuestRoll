@@ -20,6 +20,8 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatu
 import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureTypeEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_language.CustomLanguageDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_language.CustomLanguageEntity;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_species.CustomSpeciesDao;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_species.CustomSpeciesEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellSchoolDao;
@@ -34,8 +36,9 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellScho
         CustomSpellEntity.class,
         CustomSpellSchoolEntity.class,
         CustomCreatureEntity.class,
-        CustomCreatureTypeEntity.class},
-        version = 12,
+        CustomCreatureTypeEntity.class,
+        CustomSpeciesEntity.class},
+        version = 14,
         exportSchema = false
 )
 @TypeConverters({CustomConverters.class})
@@ -50,6 +53,8 @@ public abstract class UserContentDatabase extends RoomDatabase {
     public abstract CustomSpellSchoolDao customSpellSchoolDao();
     public abstract CustomCreatureDao customCreatureDao();
     public abstract CustomCreatureTypeDao customCreatureTypeDao();
+    public abstract CustomSpeciesDao customSpeciesDao();
+
 
 
 

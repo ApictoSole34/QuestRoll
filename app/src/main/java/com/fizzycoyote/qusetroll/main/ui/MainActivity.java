@@ -15,6 +15,7 @@ import com.fizzycoyote.qusetroll.feature_creature.ui.CreatureListActivity;
 import com.fizzycoyote.qusetroll.feature_dice.ui.RollDiceActivity;
 import com.fizzycoyote.qusetroll.feature_language.ui.language_list.LanguageListActivity;
 import com.fizzycoyote.qusetroll.feature_loading.LoadingActivity;
+import com.fizzycoyote.qusetroll.feature_species.ui.SpeciesListActivity;
 import com.fizzycoyote.qusetroll.feature_spell.ui.SpellListActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -52,6 +53,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void openCreatureListActivity(View view) {
         startActivity(new Intent(this, CreatureListActivity.class));
+    }
+
+    public void openSpeciesListActivity(View view) {
+        startActivity(new Intent(this, SpeciesListActivity.class));
     }
 
     // ── DATA MANAGEMENT

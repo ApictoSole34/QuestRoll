@@ -14,12 +14,12 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:layout_marginBottom="48dp"
+            android:gravity="center"
             android:text="QuestRoll"
             android:textSize="32sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:layout_marginTop="48dp"
-            android:layout_marginBottom="48dp"/>
+            android:textStyle="bold" />
 
         <Button
             android:id="@+id/openCharacterListButton"
@@ -68,6 +68,14 @@
             android:layout_marginBottom="32dp"
             android:onClick="openCreatureListActivity"
             android:text="Creature" />
+
+        <Button
+            android:id="@+id/openSpecies"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:onClick="openSpeciesListActivity"
+            android:text="Species" />
 
         <Button
             android:id="@+id/btnManageData"

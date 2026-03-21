@@ -11,8 +11,6 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureTypeDao;
-import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureTypeEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.Converters;
 import com.fizzycoyote.qusetroll.core.models.open5e.ability.AbilityDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.ability.AbilityEntity;
@@ -40,6 +38,8 @@ import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.species.SpeciesDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.species.SpeciesEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell.SpellDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell.SpellEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolDao;
@@ -65,9 +65,9 @@ import java.util.concurrent.Executors;
                 SpellEntity.class,
                 SpellSchoolEntity.class,
                 CreatureEntity.class,
-                CustomCreatureTypeEntity.class
+                SpeciesEntity.class,
         },
-        version = 22,
+        version = 24,
         exportSchema = false
 )
 @TypeConverters({GainedAtListConverter.class, TableDataListConverter.class, Converters.class})
@@ -88,7 +88,7 @@ public abstract class Open5eDatabase extends RoomDatabase {
     public abstract SpellDao spellDao();
     public abstract SpellSchoolDao spellSchoolDao();
     public abstract CreatureDao creatureDao();
-    public abstract CustomCreatureTypeDao customCreatureTypeDao();
+    public abstract SpeciesDao speciesDao();
 
 
 

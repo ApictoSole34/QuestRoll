@@ -46,6 +46,10 @@ import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherMapper;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.species.SpeciesDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.species.SpeciesEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.species.SpeciesMapper;
+import com.fizzycoyote.qusetroll.core.models.open5e.species.SpeciesResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell.SpellDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell.SpellEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell.SpellMapper;
@@ -81,6 +85,7 @@ public class Open5eRepository {
     private final SpellDao spellDao;
     private final SpellSchoolDao spellSchoolDao;
     private final CreatureDao creatureDao;
+    private final SpeciesDao speciesDao;
     private final Executor executor;
 
     public Open5eRepository(Open5eApiService api,
@@ -98,6 +103,7 @@ public class Open5eRepository {
                             SpellDao spellDao,
                             SpellSchoolDao spellSchoolDao,
                             CreatureDao creatureDao,
+                            SpeciesDao speciesDao,
                             Executor executor) {
         this.api = api;
         this.publisherDao = publisherDao;
@@ -114,6 +120,7 @@ public class Open5eRepository {
         this.spellDao = spellDao;
         this.spellSchoolDao = spellSchoolDao;
         this.creatureDao = creatureDao;
+        this.speciesDao = speciesDao;
         this.executor = executor;
     }
 
@@ -138,6 +145,7 @@ public class Open5eRepository {
                 futures.add(processSpells(completed, totalSections, result));
                 futures.add(processSpellSchools(completed, totalSections, result));
                 futures.add(processCreatures(completed, totalSections, result));
+                futures.add(processSpecies(completed, totalSections, result));
 
 
 
@@ -154,6 +162,62 @@ public class Open5eRepository {
         });
 
         return result;
+    }
+
+    private CompletableFuture<Void> processSpecies(AtomicInteger completed, int total,
+                                                   MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                List<SpeciesEntity> allSpecies = new ArrayList<>();
+                int page = 1;
+                boolean hasMore = true;
+                int maxRetries = 3;
+
+                while (hasMore) {
+                    Response<SpeciesResponse> response = null;
+
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getSpeciesPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            Log.w("Repository", "Retry " + retry + " for species page " + page);
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+
+                    if (response == null || !response.isSuccessful() || response.body() == null) {
+                        Log.e("Repository", "❌ Failed to fetch species page " + page);
+                        updateProgress(completed, total, result);
+                        return;
+                    }
+
+                    SpeciesResponse body = response.body();
+                    List<SpeciesEntity> entities = body.results.stream()
+                            .map(SpeciesMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+
+                    allSpecies.addAll(entities);
+                    Log.d("Repository", "✅ Species page " + page + ": " + entities.size()
+                            + " (total: " + allSpecies.size() + "/" + body.count + ")");
+
+                    hasMore = body.next != null;
+                    page++;
+                }
+
+                if (!allSpecies.isEmpty()) {
+                    speciesDao.deleteAll();
+                    speciesDao.insertAll(allSpecies);
+                    Log.d("Repository", "✅ Saved " + allSpecies.size() + " species");
+                }
+
+                updateProgress(completed, total, result);
+
+            } catch (Exception e) {
+                handleError("Species", e);
+            }
+        }, executor);
     }
 
     private CompletableFuture<Void> processCreatures(AtomicInteger completed, int total,

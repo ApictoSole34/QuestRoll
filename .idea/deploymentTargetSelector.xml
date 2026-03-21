@@ -35,10 +35,10 @@
       <SelectionState runConfigName="CombinedLanguageTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="LanguageDetailViewModelTest">
+      <SelectionState runConfigName="CustomSpellCreateActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="CustomSpellCreateActivity">
+      <SelectionState runConfigName="CustomSpeciesCreateActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>
