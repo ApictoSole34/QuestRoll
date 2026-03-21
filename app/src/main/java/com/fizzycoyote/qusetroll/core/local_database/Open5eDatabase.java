@@ -11,6 +11,8 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureTypeDao;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureTypeEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.Converters;
 import com.fizzycoyote.qusetroll.core.models.open5e.ability.AbilityDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.ability.AbilityEntity;
@@ -26,6 +28,8 @@ import com.fizzycoyote.qusetroll.core.models.open5e.character_class.hit_points.H
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.saving_throw.SavingThrowDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.saving_throw.SavingThrowEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.table_data.TableDataListConverter;
+import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemDao;
@@ -59,9 +63,11 @@ import java.util.concurrent.Executors;
                 HitPointsEntity.class,
                 SavingThrowEntity.class,
                 SpellEntity.class,
-                SpellSchoolEntity.class
+                SpellSchoolEntity.class,
+                CreatureEntity.class,
+                CustomCreatureTypeEntity.class
         },
-        version = 20,
+        version = 22,
         exportSchema = false
 )
 @TypeConverters({GainedAtListConverter.class, TableDataListConverter.class, Converters.class})
@@ -81,6 +87,9 @@ public abstract class Open5eDatabase extends RoomDatabase {
     public abstract SavingThrowDao savingThrowDao();
     public abstract SpellDao spellDao();
     public abstract SpellSchoolDao spellSchoolDao();
+    public abstract CreatureDao creatureDao();
+    public abstract CustomCreatureTypeDao customCreatureTypeDao();
+
 
 
     public static Open5eDatabase getInstance(Context context) {

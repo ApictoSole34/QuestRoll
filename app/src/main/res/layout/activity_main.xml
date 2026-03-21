@@ -57,9 +57,17 @@
             android:id="@+id/openSpellListActivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Spells"
             android:layout_marginBottom="32dp"
-            android:onClick="openSpellListActivity"/>
+            android:onClick="openSpellListActivity"
+            android:text="Spells" />
+
+        <Button
+            android:id="@+id/openCreature"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:onClick="openCreatureListActivity"
+            android:text="Creature" />
 
         <Button
             android:id="@+id/btnManageData"
@@ -71,7 +79,7 @@
 
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="24dp"
             android:layout_marginBottom="16dp" />
 
     </LinearLayout>

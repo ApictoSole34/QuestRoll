@@ -14,6 +14,10 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custo
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custom_class_progression.CustomClassProgressionEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custom_feature.CustomFeatureDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custom_feature.CustomFeatureEntity;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureDao;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureEntity;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureTypeDao;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureTypeEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_language.CustomLanguageDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_language.CustomLanguageEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellDao;
@@ -28,8 +32,10 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellScho
         CustomFeatureEntity.class,
         CustomClassProgressionEntity.class,
         CustomSpellEntity.class,
-        CustomSpellSchoolEntity.class},
-        version = 10,
+        CustomSpellSchoolEntity.class,
+        CustomCreatureEntity.class,
+        CustomCreatureTypeEntity.class},
+        version = 12,
         exportSchema = false
 )
 @TypeConverters({CustomConverters.class})
@@ -42,6 +48,9 @@ public abstract class UserContentDatabase extends RoomDatabase {
     public abstract CustomClassProgressionDao customClassProgressionDao();
     public abstract CustomSpellDao customSpellDao();
     public abstract CustomSpellSchoolDao customSpellSchoolDao();
+    public abstract CustomCreatureDao customCreatureDao();
+    public abstract CustomCreatureTypeDao customCreatureTypeDao();
+
 
 
     public static UserContentDatabase getInstance(Context context) {

@@ -22,6 +22,10 @@ import com.fizzycoyote.qusetroll.core.models.open5e.character_class.hit_points.H
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.saving_throw.SavingThrowDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.saving_throw.SavingThrowEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.table_data.TableData;
+import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureMapper;
+import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentMapper;
@@ -76,6 +80,7 @@ public class Open5eRepository {
     private final SavingThrowDao savingThrowDao;
     private final SpellDao spellDao;
     private final SpellSchoolDao spellSchoolDao;
+    private final CreatureDao creatureDao;
     private final Executor executor;
 
     public Open5eRepository(Open5eApiService api,
@@ -92,6 +97,7 @@ public class Open5eRepository {
                             SavingThrowDao savingThrowDao,
                             SpellDao spellDao,
                             SpellSchoolDao spellSchoolDao,
+                            CreatureDao creatureDao,
                             Executor executor) {
         this.api = api;
         this.publisherDao = publisherDao;
@@ -107,6 +113,7 @@ public class Open5eRepository {
         this.savingThrowDao = savingThrowDao;
         this.spellDao = spellDao;
         this.spellSchoolDao = spellSchoolDao;
+        this.creatureDao = creatureDao;
         this.executor = executor;
     }
 
@@ -130,6 +137,8 @@ public class Open5eRepository {
                 futures.add(processCharacterClasses(completed, totalSections, result));
                 futures.add(processSpells(completed, totalSections, result));
                 futures.add(processSpellSchools(completed, totalSections, result));
+                futures.add(processCreatures(completed, totalSections, result));
+
 
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
@@ -145,6 +154,64 @@ public class Open5eRepository {
         });
 
         return result;
+    }
+
+    private CompletableFuture<Void> processCreatures(AtomicInteger completed, int total,
+                                                     MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                List<CreatureEntity> allCreatures = new ArrayList<>();
+                int page = 1;
+                boolean hasMore = true;
+                int maxRetries = 3;
+
+                while (hasMore) {
+                    Response<CreatureResponse> response = null;
+
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getCreaturesPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            Log.w("Repository", "Retry " + retry + " for creatures page " + page);
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+
+                    if (response == null || !response.isSuccessful() || response.body() == null) {
+                        Log.e("Repository", "❌ Failed to fetch creatures page " + page);
+                        updateProgress(completed, total, result);
+                        return;
+                    }
+
+                    CreatureResponse body = response.body();
+                    List<CreatureEntity> entities = body.results.stream()
+                            .map(CreatureMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+
+                    allCreatures.addAll(entities);
+                    Log.d("Repository", "✅ Creatures page " + page + ": " + entities.size()
+                            + " (total: " + allCreatures.size() + "/" + body.count + ")");
+
+                    hasMore = body.next != null;
+                    page++;
+                }
+
+                if (allCreatures.size() > 100) {
+                    creatureDao.deleteAll();
+                    creatureDao.insertAll(allCreatures);
+                    Log.d("Repository", "✅ Saved " + allCreatures.size() + " creatures");
+                } else {
+                    Log.w("Repository", "⚠️ Too few creatures (" + allCreatures.size() + "), skipping");
+                }
+
+                updateProgress(completed, total, result);
+
+            } catch (Exception e) {
+                handleError("Creatures", e);
+            }
+        }, executor);
     }
 
     private CompletableFuture<Void> processSpellSchools(AtomicInteger completed, int total,

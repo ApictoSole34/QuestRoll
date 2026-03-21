@@ -19,7 +19,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fizzycoyote.qusetroll.R;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
-import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolEntity;
 import com.fizzycoyote.qusetroll.feature_spell.view_model.SpellListViewModel;
 import com.fizzycoyote.qusetroll.feature_spell.adapter.SpellAdapter;
 import com.fizzycoyote.qusetroll.feature_spell.model.SpellFilter;

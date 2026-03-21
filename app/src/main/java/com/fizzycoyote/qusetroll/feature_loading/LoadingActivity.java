@@ -50,6 +50,7 @@ public class LoadingActivity extends AppCompatActivity {
                 db.savingThrowDao(),
                 db.spellDao(),
                 db.spellSchoolDao(),
+                db.creatureDao(),
                 executor
         );
 

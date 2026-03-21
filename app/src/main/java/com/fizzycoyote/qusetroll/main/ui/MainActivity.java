@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 import com.fizzycoyote.qusetroll.R;
 import com.fizzycoyote.qusetroll.feature_character.ui.list.CharacterListActivity;
 import com.fizzycoyote.qusetroll.feature_class.ui.ClassListActivity;
+import com.fizzycoyote.qusetroll.feature_creature.ui.CreatureListActivity;
 import com.fizzycoyote.qusetroll.feature_dice.ui.RollDiceActivity;
 import com.fizzycoyote.qusetroll.feature_language.ui.language_list.LanguageListActivity;
 import com.fizzycoyote.qusetroll.feature_loading.LoadingActivity;
@@ -47,6 +48,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void openClassListActivity(View view) {
         startActivity(new Intent(this, ClassListActivity.class));
+    }
+
+    public void openCreatureListActivity(View view) {
+        startActivity(new Intent(this, CreatureListActivity.class));
     }
 
     // ── DATA MANAGEMENT

@@ -2,6 +2,7 @@ package com.fizzycoyote.qusetroll.core.api;
 
 import com.fizzycoyote.qusetroll.core.models.open5e.ability.AbilityResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.CharacterClassResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageResponse;
@@ -40,4 +41,7 @@ public interface Open5eApiService {
 
     @GET("spellschools/")
     Call<SpellSchoolResponse> getSpellSchools();
+
+    @GET("creatures/")
+    Call<CreatureResponse> getCreaturesPage(@Query("page") int page);
 }
