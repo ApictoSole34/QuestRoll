@@ -28,6 +28,8 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellSchoolDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellSchoolEntity;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_weapon.CustomWeaponDao;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_weapon.CustomWeaponEntity;
 
 
 @Database(
@@ -40,8 +42,9 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellScho
         CustomCreatureEntity.class,
         CustomCreatureTypeEntity.class,
         CustomSpeciesEntity.class,
-        CustomBackgroundEntity.class},
-        version = 15,
+        CustomBackgroundEntity.class,
+        CustomWeaponEntity.class},
+        version = 16,
         exportSchema = false
 )
 @TypeConverters({CustomConverters.class})
@@ -58,6 +61,8 @@ public abstract class UserContentDatabase extends RoomDatabase {
     public abstract CustomCreatureTypeDao customCreatureTypeDao();
     public abstract CustomSpeciesDao customSpeciesDao();
     public abstract CustomBackgroundDao customBackgroundDao();
+    public abstract CustomWeaponDao customWeaponDao();
+
 
 
 

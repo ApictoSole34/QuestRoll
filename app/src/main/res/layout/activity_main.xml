@@ -86,6 +86,14 @@
             android:text="Species" />
 
         <Button
+            android:id="@+id/openItemMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:onClick="openItemMenuActivity"
+            android:text="Items" />
+
+        <Button
             android:id="@+id/btnManageData"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -62,6 +62,10 @@ import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolEnti
 import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolMapper;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell.SpellResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.weapon.WeaponDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.weapon.WeaponEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.weapon.WeaponMapper;
+import com.fizzycoyote.qusetroll.core.models.open5e.weapon.WeaponResponse;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -91,6 +95,7 @@ public class Open5eRepository {
     private final CreatureDao creatureDao;
     private final SpeciesDao speciesDao;
     private final BackgroundDao backgroundDao;
+    private final WeaponDao weaponDao;
     private final Executor executor;
 
     public Open5eRepository(Open5eApiService api,
@@ -110,6 +115,7 @@ public class Open5eRepository {
                             CreatureDao creatureDao,
                             SpeciesDao speciesDao,
                             BackgroundDao backgroundDao,
+                            WeaponDao weaponDao,
                             Executor executor) {
         this.api = api;
         this.publisherDao = publisherDao;
@@ -128,6 +134,7 @@ public class Open5eRepository {
         this.creatureDao = creatureDao;
         this.speciesDao = speciesDao;
         this.backgroundDao = backgroundDao;
+        this.weaponDao = weaponDao;
         this.executor = executor;
     }
 
@@ -137,7 +144,7 @@ public class Open5eRepository {
 
         executor.execute(() -> {
             try {
-                int totalSections = 9;
+                int totalSections = 13;
                 AtomicInteger completed = new AtomicInteger(0);
 
                 List<CompletableFuture<Void>> futures = new ArrayList<>();
@@ -154,6 +161,8 @@ public class Open5eRepository {
                 futures.add(processCreatures(completed, totalSections, result));
                 futures.add(processSpecies(completed, totalSections, result));
                 futures.add(processBackgrounds(completed, totalSections, result));
+                futures.add(processWeapons(completed, totalSections, result));
+
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                         .thenRun(() -> result.postValue(Resource.success(true)))
@@ -168,6 +177,62 @@ public class Open5eRepository {
         });
 
         return result;
+    }
+
+    private CompletableFuture<Void> processWeapons(AtomicInteger completed, int total,
+                                                   MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                List<WeaponEntity> allWeapons = new ArrayList<>();
+                int page = 1;
+                boolean hasMore = true;
+                int maxRetries = 3;
+
+                while (hasMore) {
+                    Response<WeaponResponse> response = null;
+
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getWeaponsPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            Log.w("Repository", "Retry " + retry + " for weapons page " + page);
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+
+                    if (response == null || !response.isSuccessful() || response.body() == null) {
+                        Log.e("Repository", "❌ Failed to fetch weapons page " + page);
+                        updateProgress(completed, total, result);
+                        return;
+                    }
+
+                    WeaponResponse body = response.body();
+                    List<WeaponEntity> entities = body.results.stream()
+                            .map(WeaponMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+
+                    allWeapons.addAll(entities);
+                    Log.d("Repository", "✅ Weapons page " + page + ": " + entities.size()
+                            + " (total: " + allWeapons.size() + "/" + body.count + ")");
+
+                    hasMore = body.next != null;
+                    page++;
+                }
+
+                if (!allWeapons.isEmpty()) {
+                    weaponDao.deleteAll();
+                    weaponDao.insertAll(allWeapons);
+                    Log.d("Repository", "✅ Saved " + allWeapons.size() + " weapons");
+                }
+
+                updateProgress(completed, total, result);
+
+            } catch (Exception e) {
+                handleError("Weapons", e);
+            }
+        }, executor);
     }
 
     private CompletableFuture<Void> processBackgrounds(AtomicInteger completed, int total,

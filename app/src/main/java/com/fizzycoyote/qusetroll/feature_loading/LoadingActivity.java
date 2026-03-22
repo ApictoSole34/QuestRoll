@@ -53,6 +53,7 @@ public class LoadingActivity extends AppCompatActivity {
                 db.creatureDao(),
                 db.speciesDao(),
                 db.backgroundDao(),
+                db.weaponDao(),
                 executor
         );
 

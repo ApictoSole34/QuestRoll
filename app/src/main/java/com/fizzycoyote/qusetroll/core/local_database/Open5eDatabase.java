@@ -46,6 +46,8 @@ import com.fizzycoyote.qusetroll.core.models.open5e.spell.SpellDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell.SpellEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.weapon.WeaponDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.weapon.WeaponEntity;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -68,9 +70,10 @@ import java.util.concurrent.Executors;
                 SpellSchoolEntity.class,
                 CreatureEntity.class,
                 SpeciesEntity.class,
-                BackgroundEntity.class
+                BackgroundEntity.class,
+                WeaponEntity.class,
         },
-        version = 25,
+        version = 26,
         exportSchema = false
 )
 @TypeConverters({GainedAtListConverter.class, TableDataListConverter.class, Converters.class})
@@ -93,6 +96,8 @@ public abstract class Open5eDatabase extends RoomDatabase {
     public abstract CreatureDao creatureDao();
     public abstract SpeciesDao speciesDao();
     public abstract BackgroundDao backgroundDao();
+    public abstract WeaponDao weaponDao();
+
 
     public static Open5eDatabase getInstance(Context context) {
         if (INSTANCE == null) {
