@@ -1,6 +1,7 @@
 package com.fizzycoyote.qusetroll.core.api;
 
 import com.fizzycoyote.qusetroll.core.models.open5e.ability.AbilityResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.background.BackgroundResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.CharacterClassResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentResponse;
@@ -48,4 +49,7 @@ public interface Open5eApiService {
 
     @GET("species/")
     Call<SpeciesResponse> getSpeciesPage(@Query("page") int page);
+
+    @GET("backgrounds/")
+    Call<BackgroundResponse> getBackgroundsPage(@Query("page") int page);
 }

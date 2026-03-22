@@ -70,6 +70,14 @@
             android:text="Creature" />
 
         <Button
+            android:id="@+id/openBackground"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:onClick="openBackgroundListActivity"
+            android:text="Background" />
+
+        <Button
             android:id="@+id/openSpecies"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -10,6 +10,10 @@ import com.fizzycoyote.qusetroll.core.models.open5e.ability.AbilityMapper;
 import com.fizzycoyote.qusetroll.core.models.open5e.ability.AbilityResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.ability.skill.SkillDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.ability.skill.SkillEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.background.BackgroundDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.background.BackgroundEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.background.BackgroundMapper;
+import com.fizzycoyote.qusetroll.core.models.open5e.background.BackgroundResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.CharacterClassDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.CharacterClassDto;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.CharacterClassEntity;
@@ -86,6 +90,7 @@ public class Open5eRepository {
     private final SpellSchoolDao spellSchoolDao;
     private final CreatureDao creatureDao;
     private final SpeciesDao speciesDao;
+    private final BackgroundDao backgroundDao;
     private final Executor executor;
 
     public Open5eRepository(Open5eApiService api,
@@ -104,6 +109,7 @@ public class Open5eRepository {
                             SpellSchoolDao spellSchoolDao,
                             CreatureDao creatureDao,
                             SpeciesDao speciesDao,
+                            BackgroundDao backgroundDao,
                             Executor executor) {
         this.api = api;
         this.publisherDao = publisherDao;
@@ -121,6 +127,7 @@ public class Open5eRepository {
         this.spellSchoolDao = spellSchoolDao;
         this.creatureDao = creatureDao;
         this.speciesDao = speciesDao;
+        this.backgroundDao = backgroundDao;
         this.executor = executor;
     }
 
@@ -146,8 +153,7 @@ public class Open5eRepository {
                 futures.add(processSpellSchools(completed, totalSections, result));
                 futures.add(processCreatures(completed, totalSections, result));
                 futures.add(processSpecies(completed, totalSections, result));
-
-
+                futures.add(processBackgrounds(completed, totalSections, result));
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                         .thenRun(() -> result.postValue(Resource.success(true)))
@@ -162,6 +168,62 @@ public class Open5eRepository {
         });
 
         return result;
+    }
+
+    private CompletableFuture<Void> processBackgrounds(AtomicInteger completed, int total,
+                                                       MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                List<BackgroundEntity> allBackgrounds = new ArrayList<>();
+                int page = 1;
+                boolean hasMore = true;
+                int maxRetries = 3;
+
+                while (hasMore) {
+                    Response<BackgroundResponse> response = null;
+
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getBackgroundsPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            Log.w("Repository", "Retry " + retry + " for backgrounds page " + page);
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+
+                    if (response == null || !response.isSuccessful() || response.body() == null) {
+                        Log.e("Repository", "❌ Failed to fetch backgrounds page " + page);
+                        updateProgress(completed, total, result);
+                        return;
+                    }
+
+                    BackgroundResponse body = response.body();
+                    List<BackgroundEntity> entities = body.results.stream()
+                            .map(BackgroundMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+
+                    allBackgrounds.addAll(entities);
+                    Log.d("Repository", "✅ Backgrounds page " + page + ": " + entities.size()
+                            + " (total: " + allBackgrounds.size() + "/" + body.count + ")");
+
+                    hasMore = body.next != null;
+                    page++;
+                }
+
+                if (!allBackgrounds.isEmpty()) {
+                    backgroundDao.deleteAll();
+                    backgroundDao.insertAll(allBackgrounds);
+                    Log.d("Repository", "✅ Saved " + allBackgrounds.size() + " backgrounds");
+                }
+
+                updateProgress(completed, total, result);
+
+            } catch (Exception e) {
+                handleError("Backgrounds", e);
+            }
+        }, executor);
     }
 
     private CompletableFuture<Void> processSpecies(AtomicInteger completed, int total,

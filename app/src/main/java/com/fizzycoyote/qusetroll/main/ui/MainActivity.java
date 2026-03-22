@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.feature_background.ui.BackgroundListActivity;
 import com.fizzycoyote.qusetroll.feature_character.ui.list.CharacterListActivity;
 import com.fizzycoyote.qusetroll.feature_class.ui.ClassListActivity;
 import com.fizzycoyote.qusetroll.feature_creature.ui.CreatureListActivity;
@@ -57,6 +58,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void openSpeciesListActivity(View view) {
         startActivity(new Intent(this, SpeciesListActivity.class));
+    }
+
+    public void openBackgroundListActivity(View view) {
+        startActivity(new Intent(this, BackgroundListActivity.class));
     }
 
     // ── DATA MANAGEMENT

@@ -8,6 +8,8 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
 import com.fizzycoyote.qusetroll.core.models.conventers.CustomConverters;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_background.CustomBackgroundDao;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_background.CustomBackgroundEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.CustomCharacterClassDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.CustomCharacterClassEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custom_class_progression.CustomClassProgressionDao;
@@ -37,8 +39,9 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellScho
         CustomSpellSchoolEntity.class,
         CustomCreatureEntity.class,
         CustomCreatureTypeEntity.class,
-        CustomSpeciesEntity.class},
-        version = 14,
+        CustomSpeciesEntity.class,
+        CustomBackgroundEntity.class},
+        version = 15,
         exportSchema = false
 )
 @TypeConverters({CustomConverters.class})
@@ -54,6 +57,7 @@ public abstract class UserContentDatabase extends RoomDatabase {
     public abstract CustomCreatureDao customCreatureDao();
     public abstract CustomCreatureTypeDao customCreatureTypeDao();
     public abstract CustomSpeciesDao customSpeciesDao();
+    public abstract CustomBackgroundDao customBackgroundDao();
 
 
 

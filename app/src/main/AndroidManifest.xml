@@ -44,6 +44,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".feature_background.ui.BackgroundListActivity"/>
+        <activity android:name=".feature_background.ui.BackgroundDetailActivity"/>
+        <activity android:name=".feature_background.ui.CustomBackgroundCreateActivity"/>
+        <activity android:name=".feature_background.ui.CustomBackgroundDetailActivity"/>
         <activity android:name=".feature_species.ui.SpeciesListActivity"/>
         <activity android:name=".feature_species.ui.SpeciesDetailActivity"/>
         <activity android:name=".feature_species.ui.CustomSpeciesCreateActivity"/>
