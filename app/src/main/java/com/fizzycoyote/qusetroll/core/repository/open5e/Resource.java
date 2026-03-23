@@ -1,31 +1,35 @@
 package com.fizzycoyote.qusetroll.core.repository.open5e;
 
-import androidx.annotation.Nullable;
-
 public class Resource<T> {
-    public enum Status { LOADING, SUCCESS, ERROR }
-
     public final Status status;
     public final T data;
     public final String message;
     public final int progress;
+    public final String sectionName; // ← NOWE
 
-    private Resource(Status status, @Nullable T data, @Nullable String message, int progress) {
+    public enum Status { SUCCESS, ERROR, LOADING }
+
+    private Resource(Status status, T data, String message, int progress, String sectionName) {
         this.status = status;
         this.data = data;
         this.message = message;
         this.progress = progress;
+        this.sectionName = sectionName;
     }
 
-    public static <T> Resource<T> loading(@Nullable T data, int progress) {
-        return new Resource<>(Status.LOADING, data, null, progress);
+    public static <T> Resource<T> success(T data) {
+        return new Resource<>(Status.SUCCESS, data, null, 100, null);
     }
 
-    public static <T> Resource<T> success(@Nullable T data) {
-        return new Resource<>(Status.SUCCESS, data, null, 100);
+    public static <T> Resource<T> error(String message, T data) {
+        return new Resource<>(Status.ERROR, data, message, 0, null);
     }
 
-    public static <T> Resource<T> error(String msg, @Nullable T data) {
-        return new Resource<>(Status.ERROR, data, msg, 0);
+    public static <T> Resource<T> loading(T data, int progress) {
+        return new Resource<>(Status.LOADING, data, null, progress, null);
+    }
+
+    public static <T> Resource<T> loading(T data, int progress, String sectionName) {
+        return new Resource<>(Status.LOADING, data, null, progress, sectionName);
     }
 }

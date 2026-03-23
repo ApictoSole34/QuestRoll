@@ -66,6 +66,7 @@ import com.fizzycoyote.qusetroll.core.models.open5e.weapon.WeaponDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.weapon.WeaponEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.weapon.WeaponMapper;
 import com.fizzycoyote.qusetroll.core.models.open5e.weapon.WeaponResponse;
+import com.fizzycoyote.qusetroll.feature_loading.DataSection;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -73,6 +74,7 @@ import retrofit2.Response;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -173,6 +175,58 @@ public class Open5eRepository {
 
             } catch (Exception e) {
                 result.postValue(Resource.error("Initialization failed: " + e.getMessage(), false));
+            }
+        });
+
+        return result;
+    }
+
+    public LiveData<Resource<Boolean>> refreshSelectedData(Set<DataSection> sections) {
+        MutableLiveData<Resource<Boolean>> result = new MutableLiveData<>();
+        result.postValue(Resource.loading(null, 0));
+
+        executor.execute(() -> {
+            try {
+                int totalSections = sections.size();
+                AtomicInteger completed = new AtomicInteger(0);
+                List<CompletableFuture<Void>> futures = new ArrayList<>();
+
+                if (sections.contains(DataSection.PUBLISHERS))
+                    futures.add(processPublishers(completed, totalSections, result));
+                if (sections.contains(DataSection.LICENSES))
+                    futures.add(processLicenses(completed, totalSections, result));
+                if (sections.contains(DataSection.DOCUMENTS))
+                    futures.add(processDocuments(completed, totalSections, result));
+                if (sections.contains(DataSection.GAME_SYSTEMS))
+                    futures.add(processGameSystems(completed, totalSections, result));
+                if (sections.contains(DataSection.LANGUAGES))
+                    futures.add(processLanguages(completed, totalSections, result));
+                if (sections.contains(DataSection.ABILITIES))
+                    futures.add(processAbilities(completed, totalSections, result));
+                if (sections.contains(DataSection.CLASSES))
+                    futures.add(processCharacterClasses(completed, totalSections, result));
+                if (sections.contains(DataSection.SPELLS))
+                    futures.add(processSpells(completed, totalSections, result));
+                if (sections.contains(DataSection.SPELL_SCHOOLS))
+                    futures.add(processSpellSchools(completed, totalSections, result));
+                if (sections.contains(DataSection.CREATURES))
+                    futures.add(processCreatures(completed, totalSections, result));
+                if (sections.contains(DataSection.SPECIES))
+                    futures.add(processSpecies(completed, totalSections, result));
+                if (sections.contains(DataSection.BACKGROUNDS))
+                    futures.add(processBackgrounds(completed, totalSections, result));
+                if (sections.contains(DataSection.WEAPONS))
+                    futures.add(processWeapons(completed, totalSections, result));
+
+                CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                        .thenRun(() -> result.postValue(Resource.success(true)))
+                        .exceptionally(ex -> {
+                            result.postValue(Resource.error(ex.getMessage(), false));
+                            return null;
+                        });
+
+            } catch (Exception e) {
+                result.postValue(Resource.error("Failed: " + e.getMessage(), false));
             }
         });
 
