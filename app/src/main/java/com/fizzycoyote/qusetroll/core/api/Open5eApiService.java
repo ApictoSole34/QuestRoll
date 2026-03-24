@@ -12,7 +12,6 @@ import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.species.SpeciesResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell.SpellResponse;
-import com.fizzycoyote.qusetroll.core.models.open5e.weapon.WeaponResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Query;
@@ -53,7 +52,4 @@ public interface Open5eApiService {
 
     @GET("backgrounds/")
     Call<BackgroundResponse> getBackgroundsPage(@Query("page") int page);
-
-    @GET("weapons/")
-    Call<WeaponResponse> getWeaponsPage(@Query("page") int page);
 }
