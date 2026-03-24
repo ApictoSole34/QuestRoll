@@ -70,7 +70,7 @@ import java.util.concurrent.Executors;
                 SpeciesEntity.class,
                 BackgroundEntity.class,
         },
-        version = 26,
+        version = 27,
         exportSchema = false
 )
 @TypeConverters({GainedAtListConverter.class, TableDataListConverter.class, Converters.class})
