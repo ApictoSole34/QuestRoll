@@ -1,25 +1,15 @@
-package com.fizzycoyote.qusetroll.core.models.open5e.item;
+package com.fizzycoyote.qusetroll.core.models.custom.custom_item;
 
-import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.Index;
 import androidx.room.PrimaryKey;
-import androidx.room.TypeConverters;
 
-import com.fizzycoyote.qusetroll.core.models.open5e.Converters;
+@Entity(tableName = "custom_items")
+public class CustomItemEntity {
 
-import java.util.List;
+    @PrimaryKey(autoGenerate = true)
+    public long id;
 
-@Entity(tableName = "items", indices = {
-        @Index("name"),
-        @Index("category_name"),
-        @Index("document_name")
-})
-public class ItemEntity {
-
-    @PrimaryKey
-    @NonNull
     public String key;
 
     public String name;
@@ -34,8 +24,6 @@ public class ItemEntity {
     public String rarityName;
     @ColumnInfo(name = "rarity_key")
     public String rarityKey;
-    @ColumnInfo(name = "rarity_rank")
-    public int rarityRank;
 
     @ColumnInfo(name = "is_magic_item")
     public boolean isMagicItem;
@@ -44,11 +32,6 @@ public class ItemEntity {
     public String weaponJson;
     @ColumnInfo(name = "armor_json")
     public String armorJson;
-
-    @ColumnInfo(name = "size_name")
-    public String sizeName;
-    @ColumnInfo(name = "size_key")
-    public String sizeKey;
 
     public float weight;
     @ColumnInfo(name = "weight_unit")
@@ -60,9 +43,4 @@ public class ItemEntity {
     public boolean requiresAttunement;
     @ColumnInfo(name = "attunement_detail")
     public String attunementDetail;
-
-    @ColumnInfo(name = "document_name")
-    public String documentName;
-    @ColumnInfo(name = "document_key")
-    public String documentKey;
 }

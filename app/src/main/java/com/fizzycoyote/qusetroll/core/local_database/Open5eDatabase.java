@@ -34,6 +34,8 @@ import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.item.ItemDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.item.ItemEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseDao;
@@ -69,8 +71,9 @@ import java.util.concurrent.Executors;
                 CreatureEntity.class,
                 SpeciesEntity.class,
                 BackgroundEntity.class,
+                ItemEntity.class,
         },
-        version = 27,
+        version = 29,
         exportSchema = false
 )
 @TypeConverters({GainedAtListConverter.class, TableDataListConverter.class, Converters.class})
@@ -93,6 +96,7 @@ public abstract class Open5eDatabase extends RoomDatabase {
     public abstract CreatureDao creatureDao();
     public abstract SpeciesDao speciesDao();
     public abstract BackgroundDao backgroundDao();
+    public abstract ItemDao itemDao();
 
 
     public static Open5eDatabase getInstance(Context context) {

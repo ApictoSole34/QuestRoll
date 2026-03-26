@@ -1,30 +1,40 @@
 package com.fizzycoyote.qusetroll.core.models.open5e.item;
 
+import com.google.gson.Gson;
+
 public class ItemMapper {
+    private static final Gson gson = new Gson();
+
     public static ItemEntity dtoToEntity(ItemDto dto) {
-        ItemEntity entity = new ItemEntity();
-        entity.key = dto.key;
-        entity.url = dto.url;
-        entity.isMagicItem = dto.isMagicItem;
-        entity.weaponUrl = dto.weaponUrl;
-        entity.armorUrl = dto.armorUrl;
-        entity.document = dto.documentUrl;
-        entity.category = dto.category;
-        entity.rarity = dto.rarity;
-        entity.name = dto.name;
-        entity.desc = dto.desc;
-        entity.weight = dto.weight;
-        entity.armorClass = dto.armorClass;
-        entity.hitPoints = dto.hitPoints;
-        entity.hitDice = dto.hitDice;
-        entity.nonmagicalAttackResistance = dto.nonmagicalAttackResistance;
-        entity.nonmagicalAttackImmunity = dto.nonmagicalAttackImmunity;
-        entity.cost = dto.cost;
-        entity.requiresAttunement = dto.requaiersAttunement;
-        entity.size = dto.size;
-        entity.damageVulnerabilities = dto.damageVulnerabilites;
-        entity.damageImmunities = dto.damageImmunities;
-        entity.damageResistances = dto.damageResistances;
-        return entity;
+        ItemEntity e = new ItemEntity();
+        e.key = dto.key;
+        e.name = dto.name;
+        e.desc = dto.desc;
+        if (dto.category != null) {
+            e.categoryName = dto.category.name;
+            e.categoryKey = dto.category.key;
+        }
+        if (dto.rarity != null) {
+            e.rarityName = dto.rarity.name;
+            e.rarityKey = dto.rarity.key;
+            e.rarityRank = dto.rarity.rank;
+        }
+        e.isMagicItem = dto.isMagicItem;
+        if (dto.weapon != null) e.weaponJson = gson.toJson(dto.weapon);
+        if (dto.armor != null) e.armorJson = gson.toJson(dto.armor);
+        if (dto.size != null) {
+            e.sizeName = dto.size.name;
+            e.sizeKey = dto.size.key;
+        }
+        try { e.weight = Float.parseFloat(dto.weight); } catch (Exception ex) { e.weight = 0f; }
+        e.weightUnit = dto.weightUnit;
+        try { e.cost = Float.parseFloat(dto.cost); } catch (Exception ex) { e.cost = 0f; }
+        e.requiresAttunement = dto.requiresAttunement;
+        e.attunementDetail = dto.attunementDetail;
+        if (dto.document != null) {
+            e.documentName = dto.document.name;
+            e.documentKey = dto.document.key;
+        }
+        return e;
     }
 }

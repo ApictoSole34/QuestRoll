@@ -38,6 +38,10 @@ import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemMapper;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.item.ItemDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.item.ItemEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.item.ItemMapper;
+import com.fizzycoyote.qusetroll.core.models.open5e.item.ItemResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageMapper;
@@ -93,6 +97,7 @@ public class Open5eRepository {
     private final CreatureDao creatureDao;
     private final SpeciesDao speciesDao;
     private final BackgroundDao backgroundDao;
+    private final ItemDao itemDao;
     private final Executor executor;
 
     public Open5eRepository(Open5eApiService api,
@@ -112,6 +117,7 @@ public class Open5eRepository {
                             CreatureDao creatureDao,
                             SpeciesDao speciesDao,
                             BackgroundDao backgroundDao,
+                            ItemDao itemDao,
                             Executor executor) {
         this.api = api;
         this.publisherDao = publisherDao;
@@ -130,6 +136,7 @@ public class Open5eRepository {
         this.creatureDao = creatureDao;
         this.speciesDao = speciesDao;
         this.backgroundDao = backgroundDao;
+        this.itemDao = itemDao;
         this.executor = executor;
     }
 
@@ -156,6 +163,7 @@ public class Open5eRepository {
                 futures.add(processCreatures(completed, totalSections, result));
                 futures.add(processSpecies(completed, totalSections, result));
                 futures.add(processBackgrounds(completed, totalSections, result));
+                futures.add(processItems(completed, totalSections, result));
 
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
@@ -207,6 +215,8 @@ public class Open5eRepository {
                     futures.add(processSpecies(completed, totalSections, result));
                 if (sections.contains(DataSection.BACKGROUNDS))
                     futures.add(processBackgrounds(completed, totalSections, result));
+                if (sections.contains(DataSection.ITEMS))
+                    futures.add(processItems(completed, totalSections, result));
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                         .thenRun(() -> result.postValue(Resource.success(true)))
@@ -221,6 +231,62 @@ public class Open5eRepository {
         });
 
         return result;
+    }
+
+    private CompletableFuture<Void> processItems(AtomicInteger completed, int total,
+                                                 MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                List<ItemEntity> allItems = new ArrayList<>();
+                int page = 1;
+                boolean hasMore = true;
+                int maxRetries = 3;
+
+                while (hasMore) {
+                    Response<ItemResponse> response = null;
+
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getItemsPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            Log.w("Repository", "Retry " + retry + " for items page " + page);
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000); // wait before retry
+                        }
+                    }
+
+                    if (response == null || !response.isSuccessful() || response.body() == null) {
+                        Log.e("Repository", "❌ Failed to fetch items page " + page);
+                        updateProgress(completed, total, result);
+                        return;
+                    }
+
+                    ItemResponse body = response.body();
+                    List<ItemEntity> entities = body.results.stream()
+                            .map(ItemMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+
+                    allItems.addAll(entities);
+                    Log.d("Repository", "✅ Items page " + page + ": " + entities.size()
+                            + " (total: " + allItems.size() + "/" + body.count + ")");
+
+                    hasMore = body.next != null;
+                    page++;
+                }
+
+                if (!allItems.isEmpty()) {
+                    itemDao.deleteAll();
+                    itemDao.insertAll(allItems);
+                    Log.d("Repository", "✅ Saved " + allItems.size() + " items");
+                }
+
+                updateProgress(completed, total, result);
+
+            } catch (Exception e) {
+                handleError("Items", e);
+            }
+        }, executor);
     }
 
     private CompletableFuture<Void> processBackgrounds(AtomicInteger completed, int total,

@@ -20,6 +20,8 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatu
 import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureTypeDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureTypeEntity;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_item.CustomItemDao;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_item.CustomItemEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_language.CustomLanguageDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_language.CustomLanguageEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_species.CustomSpeciesDao;
@@ -39,8 +41,9 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellScho
         CustomCreatureEntity.class,
         CustomCreatureTypeEntity.class,
         CustomSpeciesEntity.class,
-        CustomBackgroundEntity.class,},
-        version = 17,
+        CustomBackgroundEntity.class,
+        CustomItemEntity.class},
+        version = 19,
         exportSchema = false
 )
 @TypeConverters({CustomConverters.class})
@@ -57,6 +60,7 @@ public abstract class UserContentDatabase extends RoomDatabase {
     public abstract CustomCreatureTypeDao customCreatureTypeDao();
     public abstract CustomSpeciesDao customSpeciesDao();
     public abstract CustomBackgroundDao customBackgroundDao();
+    public abstract CustomItemDao customItemDao();
 
 
     public static UserContentDatabase getInstance(Context context) {
