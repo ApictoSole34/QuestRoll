@@ -13,8 +13,7 @@ public class CustomAbilityEntity {
     public String name = "";
 
     public String shortDesc;
-    public String description;  // free-text Markdown
+    public String description;
 
-    /** epoch-millis, for sorting */
     public long createdAt;
 }

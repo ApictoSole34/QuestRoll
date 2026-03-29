@@ -13,10 +13,6 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_ability.CustomAbility
 
 import java.util.concurrent.Executor;
 
-/**
- * Create OR edit a custom ability.
- * Pass CUSTOM_ABILITY_ID (long) in intent to enter edit mode.
- */
 public class CustomAbilityCreateActivity extends AppCompatActivity {
 
     private CustomAbilityDao dao;

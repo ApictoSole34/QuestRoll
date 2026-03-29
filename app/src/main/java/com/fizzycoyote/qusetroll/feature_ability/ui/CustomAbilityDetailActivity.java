@@ -1,17 +1,12 @@
 package com.fizzycoyote.qusetroll.feature_ability.ui;
 
-import static android.content.Intent.getIntent;
-
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -56,7 +51,6 @@ public class CustomAbilityDetailActivity extends AppCompatActivity {
         skillDao   = udb.customSkillDao();
         executor   = Open5eDatabase.getInstance(this).getQueryExecutor();
 
-        // 🔥 bind view raz
         tvName        = findViewById(R.id.tv_ability_name);
         tvShortDesc   = findViewById(R.id.tv_ability_short_desc);
         tvDescription = findViewById(R.id.tv_ability_description);
@@ -134,8 +128,8 @@ public class CustomAbilityDetailActivity extends AppCompatActivity {
 
     private void showManagePopup(View anchor) {
         PopupMenu popup = new PopupMenu(this, anchor);
-        popup.getMenu().add(0, 1, 0, "Edit");      // id = 1
-        popup.getMenu().add(0, 2, 0, "Delete");    // id = 2
+        popup.getMenu().add(0, 1, 0, "Edit");
+        popup.getMenu().add(0, 2, 0, "Delete");
 
         popup.setOnMenuItemClickListener(item -> {
             int itemId = item.getItemId();

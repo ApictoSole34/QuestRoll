@@ -47,7 +47,6 @@ public class AbilityDetailActivity extends AppCompatActivity {
             ((TextView) findViewById(R.id.tv_ability_name)).setText(ability.name);
             ((TextView) findViewById(R.id.tv_ability_short_desc)).setText(ability.shortDesc);
 
-            // Parse and show descriptions per gamesystem
             if (ability.descriptionsJson != null) {
                 Type t = new TypeToken<List<AbilityDto.AbilityDescriptionDto>>(){}.getType();
                 List<AbilityDto.AbilityDescriptionDto> descs =
@@ -56,7 +55,6 @@ public class AbilityDetailActivity extends AppCompatActivity {
             }
         });
 
-        // Skills section – open5e skills for this ability
         RecyclerView rvOpen5e = findViewById(R.id.rv_skills_open5e);
         SkillAdapter open5eAdapter = new SkillAdapter(skill -> {
             Intent i = new Intent(this, SkillDetailActivity.class);
@@ -73,7 +71,6 @@ public class AbilityDetailActivity extends AppCompatActivity {
             open5eAdapter.submitList(combined);
         });
 
-        // Custom skills linked to this open5e ability
         RecyclerView rvCustom = findViewById(R.id.rv_skills_custom);
         SkillAdapter customAdapter = new SkillAdapter(skill -> {
             Intent i = new Intent(this, CustomSkillDetailActivity.class);
@@ -90,7 +87,6 @@ public class AbilityDetailActivity extends AppCompatActivity {
             customAdapter.submitList(combined);
         });
 
-        // FAB → add custom skill to this ability
         FloatingActionButton fab = findViewById(R.id.fab_add_custom_skill);
         fab.setOnClickListener(v -> {
             Intent i = new Intent(this, CustomSkillCreateActivity.class);
@@ -107,13 +103,13 @@ public class AbilityDetailActivity extends AppCompatActivity {
         container.removeAllViews();
         if (descs == null) return;
         for (AbilityDto.AbilityDescriptionDto d : descs) {
-            // system label
+
             TextView label = new TextView(this);
             label.setText(d.gamesystem != null ? d.gamesystem.toUpperCase() : "");
             label.setTypeface(null, Typeface.BOLD);
             label.setTextSize(12);
             container.addView(label);
-            // description body (Markdown)
+
             TextView body = new TextView(this);
             markwon.setMarkdown(body, d.desc != null ? d.desc : "");
             body.setTextSize(14);

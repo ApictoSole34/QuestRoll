@@ -1,7 +1,6 @@
 package com.fizzycoyote.qusetroll.core.models.open5e.ability;
 
 import androidx.annotation.NonNull;
-import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -9,11 +8,10 @@ import androidx.room.PrimaryKey;
 public class AbilityEntity {
     @PrimaryKey
     @NonNull
-    public String key;          // "cha", "dex", …
+    public String key;
 
-    public String name;         // "Charisma"
-    public String shortDesc;    // "measuring force of personality"
+    public String name;
+    public String shortDesc;
 
-    /** JSON: List<DescriptionDto> – stores per-gamesystem descriptions */
     public String descriptionsJson;
 }

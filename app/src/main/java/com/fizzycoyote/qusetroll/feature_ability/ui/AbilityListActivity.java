@@ -67,7 +67,6 @@ public class AbilityListActivity extends AppCompatActivity {
                     .setText(list.size() + " abilities");
         });
 
-        // FAB → create custom ability
         findViewById(R.id.fab_create_ability).setOnClickListener(v ->
                 startActivity(new Intent(this, CustomAbilityCreateActivity.class)));
     }

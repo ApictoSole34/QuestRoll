@@ -31,7 +31,6 @@ public class AbilityListViewModel extends ViewModel {
 
     private final MutableLiveData<String> query = new MutableLiveData<>("");
 
-    // Merged list
     public final LiveData<List<CombinedAbility>> abilities;
 
     public AbilityListViewModel(AbilityDao abilityDao,
@@ -79,7 +78,6 @@ public class AbilityListViewModel extends ViewModel {
         executor.execute(() -> customAbilityDao.delete(entity));
     }
 
-    // --- Factory ---
     public static class Factory implements ViewModelProvider.Factory {
         private final AbilityDao a; private final CustomAbilityDao ca;
         private final SkillDao s;   private final CustomSkillDao cs;

@@ -1,7 +1,5 @@
 package com.fizzycoyote.qusetroll.core.models.open5e.ability.skill;
 
-import static androidx.room.ForeignKey.CASCADE;
-
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -23,12 +21,11 @@ import com.fizzycoyote.qusetroll.core.models.open5e.ability.AbilityEntity;
 public class SkillEntity {
     @PrimaryKey
     @NonNull
-    public String key;          // "deception", "stealth", …
+    public String key;
 
-    public String name;         // "Deception"
-    public String abilityKey;   // FK → AbilityEntity.key
-    public String documentKey;  // "core", "a5e-ag", …
+    public String name;
+    public String abilityKey;
+    public String documentKey;
 
-    /** JSON: List<DescriptionDto> */
     public String descriptionsJson;
 }

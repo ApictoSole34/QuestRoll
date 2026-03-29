@@ -1,7 +1,5 @@
 package com.fizzycoyote.qusetroll.feature_loading;
 
-import static com.fizzycoyote.qusetroll.core.repository.open5e.Resource.Status.LOADING;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;

@@ -33,7 +33,7 @@ public class SkillAdapter extends ListAdapter<CombinedSkill, SkillAdapter.ViewHo
 
                 @Override
                 public boolean areItemsTheSame(@NonNull CombinedSkill a, @NonNull CombinedSkill b) {
-                    return a.id.equals(b.id);           // zakładam, że masz pole id
+                    return a.id.equals(b.id);
                 }
 
                 @Override
@@ -58,7 +58,6 @@ public class SkillAdapter extends ListAdapter<CombinedSkill, SkillAdapter.ViewHo
         holder.bind(item, listener);
     }
 
-    // ==================== VIEW HOLDER ====================
     static class ViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView tvName;
@@ -68,7 +67,7 @@ public class SkillAdapter extends ListAdapter<CombinedSkill, SkillAdapter.ViewHo
         ViewHolder(View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tv_skill_name);
-            tvAbility = itemView.findViewById(R.id.tv_ability_name);      // <--- poprawione ID
+            tvAbility = itemView.findViewById(R.id.tv_ability_name);
             tvCustomBadge = itemView.findViewById(R.id.tv_custom_badge);
         }
 

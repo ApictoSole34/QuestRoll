@@ -14,15 +14,9 @@ public class CustomSkillEntity {
 
     public String description;
 
-    /**
-     * Key of the parent ability.
-     * - If parentIsCustom == false → matches AbilityEntity.key ("cha", "dex", …)
-     * - If parentIsCustom == true  → String.valueOf(CustomAbilityEntity.id)
-     */
     public String abilityKey;
     public boolean parentIsCustom;
 
-    /** Human-readable ability name, denormalized for easy display */
     public String abilityName;
 
     public long createdAt;

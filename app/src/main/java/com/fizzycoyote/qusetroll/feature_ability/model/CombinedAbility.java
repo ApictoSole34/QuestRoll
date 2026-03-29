@@ -5,8 +5,8 @@ import com.fizzycoyote.qusetroll.core.models.open5e.ability.AbilityEntity;
 
 public class CombinedAbility {
     public final String id;
-    public final String key;        // null if custom
-    public final long   customId;   // -1 if open5e
+    public final String key;
+    public final long   customId;
     public final String name;
     public final String shortDesc;
     public final boolean isCustom;

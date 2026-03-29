@@ -2,14 +2,9 @@ package com.fizzycoyote.qusetroll.core.models.open5e.ability;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
-import androidx.room.Embedded;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
-import androidx.room.Relation;
-import androidx.room.Transaction;
-
-import com.fizzycoyote.qusetroll.core.models.open5e.ability.skill.SkillEntity;
 
 import java.util.List;
 

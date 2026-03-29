@@ -43,7 +43,6 @@ public class SkillDetailActivity extends AppCompatActivity {
     private void populateUI(SkillEntity skill) {
         ((TextView) findViewById(R.id.tv_skill_name)).setText(skill.name);
 
-        // Ability chip – load ability name
         Open5eDatabase.getInstance(this).abilityDao()
                 .getByKey(skill.abilityKey)
                 .observe(this, ability -> {
@@ -53,7 +52,6 @@ public class SkillDetailActivity extends AppCompatActivity {
                     }
                 });
 
-        // Descriptions
         if (skill.descriptionsJson != null) {
             Type t = new TypeToken<List<AbilityDto.AbilityDescriptionDto>>(){}.getType();
             List<AbilityDto.AbilityDescriptionDto> descs =

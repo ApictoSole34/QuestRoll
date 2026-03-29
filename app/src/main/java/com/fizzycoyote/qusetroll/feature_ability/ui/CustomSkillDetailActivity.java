@@ -1,18 +1,8 @@
 package com.fizzycoyote.qusetroll.feature_ability.ui;
 
-import static android.content.Intent.getIntent;
-
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.PopupMenu;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fizzycoyote.qusetroll.R;
@@ -45,7 +35,6 @@ public class CustomSkillDetailActivity extends AppCompatActivity {
         skillDao = UserContentDatabase.getInstance(this).customSkillDao();
         executor = Open5eDatabase.getInstance(this).getQueryExecutor();
 
-        // 🔥 bind view raz (a nie findViewById 10x)
         tvName = findViewById(R.id.tv_skill_name);
         tvAbility = findViewById(R.id.tv_ability_name);
         tvDescription = findViewById(R.id.tv_skill_description);

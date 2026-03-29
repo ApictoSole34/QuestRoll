@@ -23,10 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-/**
- * Create OR edit a custom skill.
- * Optionally pre-fill the ability from intent extras (from AbilityDetailActivity).
- */
 public class CustomSkillCreateActivity extends AppCompatActivity {
 
     private CustomSkillDao skillDao;
@@ -40,7 +36,6 @@ public class CustomSkillCreateActivity extends AppCompatActivity {
     private long editId = -1;
     private CustomSkillEntity editing;
 
-    // Spinner data
     private final List<String>  abilityKeys     = new ArrayList<>();
     private final List<String>  abilityNames    = new ArrayList<>();
     private final List<Boolean> abilityIsCustom = new ArrayList<>();
@@ -64,7 +59,6 @@ public class CustomSkillCreateActivity extends AppCompatActivity {
 
         editId = getIntent().getLongExtra("CUSTOM_SKILL_ID", -1);
 
-        // Load abilities for spinner: open5e first, then custom
         loadAbilities(() -> {
             if (editId != -1) {
                 setTitle("Edit Skill");
@@ -73,7 +67,6 @@ public class CustomSkillCreateActivity extends AppCompatActivity {
                         editing = e;
                         etName.setText(e.name);
                         etDescription.setText(e.description);
-                        // Select matching spinner entry
                         for (int i = 0; i < abilityKeys.size(); i++) {
                             if (abilityKeys.get(i).equals(e.abilityKey)
                                     && abilityIsCustom.get(i) == e.parentIsCustom) {
@@ -85,7 +78,6 @@ public class CustomSkillCreateActivity extends AppCompatActivity {
                 });
             } else {
                 setTitle("New Custom Skill");
-                // Pre-select from intent if launched from AbilityDetailActivity
                 String presetKey      = getIntent().getStringExtra("PRESET_ABILITY_KEY");
                 boolean presetCustom  = getIntent().getBooleanExtra("PRESET_ABILITY_IS_CUSTOM", false);
                 if (presetKey != null) {
@@ -105,12 +97,11 @@ public class CustomSkillCreateActivity extends AppCompatActivity {
     }
 
     private void loadAbilities(Runnable onDone) {
-        // Observe both sources; build spinner once both arrive
         final boolean[] o5Done  = {false};
         final boolean[] cusDone = {false};
 
         abilityDao.getAll().observe(this, list -> {
-            if (o5Done[0]) return; // only first emission
+            if (o5Done[0]) return;
             o5Done[0] = true;
             for (AbilityEntity e : list) {
                 abilityKeys.add(e.key);

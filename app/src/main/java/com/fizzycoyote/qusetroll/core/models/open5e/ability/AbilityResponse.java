@@ -1,6 +1,5 @@
 package com.fizzycoyote.qusetroll.core.models.open5e.ability;
 
-import com.fizzycoyote.qusetroll.core.models.open5e.ApiResponse;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
