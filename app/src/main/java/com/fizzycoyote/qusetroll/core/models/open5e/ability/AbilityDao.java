@@ -1,5 +1,6 @@
 package com.fizzycoyote.qusetroll.core.models.open5e.ability;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Embedded;
 import androidx.room.Insert;
@@ -15,16 +16,17 @@ import java.util.List;
 @Dao
 public interface AbilityDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertAbilities(List<AbilityEntity> abilities);
+    void insertAll(List<AbilityEntity> list);
 
-    @Query("SELECT * FROM abilities WHERE 'key' = :key")
-    AbilityEntity getAbility(String key);
+    @Query("DELETE FROM abilities")
+    void deleteAll();
 
-    @Query("SELECT * FROM abilities")
-    List<AbilityEntity> getAllAbilitiesSync();
+    @Query("SELECT * FROM abilities ORDER BY name ASC")
+    LiveData<List<AbilityEntity>> getAll();
 
-    @Transaction
-    @Query("SELECT * FROM abilities WHERE `key` = :key")
-    AbilityWithSkills getAbilityWithSkills(String key);
+    @Query("SELECT * FROM abilities WHERE key = :key")
+    LiveData<AbilityEntity> getByKey(String key);
+
+    @Query("SELECT * FROM abilities WHERE key = :key")
+    AbilityEntity getByKeySync(String key);
 }
-

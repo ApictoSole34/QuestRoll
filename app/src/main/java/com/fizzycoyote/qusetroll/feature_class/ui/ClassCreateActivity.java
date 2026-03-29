@@ -288,40 +288,40 @@ public class ClassCreateActivity extends AppCompatActivity {
         viewModel.saveClass(entity);
     }
 
-    // ── DIALOGS
     private void showSavingThrowsDialog() {
         Open5eDatabase db = Open5eDatabase.getInstance(this);
-        db.getQueryExecutor().execute(() -> {
-            List<AbilityEntity> abilities = db.abilityDao().getAllAbilitiesSync();
+
+        db.abilityDao().getAll().observe(this, abilities -> {
+            if (abilities == null) return;
+
             Set<String> alreadySelected = viewModel.getSelectedSavingThrows().getValue();
 
-            boolean[] checkedItems = new boolean[abilities.size()];
             String[] names = new String[abilities.size()];
+            boolean[] checkedItems = new boolean[abilities.size()];
 
             for (int i = 0; i < abilities.size(); i++) {
-                names[i] = abilities.get(i).name;
-                checkedItems[i] = alreadySelected != null
-                        && alreadySelected.contains(abilities.get(i).key);
+                AbilityEntity ability = abilities.get(i);
+                names[i] = ability.name;
+                checkedItems[i] = alreadySelected != null && alreadySelected.contains(ability.key);
             }
 
-            runOnUiThread(() ->
-                    new AlertDialog.Builder(this)
-                            .setTitle("Select Saving Throws")
-                            .setMultiChoiceItems(names, checkedItems,
-                                    (dialog, which, isChecked) -> checkedItems[which] = isChecked)
-                            .setPositiveButton("OK", (dialog, which) -> {
-                                Set<String> result = new HashSet<>();
-                                for (int i = 0; i < abilities.size(); i++) {
-                                    if (checkedItems[i]) result.add(abilities.get(i).key);
-                                }
-                                viewModel.setSelectedSavingThrows(result);
-                            })
-                            .setNegativeButton("Cancel", null)
-                            .show()
-            );
+            new AlertDialog.Builder(this)
+                    .setTitle("Select Saving Throws")
+                    .setMultiChoiceItems(names, checkedItems, (dialog, which, isChecked) ->
+                            checkedItems[which] = isChecked)
+                    .setPositiveButton("OK", (dialog, which) -> {
+                        Set<String> result = new HashSet<>();
+                        for (int i = 0; i < abilities.size(); i++) {
+                            if (checkedItems[i]) {
+                                result.add(abilities.get(i).key);
+                            }
+                        }
+                        viewModel.setSelectedSavingThrows(result);
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
         });
     }
-
     // ── HELPERS
 
     private ArrayAdapter<CombinedClass> buildSubclassAdapter(List<CombinedClass> options) {

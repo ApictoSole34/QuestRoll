@@ -16,13 +16,19 @@ import com.fizzycoyote.qusetroll.core.models.open5e.ability.AbilityEntity;
                 entity = AbilityEntity.class,
                 parentColumns = "key",
                 childColumns = "abilityKey",
-                onDelete = CASCADE
+                onDelete = ForeignKey.CASCADE
         ),
-        indices = @Index("abilityKey")
+        indices = {@Index("abilityKey")}
 )
 public class SkillEntity {
-    @PrimaryKey @NonNull public String key;
-    @NonNull public String abilityKey;
-    public String name;
-    public String description;
+    @PrimaryKey
+    @NonNull
+    public String key;          // "deception", "stealth", …
+
+    public String name;         // "Deception"
+    public String abilityKey;   // FK → AbilityEntity.key
+    public String documentKey;  // "core", "a5e-ag", …
+
+    /** JSON: List<DescriptionDto> */
+    public String descriptionsJson;
 }

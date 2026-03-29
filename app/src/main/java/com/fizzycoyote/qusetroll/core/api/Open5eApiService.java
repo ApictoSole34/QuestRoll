@@ -60,4 +60,7 @@ public interface Open5eApiService {
 
     @GET("damagetypes/")
     Call<DamageTypeResponse> getDamageTypesPage(@Query("page") int page);
+
+    @GET("abilities/")
+    Call<AbilityResponse> getAbilitiesPage(@Query("page") int page);
 }

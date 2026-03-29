@@ -7,11 +7,13 @@ import androidx.room.PrimaryKey;
 
 @Entity(tableName = "abilities")
 public class AbilityEntity {
-    @PrimaryKey @NonNull @ColumnInfo(name = "key") public String key;
-    public String name;
-    public String description;
-    @ColumnInfo(name = "short_desc")
-    public String shortDesc;
-    @ColumnInfo(name = "document")
-    public String documentUrl;
+    @PrimaryKey
+    @NonNull
+    public String key;          // "cha", "dex", …
+
+    public String name;         // "Charisma"
+    public String shortDesc;    // "measuring force of personality"
+
+    /** JSON: List<DescriptionDto> – stores per-gamesystem descriptions */
+    public String descriptionsJson;
 }

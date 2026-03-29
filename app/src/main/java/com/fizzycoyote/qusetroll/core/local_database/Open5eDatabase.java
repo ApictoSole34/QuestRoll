@@ -74,9 +74,9 @@ import java.util.concurrent.Executors;
                 SpeciesEntity.class,
                 BackgroundEntity.class,
                 ItemEntity.class,
-                DamageTypeEntity.class
+                DamageTypeEntity.class,
         },
-        version = 30,
+        version = 31,
         exportSchema = false
 )
 @TypeConverters({GainedAtListConverter.class, TableDataListConverter.class, Converters.class})

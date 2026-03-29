@@ -8,6 +8,10 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
 import com.fizzycoyote.qusetroll.core.models.conventers.CustomConverters;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_ability.CustomAbilityDao;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_ability.CustomAbilityEntity;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_ability.CustomSkillDao;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_ability.CustomSkillEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_background.CustomBackgroundDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_background.CustomBackgroundEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.CustomCharacterClassDao;
@@ -45,8 +49,10 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellScho
         CustomSpeciesEntity.class,
         CustomBackgroundEntity.class,
         CustomItemEntity.class,
-        CustomDamageTypeEntity.class},
-        version = 20,
+        CustomDamageTypeEntity.class,
+        CustomAbilityEntity.class,
+        CustomSkillEntity.class},
+        version = 21,
         exportSchema = false
 )
 @TypeConverters({CustomConverters.class})
@@ -65,6 +71,9 @@ public abstract class UserContentDatabase extends RoomDatabase {
     public abstract CustomBackgroundDao customBackgroundDao();
     public abstract CustomItemDao customItemDao();
     public abstract CustomDamageTypeDao customDamageTypeDao();
+    public abstract CustomAbilityDao customAbilityDao();
+    public abstract CustomSkillDao customSkillDao();
+
 
 
 

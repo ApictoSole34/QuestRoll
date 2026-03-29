@@ -663,24 +663,49 @@ public class Open5eRepository {
         }, executor);
     }
 
-    private CompletableFuture<Void> processAbilities(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
+    private CompletableFuture<Void> processAbilities(AtomicInteger completed, int total,
+                                                     MutableLiveData<Resource<Boolean>> result) {
         return CompletableFuture.runAsync(() -> {
             try {
-                Response<AbilityResponse> response = api.getAbilities().execute();
-                List<AbilityDto> dtos = response.body().getResults();
+                List<AbilityEntity> allAbilities = new ArrayList<>();
+                List<SkillEntity>   allSkills    = new ArrayList<>();
+                int page = 1;
+                boolean hasMore = true;
+                int maxRetries = 3;
 
-                List<AbilityEntity> abilities = dtos.stream()
-                        .map(AbilityMapper::toEntity)
-                        .collect(Collectors.toList());
+                while (hasMore) {
+                    Response<AbilityResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getAbilitiesPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
 
-                List<SkillEntity> skills = dtos.stream()
-                        .flatMap(dto -> AbilityMapper.toSkillEntities(dto).stream())
-                        .collect(Collectors.toList());
+                    if (response == null || !response.isSuccessful() || response.body() == null) {
+                        updateProgress(completed, total, result);
+                        return;
+                    }
 
-                Executors.newSingleThreadExecutor().execute(() -> {
-                    abilityDao.insertAbilities(abilities);
-                    skillDao.insertSkills(skills);
-                });
+                    AbilityResponse body = response.body();
+                    for (AbilityDto dto : body.results) {
+                        allAbilities.add(AbilityMapper.dtoToEntity(dto));
+                        allSkills.addAll(AbilityMapper.dtosToSkillEntities(dto));
+                    }
+
+                    hasMore = body.next != null;
+                    page++;
+                }
+
+                if (!allAbilities.isEmpty()) {
+                    skillDao.deleteAll();   // delete skills first (FK)
+                    abilityDao.deleteAll();
+                    abilityDao.insertAll(allAbilities);
+                    skillDao.insertAll(allSkills);
+                }
 
                 updateProgress(completed, total, result);
 
