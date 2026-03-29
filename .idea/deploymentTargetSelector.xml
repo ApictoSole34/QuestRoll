@@ -29,9 +29,6 @@
       <SelectionState runConfigName="LanguageRepositoryTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="CustomLanguageCreateViewModelTest">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="CombinedLanguageTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
@@ -39,6 +36,9 @@
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="CustomSpeciesCreateActivity">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="DamageTypeListActivity">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

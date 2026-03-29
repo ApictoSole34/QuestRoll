@@ -30,6 +30,8 @@ import com.fizzycoyote.qusetroll.core.models.open5e.character_class.saving_throw
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.table_data.TableDataListConverter;
 import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.damage_type.DamageTypeDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.damage_type.DamageTypeEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemDao;
@@ -72,8 +74,9 @@ import java.util.concurrent.Executors;
                 SpeciesEntity.class,
                 BackgroundEntity.class,
                 ItemEntity.class,
+                DamageTypeEntity.class
         },
-        version = 29,
+        version = 30,
         exportSchema = false
 )
 @TypeConverters({GainedAtListConverter.class, TableDataListConverter.class, Converters.class})
@@ -97,6 +100,8 @@ public abstract class Open5eDatabase extends RoomDatabase {
     public abstract SpeciesDao speciesDao();
     public abstract BackgroundDao backgroundDao();
     public abstract ItemDao itemDao();
+    public abstract DamageTypeDao damageTypeDao();
+
 
 
     public static Open5eDatabase getInstance(Context context) {

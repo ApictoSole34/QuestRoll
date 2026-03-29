@@ -13,6 +13,7 @@ import com.fizzycoyote.qusetroll.feature_background.ui.BackgroundListActivity;
 import com.fizzycoyote.qusetroll.feature_character.ui.list.CharacterListActivity;
 import com.fizzycoyote.qusetroll.feature_class.ui.ClassListActivity;
 import com.fizzycoyote.qusetroll.feature_creature.ui.CreatureListActivity;
+import com.fizzycoyote.qusetroll.feature_damage_types.ui.DamageTypeListActivity;
 import com.fizzycoyote.qusetroll.feature_dice.ui.RollDiceActivity;
 import com.fizzycoyote.qusetroll.feature_item.ui.ItemListActivity;
 import com.fizzycoyote.qusetroll.feature_language.ui.language_list.LanguageListActivity;
@@ -68,6 +69,11 @@ public class MainActivity extends AppCompatActivity {
     public void openItemListActivity(View view) {
         startActivity(new Intent(this, ItemListActivity.class));
     }
+
+    public void openDamageTypeListActivity(View view) {
+        startActivity(new Intent(this, DamageTypeListActivity.class));
+    }
+
 
     // ── DATA MANAGEMENT
 

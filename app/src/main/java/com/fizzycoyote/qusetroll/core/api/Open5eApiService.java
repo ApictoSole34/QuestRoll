@@ -4,6 +4,7 @@ import com.fizzycoyote.qusetroll.core.models.open5e.ability.AbilityResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.background.BackgroundResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.CharacterClassResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.damage_type.DamageTypeResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.item.ItemResponse;
@@ -56,4 +57,7 @@ public interface Open5eApiService {
 
     @GET("items/")
     Call<ItemResponse> getItemsPage(@Query("page") int page);
+
+    @GET("damagetypes/")
+    Call<DamageTypeResponse> getDamageTypesPage(@Query("page") int page);
 }

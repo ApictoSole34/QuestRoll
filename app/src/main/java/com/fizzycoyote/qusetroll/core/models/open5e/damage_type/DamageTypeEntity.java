@@ -7,9 +7,12 @@ import androidx.room.PrimaryKey;
 
 @Entity(tableName = "damage_types")
 public class DamageTypeEntity {
-    @PrimaryKey @NonNull public String key;
-    public String url;
+    @PrimaryKey
+    @NonNull
+    public String key;
+
     public String name;
-    public String desc;
-    public String documentUrl;
+    public String url;
+    public String description;
+    public String document;
 }

@@ -94,6 +94,14 @@
             android:text="Items" />
 
         <Button
+            android:id="@+id/openDamageType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:onClick="openDamageTypeListActivity"
+            android:text="Damage Types" />
+
+        <Button
             android:id="@+id/btnManageData"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

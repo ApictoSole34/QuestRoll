@@ -13,7 +13,8 @@ public enum DataSection {
     CREATURES("Creatures"),
     SPECIES("Species"),
     BACKGROUNDS("Backgrounds"),
-    ITEMS("Items"),;
+    ITEMS("Items"),
+    DAMAGE_TYPES("Damage Types");
 
     public final String displayName;
 

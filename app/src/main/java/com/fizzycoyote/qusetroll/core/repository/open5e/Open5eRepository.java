@@ -30,6 +30,10 @@ import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureMapper;
 import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.damage_type.DamageTypeDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.damage_type.DamageTypeEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.damage_type.DamageTypeMapper;
+import com.fizzycoyote.qusetroll.core.models.open5e.damage_type.DamageTypeResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentMapper;
@@ -98,6 +102,7 @@ public class Open5eRepository {
     private final SpeciesDao speciesDao;
     private final BackgroundDao backgroundDao;
     private final ItemDao itemDao;
+    private final DamageTypeDao damageTypeDao;
     private final Executor executor;
 
     public Open5eRepository(Open5eApiService api,
@@ -118,6 +123,7 @@ public class Open5eRepository {
                             SpeciesDao speciesDao,
                             BackgroundDao backgroundDao,
                             ItemDao itemDao,
+                            DamageTypeDao damageTypeDao,
                             Executor executor) {
         this.api = api;
         this.publisherDao = publisherDao;
@@ -137,6 +143,7 @@ public class Open5eRepository {
         this.speciesDao = speciesDao;
         this.backgroundDao = backgroundDao;
         this.itemDao = itemDao;
+        this.damageTypeDao = damageTypeDao;
         this.executor = executor;
     }
 
@@ -146,7 +153,7 @@ public class Open5eRepository {
 
         executor.execute(() -> {
             try {
-                int totalSections = 13;
+                int totalSections = DataSection.values().length;
                 AtomicInteger completed = new AtomicInteger(0);
 
                 List<CompletableFuture<Void>> futures = new ArrayList<>();
@@ -164,6 +171,7 @@ public class Open5eRepository {
                 futures.add(processSpecies(completed, totalSections, result));
                 futures.add(processBackgrounds(completed, totalSections, result));
                 futures.add(processItems(completed, totalSections, result));
+                futures.add(processDamageTypes(completed, totalSections, result));
 
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
@@ -217,6 +225,9 @@ public class Open5eRepository {
                     futures.add(processBackgrounds(completed, totalSections, result));
                 if (sections.contains(DataSection.ITEMS))
                     futures.add(processItems(completed, totalSections, result));
+                if (sections.contains(DataSection.DAMAGE_TYPES))
+                    futures.add(processDamageTypes(completed, totalSections, result));
+
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                         .thenRun(() -> result.postValue(Resource.success(true)))
@@ -231,6 +242,61 @@ public class Open5eRepository {
         });
 
         return result;
+    }
+
+    private CompletableFuture<Void> processDamageTypes(AtomicInteger completed, int total,
+                                                     MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                List<DamageTypeEntity> allTypes = new ArrayList<>();
+                int page = 1;
+                boolean hasMore = true;
+                int maxRetries = 3;
+
+                while (hasMore) {
+                    Response<DamageTypeResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getDamageTypesPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            Log.w("Repository", "Retry " + retry + " for damage types page " + page);
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+
+                    if (response == null || !response.isSuccessful() || response.body() == null) {
+                        Log.e("Repository", "Failed to fetch damage types page " + page);
+                        updateProgress(completed, total, result);
+                        return;
+                    }
+
+                    DamageTypeResponse body = response.body();
+                    List<DamageTypeEntity> entities = body.results.stream()
+                            .map(DamageTypeMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+
+                    allTypes.addAll(entities);
+                    Log.d("Repository", "Damage types page " + page + ": " + entities.size()
+                            + " (total: " + allTypes.size() + "/" + body.count + ")");
+
+                    hasMore = body.next != null;
+                    page++;
+                }
+
+                if (!allTypes.isEmpty()) {
+                    damageTypeDao.deleteAll();
+                    damageTypeDao.insertAll(allTypes);
+                    Log.d("Repository", "Saved " + allTypes.size() + " damage types");
+                }
+
+                updateProgress(completed, total, result);
+
+            } catch (Exception e) {
+                handleError("Damage Types", e);
+            }
+        }, executor);
     }
 
     private CompletableFuture<Void> processItems(AtomicInteger completed, int total,
