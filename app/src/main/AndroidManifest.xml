@@ -44,6 +44,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".feature_ability.ui.AbilityListActivity"/>
+        <activity android:name=".feature_ability.ui.AbilityDetailActivity"/>
+        <activity android:name=".feature_ability.ui.CustomAbilityCreateActivity"/>
+        <activity android:name=".feature_ability.ui.CustomAbilityDetailActivity"/>
+        <activity android:name=".feature_ability.ui.CustomSkillCreateActivity"/>
+        <activity android:name=".feature_ability.ui.CustomSkillDetailActivity"/>
+        <activity android:name=".feature_ability.ui.SkillDetailActivity"/>
         <activity android:name=".feature_damage_types.ui.DamageTypeListActivity"/>
         <activity android:name=".feature_damage_types.ui.DamageTypeDetailActivity"/>
         <activity android:name=".feature_damage_types.ui.CustomDamageTypeCreateActivity"/>
