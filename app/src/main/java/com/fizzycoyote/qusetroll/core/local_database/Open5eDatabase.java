@@ -16,6 +16,8 @@ import com.fizzycoyote.qusetroll.core.models.open5e.ability.AbilityDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.ability.AbilityEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.ability.skill.SkillDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.ability.skill.SkillEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.alignment.AlignmentDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.alignment.AlignmentEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.background.BackgroundDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.background.BackgroundEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.CharacterClassDao;
@@ -75,8 +77,9 @@ import java.util.concurrent.Executors;
                 BackgroundEntity.class,
                 ItemEntity.class,
                 DamageTypeEntity.class,
+                AlignmentEntity.class,
         },
-        version = 31,
+        version = 33,
         exportSchema = false
 )
 @TypeConverters({GainedAtListConverter.class, TableDataListConverter.class, Converters.class})
@@ -101,8 +104,7 @@ public abstract class Open5eDatabase extends RoomDatabase {
     public abstract BackgroundDao backgroundDao();
     public abstract ItemDao itemDao();
     public abstract DamageTypeDao damageTypeDao();
-
-
+    public abstract AlignmentDao alignmentDao();
 
     public static Open5eDatabase getInstance(Context context) {
         if (INSTANCE == null) {

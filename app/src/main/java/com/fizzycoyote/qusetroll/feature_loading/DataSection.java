@@ -14,7 +14,8 @@ public enum DataSection {
     SPECIES("Species"),
     BACKGROUNDS("Backgrounds"),
     ITEMS("Items"),
-    DAMAGE_TYPES("Damage Types");
+    DAMAGE_TYPES("Damage Types"),
+    ALIGNMENTS("Alignments");
 
     public final String displayName;
 

@@ -12,6 +12,8 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_ability.CustomAbility
 import com.fizzycoyote.qusetroll.core.models.custom.custom_ability.CustomAbilityEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_ability.CustomSkillDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_ability.CustomSkillEntity;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_alignment.CustomAlignmentDao;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_alignment.CustomAlignmentEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_background.CustomBackgroundDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_background.CustomBackgroundEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.CustomCharacterClassDao;
@@ -51,8 +53,9 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellScho
         CustomItemEntity.class,
         CustomDamageTypeEntity.class,
         CustomAbilityEntity.class,
-        CustomSkillEntity.class},
-        version = 21,
+        CustomSkillEntity.class,
+        CustomAlignmentEntity.class},
+        version = 23,
         exportSchema = false
 )
 @TypeConverters({CustomConverters.class})
@@ -73,6 +76,7 @@ public abstract class UserContentDatabase extends RoomDatabase {
     public abstract CustomDamageTypeDao customDamageTypeDao();
     public abstract CustomAbilityDao customAbilityDao();
     public abstract CustomSkillDao customSkillDao();
+    public abstract CustomAlignmentDao customAlignmentDao();
 
 
 

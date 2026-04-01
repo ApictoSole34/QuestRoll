@@ -10,6 +10,10 @@ import com.fizzycoyote.qusetroll.core.models.open5e.ability.AbilityMapper;
 import com.fizzycoyote.qusetroll.core.models.open5e.ability.AbilityResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.ability.skill.SkillDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.ability.skill.SkillEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.alignment.AlignmentDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.alignment.AlignmentEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.alignment.AlignmentMapper;
+import com.fizzycoyote.qusetroll.core.models.open5e.alignment.AlignmentResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.background.BackgroundDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.background.BackgroundEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.background.BackgroundMapper;
@@ -103,6 +107,7 @@ public class Open5eRepository {
     private final BackgroundDao backgroundDao;
     private final ItemDao itemDao;
     private final DamageTypeDao damageTypeDao;
+    private final AlignmentDao alignmentDao;
     private final Executor executor;
 
     public Open5eRepository(Open5eApiService api,
@@ -124,6 +129,7 @@ public class Open5eRepository {
                             BackgroundDao backgroundDao,
                             ItemDao itemDao,
                             DamageTypeDao damageTypeDao,
+                            AlignmentDao alignmentDao,
                             Executor executor) {
         this.api = api;
         this.publisherDao = publisherDao;
@@ -144,6 +150,7 @@ public class Open5eRepository {
         this.backgroundDao = backgroundDao;
         this.itemDao = itemDao;
         this.damageTypeDao = damageTypeDao;
+        this.alignmentDao = alignmentDao;
         this.executor = executor;
     }
 
@@ -172,7 +179,7 @@ public class Open5eRepository {
                 futures.add(processBackgrounds(completed, totalSections, result));
                 futures.add(processItems(completed, totalSections, result));
                 futures.add(processDamageTypes(completed, totalSections, result));
-
+                futures.add(processAlignments(completed, totalSections, result));
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                         .thenRun(() -> result.postValue(Resource.success(true)))
@@ -227,6 +234,8 @@ public class Open5eRepository {
                     futures.add(processItems(completed, totalSections, result));
                 if (sections.contains(DataSection.DAMAGE_TYPES))
                     futures.add(processDamageTypes(completed, totalSections, result));
+                if (sections.contains(DataSection.ALIGNMENTS))
+                    futures.add(processAlignments(completed, totalSections, result));
 
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
@@ -242,6 +251,61 @@ public class Open5eRepository {
         });
 
         return result;
+    }
+
+    private CompletableFuture<Void> processAlignments(AtomicInteger completed, int total,
+                                                      MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                List<AlignmentEntity> allAlignments = new ArrayList<>();
+                int page = 1;
+                boolean hasMore = true;
+                int maxRetries = 3;
+
+                while (hasMore) {
+                    Response<AlignmentResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getAlignmentsPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            Log.w("Repository", "Retry " + retry + " for alignments page " + page);
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+
+                    if (response == null || !response.isSuccessful() || response.body() == null) {
+                        Log.e("Repository", "Failed to fetch alignments page " + page);
+                        updateProgress(completed, total, result);
+                        return;
+                    }
+
+                    AlignmentResponse body = response.body();
+                    List<AlignmentEntity> entities = body.results.stream()
+                            .map(AlignmentMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+
+                    allAlignments.addAll(entities);
+                    Log.d("Repository", "Alignments page " + page + ": " + entities.size()
+                            + " (total: " + allAlignments.size() + "/" + body.count + ")");
+
+                    hasMore = body.next != null;
+                    page++;
+                }
+
+                if (!allAlignments.isEmpty()) {
+                    alignmentDao.deleteAll();
+                    alignmentDao.insertAll(allAlignments);
+                    Log.d("Repository", "Saved " + allAlignments.size() + " alignments");
+                }
+
+                updateProgress(completed, total, result);
+
+            } catch (Exception e) {
+                handleError("Alignments", e);
+            }
+        }, executor);
     }
 
     private CompletableFuture<Void> processDamageTypes(AtomicInteger completed, int total,

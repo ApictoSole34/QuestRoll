@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatDelegate;
 
 import com.fizzycoyote.qusetroll.R;
 import com.fizzycoyote.qusetroll.feature_ability.ui.AbilityListActivity;
+import com.fizzycoyote.qusetroll.feature_alignment.ui.AlignmentListActivity;
 import com.fizzycoyote.qusetroll.feature_background.ui.BackgroundListActivity;
 import com.fizzycoyote.qusetroll.feature_character.ui.list.CharacterListActivity;
 import com.fizzycoyote.qusetroll.feature_class.ui.ClassListActivity;
@@ -77,6 +78,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void openAbilityListActivity(View view) {
         startActivity(new Intent(this, AbilityListActivity.class));
+    }
+
+    public void openAlignmentListActivity(View view) {
+        startActivity(new Intent(this, AlignmentListActivity.class));
     }
 
 
