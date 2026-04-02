@@ -66,6 +66,10 @@ import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherMapper;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.service.ServiceDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.service.ServiceEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.service.ServiceMapper;
+import com.fizzycoyote.qusetroll.core.models.open5e.service.ServiceResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.species.SpeciesDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.species.SpeciesEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.species.SpeciesMapper;
@@ -118,6 +122,7 @@ public class Open5eRepository {
     private final AlignmentDao alignmentDao;
     private final ItemRarityDao itemRarityDao;
     private final WeaponPropertyDao weaponPropertyDao;
+    private final ServiceDao serviceDao;
     private final Executor executor;
 
     public Open5eRepository(Open5eApiService api,
@@ -142,6 +147,7 @@ public class Open5eRepository {
                             AlignmentDao alignmentDao,
                             ItemRarityDao itemRarityDao,
                             WeaponPropertyDao weaponPropertyDao,
+                            ServiceDao serviceDao,
                             Executor executor) {
         this.api = api;
         this.publisherDao = publisherDao;
@@ -165,6 +171,7 @@ public class Open5eRepository {
         this.alignmentDao = alignmentDao;
         this.itemRarityDao = itemRarityDao;
         this.weaponPropertyDao = weaponPropertyDao;
+        this.serviceDao = serviceDao;
         this.executor = executor;
     }
 
@@ -196,6 +203,7 @@ public class Open5eRepository {
                 futures.add(processAlignments(completed, totalSections, result));
                 futures.add(processItemRarities(completed, totalSections, result));
                 futures.add(processWeaponProperties(completed, totalSections, result));
+                futures.add(processServices(completed, totalSections, result));
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                         .thenRun(() -> result.postValue(Resource.success(true)))
@@ -256,6 +264,8 @@ public class Open5eRepository {
                     futures.add(processItemRarities(completed, totalSections, result));
                 if (sections.contains(DataSection.WEAPON_PROPERTIES))
                     futures.add(processWeaponProperties(completed, totalSections, result));
+                if (sections.contains(DataSection.SERVICES))
+                    futures.add(processServices(completed, totalSections, result));
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                         .thenRun(() -> result.postValue(Resource.success(true)))
@@ -270,6 +280,30 @@ public class Open5eRepository {
         });
 
         return result;
+    }
+
+    private CompletableFuture<Void> processServices(AtomicInteger completed, int total,
+                                                    MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                Response<ServiceResponse> response = api.getServices().execute();
+                if (!response.isSuccessful() || response.body() == null) {
+                    Log.e("Repository", "Failed to fetch services");
+                    updateProgress(completed, total, result);
+                    return;
+                }
+                List<ServiceEntity> entities = response.body().results.stream()
+                        .map(ServiceMapper::dtoToEntity)
+                        .collect(Collectors.toList());
+
+                serviceDao.deleteAll();
+                serviceDao.insertAll(entities);
+                Log.d("Repository", "Saved " + entities.size() + " services");
+                updateProgress(completed, total, result);
+            } catch (Exception e) {
+                handleError("Services", e);
+            }
+        }, executor);
     }
 
     private CompletableFuture<Void> processWeaponProperties(AtomicInteger completed, int total,

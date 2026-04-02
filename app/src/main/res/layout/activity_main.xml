@@ -134,6 +134,14 @@
             android:text="Weapon Properties" />
 
         <Button
+            android:id="@+id/itemServiceListActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:onClick="openServiceListActivity"
+            android:text="Services" />
+
+        <Button
             android:id="@+id/btnManageData"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

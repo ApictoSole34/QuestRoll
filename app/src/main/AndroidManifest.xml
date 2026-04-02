@@ -44,6 +44,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".feature_service.ui.ServiceListActivity"/>
+        <activity android:name=".feature_service.ui.ServiceDetailActivity"/>
+        <activity android:name=".feature_service.ui.CustomServiceCreateActivity"/>
+        <activity android:name=".feature_service.ui.CustomServiceDetailActivity"/>
         <activity android:name=".feature_item.weapon_property.ui.WeaponPropertyListActivity"/>
         <activity android:name=".feature_item.weapon_property.ui.WeaponPropertyDetailActivity"/>
         <activity android:name=".feature_item.weapon_property.ui.CustomWeaponPropertyCreateActivity"/>

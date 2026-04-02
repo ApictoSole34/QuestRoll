@@ -13,6 +13,7 @@ import com.fizzycoyote.qusetroll.core.models.open5e.item_rarity.ItemRarityRespon
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.service.ServiceResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.species.SpeciesResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell.SpellResponse;
@@ -76,4 +77,7 @@ public interface Open5eApiService {
 
     @GET("weaponproperties/")
     Call<WeaponPropertyResponse> getWeaponProperties();
+
+    @GET("services/")
+    Call<ServiceResponse> getServices();
 }

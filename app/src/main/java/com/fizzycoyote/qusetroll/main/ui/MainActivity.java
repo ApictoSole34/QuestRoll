@@ -22,6 +22,7 @@ import com.fizzycoyote.qusetroll.feature_item.ui.ItemListActivity;
 import com.fizzycoyote.qusetroll.feature_item.weapon_property.ui.WeaponPropertyListActivity;
 import com.fizzycoyote.qusetroll.feature_language.ui.language_list.LanguageListActivity;
 import com.fizzycoyote.qusetroll.feature_loading.LoadingActivity;
+import com.fizzycoyote.qusetroll.feature_service.ui.ServiceListActivity;
 import com.fizzycoyote.qusetroll.feature_species.ui.SpeciesListActivity;
 import com.fizzycoyote.qusetroll.feature_spell.ui.SpellListActivity;
 
@@ -92,6 +93,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void openWeaponPropertyListActivity(View view) {
         startActivity(new Intent(this, WeaponPropertyListActivity.class));
+    }
+
+    public void openServiceListActivity(View view) {
+        startActivity(new Intent(this, ServiceListActivity.class));
     }
 
     // ── DATA MANAGEMENT
