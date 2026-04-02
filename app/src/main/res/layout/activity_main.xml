@@ -150,6 +150,14 @@
             android:text="Environments" />
 
         <Button
+            android:id="@+id/itemRulesetListActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:onClick="openRulesetListActivity"
+            android:text="Rulesets" />
+
+        <Button
             android:id="@+id/btnManageData"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

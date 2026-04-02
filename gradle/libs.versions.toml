@@ -61,6 +61,7 @@ compiler-v4151 = { module = "com.github.bumptech.glide:compiler", version.ref = 
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 core = { module = "io.noties.markwon:core", version.ref = "core" }
 edmodo-android-image-cropper = { module = "com.theartofdev.edmodo:android-image-cropper", version.ref = "androidImageCropperVersion" }
+ext-tables = { module = "io.noties.markwon:ext-tables", version.ref = "core" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 #noinspection SimilarGradleDependency
 glide-v4151 = { module = "com.github.bumptech.glide:glide", version.ref = "glideVersion" }

@@ -70,6 +70,16 @@ import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherMapper;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.rule.RuleDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.rule.RuleDto;
+import com.fizzycoyote.qusetroll.core.models.open5e.rule.RuleEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.rule.RuleMapper;
+import com.fizzycoyote.qusetroll.core.models.open5e.rule.RuleResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.rule_set.RulesetDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.rule_set.RulesetDto;
+import com.fizzycoyote.qusetroll.core.models.open5e.rule_set.RulesetEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.rule_set.RulesetMapper;
+import com.fizzycoyote.qusetroll.core.models.open5e.rule_set.RulesetResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.service.ServiceDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.service.ServiceEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.service.ServiceMapper;
@@ -128,6 +138,8 @@ public class Open5eRepository {
     private final WeaponPropertyDao weaponPropertyDao;
     private final ServiceDao serviceDao;
     private final EnvironmentDao environmentDao;
+    private final RuleDao ruleDao;
+    private final RulesetDao rulesetDao;
     private final Executor executor;
 
     public Open5eRepository(Open5eApiService api,
@@ -154,6 +166,8 @@ public class Open5eRepository {
                             WeaponPropertyDao weaponPropertyDao,
                             ServiceDao serviceDao,
                             EnvironmentDao environmentDao,
+                            RuleDao ruleDao,
+                            RulesetDao rulesetDao,
                             Executor executor) {
         this.api = api;
         this.publisherDao = publisherDao;
@@ -179,6 +193,8 @@ public class Open5eRepository {
         this.weaponPropertyDao = weaponPropertyDao;
         this.serviceDao = serviceDao;
         this.environmentDao = environmentDao;
+        this.ruleDao = ruleDao;
+        this.rulesetDao = rulesetDao;
         this.executor = executor;
     }
 
@@ -212,6 +228,8 @@ public class Open5eRepository {
                 futures.add(processWeaponProperties(completed, totalSections, result));
                 futures.add(processServices(completed, totalSections, result));
                 futures.add(processEnvironments(completed, totalSections, result));
+                futures.add(processRules(completed, totalSections, result));
+                futures.add(processRulesets(completed, totalSections, result));
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                         .thenRun(() -> result.postValue(Resource.success(true)))
@@ -276,6 +294,10 @@ public class Open5eRepository {
                     futures.add(processServices(completed, totalSections, result));
                 if (sections.contains(DataSection.ENVIRONMENTS))
                     futures.add(processEnvironments(completed, totalSections, result));
+                if (sections.contains(DataSection.RULES))
+                    futures.add(processRules(completed, totalSections, result));
+                if (sections.contains(DataSection.RULESETS))
+                    futures.add(processRulesets(completed, totalSections, result));
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                         .thenRun(() -> result.postValue(Resource.success(true)))
@@ -290,6 +312,121 @@ public class Open5eRepository {
         });
 
         return result;
+    }
+
+    private CompletableFuture<Void> processRulesets(AtomicInteger completed, int total,
+                                                    MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                List<RulesetEntity> allRulesets = new ArrayList<>();
+                List<RuleEntity> allRules = new ArrayList<>();
+                int page = 1;
+                boolean hasMore = true;
+                int maxRetries = 3;
+
+                while (hasMore) {
+                    Response<RulesetResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getRulesetsPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            Log.w("Repository", "Retry " + retry + " for rulesets page " + page);
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+
+                    if (response == null || !response.isSuccessful() || response.body() == null) {
+                        Log.e("Repository", "Failed to fetch rulesets page " + page);
+                        updateProgress(completed, total, result);
+                        return;
+                    }
+
+                    RulesetResponse body = response.body();
+                    for (RulesetDto dto : body.results) {
+                        allRulesets.add(RulesetMapper.dtoToEntity(dto));
+
+                        if (dto.rules != null) {
+                            for (RuleDto ruleDto : dto.rules) {
+                                RuleEntity rule = RuleMapper.dtoToEntity(ruleDto);
+                                rule.rulesetKey = dto.key;
+                                allRules.add(rule);
+                            }
+                        }
+                    }
+
+                    Log.d("Repository", "Rulesets page " + page + ": " + body.results.size()
+                            + " rulesets, total rules so far: " + allRules.size());
+
+                    hasMore = body.next != null;
+                    page++;
+                }
+
+                if (!allRulesets.isEmpty()) {
+                    rulesetDao.deleteAll();
+                    rulesetDao.insertAll(allRulesets);
+                    Log.d("Repository", "Saved " + allRulesets.size() + " rulesets");
+                }
+                if (!allRules.isEmpty()) {
+                    ruleDao.deleteAll();
+                    ruleDao.insertAll(allRules);
+                    Log.d("Repository", "Saved " + allRules.size() + " rules");
+                }
+
+                updateProgress(completed, total, result);
+
+            } catch (Exception e) {
+                handleError("Rulesets", e);
+            }
+        }, executor);
+    }
+
+    private CompletableFuture<Void> processRules(AtomicInteger completed, int total,
+                                                 MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                List<RuleEntity> allRules = new ArrayList<>();
+                int page = 1;
+                boolean hasMore = true;
+                int maxRetries = 3;
+                while (hasMore) {
+                    Response<RuleResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getRulesPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            Log.w("Repository", "Retry " + retry + " for rules page " + page);
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+                    if (response == null || !response.isSuccessful() || response.body() == null) {
+                        Log.e("Repository", "Failed to fetch rules page " + page);
+                        updateProgress(completed, total, result);
+                        return;
+                    }
+                    RuleResponse body = response.body();
+                    List<RuleEntity> entities = body.results.stream()
+                            .map(RuleMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    allRules.addAll(entities);
+                    Log.d("Repository", "Rules page " + page + ": " + entities.size()
+                            + " (total: " + allRules.size() + "/" + body.count + ")");
+                    hasMore = body.next != null;
+                    page++;
+                }
+                if (!allRules.isEmpty()) {
+                    ruleDao.deleteAll();
+                    ruleDao.insertAll(allRules);
+                    Log.d("Repository", "Saved " + allRules.size() + " rules");
+                }
+                updateProgress(completed, total, result);
+            } catch (Exception e) {
+                handleError("Rules", e);
+            }
+        }, executor);
     }
 
     private CompletableFuture<Void> processEnvironments(AtomicInteger completed, int total,

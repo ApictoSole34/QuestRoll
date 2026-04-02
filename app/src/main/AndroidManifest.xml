@@ -44,6 +44,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".feature_rule.rule_set.ui.RulesetListActivity"/>
+        <activity android:name=".feature_rule.rule.ui.RuleDetailActivity"/>
+        <activity android:name=".feature_rule.rule.ui.RuleListActivity"/>
         <activity android:name=".feature_environment.ui.EnvironmentListActivity"/>
         <activity android:name=".feature_environment.ui.EnvironmentDetailActivity"/>
         <activity android:name=".feature_environment.ui.CustomEnvironmentCreateActivity"/>

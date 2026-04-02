@@ -50,6 +50,10 @@ import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.rule.RuleDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.rule.RuleEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.rule_set.RulesetDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.rule_set.RulesetEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.service.ServiceDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.service.ServiceEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.species.SpeciesDao;
@@ -90,8 +94,10 @@ import java.util.concurrent.Executors;
                 WeaponPropertyEntity.class,
                 ServiceEntity.class,
                 EnvironmentEntity.class,
+                RuleEntity.class,
+                RulesetEntity.class
         },
-        version = 37,
+        version = 39,
         exportSchema = false
 )
 @TypeConverters({GainedAtListConverter.class, TableDataListConverter.class, Converters.class})
@@ -121,6 +127,8 @@ public abstract class Open5eDatabase extends RoomDatabase {
     public abstract WeaponPropertyDao weaponPropertyDao();
     public abstract ServiceDao serviceDao();
     public abstract EnvironmentDao environmentDao();
+    public abstract RuleDao ruleDao();
+    public abstract RulesetDao rulesetDao();
 
     public static Open5eDatabase getInstance(Context context) {
         if (INSTANCE == null) {

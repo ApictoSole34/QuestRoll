@@ -49,6 +49,7 @@ android {
 
 dependencies {
 
+    implementation libs.ext.tables
     implementation libs.core
     implementation libs.androidx.appcompat.v161
     implementation libs.material

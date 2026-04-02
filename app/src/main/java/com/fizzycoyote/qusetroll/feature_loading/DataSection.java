@@ -19,7 +19,9 @@ public enum DataSection {
     ITEM_RARITIES("Item Rarities"),
     WEAPON_PROPERTIES("Weapon Properties"),
     SERVICES("Services"),
-    ENVIRONMENTS("Environments");
+    ENVIRONMENTS("Environments"),
+    RULES("Rules"),
+    RULESETS("Rule Sets");
 
     public final String displayName;
 

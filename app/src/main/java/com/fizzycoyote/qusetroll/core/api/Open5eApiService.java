@@ -14,6 +14,8 @@ import com.fizzycoyote.qusetroll.core.models.open5e.item_rarity.ItemRarityRespon
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.rule.RuleResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.rule_set.RulesetResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.service.ServiceResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.species.SpeciesResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolResponse;
@@ -84,4 +86,10 @@ public interface Open5eApiService {
 
     @GET("environments/")
     Call<EnvironmentResponse> getEnvironmentsPage(@Query("page") int page);
+
+    @GET("rulesets/")
+    Call<RulesetResponse> getRulesetsPage(@Query("page") int page);
+
+    @GET("rules/")
+    Call<RuleResponse> getRulesPage(@Query("page") int page);
 }
