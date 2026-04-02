@@ -16,7 +16,8 @@ public enum DataSection {
     ITEMS("Items"),
     DAMAGE_TYPES("Damage Types"),
     ALIGNMENTS("Alignments"),
-    ITEM_RARITIES("Item Rarities");
+    ITEM_RARITIES("Item Rarities"),
+    WEAPON_PROPERTIES("Weapon Properties");
 
     public final String displayName;
 

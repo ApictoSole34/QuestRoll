@@ -54,6 +54,8 @@ import com.fizzycoyote.qusetroll.core.models.open5e.spell.SpellDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell.SpellEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.weapon_property.WeaponPropertyDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.weapon_property.WeaponPropertyEntity;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -81,8 +83,9 @@ import java.util.concurrent.Executors;
                 DamageTypeEntity.class,
                 AlignmentEntity.class,
                 ItemRarityEntity.class,
+                WeaponPropertyEntity.class,
         },
-        version = 34,
+        version = 35,
         exportSchema = false
 )
 @TypeConverters({GainedAtListConverter.class, TableDataListConverter.class, Converters.class})
@@ -109,6 +112,8 @@ public abstract class Open5eDatabase extends RoomDatabase {
     public abstract DamageTypeDao damageTypeDao();
     public abstract AlignmentDao alignmentDao();
     public abstract ItemRarityDao itemRarityDao();
+    public abstract WeaponPropertyDao weaponPropertyDao();
+
 
     public static Open5eDatabase getInstance(Context context) {
         if (INSTANCE == null) {

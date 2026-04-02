@@ -19,6 +19,7 @@ import com.fizzycoyote.qusetroll.feature_damage_types.ui.DamageTypeListActivity;
 import com.fizzycoyote.qusetroll.feature_dice.ui.RollDiceActivity;
 import com.fizzycoyote.qusetroll.feature_item.item_rarity.ui.ItemRarityListActivity;
 import com.fizzycoyote.qusetroll.feature_item.ui.ItemListActivity;
+import com.fizzycoyote.qusetroll.feature_item.weapon_property.ui.WeaponPropertyListActivity;
 import com.fizzycoyote.qusetroll.feature_language.ui.language_list.LanguageListActivity;
 import com.fizzycoyote.qusetroll.feature_loading.LoadingActivity;
 import com.fizzycoyote.qusetroll.feature_species.ui.SpeciesListActivity;
@@ -89,7 +90,9 @@ public class MainActivity extends AppCompatActivity {
         startActivity(new Intent(this, ItemRarityListActivity.class));
     }
 
-
+    public void openWeaponPropertyListActivity(View view) {
+        startActivity(new Intent(this, WeaponPropertyListActivity.class));
+    }
 
     // ── DATA MANAGEMENT
 

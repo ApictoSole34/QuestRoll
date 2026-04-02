@@ -78,6 +78,10 @@ import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolEnti
 import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolMapper;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell_school.SpellSchoolResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell.SpellResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.weapon_property.WeaponPropertyDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.weapon_property.WeaponPropertyEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.weapon_property.WeaponPropertyMapper;
+import com.fizzycoyote.qusetroll.core.models.open5e.weapon_property.WeaponPropertyResponse;
 import com.fizzycoyote.qusetroll.feature_loading.DataSection;
 
 import androidx.lifecycle.LiveData;
@@ -113,6 +117,7 @@ public class Open5eRepository {
     private final DamageTypeDao damageTypeDao;
     private final AlignmentDao alignmentDao;
     private final ItemRarityDao itemRarityDao;
+    private final WeaponPropertyDao weaponPropertyDao;
     private final Executor executor;
 
     public Open5eRepository(Open5eApiService api,
@@ -136,6 +141,7 @@ public class Open5eRepository {
                             DamageTypeDao damageTypeDao,
                             AlignmentDao alignmentDao,
                             ItemRarityDao itemRarityDao,
+                            WeaponPropertyDao weaponPropertyDao,
                             Executor executor) {
         this.api = api;
         this.publisherDao = publisherDao;
@@ -158,6 +164,7 @@ public class Open5eRepository {
         this.damageTypeDao = damageTypeDao;
         this.alignmentDao = alignmentDao;
         this.itemRarityDao = itemRarityDao;
+        this.weaponPropertyDao = weaponPropertyDao;
         this.executor = executor;
     }
 
@@ -188,6 +195,7 @@ public class Open5eRepository {
                 futures.add(processDamageTypes(completed, totalSections, result));
                 futures.add(processAlignments(completed, totalSections, result));
                 futures.add(processItemRarities(completed, totalSections, result));
+                futures.add(processWeaponProperties(completed, totalSections, result));
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                         .thenRun(() -> result.postValue(Resource.success(true)))
@@ -246,7 +254,8 @@ public class Open5eRepository {
                     futures.add(processAlignments(completed, totalSections, result));
                 if (sections.contains(DataSection.ITEM_RARITIES))
                     futures.add(processItemRarities(completed, totalSections, result));
-
+                if (sections.contains(DataSection.WEAPON_PROPERTIES))
+                    futures.add(processWeaponProperties(completed, totalSections, result));
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                         .thenRun(() -> result.postValue(Resource.success(true)))
@@ -261,6 +270,30 @@ public class Open5eRepository {
         });
 
         return result;
+    }
+
+    private CompletableFuture<Void> processWeaponProperties(AtomicInteger completed, int total,
+                                                            MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                Response<WeaponPropertyResponse> response = api.getWeaponProperties().execute();
+                if (!response.isSuccessful() || response.body() == null) {
+                    Log.e("Repository", "Failed to fetch weapon properties");
+                    updateProgress(completed, total, result);
+                    return;
+                }
+                List<WeaponPropertyEntity> entities = response.body().results.stream()
+                        .map(WeaponPropertyMapper::dtoToEntity)
+                        .collect(Collectors.toList());
+
+                weaponPropertyDao.deleteAll();
+                weaponPropertyDao.insertAll(entities);
+                Log.d("Repository", "Saved " + entities.size() + " weapon properties");
+                updateProgress(completed, total, result);
+            } catch (Exception e) {
+                handleError("Weapon Properties", e);
+            }
+        }, executor);
     }
 
     private CompletableFuture<Void> processItemRarities(AtomicInteger completed, int total,

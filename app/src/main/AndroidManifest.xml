@@ -44,6 +44,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".feature_item.weapon_property.ui.WeaponPropertyListActivity"/>
+        <activity android:name=".feature_item.weapon_property.ui.WeaponPropertyDetailActivity"/>
+        <activity android:name=".feature_item.weapon_property.ui.CustomWeaponPropertyCreateActivity"/>
+        <activity android:name=".feature_item.weapon_property.ui.CustomWeaponPropertyDetailActivity"/>
         <activity android:name=".feature_item.item_rarity.ui.ItemRarityListActivity"/>
         <activity android:name=".feature_item.item_rarity.ui.ItemRarityDetailActivity"/>
         <activity android:name=".feature_item.item_rarity.ui.CustomItemRarityCreateActivity"/>
