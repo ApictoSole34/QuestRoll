@@ -9,6 +9,7 @@ import com.fizzycoyote.qusetroll.core.models.open5e.damage_type.DamageTypeRespon
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.item.ItemResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.item_rarity.ItemRarityResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherResponse;
@@ -68,4 +69,7 @@ public interface Open5eApiService {
 
     @GET("alignments/")
     Call<AlignmentResponse> getAlignmentsPage(@Query("page") int page);
+
+    @GET("itemrarities/")
+    Call<ItemRarityResponse> getItemRarities();
 }

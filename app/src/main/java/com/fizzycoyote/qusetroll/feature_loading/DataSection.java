@@ -15,7 +15,8 @@ public enum DataSection {
     BACKGROUNDS("Backgrounds"),
     ITEMS("Items"),
     DAMAGE_TYPES("Damage Types"),
-    ALIGNMENTS("Alignments");
+    ALIGNMENTS("Alignments"),
+    ITEM_RARITIES("Item Rarities");
 
     public final String displayName;
 

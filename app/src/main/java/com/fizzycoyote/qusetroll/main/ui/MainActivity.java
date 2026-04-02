@@ -17,6 +17,7 @@ import com.fizzycoyote.qusetroll.feature_class.ui.ClassListActivity;
 import com.fizzycoyote.qusetroll.feature_creature.ui.CreatureListActivity;
 import com.fizzycoyote.qusetroll.feature_damage_types.ui.DamageTypeListActivity;
 import com.fizzycoyote.qusetroll.feature_dice.ui.RollDiceActivity;
+import com.fizzycoyote.qusetroll.feature_item.item_rarity.ui.ItemRarityListActivity;
 import com.fizzycoyote.qusetroll.feature_item.ui.ItemListActivity;
 import com.fizzycoyote.qusetroll.feature_language.ui.language_list.LanguageListActivity;
 import com.fizzycoyote.qusetroll.feature_loading.LoadingActivity;
@@ -83,6 +84,11 @@ public class MainActivity extends AppCompatActivity {
     public void openAlignmentListActivity(View view) {
         startActivity(new Intent(this, AlignmentListActivity.class));
     }
+
+    public void openItemRarityListActivity(View view) {
+        startActivity(new Intent(this, ItemRarityListActivity.class));
+    }
+
 
 
     // ── DATA MANAGEMENT

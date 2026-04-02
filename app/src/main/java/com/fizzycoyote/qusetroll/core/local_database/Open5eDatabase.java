@@ -40,6 +40,8 @@ import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.item.ItemDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.item.ItemEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.item_rarity.ItemRarityDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.item_rarity.ItemRarityEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseDao;
@@ -78,8 +80,9 @@ import java.util.concurrent.Executors;
                 ItemEntity.class,
                 DamageTypeEntity.class,
                 AlignmentEntity.class,
+                ItemRarityEntity.class,
         },
-        version = 33,
+        version = 34,
         exportSchema = false
 )
 @TypeConverters({GainedAtListConverter.class, TableDataListConverter.class, Converters.class})
@@ -105,6 +108,7 @@ public abstract class Open5eDatabase extends RoomDatabase {
     public abstract ItemDao itemDao();
     public abstract DamageTypeDao damageTypeDao();
     public abstract AlignmentDao alignmentDao();
+    public abstract ItemRarityDao itemRarityDao();
 
     public static Open5eDatabase getInstance(Context context) {
         if (INSTANCE == null) {

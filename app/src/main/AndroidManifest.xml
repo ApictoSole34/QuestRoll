@@ -44,6 +44,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".feature_item.item_rarity.ui.ItemRarityListActivity"/>
+        <activity android:name=".feature_item.item_rarity.ui.ItemRarityDetailActivity"/>
+        <activity android:name=".feature_item.item_rarity.ui.CustomItemRarityCreateActivity"/>
+        <activity android:name=".feature_item.item_rarity.ui.CustomItemRarityDetailActivity"/>
         <activity android:name=".feature_alignment.ui.AlignmentListActivity"/>
         <activity android:name=".feature_alignment.ui.AlignmentDetailActivity"/>
         <activity android:name=".feature_alignment.ui.CustomAlignmentCreateActivity"/>

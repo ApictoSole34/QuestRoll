@@ -118,6 +118,14 @@
             android:text="Alignments" />
 
         <Button
+            android:id="@+id/itemRarityListActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:onClick="openItemRarityListActivity"
+            android:text="Item Rarities" />
+
+        <Button
             android:id="@+id/btnManageData"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

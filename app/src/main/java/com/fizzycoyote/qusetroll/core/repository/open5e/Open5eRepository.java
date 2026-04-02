@@ -50,6 +50,10 @@ import com.fizzycoyote.qusetroll.core.models.open5e.item.ItemDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.item.ItemEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.item.ItemMapper;
 import com.fizzycoyote.qusetroll.core.models.open5e.item.ItemResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.item_rarity.ItemRarityDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.item_rarity.ItemRarityEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.item_rarity.ItemRarityMapper;
+import com.fizzycoyote.qusetroll.core.models.open5e.item_rarity.ItemRarityResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageMapper;
@@ -108,6 +112,7 @@ public class Open5eRepository {
     private final ItemDao itemDao;
     private final DamageTypeDao damageTypeDao;
     private final AlignmentDao alignmentDao;
+    private final ItemRarityDao itemRarityDao;
     private final Executor executor;
 
     public Open5eRepository(Open5eApiService api,
@@ -130,6 +135,7 @@ public class Open5eRepository {
                             ItemDao itemDao,
                             DamageTypeDao damageTypeDao,
                             AlignmentDao alignmentDao,
+                            ItemRarityDao itemRarityDao,
                             Executor executor) {
         this.api = api;
         this.publisherDao = publisherDao;
@@ -151,6 +157,7 @@ public class Open5eRepository {
         this.itemDao = itemDao;
         this.damageTypeDao = damageTypeDao;
         this.alignmentDao = alignmentDao;
+        this.itemRarityDao = itemRarityDao;
         this.executor = executor;
     }
 
@@ -180,6 +187,7 @@ public class Open5eRepository {
                 futures.add(processItems(completed, totalSections, result));
                 futures.add(processDamageTypes(completed, totalSections, result));
                 futures.add(processAlignments(completed, totalSections, result));
+                futures.add(processItemRarities(completed, totalSections, result));
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                         .thenRun(() -> result.postValue(Resource.success(true)))
@@ -236,6 +244,8 @@ public class Open5eRepository {
                     futures.add(processDamageTypes(completed, totalSections, result));
                 if (sections.contains(DataSection.ALIGNMENTS))
                     futures.add(processAlignments(completed, totalSections, result));
+                if (sections.contains(DataSection.ITEM_RARITIES))
+                    futures.add(processItemRarities(completed, totalSections, result));
 
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
@@ -251,6 +261,30 @@ public class Open5eRepository {
         });
 
         return result;
+    }
+
+    private CompletableFuture<Void> processItemRarities(AtomicInteger completed, int total,
+                                                        MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                Response<ItemRarityResponse> response = api.getItemRarities().execute();
+                if (!response.isSuccessful() || response.body() == null) {
+                    Log.e("Repository", "Failed to fetch item rarities");
+                    updateProgress(completed, total, result);
+                    return;
+                }
+                List<ItemRarityEntity> entities = response.body().results.stream()
+                        .map(ItemRarityMapper::dtoToEntity)
+                        .collect(Collectors.toList());
+
+                itemRarityDao.deleteAll();
+                itemRarityDao.insertAll(entities);
+                Log.d("Repository", "Saved " + entities.size() + " item rarities");
+                updateProgress(completed, total, result);
+            } catch (Exception e) {
+                handleError("Item Rarities", e);
+            }
+        }, executor);
     }
 
     private CompletableFuture<Void> processAlignments(AtomicInteger completed, int total,
