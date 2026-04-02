@@ -18,7 +18,8 @@ public enum DataSection {
     ALIGNMENTS("Alignments"),
     ITEM_RARITIES("Item Rarities"),
     WEAPON_PROPERTIES("Weapon Properties"),
-    SERVICES("Services");
+    SERVICES("Services"),
+    ENVIRONMENTS("Environments");
 
     public final String displayName;
 

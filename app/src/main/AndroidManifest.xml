@@ -44,6 +44,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".feature_environment.ui.EnvironmentListActivity"/>
+        <activity android:name=".feature_environment.ui.EnvironmentDetailActivity"/>
+        <activity android:name=".feature_environment.ui.CustomEnvironmentCreateActivity"/>
+        <activity android:name=".feature_environment.ui.CustomEnvironmentDetailActivity"/>
         <activity android:name=".feature_service.ui.ServiceListActivity"/>
         <activity android:name=".feature_service.ui.ServiceDetailActivity"/>
         <activity android:name=".feature_service.ui.CustomServiceCreateActivity"/>

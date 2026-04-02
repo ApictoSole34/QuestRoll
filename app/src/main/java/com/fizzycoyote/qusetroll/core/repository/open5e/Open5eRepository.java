@@ -42,6 +42,10 @@ import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentMapper;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.environment.EnvironmentDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.environment.EnvironmentEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.environment.EnvironmentMapper;
+import com.fizzycoyote.qusetroll.core.models.open5e.environment.EnvironmentResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemMapper;
@@ -123,6 +127,7 @@ public class Open5eRepository {
     private final ItemRarityDao itemRarityDao;
     private final WeaponPropertyDao weaponPropertyDao;
     private final ServiceDao serviceDao;
+    private final EnvironmentDao environmentDao;
     private final Executor executor;
 
     public Open5eRepository(Open5eApiService api,
@@ -148,6 +153,7 @@ public class Open5eRepository {
                             ItemRarityDao itemRarityDao,
                             WeaponPropertyDao weaponPropertyDao,
                             ServiceDao serviceDao,
+                            EnvironmentDao environmentDao,
                             Executor executor) {
         this.api = api;
         this.publisherDao = publisherDao;
@@ -172,6 +178,7 @@ public class Open5eRepository {
         this.itemRarityDao = itemRarityDao;
         this.weaponPropertyDao = weaponPropertyDao;
         this.serviceDao = serviceDao;
+        this.environmentDao = environmentDao;
         this.executor = executor;
     }
 
@@ -204,6 +211,7 @@ public class Open5eRepository {
                 futures.add(processItemRarities(completed, totalSections, result));
                 futures.add(processWeaponProperties(completed, totalSections, result));
                 futures.add(processServices(completed, totalSections, result));
+                futures.add(processEnvironments(completed, totalSections, result));
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                         .thenRun(() -> result.postValue(Resource.success(true)))
@@ -266,6 +274,8 @@ public class Open5eRepository {
                     futures.add(processWeaponProperties(completed, totalSections, result));
                 if (sections.contains(DataSection.SERVICES))
                     futures.add(processServices(completed, totalSections, result));
+                if (sections.contains(DataSection.ENVIRONMENTS))
+                    futures.add(processEnvironments(completed, totalSections, result));
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                         .thenRun(() -> result.postValue(Resource.success(true)))
@@ -280,6 +290,61 @@ public class Open5eRepository {
         });
 
         return result;
+    }
+
+    private CompletableFuture<Void> processEnvironments(AtomicInteger completed, int total,
+                                                        MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                List<EnvironmentEntity> allEnvironments = new ArrayList<>();
+                int page = 1;
+                boolean hasMore = true;
+                int maxRetries = 3;
+
+                while (hasMore) {
+                    Response<EnvironmentResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getEnvironmentsPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            Log.w("Repository", "Retry " + retry + " for environments page " + page);
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+
+                    if (response == null || !response.isSuccessful() || response.body() == null) {
+                        Log.e("Repository", "Failed to fetch environments page " + page);
+                        updateProgress(completed, total, result);
+                        return;
+                    }
+
+                    EnvironmentResponse body = response.body();
+                    List<EnvironmentEntity> entities = body.results.stream()
+                            .map(EnvironmentMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+
+                    allEnvironments.addAll(entities);
+                    Log.d("Repository", "Environments page " + page + ": " + entities.size()
+                            + " (total: " + allEnvironments.size() + "/" + body.count + ")");
+
+                    hasMore = body.next != null;
+                    page++;
+                }
+
+                if (!allEnvironments.isEmpty()) {
+                    environmentDao.deleteAll();
+                    environmentDao.insertAll(allEnvironments);
+                    Log.d("Repository", "Saved " + allEnvironments.size() + " environments");
+                }
+
+                updateProgress(completed, total, result);
+
+            } catch (Exception e) {
+                handleError("Environments", e);
+            }
+        }, executor);
     }
 
     private CompletableFuture<Void> processServices(AtomicInteger completed, int total,

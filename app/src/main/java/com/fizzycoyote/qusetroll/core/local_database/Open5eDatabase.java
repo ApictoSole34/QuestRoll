@@ -36,6 +36,8 @@ import com.fizzycoyote.qusetroll.core.models.open5e.damage_type.DamageTypeDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.damage_type.DamageTypeEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.environment.EnvironmentDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.environment.EnvironmentEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.item.ItemDao;
@@ -87,8 +89,9 @@ import java.util.concurrent.Executors;
                 ItemRarityEntity.class,
                 WeaponPropertyEntity.class,
                 ServiceEntity.class,
+                EnvironmentEntity.class,
         },
-        version = 36,
+        version = 37,
         exportSchema = false
 )
 @TypeConverters({GainedAtListConverter.class, TableDataListConverter.class, Converters.class})
@@ -117,7 +120,7 @@ public abstract class Open5eDatabase extends RoomDatabase {
     public abstract ItemRarityDao itemRarityDao();
     public abstract WeaponPropertyDao weaponPropertyDao();
     public abstract ServiceDao serviceDao();
-
+    public abstract EnvironmentDao environmentDao();
 
     public static Open5eDatabase getInstance(Context context) {
         if (INSTANCE == null) {
