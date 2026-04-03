@@ -14,6 +14,7 @@ import com.fizzycoyote.qusetroll.feature_alignment.ui.AlignmentListActivity;
 import com.fizzycoyote.qusetroll.feature_background.ui.BackgroundListActivity;
 import com.fizzycoyote.qusetroll.feature_character.ui.list.CharacterListActivity;
 import com.fizzycoyote.qusetroll.feature_class.ui.ClassListActivity;
+import com.fizzycoyote.qusetroll.feature_condition.ui.ConditionListActivity;
 import com.fizzycoyote.qusetroll.feature_creature.ui.CreatureListActivity;
 import com.fizzycoyote.qusetroll.feature_damage_types.ui.DamageTypeListActivity;
 import com.fizzycoyote.qusetroll.feature_dice.ui.RollDiceActivity;
@@ -107,6 +108,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void openRulesetListActivity(View view) {
         startActivity(new Intent(this, RulesetListActivity.class));
+    }
+
+    public void openConditionListActivity(View view) {
+        startActivity(new Intent(this, ConditionListActivity.class));
     }
 
     // ── DATA MANAGEMENT

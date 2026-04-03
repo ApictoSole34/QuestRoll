@@ -158,6 +158,14 @@
             android:text="Rulesets" />
 
         <Button
+            android:id="@+id/conditionListActivity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:onClick="openConditionListActivity"
+            android:text="Conditions" />
+
+        <Button
             android:id="@+id/btnManageData"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -30,6 +30,8 @@ import com.fizzycoyote.qusetroll.core.models.open5e.character_class.hit_points.H
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.saving_throw.SavingThrowDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.saving_throw.SavingThrowEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.table_data.TableDataListConverter;
+import com.fizzycoyote.qusetroll.core.models.open5e.condition.ConditionDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.condition.ConditionEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.damage_type.DamageTypeDao;
@@ -95,9 +97,10 @@ import java.util.concurrent.Executors;
                 ServiceEntity.class,
                 EnvironmentEntity.class,
                 RuleEntity.class,
-                RulesetEntity.class
+                RulesetEntity.class,
+                ConditionEntity.class
         },
-        version = 39,
+        version = 40,
         exportSchema = false
 )
 @TypeConverters({GainedAtListConverter.class, TableDataListConverter.class, Converters.class})
@@ -129,6 +132,7 @@ public abstract class Open5eDatabase extends RoomDatabase {
     public abstract EnvironmentDao environmentDao();
     public abstract RuleDao ruleDao();
     public abstract RulesetDao rulesetDao();
+    public abstract ConditionDao conditionDao();
 
     public static Open5eDatabase getInstance(Context context) {
         if (INSTANCE == null) {

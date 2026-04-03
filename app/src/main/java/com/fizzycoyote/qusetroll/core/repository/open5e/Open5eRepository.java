@@ -30,6 +30,10 @@ import com.fizzycoyote.qusetroll.core.models.open5e.character_class.hit_points.H
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.saving_throw.SavingThrowDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.saving_throw.SavingThrowEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.table_data.TableData;
+import com.fizzycoyote.qusetroll.core.models.open5e.condition.ConditionDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.condition.ConditionEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.condition.ConditionMapper;
+import com.fizzycoyote.qusetroll.core.models.open5e.condition.ConditionResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureMapper;
@@ -140,6 +144,7 @@ public class Open5eRepository {
     private final EnvironmentDao environmentDao;
     private final RuleDao ruleDao;
     private final RulesetDao rulesetDao;
+    private final ConditionDao conditionDao;
     private final Executor executor;
 
     public Open5eRepository(Open5eApiService api,
@@ -168,6 +173,7 @@ public class Open5eRepository {
                             EnvironmentDao environmentDao,
                             RuleDao ruleDao,
                             RulesetDao rulesetDao,
+                            ConditionDao conditionDao,
                             Executor executor) {
         this.api = api;
         this.publisherDao = publisherDao;
@@ -195,6 +201,7 @@ public class Open5eRepository {
         this.environmentDao = environmentDao;
         this.ruleDao = ruleDao;
         this.rulesetDao = rulesetDao;
+        this.conditionDao = conditionDao;
         this.executor = executor;
     }
 
@@ -230,6 +237,7 @@ public class Open5eRepository {
                 futures.add(processEnvironments(completed, totalSections, result));
                 futures.add(processRules(completed, totalSections, result));
                 futures.add(processRulesets(completed, totalSections, result));
+                futures.add(processConditions(completed, totalSections, result));
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                         .thenRun(() -> result.postValue(Resource.success(true)))
@@ -298,6 +306,9 @@ public class Open5eRepository {
                     futures.add(processRules(completed, totalSections, result));
                 if (sections.contains(DataSection.RULESETS))
                     futures.add(processRulesets(completed, totalSections, result));
+                if (sections.contains(DataSection.CONDITIONS))
+                    futures.add(processConditions(completed, totalSections, result));
+
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                         .thenRun(() -> result.postValue(Resource.success(true)))
@@ -312,6 +323,58 @@ public class Open5eRepository {
         });
 
         return result;
+    }
+
+    private CompletableFuture<Void> processConditions(AtomicInteger completed, int total,
+                                                      MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                List<ConditionEntity> allConditions = new ArrayList<>();
+                int page = 1;
+                boolean hasMore = true;
+                int maxRetries = 3;
+
+                while (hasMore) {
+                    Response<ConditionResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getConditionsPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            Log.w("Repository", "Retry " + retry + " for conditions page " + page);
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+
+                    if (response == null || !response.isSuccessful() || response.body() == null) {
+                        Log.e("Repository", "Failed to fetch conditions page " + page);
+                        updateProgress(completed, total, result);
+                        return;
+                    }
+
+                    ConditionResponse body = response.body();
+                    List<ConditionEntity> entities = body.results.stream()
+                            .map(ConditionMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    allConditions.addAll(entities);
+                    Log.d("Repository", "Conditions page " + page + ": " + entities.size()
+                            + " (total: " + allConditions.size() + "/" + body.count + ")");
+                    hasMore = body.next != null;
+                    page++;
+                }
+
+                if (!allConditions.isEmpty()) {
+                    conditionDao.deleteAll();
+                    conditionDao.insertAll(allConditions);
+                    Log.d("Repository", "Saved " + allConditions.size() + " conditions");
+                }
+
+                updateProgress(completed, total, result);
+            } catch (Exception e) {
+                handleError("Conditions", e);
+            }
+        }, executor);
     }
 
     private CompletableFuture<Void> processRulesets(AtomicInteger completed, int total,

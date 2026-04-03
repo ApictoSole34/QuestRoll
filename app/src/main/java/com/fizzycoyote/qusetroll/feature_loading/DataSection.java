@@ -21,7 +21,8 @@ public enum DataSection {
     SERVICES("Services"),
     ENVIRONMENTS("Environments"),
     RULES("Rules"),
-    RULESETS("Rule Sets");
+    RULESETS("Rule Sets"),
+    CONDITIONS("Conditions");
 
     public final String displayName;
 
