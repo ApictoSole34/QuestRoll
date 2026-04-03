@@ -37,6 +37,8 @@ public class CreatureListActivity extends AppCompatActivity {
     private ChipGroup chipGroupSources;
     private RecyclerView rv;
 
+    private List<String> currentTypeNames = new ArrayList<>(Collections.singletonList(""));
+
     private static final String[] ALIGNMENTS = {
             "", "lawful good", "neutral good", "chaotic good",
             "lawful neutral", "neutral", "chaotic neutral",
@@ -71,7 +73,8 @@ public class CreatureListActivity extends AppCompatActivity {
                 new CreatureListViewModel.Factory(
                         open5eDb.creatureDao(),
                         customDb.customCreatureDao(),
-                        customDb.customCreatureTypeDao()
+                        customDb.customCreatureTypeDao(),
+                        open5eDb.creatureTypeDao()
                 )).get(CreatureListViewModel.class);
 
         chipGroupSources = findViewById(R.id.chip_group_sources);
@@ -130,6 +133,10 @@ public class CreatureListActivity extends AppCompatActivity {
         viewModel.getSources().observe(this, sources -> {
             if (sources == null || sources.isEmpty()) return;
             buildSourceChips(sources);
+        });
+
+        viewModel.getAllTypeNames().observe(this, types -> {
+            if (types != null) currentTypeNames = types;
         });
     }
 
@@ -206,12 +213,11 @@ public class CreatureListActivity extends AppCompatActivity {
         if (current == null) current = new CreatureFilter();
         final CreatureFilter finalCurrent = current;
 
-        List<String> typeNames = viewModel.getAllTypeNames().getValue();
-        if (typeNames == null) typeNames = new ArrayList<>(Collections.singletonList(""));
-        final List<String> finalTypeNames = typeNames;
+        final List<String> finalTypeNames = currentTypeNames;
+
         List<String> typeLabels = new ArrayList<>();
         typeLabels.add("All Types");
-        for (int i = 1; i < typeNames.size(); i++) typeLabels.add(typeNames.get(i));
+        for (int i = 1; i < finalTypeNames.size(); i++) typeLabels.add(finalTypeNames.get(i));
         spinnerType.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, typeLabels));
         int ti = finalTypeNames.indexOf(finalCurrent.typeKey);

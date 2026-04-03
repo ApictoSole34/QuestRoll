@@ -4,21 +4,21 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.fizzycoyote.qusetroll.core.models.custom.custom_creature_type.CustomCreatureTypeDao;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_creature_type.CustomCreatureTypeEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.creature_type.CreatureTypeDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.creature_type.CreatureTypeEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureAction;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureEntity;
-import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureTypeDao;
-import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureTypeEntity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -28,7 +28,8 @@ public class CustomCreatureCreateViewModel extends ViewModel {
     public static final long NO_ID = -1L;
 
     private final CustomCreatureDao creatureDao;
-    private final CustomCreatureTypeDao typeDao;
+    private final CustomCreatureTypeDao customTypeDao;
+    private final CreatureTypeDao apiTypeDao;
     private final long editId;
     private final Executor executor;
 
@@ -42,33 +43,41 @@ public class CustomCreatureCreateViewModel extends ViewModel {
             new MutableLiveData<>(new ArrayList<>());
 
     public CustomCreatureCreateViewModel(CustomCreatureDao creatureDao,
-                                         CustomCreatureTypeDao typeDao,
+                                         CustomCreatureTypeDao customTypeDao,
+                                         CreatureTypeDao apiTypeDao,
                                          long editId,
                                          Executor executor) {
         this.creatureDao = creatureDao;
-        this.typeDao = typeDao;
+        this.customTypeDao = customTypeDao;
+        this.apiTypeDao = apiTypeDao;
         this.editId = editId;
         this.executor = executor;
 
-        LiveData<List<CustomCreatureTypeEntity>> customTypesLive = typeDao.getAll();
+        LiveData<List<CreatureTypeEntity>> apiTypesLive = apiTypeDao.getAll();
+        LiveData<List<CustomCreatureTypeEntity>> customTypesLive = customTypeDao.getAll();
+
         MediatorLiveData<List<String>> typeMediator = new MediatorLiveData<>();
-        Observer<Object> refresh = ignored -> new Thread(() -> {
-            List<String> names = new ArrayList<>(Arrays.asList(
-                    "Aberration", "Beast", "Celestial", "Construct",
-                    "Dragon", "Elemental", "Fey", "Fiend", "Giant",
-                    "Humanoid", "Monstrosity", "Ooze", "Plant", "Undead"
-            ));
-            for (CustomCreatureTypeEntity t : typeDao.getAllSync()) {
-                if (!names.contains(t.name)) names.add(t.name);
-            }
-            Collections.sort(names);
-            typeMediator.postValue(names);
-        }).start();
-        typeMediator.addSource(customTypesLive, t -> refresh.onChanged(null));
-        refresh.onChanged(null);
+        typeMediator.addSource(apiTypesLive, apiTypes ->
+                mergeTypeNames(apiTypes, customTypesLive.getValue(), typeMediator));
+        typeMediator.addSource(customTypesLive, customTypes ->
+                mergeTypeNames(apiTypesLive.getValue(), customTypes, typeMediator));
         allTypeNames = typeMediator;
 
         if (isEditMode()) loadExisting();
+    }
+
+    private void mergeTypeNames(List<CreatureTypeEntity> apiTypes,
+                                List<CustomCreatureTypeEntity> customTypes,
+                                MediatorLiveData<List<String>> out) {
+        List<String> names = new ArrayList<>();
+        if (apiTypes != null)
+            for (CreatureTypeEntity t : apiTypes)
+                if (!names.contains(t.name)) names.add(t.name);
+        if (customTypes != null)
+            for (CustomCreatureTypeEntity t : customTypes)
+                if (!names.contains(t.name)) names.add(t.name);
+        Collections.sort(names);
+        out.setValue(names);
     }
 
     public boolean isEditMode() { return editId != NO_ID; }
@@ -98,27 +107,27 @@ public class CustomCreatureCreateViewModel extends ViewModel {
     public LiveData<List<CustomCreatureAction>> getTraits() { return traits; }
 
     public void addAction(CustomCreatureAction a) {
-        List<CustomCreatureAction> list = new ArrayList<>(
-                actions.getValue() != null ? actions.getValue() : new ArrayList<>());
-        list.add(a); actions.setValue(list);
+        List<CustomCreatureAction> list = new ArrayList<>(actions.getValue());
+        list.add(a);
+        actions.setValue(list);
     }
 
     public void removeAction(int i) {
-        List<CustomCreatureAction> list = new ArrayList<>(
-                actions.getValue() != null ? actions.getValue() : new ArrayList<>());
-        if (i >= 0 && i < list.size()) { list.remove(i); actions.setValue(list); }
+        List<CustomCreatureAction> list = new ArrayList<>(actions.getValue());
+        if (i >= 0 && i < list.size()) list.remove(i);
+        actions.setValue(list);
     }
 
     public void addTrait(CustomCreatureAction t) {
-        List<CustomCreatureAction> list = new ArrayList<>(
-                traits.getValue() != null ? traits.getValue() : new ArrayList<>());
-        list.add(t); traits.setValue(list);
+        List<CustomCreatureAction> list = new ArrayList<>(traits.getValue());
+        list.add(t);
+        traits.setValue(list);
     }
 
     public void removeTrait(int i) {
-        List<CustomCreatureAction> list = new ArrayList<>(
-                traits.getValue() != null ? traits.getValue() : new ArrayList<>());
-        if (i >= 0 && i < list.size()) { list.remove(i); traits.setValue(list); }
+        List<CustomCreatureAction> list = new ArrayList<>(traits.getValue());
+        if (i >= 0 && i < list.size()) list.remove(i);
+        traits.setValue(list);
     }
 
     public void save(CustomCreatureEntity entity) {
@@ -137,7 +146,8 @@ public class CustomCreatureCreateViewModel extends ViewModel {
                     creatureDao.update(entity);
                 } else {
                     if (creatureDao.countByName(entity.name) > 0) {
-                        saveResult.postValue(false); return;
+                        saveResult.postValue(false);
+                        return;
                     }
                     creatureDao.insert(entity);
                 }
@@ -150,14 +160,19 @@ public class CustomCreatureCreateViewModel extends ViewModel {
 
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
         private final CustomCreatureDao creatureDao;
-        private final CustomCreatureTypeDao typeDao;
+        private final CustomCreatureTypeDao customTypeDao;
+        private final CreatureTypeDao apiTypeDao;
         private final long editId;
         private final Executor executor;
 
-        public Factory(CustomCreatureDao creatureDao, CustomCreatureTypeDao typeDao,
-                       long editId, Executor executor) {
+        public Factory(CustomCreatureDao creatureDao,
+                       CustomCreatureTypeDao customTypeDao,
+                       CreatureTypeDao apiTypeDao,
+                       long editId,
+                       Executor executor) {
             this.creatureDao = creatureDao;
-            this.typeDao = typeDao;
+            this.customTypeDao = customTypeDao;
+            this.apiTypeDao = apiTypeDao;
             this.editId = editId;
             this.executor = executor;
         }
@@ -165,7 +180,7 @@ public class CustomCreatureCreateViewModel extends ViewModel {
         @NonNull
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            return (T) new CustomCreatureCreateViewModel(creatureDao, typeDao, editId, executor);
+            return (T) new CustomCreatureCreateViewModel(creatureDao, customTypeDao, apiTypeDao, editId, executor);
         }
     }
 }

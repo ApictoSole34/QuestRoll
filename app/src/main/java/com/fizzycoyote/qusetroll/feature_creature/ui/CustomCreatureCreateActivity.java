@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureAction;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureEntity;
@@ -68,13 +69,17 @@ public class CustomCreatureCreateActivity extends AppCompatActivity {
         UserContentDatabase db = UserContentDatabase.getInstance(this);
         long editId = getIntent().getLongExtra(EXTRA_EDIT_ID, CustomCreatureCreateViewModel.NO_ID);
 
+        Open5eDatabase open5eDb = Open5eDatabase.getInstance(this);
+
         viewModel = new ViewModelProvider(this,
                 new CustomCreatureCreateViewModel.Factory(
                         db.customCreatureDao(),
                         db.customCreatureTypeDao(),
+                        open5eDb.creatureTypeDao(),
                         editId,
                         Executors.newSingleThreadExecutor()
-                )).get(CustomCreatureCreateViewModel.class);
+                )
+        ).get(CustomCreatureCreateViewModel.class);
 
         initViews();
         setupDropdowns();

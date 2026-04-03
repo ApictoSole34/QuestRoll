@@ -26,8 +26,8 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_condition.CustomCondi
 import com.fizzycoyote.qusetroll.core.models.custom.custom_condition.CustomConditionEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureEntity;
-import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureTypeDao;
-import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureTypeEntity;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_creature_type.CustomCreatureTypeDao;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_creature_type.CustomCreatureTypeEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_damage_types.CustomDamageTypeDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_damage_types.CustomDamageTypeEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_environment.CustomEnvironmentDao;
@@ -69,8 +69,8 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_weapon_property.Custo
         CustomWeaponPropertyEntity.class,
         CustomServiceEntity.class,
         CustomEnvironmentEntity.class,
-        CustomConditionEntity.class},
-        version = 30,
+        CustomConditionEntity.class,},
+        version = 31,
         exportSchema = false
 )
 @TypeConverters({CustomConverters.class})

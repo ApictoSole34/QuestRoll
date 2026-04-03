@@ -11,6 +11,7 @@ public enum DataSection {
     SPELLS("Spells"),
     SPELL_SCHOOLS("Spell Schools"),
     CREATURES("Creatures"),
+    CREATURE_TYPES("Creature Types"),
     SPECIES("Species"),
     BACKGROUNDS("Backgrounds"),
     ITEMS("Items"),

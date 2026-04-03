@@ -15,6 +15,7 @@ import com.fizzycoyote.qusetroll.feature_background.ui.BackgroundListActivity;
 import com.fizzycoyote.qusetroll.feature_character.ui.list.CharacterListActivity;
 import com.fizzycoyote.qusetroll.feature_class.ui.ClassListActivity;
 import com.fizzycoyote.qusetroll.feature_condition.ui.ConditionListActivity;
+import com.fizzycoyote.qusetroll.feature_creature.creature_type.ui.CreatureTypeListActivity;
 import com.fizzycoyote.qusetroll.feature_creature.ui.CreatureListActivity;
 import com.fizzycoyote.qusetroll.feature_damage_types.ui.DamageTypeListActivity;
 import com.fizzycoyote.qusetroll.feature_dice.ui.RollDiceActivity;
@@ -64,6 +65,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void openCreatureListActivity(View view) {
         startActivity(new Intent(this, CreatureListActivity.class));
+    }
+
+    public void openCreatureTypeListActivity(View view) {
+        startActivity(new Intent(this, CreatureTypeListActivity.class));
     }
 
     public void openSpeciesListActivity(View view) {

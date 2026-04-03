@@ -16,8 +16,8 @@ import com.fizzycoyote.qusetroll.R;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureEntity;
-import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureTypeDao;
-import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureTypeEntity;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_creature_type.CustomCreatureTypeDao;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_creature_type.CustomCreatureTypeEntity;
 import com.fizzycoyote.qusetroll.feature_creature.adapter.CustomCreatureTypeAdapter;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
@@ -56,7 +56,7 @@ public class CustomCreatureTypeBottomSheet extends BottomSheetDialogFragment {
         );
         rv.setAdapter(adapter);
 
-        typeDao.getAll().observe(getViewLifecycleOwner(), adapter::submitList);
+        typeDao.getAll().observe(getViewLifecycleOwner(), types -> adapter.submitList(types));
 
         view.findViewById(R.id.btnAddType).setOnClickListener(v -> showAddDialog());
     }

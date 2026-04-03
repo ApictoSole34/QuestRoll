@@ -159,7 +159,6 @@ public class CreatureDetailActivity extends AppCompatActivity {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void buildKeyValueSection(int viewId, String label,
                                       String json, boolean skipZeroes) {
         if (json == null || json.isEmpty()) { hide(viewId); return; }

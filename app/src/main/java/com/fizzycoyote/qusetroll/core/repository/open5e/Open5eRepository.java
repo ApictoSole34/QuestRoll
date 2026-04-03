@@ -38,6 +38,10 @@ import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureMapper;
 import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.creature_type.CreatureTypeDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.creature_type.CreatureTypeEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.creature_type.CreatureTypeMapper;
+import com.fizzycoyote.qusetroll.core.models.open5e.creature_type.CreatureTypeResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.damage_type.DamageTypeDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.damage_type.DamageTypeEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.damage_type.DamageTypeMapper;
@@ -145,6 +149,7 @@ public class Open5eRepository {
     private final RuleDao ruleDao;
     private final RulesetDao rulesetDao;
     private final ConditionDao conditionDao;
+    private final CreatureTypeDao creatureTypeDao;
     private final Executor executor;
 
     public Open5eRepository(Open5eApiService api,
@@ -174,6 +179,7 @@ public class Open5eRepository {
                             RuleDao ruleDao,
                             RulesetDao rulesetDao,
                             ConditionDao conditionDao,
+                            CreatureTypeDao creatureTypeDao,
                             Executor executor) {
         this.api = api;
         this.publisherDao = publisherDao;
@@ -202,6 +208,7 @@ public class Open5eRepository {
         this.ruleDao = ruleDao;
         this.rulesetDao = rulesetDao;
         this.conditionDao = conditionDao;
+        this.creatureTypeDao = creatureTypeDao;
         this.executor = executor;
     }
 
@@ -238,6 +245,7 @@ public class Open5eRepository {
                 futures.add(processRules(completed, totalSections, result));
                 futures.add(processRulesets(completed, totalSections, result));
                 futures.add(processConditions(completed, totalSections, result));
+                futures.add(processCreatureTypes(completed, totalSections, result));
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                         .thenRun(() -> result.postValue(Resource.success(true)))
@@ -308,6 +316,8 @@ public class Open5eRepository {
                     futures.add(processRulesets(completed, totalSections, result));
                 if (sections.contains(DataSection.CONDITIONS))
                     futures.add(processConditions(completed, totalSections, result));
+                if (sections.contains(DataSection.CREATURE_TYPES))
+                    futures.add(processCreatureTypes(completed, totalSections, result));
 
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
@@ -323,6 +333,58 @@ public class Open5eRepository {
         });
 
         return result;
+    }
+
+    private CompletableFuture<Void> processCreatureTypes(AtomicInteger completed, int total,
+                                                         MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                List<CreatureTypeEntity> allTypes = new ArrayList<>();
+                int page = 1;
+                boolean hasMore = true;
+                int maxRetries = 3;
+
+                while (hasMore) {
+                    Response<CreatureTypeResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getCreatureTypesPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            Log.w("Repository", "Retry " + retry + " for creature types page " + page);
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+
+                    if (response == null || !response.isSuccessful() || response.body() == null) {
+                        Log.e("Repository", "Failed to fetch creature types page " + page);
+                        updateProgress(completed, total, result);
+                        return;
+                    }
+
+                    CreatureTypeResponse body = response.body();
+                    List<CreatureTypeEntity> entities = body.results.stream()
+                            .map(CreatureTypeMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    allTypes.addAll(entities);
+                    Log.d("Repository", "Creature types page " + page + ": " + entities.size()
+                            + " (total: " + allTypes.size() + "/" + body.count + ")");
+                    hasMore = body.next != null;
+                    page++;
+                }
+
+                if (!allTypes.isEmpty()) {
+                    creatureTypeDao.deleteAll();
+                    creatureTypeDao.insertAll(allTypes);
+                    Log.d("Repository", "Saved " + allTypes.size() + " creature types");
+                }
+
+                updateProgress(completed, total, result);
+            } catch (Exception e) {
+                handleError("Creature Types", e);
+            }
+        }, executor);
     }
 
     private CompletableFuture<Void> processConditions(AtomicInteger completed, int total,

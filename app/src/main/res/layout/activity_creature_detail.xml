@@ -28,6 +28,13 @@
             android:textColor="@android:color/darker_gray"
             android:layout_marginBottom="4dp"/>
 
+        <Button
+            android:id="@+id/btnManage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Manage"
+            android:visibility="gone" />
+
         <TextView
             android:id="@+id/tv_cr"
             android:layout_width="match_parent"

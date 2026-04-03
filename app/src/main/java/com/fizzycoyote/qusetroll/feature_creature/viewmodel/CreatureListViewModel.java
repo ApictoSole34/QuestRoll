@@ -4,22 +4,23 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.fizzycoyote.qusetroll.core.models.custom.custom_creature_type.CustomCreatureTypeDao;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_creature_type.CustomCreatureTypeEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.creature_type.CreatureTypeDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.creature_type.CreatureTypeEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureEntity;
-import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureTypeDao;
-import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureTypeEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureEntity;
 import com.fizzycoyote.qusetroll.feature_creature.model.CombinedCreature;
 import com.fizzycoyote.qusetroll.feature_creature.model.CreatureFilter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class CreatureListViewModel extends ViewModel {
@@ -27,6 +28,7 @@ public class CreatureListViewModel extends ViewModel {
     private final CreatureDao creatureDao;
     private final CustomCreatureDao customCreatureDao;
     private final CustomCreatureTypeDao customCreatureTypeDao;
+    private final CreatureTypeDao creatureTypeDao;
 
     private final MutableLiveData<CreatureFilter> filter = new MutableLiveData<>(new CreatureFilter());
     private final LiveData<List<CombinedCreature>> combinedCreatures;
@@ -35,10 +37,12 @@ public class CreatureListViewModel extends ViewModel {
 
     public CreatureListViewModel(CreatureDao creatureDao,
                                  CustomCreatureDao customCreatureDao,
-                                 CustomCreatureTypeDao customCreatureTypeDao) {
+                                 CustomCreatureTypeDao customCreatureTypeDao,
+                                 CreatureTypeDao creatureTypeDao) {
         this.creatureDao = creatureDao;
         this.customCreatureDao = customCreatureDao;
         this.customCreatureTypeDao = customCreatureTypeDao;
+        this.creatureTypeDao = creatureTypeDao;
 
         LiveData<List<CreatureEntity>> open5eCreatures = Transformations.switchMap(filter, f ->
                 creatureDao.getFilteredCreatures(
@@ -53,25 +57,33 @@ public class CreatureListViewModel extends ViewModel {
                 combine(open5eCreatures.getValue(), custom, mediator));
         combinedCreatures = mediator;
 
+        LiveData<List<CreatureTypeEntity>> apiTypesLive = creatureTypeDao.getAll();
         LiveData<List<CustomCreatureTypeEntity>> customTypesLive = customCreatureTypeDao.getAll();
+
         MediatorLiveData<List<String>> typeMediator = new MediatorLiveData<>();
-        Observer<Object> refreshTypes = ignored -> new Thread(() -> {
-            List<String> names = new ArrayList<>();
-            names.add(""); // placeholder
-            names.addAll(Arrays.asList(
-                    "Aberration", "Beast", "Celestial", "Construct",
-                    "Dragon", "Elemental", "Fey", "Fiend", "Giant",
-                    "Humanoid", "Monstrosity", "Ooze", "Plant", "Undead",
-                    "No Type"
-            ));
-            for (CustomCreatureTypeEntity t : customCreatureTypeDao.getAllSync()) {
-                if (!names.contains(t.name)) names.add(t.name);
-            }
-            typeMediator.postValue(names);
-        }).start();
-        typeMediator.addSource(customTypesLive, t -> refreshTypes.onChanged(null));
-        refreshTypes.onChanged(null);
+        typeMediator.addSource(apiTypesLive, apiTypes ->
+                mergeTypeNames(apiTypes, customTypesLive.getValue(), typeMediator));
+        typeMediator.addSource(customTypesLive, customTypes ->
+                mergeTypeNames(apiTypesLive.getValue(), customTypes, typeMediator));
         allTypeNames = typeMediator;
+    }
+
+    private void mergeTypeNames(List<CreatureTypeEntity> apiTypes,
+                                List<CustomCreatureTypeEntity> customTypes,
+                                MediatorLiveData<List<String>> out) {
+        List<String> names = new ArrayList<>();
+        names.add("");
+        if (apiTypes != null) {
+            for (CreatureTypeEntity t : apiTypes)
+                if (!names.contains(t.name)) names.add(t.name);
+        }
+        if (customTypes != null) {
+            for (CustomCreatureTypeEntity t : customTypes)
+                if (!names.contains(t.name)) names.add(t.name);
+        }
+        if (!names.contains("No Type")) names.add("No Type");
+        Collections.sort(names.subList(1, names.size()));
+        out.setValue(names);
     }
 
     private void combine(List<CreatureEntity> open5e,
@@ -105,7 +117,6 @@ public class CreatureListViewModel extends ViewModel {
             if (a.crDecimal != b.crDecimal) return Float.compare(a.crDecimal, b.crDecimal);
             return a.name.compareTo(b.name);
         });
-
         result.setValue(combined);
     }
 
@@ -148,18 +159,22 @@ public class CreatureListViewModel extends ViewModel {
         private final CreatureDao creatureDao;
         private final CustomCreatureDao customCreatureDao;
         private final CustomCreatureTypeDao customCreatureTypeDao;
+        private final CreatureTypeDao creatureTypeDao;
 
-        public Factory(CreatureDao creatureDao, CustomCreatureDao customCreatureDao,
-                       CustomCreatureTypeDao customCreatureTypeDao) {
+        public Factory(CreatureDao creatureDao,
+                       CustomCreatureDao customCreatureDao,
+                       CustomCreatureTypeDao customCreatureTypeDao,
+                       CreatureTypeDao creatureTypeDao) {
             this.creatureDao = creatureDao;
             this.customCreatureDao = customCreatureDao;
             this.customCreatureTypeDao = customCreatureTypeDao;
+            this.creatureTypeDao = creatureTypeDao;
         }
 
         @NonNull
         @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
-            return (T) new CreatureListViewModel(creatureDao, customCreatureDao, customCreatureTypeDao);
+            return (T) new CreatureListViewModel(creatureDao, customCreatureDao, customCreatureTypeDao, creatureTypeDao);
         }
     }
 }
