@@ -15,6 +15,7 @@ public enum DataSection {
     SPECIES("Species"),
     BACKGROUNDS("Backgrounds"),
     ITEMS("Items"),
+    ITEM_CATEGORIES("Item Categories"),
     DAMAGE_TYPES("Damage Types"),
     ALIGNMENTS("Alignments"),
     ITEM_RARITIES("Item Rarities"),

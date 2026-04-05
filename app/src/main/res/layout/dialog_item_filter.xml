@@ -5,15 +5,32 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Category"
-        android:textStyle="bold"
-        android:layout_marginBottom="4dp" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Rarity"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/btn_manage_rarities_in_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_edit"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:contentDescription="Manage Rarities" />
+    </LinearLayout>
 
     <Spinner
-        android:id="@+id/spinner_category"
+        android:id="@+id/spinner_rarity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp" />
@@ -25,23 +42,40 @@
         android:text="Magic Item Only"
         android:layout_marginBottom="16dp" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Rarity"
-        android:textStyle="bold"
-        android:layout_marginBottom="4dp" />
-
-    <Spinner
-        android:id="@+id/spinner_rarity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp" />
-
     <CheckBox
         android:id="@+id/cb_attunement"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Requires Attunement" />
+        android:text="Requires Attunement"
+        android:layout_marginBottom="16dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Weapon Property"
+            android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/btn_manage_weapon_properties_in_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@android:drawable/ic_menu_edit"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:padding="8dp"
+            android:contentDescription="Manage Weapon Properties" />
+    </LinearLayout>
+
+    <Spinner
+        android:id="@+id/spinner_weapon_property"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

@@ -5,31 +5,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
-import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureAction;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_item.CustomItemEntity;
-import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomCastingOption;
 import com.fizzycoyote.qusetroll.core.models.open5e.item.ItemDto;
 import com.fizzycoyote.qusetroll.feature_item.view_model.CustomItemCreateViewModel;
-import com.fizzycoyote.qusetroll.feature_spell.adapter.CastingOptionAdapter;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Executors;
 
 public class CustomItemCreateActivity extends AppCompatActivity {
@@ -42,31 +41,18 @@ public class CustomItemCreateActivity extends AppCompatActivity {
     private CheckBox cbMagic, cbAttunement;
     private TextInputEditText etAttunementDetail;
 
+    private Spinner spinnerWeaponProperty;
+    private ChipGroup chipGroupSelectedProperties;
+
     private LinearLayout weaponSection;
     private TextInputEditText etDamageDice, etRange, etLongRange;
     private AutoCompleteTextView actvDamageType;
     private CheckBox cbSimple, cbImprovised;
-    private CastingOptionAdapter propertiesAdapter;
 
     private LinearLayout armorSection;
     private TextInputEditText etAcBase, etAcDisplay;
     private CheckBox cbStealthDisadvantage;
     private TextInputEditText etStrengthRequired;
-
-    private static final String[] CATEGORIES = {
-            "Weapon", "Armor", "Shield", "Potion", "Ring", "Wand", "Staff", "Rod",
-            "Spellcasting Focus", "Adventuring Gear", "Scroll", "Ammunition", "Art",
-            "Equipment Pack", "Gem", "Jewelry", "Land Vehicle", "Mount", "Poison",
-            "Service", "Tools", "Trade Good", "Waterborne Vehicle", "Wondrous Item"
-    };
-    private static final String[] RARITIES = {
-            "Common", "Uncommon", "Rare", "Very Rare", "Legendary", "Artifact"
-    };
-    private static final String[] DAMAGE_TYPES = {
-            "acid", "bludgeoning", "cold", "fire", "force",
-            "lightning", "necrotic", "piercing", "poison",
-            "psychic", "radiant", "slashing", "thunder"
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,16 +64,22 @@ public class CustomItemCreateActivity extends AppCompatActivity {
                 new CustomItemCreateViewModel.Factory(
                         UserContentDatabase.getInstance(this).customItemDao(),
                         editId,
-                        Executors.newSingleThreadExecutor()
+                        Executors.newSingleThreadExecutor(),
+                        Open5eDatabase.getInstance(this).itemCategoryDao(),
+                        UserContentDatabase.getInstance(this).customItemCategoryDao(),
+                        Open5eDatabase.getInstance(this).itemRarityDao(),
+                        UserContentDatabase.getInstance(this).customItemRarityDao(),
+                        Open5eDatabase.getInstance(this).damageTypeDao(),
+                        UserContentDatabase.getInstance(this).customDamageTypeDao(),
+                        Open5eDatabase.getInstance(this).weaponPropertyDao(),
+                        UserContentDatabase.getInstance(this).customWeaponPropertyDao()
                 )).get(CustomItemCreateViewModel.class);
 
         initViews();
         setupObservers();
         setTitle(viewModel.isEditMode() ? "Edit Item" : "Create Item");
         ((MaterialButton) findViewById(R.id.btnSave)).setText(viewModel.isEditMode() ? "Update Item" : "Save Item");
-
         findViewById(R.id.btnSave).setOnClickListener(v -> save());
-        findViewById(R.id.btnAddProperty).setOnClickListener(v -> showAddPropertyDialog());
     }
 
     private void initViews() {
@@ -101,13 +93,23 @@ public class CustomItemCreateActivity extends AppCompatActivity {
         etWeight = findViewById(R.id.etWeight);
         etCost = findViewById(R.id.etCost);
 
-        ArrayAdapter<String> catAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, CATEGORIES);
-        actvCategory.setAdapter(catAdapter);
+        viewModel.getAllCategoryNames().observe(this, categoryNames -> {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_list_item_1, categoryNames);
+            actvCategory.setAdapter(adapter);
+        });
 
-        ArrayAdapter<String> rarityAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, RARITIES);
-        actvRarity.setAdapter(rarityAdapter);
+        viewModel.getCombinedRarityNames().observe(this, rarityNames -> {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_list_item_1, rarityNames);
+            actvRarity.setAdapter(adapter);
+        });
+
+        viewModel.getCombinedDamageTypeNames().observe(this, damageTypeNames -> {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_list_item_1, damageTypeNames);
+            actvDamageType.setAdapter(adapter);
+        });
 
         weaponSection = findViewById(R.id.weapon_section);
         etDamageDice = findViewById(R.id.etDamageDice);
@@ -117,20 +119,36 @@ public class CustomItemCreateActivity extends AppCompatActivity {
         cbSimple = findViewById(R.id.cbSimple);
         cbImprovised = findViewById(R.id.cbImprovised);
 
-        ArrayAdapter<String> damageAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, DAMAGE_TYPES);
-        actvDamageType.setAdapter(damageAdapter);
+        spinnerWeaponProperty = findViewById(R.id.spinnerWeaponProperty);
+        chipGroupSelectedProperties = findViewById(R.id.chipGroupSelectedProperties);
+        Button btnAddProperty = findViewById(R.id.btnAddSelectedProperty);
 
-        RecyclerView rvProperties = findViewById(R.id.rvProperties);
-        propertiesAdapter = new CastingOptionAdapter(pos -> {
-            List<CustomCreatureAction> list = new ArrayList<>(viewModel.getProperties().getValue());
-            if (pos >= 0 && pos < list.size()) {
-                list.remove(pos);
-                viewModel.setProperties(list);
+        viewModel.getAllWeaponPropertyNames().observe(this, propertyNames -> {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_spinner_item, propertyNames);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinnerWeaponProperty.setAdapter(adapter);
+        });
+
+        viewModel.getSelectedWeaponProperties().observe(this, selectedSet -> {
+            chipGroupSelectedProperties.removeAllViews();
+            if (selectedSet != null) {
+                for (String propName : selectedSet) {
+                    Chip chip = new Chip(this);
+                    chip.setText(propName);
+                    chip.setCloseIconVisible(true);
+                    chip.setOnCloseIconClickListener(v -> viewModel.removeWeaponProperty(propName));
+                    chipGroupSelectedProperties.addView(chip);
+                }
             }
         });
-        rvProperties.setLayoutManager(new LinearLayoutManager(this));
-        rvProperties.setAdapter(propertiesAdapter);
+
+        btnAddProperty.setOnClickListener(v -> {
+            String selected = (String) spinnerWeaponProperty.getSelectedItem();
+            if (selected != null && !selected.isEmpty()) {
+                viewModel.addWeaponProperty(selected);
+            }
+        });
 
         armorSection = findViewById(R.id.armor_section);
         etAcBase = findViewById(R.id.etAcBase);
@@ -173,8 +191,15 @@ public class CustomItemCreateActivity extends AppCompatActivity {
                         etLongRange.setText(String.valueOf((int) weapon.longRange));
                         cbSimple.setChecked(weapon.isSimple);
                         cbImprovised.setChecked(weapon.isImprovised);
+                        if (weapon.properties != null) {
+                            for (ItemDto.WeaponEmbedDto.WeaponPropertyDto wp : weapon.properties) {
+                                if (wp.property != null && wp.property.name != null) {
+                                    viewModel.addWeaponProperty(wp.property.name);
+                                }
+                            }
+                        }
                     }
-                } catch (Exception e) {}
+                } catch (Exception ignored) {}
             }
 
             if (item.categoryName != null && item.categoryName.equalsIgnoreCase("Armor") && item.armorJson != null) {
@@ -186,19 +211,8 @@ public class CustomItemCreateActivity extends AppCompatActivity {
                         cbStealthDisadvantage.setChecked(armor.grantsStealthDisadvantage);
                         etStrengthRequired.setText(armor.strengthScoreRequired != null ? String.valueOf(armor.strengthScoreRequired) : "");
                     }
-                } catch (Exception e) {}
+                } catch (Exception ignored) {}
             }
-        });
-
-        viewModel.getProperties().observe(this, props -> {
-            List<CustomCastingOption> opts = new ArrayList<>();
-            for (CustomCreatureAction p : props) {
-                CustomCastingOption o = new CustomCastingOption();
-                o.type = p.name;
-                o.desc = p.desc;
-                opts.add(o);
-            }
-            propertiesAdapter.submitList(opts);
         });
 
         viewModel.getSaveResult().observe(this, success -> {
@@ -210,29 +224,6 @@ public class CustomItemCreateActivity extends AppCompatActivity {
                 Toast.makeText(this, "An item with this name already exists.", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    private void showAddPropertyDialog() {
-        View dv = LayoutInflater.from(this).inflate(R.layout.dialog_creature_action, null);
-        EditText etPropName = dv.findViewById(R.id.etActionName);
-        EditText etPropDesc = dv.findViewById(R.id.etActionDesc);
-        dv.findViewById(R.id.spinnerActionType).setVisibility(View.GONE);
-
-        new AlertDialog.Builder(this)
-                .setTitle("Add Property")
-                .setView(dv)
-                .setPositiveButton("Add", (d, w) -> {
-                    String name = etPropName.getText().toString().trim();
-                    if (name.isEmpty()) return;
-                    CustomCreatureAction action = new CustomCreatureAction();
-                    action.name = name;
-                    action.desc = etPropDesc.getText().toString().trim();
-                    List<CustomCreatureAction> list = new ArrayList<>(viewModel.getProperties().getValue());
-                    list.add(action);
-                    viewModel.setProperties(list);
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
     }
 
     private void save() {
@@ -267,14 +258,15 @@ public class CustomItemCreateActivity extends AppCompatActivity {
             dt.name = actvDamageType.getText().toString().trim();
             dt.key = dt.name.toLowerCase().replace(" ", "_");
             weapon.damageType = dt;
+
             List<ItemDto.WeaponEmbedDto.WeaponPropertyDto> propList = new ArrayList<>();
-            List<CustomCreatureAction> props = viewModel.getProperties().getValue();
-            if (props != null) {
-                for (CustomCreatureAction action : props) {
+            Set<String> selectedProps = viewModel.getSelectedWeaponProperties().getValue();
+            if (selectedProps != null) {
+                for (String propName : selectedProps) {
                     ItemDto.WeaponEmbedDto.WeaponPropertyDto wp = new ItemDto.WeaponEmbedDto.WeaponPropertyDto();
-                    wp.detail = action.desc;
+                    wp.detail = "";
                     ItemDto.WeaponEmbedDto.WeaponPropertyDto.PropertyDetailDto detail = new ItemDto.WeaponEmbedDto.WeaponPropertyDto.PropertyDetailDto();
-                    detail.name = action.name;
+                    detail.name = propName;
                     wp.property = detail;
                     propList.add(wp);
                 }

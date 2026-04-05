@@ -24,4 +24,7 @@ public interface WeaponPropertyDao {
 
     @Query("SELECT * FROM weapon_properties WHERE key = :key")
     LiveData<WeaponPropertyEntity> getByKey(String key);
+
+    @Query("SELECT * FROM weapon_properties WHERE name = :name LIMIT 1")
+    LiveData<WeaponPropertyEntity> getByName(String name);
 }

@@ -7,6 +7,7 @@ public class ItemFilter {
     public boolean magicOnly = false;
     public String rarity = "";
     public boolean requiresAttunement = false;
+    public String weaponProperty = "";
 
     public boolean isEmpty() {
         return query.isEmpty() && categoryName.isEmpty() && source.isEmpty() && !magicOnly

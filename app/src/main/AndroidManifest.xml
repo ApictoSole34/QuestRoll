@@ -44,6 +44,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".feature_item.item_category.ui.ItemCategoryListActivity"/>
+        <activity android:name=".feature_item.item_category.ui.ItemCategoryDetailActivity"/>
+        <activity android:name=".feature_item.item_category.ui.CustomItemCategoryCreateActivity"/>
+        <activity android:name=".feature_item.item_category.ui.CustomItemCategoryDetailActivity"/>
         <activity android:name=".feature_creature.creature_type.ui.CreatureTypeDetailActivity"/>
         <activity android:name=".feature_creature.creature_type.ui.CreatureTypeListActivity"/>
         <activity android:name=".feature_creature.creature_type.ui.CustomCreatureTypeCreateActivity"/>

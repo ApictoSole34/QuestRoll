@@ -12,6 +12,7 @@ import com.fizzycoyote.qusetroll.core.models.open5e.document.DocumentResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.environment.EnvironmentResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.item.ItemResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.item_category.ItemCategoryResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.item_rarity.ItemRarityResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseResponse;
@@ -100,4 +101,7 @@ public interface Open5eApiService {
 
     @GET("conditions/")
     Call<ConditionResponse> getConditionsPage(@Query("page") int page);
+
+    @GET("itemcategories/")
+    Call<ItemCategoryResponse> getItemCategoriesPage(@Query("page") int page);
 }

@@ -39,11 +39,28 @@
         <com.google.android.material.divider.MaterialDivider android:layout_width="match_parent"
             android:layout_height="wrap_content" android:layout_marginBottom="12dp"/>
 
-        <LinearLayout android:id="@+id/weapon_section" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:orientation="vertical"
-            android:visibility="gone" android:layout_marginBottom="12dp">
+        <LinearLayout
+            android:id="@+id/weapon_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            android:layout_marginBottom="12dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?attr/selectableItemBackground">
+
             <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
                 android:text="Weapon Properties" android:textSize="18sp" android:textStyle="bold"/>
+
+            <TextView
+                android:id="@+id/tv_weapon_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
             <TextView android:id="@+id/tv_weapon_damage" android:layout_width="match_parent"
                 android:layout_height="wrap_content" android:layout_marginTop="8dp"/>
             <TextView android:id="@+id/tv_weapon_range" android:layout_width="match_parent"
