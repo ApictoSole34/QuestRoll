@@ -39,7 +39,6 @@ public class AlignmentDetailActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.tv_morality)).setText("Morality: " + (a.morality != null ? a.morality : ""));
         ((TextView) findViewById(R.id.tv_attitude)).setText("Attitude: " + (a.societalAttitude != null ? a.societalAttitude : ""));
         ((TextView) findViewById(R.id.tv_description)).setText(a.description != null ? a.description : "");
-        findViewById(R.id.tv_notes).setVisibility(View.GONE);
         findViewById(R.id.btnManage).setVisibility(View.GONE);
     }
 }
