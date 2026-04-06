@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fizzycoyote.qusetroll.R;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
+import com.fizzycoyote.qusetroll.feature_spell.spell_school.ui.SpellSchoolListActivity;
 import com.fizzycoyote.qusetroll.feature_spell.view_model.SpellListViewModel;
 import com.fizzycoyote.qusetroll.feature_spell.adapter.SpellAdapter;
 import com.fizzycoyote.qusetroll.feature_spell.model.SpellFilter;
@@ -60,10 +61,8 @@ public class SpellListActivity extends AppCompatActivity {
         viewModel.loadSources();
 
         findViewById(R.id.btnFilter).setOnClickListener(v -> showFilterDialog());
-        findViewById(R.id.btnManageSchools).setOnClickListener(v -> {
-            new CustomSpellSchoolBottomSheet()
-                    .show(getSupportFragmentManager(), "custom_schools");
-        });
+        findViewById(R.id.btnManageSchools).setOnClickListener(v ->
+                startActivity(new Intent(this, SpellSchoolListActivity.class)));
         findViewById(R.id.fabCreateSpell).setOnClickListener(v ->
                 startActivity(new Intent(this, CustomSpellCreateActivity.class)));
     }

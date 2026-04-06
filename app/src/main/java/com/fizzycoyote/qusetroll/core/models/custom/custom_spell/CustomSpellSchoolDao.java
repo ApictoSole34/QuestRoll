@@ -21,6 +21,9 @@ public interface CustomSpellSchoolDao {
     @Query("DELETE FROM custom_spell_schools WHERE id = :id")
     void delete(long id);
 
+    @Query("SELECT * FROM custom_spell_schools WHERE id = :id")
+    LiveData<CustomSpellSchoolEntity> getById(long id);
+
     @Query("SELECT * FROM custom_spell_schools ORDER BY name ASC")
     LiveData<List<CustomSpellSchoolEntity>> getAll();
 

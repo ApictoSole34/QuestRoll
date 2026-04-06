@@ -1,5 +1,6 @@
 package com.fizzycoyote.qusetroll.core.models.open5e.spell_school;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
@@ -11,6 +12,12 @@ import java.util.List;
 public interface SpellSchoolDao {
     @Query("SELECT * FROM spell_schools ORDER BY name ASC")
     List<SpellSchoolEntity> getAllSchools();
+
+    @Query("SELECT * FROM spell_schools ORDER BY name ASC")
+    LiveData<List<SpellSchoolEntity>> getAllSchoolsLive();
+
+    @Query("SELECT * FROM spell_schools WHERE slug = :slug")
+    LiveData<SpellSchoolEntity> getBySlug(String slug);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<SpellSchoolEntity> schools);

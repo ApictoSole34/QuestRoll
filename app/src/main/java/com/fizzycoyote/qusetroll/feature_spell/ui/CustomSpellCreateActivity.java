@@ -40,17 +40,6 @@ public class CustomSpellCreateActivity extends AppCompatActivity {
 
     public static final String EXTRA_EDIT_SPELL_ID = "edit_spell_id";
 
-    private static final String[] DAMAGE_TYPES = {
-            "acid", "bludgeoning", "cold", "fire", "force",
-            "lightning", "necrotic", "piercing", "poison",
-            "psychic", "radiant", "slashing", "thunder"
-    };
-
-    private static final String[] SAVING_THROWS = {
-            "", "strength", "dexterity", "constitution",
-            "intelligence", "wisdom", "charisma"
-    };
-
     private static final String[] CASTING_TIMES = {
             "action", "bonus action", "reaction", "1 minute",
             "10 minutes", "1 hour", "8 hours", "24 hours"
@@ -74,7 +63,6 @@ public class CustomSpellCreateActivity extends AppCompatActivity {
         setupViewModel();
         initViews();
         setupDropdowns();
-        setupDamageTypeChips();
         setupCastingOptionsRecycler();
         setupObservers();
         setupListeners();
@@ -90,6 +78,10 @@ public class CustomSpellCreateActivity extends AppCompatActivity {
                 new CustomSpellCreateViewModel.Factory(
                         db.customSpellDao(),
                         db.customSpellSchoolDao(),
+                        db.customDamageTypeDao(),
+                        Open5eDatabase.getInstance(this).damageTypeDao(),
+                        Open5eDatabase.getInstance(this).abilityDao(),
+                        db.customAbilityDao(),
                         editId,
                         Executors.newSingleThreadExecutor()
                 )).get(CustomSpellCreateViewModel.class);
@@ -126,18 +118,6 @@ public class CustomSpellCreateActivity extends AppCompatActivity {
         actvCastingTime.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, CASTING_TIMES));
 
-        actvSavingThrow.setAdapter(new ArrayAdapter<>(this,
-                android.R.layout.simple_list_item_1, SAVING_THROWS));
-    }
-
-    private void setupDamageTypeChips() {
-        for (String type : DAMAGE_TYPES) {
-            Chip chip = new Chip(this);
-            chip.setText(type.substring(0, 1).toUpperCase() + type.substring(1));
-            chip.setTag(type);
-            chip.setCheckable(true);
-            chipGroupDamageTypes.addView(chip);
-        }
     }
 
     private void setupCastingOptionsRecycler() {
@@ -179,16 +159,29 @@ public class CustomSpellCreateActivity extends AppCompatActivity {
             });
         });
 
-        viewModel.getSaveResult().observe(this, success -> {
-            if (success == null) return;
-            if (success) {
-                Toast.makeText(this,
-                        viewModel.isEditMode() ? "Spell updated!" : "Spell saved!",
-                        Toast.LENGTH_SHORT).show();
-                finish();
-            } else {
-                Toast.makeText(this, "A spell with this name already exists.",
-                        Toast.LENGTH_SHORT).show();
+        viewModel.getCombinedSavingThrowNames().observe(this, savingThrowNames -> {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                    android.R.layout.simple_list_item_1, savingThrowNames);
+            actvSavingThrow.setAdapter(adapter);
+        });
+
+        viewModel.getCombinedDamageTypeNames().observe(this, damageTypeNames -> {
+            chipGroupDamageTypes.removeAllViews();
+            if (damageTypeNames != null) {
+                for (String type : damageTypeNames) {
+                    Chip chip = new Chip(this);
+                    chip.setText(type.substring(0, 1).toUpperCase() + type.substring(1));
+                    chip.setTag(type);
+                    chip.setCheckable(true);
+                    chipGroupDamageTypes.addView(chip);
+                }
+            }
+            CustomSpellEntity currentSpell = viewModel.getEditData().getValue();
+            if (currentSpell != null && currentSpell.damageTypes != null) {
+                for (int i = 0; i < chipGroupDamageTypes.getChildCount(); i++) {
+                    Chip chip = (Chip) chipGroupDamageTypes.getChildAt(i);
+                    chip.setChecked(currentSpell.damageTypes.contains(chip.getTag()));
+                }
             }
         });
 
@@ -228,13 +221,6 @@ public class CustomSpellCreateActivity extends AppCompatActivity {
         cbRitual.setChecked(spell.ritual);
         cbConcentration.setChecked(spell.concentration);
         cbAttackRoll.setChecked(spell.attackRoll);
-
-        if (spell.damageTypes != null) {
-            for (int i = 0; i < chipGroupDamageTypes.getChildCount(); i++) {
-                Chip chip = (Chip) chipGroupDamageTypes.getChildAt(i);
-                chip.setChecked(spell.damageTypes.contains(chip.getTag()));
-            }
-        }
 
         findViewById(R.id.tilMaterialSpecified)
                 .setVisibility(spell.material ? View.VISIBLE : View.GONE);

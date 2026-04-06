@@ -84,4 +84,7 @@ public class SpellEntity {
 
     @ColumnInfo(name = "document_name")
     public String documentName;
+
+    @ColumnInfo(name = "document_key")
+    public String documentKey;
 }

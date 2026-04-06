@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.feature_document.fragment.DocumentDetailDialogFragment;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell.SpellEntity;
 import com.google.gson.Gson;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.noties.markwon.Markwon;
+import io.noties.markwon.ext.tables.TablePlugin;
 
 public class SpellDetailActivity extends AppCompatActivity {
 
@@ -30,7 +32,9 @@ public class SpellDetailActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spell_detail);
 
-        markwon = Markwon.create(this);
+        markwon = Markwon.builder(this)
+                .usePlugin(TablePlugin.create(this))
+                .build();
 
         String spellKey = getIntent().getStringExtra("SPELL_KEY");
         Open5eDatabase db = Open5eDatabase.getInstance(this);
@@ -54,6 +58,20 @@ public class SpellDetailActivity extends AppCompatActivity {
         setTextView(R.id.tv_range, "Range", spell.rangeText);
         setTextView(R.id.tv_duration, "Duration", spell.duration);
         setTextView(R.id.tv_target, "Target", spell.targetType);
+
+        TextView tvSource = findViewById(R.id.tv_source);
+        String sourceText = "Source: " + (spell.documentName != null ? spell.documentName : "Unknown");
+        tvSource.setText(sourceText);
+        tvSource.setVisibility(View.VISIBLE);
+        tvSource.setClickable(true);
+        tvSource.setFocusable(true);
+        tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
+        tvSource.setOnClickListener(v -> {
+            if (spell.documentKey != null && !spell.documentKey.isEmpty()) {
+                DocumentDetailDialogFragment fragment = DocumentDetailDialogFragment.newInstance(spell.documentKey);
+                fragment.show(getSupportFragmentManager(), "document_detail");
+            }
+        });
 
         StringBuilder components = new StringBuilder();
         if (spell.verbal) components.append("V");

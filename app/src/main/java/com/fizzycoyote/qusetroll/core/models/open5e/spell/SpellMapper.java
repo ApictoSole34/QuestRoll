@@ -45,6 +45,18 @@ public class SpellMapper {
 
         if (dto.document != null) {
             e.documentName = dto.document.name;
+            if (dto.document.key != null && !dto.document.key.isEmpty()) {
+                e.documentKey = dto.document.key;
+            } else if (dto.document.permalink != null && !dto.document.permalink.isEmpty()) {
+                String permalink = dto.document.permalink;
+                if (permalink.endsWith("/")) {
+                    permalink = permalink.substring(0, permalink.length() - 1);
+                }
+                String[] parts = permalink.split("/");
+                if (parts.length > 0) {
+                    e.documentKey = parts[parts.length - 1];
+                }
+            }
         }
 
         if (dto.castingOptions != null) {

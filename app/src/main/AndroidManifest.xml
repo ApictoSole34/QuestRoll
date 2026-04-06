@@ -44,6 +44,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".feature_spell.spell_school.ui.SpellSchoolListActivity"/>
+        <activity android:name=".feature_spell.spell_school.ui.SpellSchoolDetailActivity"/>
+        <activity android:name=".feature_spell.spell_school.ui.CustomSpellSchoolCreateActivity"/>
+        <activity android:name=".feature_spell.spell_school.ui.CustomSpellSchoolDetailActivity"/>
         <activity android:name=".feature_item.item_category.ui.ItemCategoryListActivity"/>
         <activity android:name=".feature_item.item_category.ui.ItemCategoryDetailActivity"/>
         <activity android:name=".feature_item.item_category.ui.CustomItemCategoryCreateActivity"/>
