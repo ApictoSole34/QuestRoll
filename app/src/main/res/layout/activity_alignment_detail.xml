@@ -51,6 +51,14 @@
             android:textSize="15sp"
             android:layout_marginBottom="12dp" />
 
+        <TextView
+            android:id="@+id/tv_source"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginBottom="12dp" />
+
         <Button
             android:id="@+id/btnManage"
             android:layout_width="wrap_content"

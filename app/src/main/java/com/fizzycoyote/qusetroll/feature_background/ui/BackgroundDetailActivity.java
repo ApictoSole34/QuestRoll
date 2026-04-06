@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.feature_document.fragment.DocumentDetailDialogFragment;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.models.open5e.background.BackgroundDto;
 import com.fizzycoyote.qusetroll.core.models.open5e.background.BackgroundEntity;
@@ -42,6 +43,15 @@ public class BackgroundDetailActivity extends AppCompatActivity {
         if (b.documentName != null && !b.documentName.isEmpty()) {
             tvSource.setText(b.documentName);
             tvSource.setVisibility(View.VISIBLE);
+            tvSource.setClickable(true);
+            tvSource.setFocusable(true);
+            tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
+            tvSource.setOnClickListener(v -> {
+                if (b.documentKey != null && !b.documentKey.isEmpty()) {
+                    DocumentDetailDialogFragment fragment = DocumentDetailDialogFragment.newInstance(b.documentKey);
+                    fragment.show(getSupportFragmentManager(), "document_detail");
+                }
+            });
         } else {
             tvSource.setVisibility(View.GONE);
         }

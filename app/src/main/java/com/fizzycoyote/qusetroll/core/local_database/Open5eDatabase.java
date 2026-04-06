@@ -106,7 +106,7 @@ import java.util.concurrent.Executors;
                 CreatureTypeEntity.class,
                 ItemCategoryEntity.class,
         },
-        version = 43,
+        version = 44,
         exportSchema = false
 )
 @TypeConverters({GainedAtListConverter.class, TableDataListConverter.class, Converters.class})

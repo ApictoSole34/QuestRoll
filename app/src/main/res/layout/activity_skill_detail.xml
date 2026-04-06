@@ -26,6 +26,15 @@
             style="@style/Widget.MaterialComponents.Chip.Entry"
             android:layout_marginBottom="16dp"/>
 
+        <!-- NOWE: Źródło (dokument) -->
+        <TextView
+            android:id="@+id/tv_source"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginBottom="16dp"/>
+
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

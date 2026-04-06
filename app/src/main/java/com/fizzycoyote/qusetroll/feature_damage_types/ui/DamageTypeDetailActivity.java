@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.feature_document.fragment.DocumentDetailDialogFragment;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.models.open5e.damage_type.DamageTypeEntity;
 
@@ -27,10 +28,49 @@ public class DamageTypeDetailActivity extends AppCompatActivity {
                 });
     }
 
+    private String extractKeyFromUrl(String url) {
+        if (url == null) return null;
+        String u = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
+        String[] parts = u.split("/");
+        if (parts.length > 0) return parts[parts.length - 1];
+        return null;
+    }
+    private String formatDocumentName(String key) {
+        if (key == null) return "Unknown";
+        switch (key) {
+            case "core": return "Core Rules";
+            case "srd-2014": return "SRD 5.1";
+            case "srd-2024": return "SRD 5.2";
+            default: return key;
+        }
+    }
+
     private void populateUI(DamageTypeEntity type) {
         ((TextView) findViewById(R.id.tv_name)).setText(type.name);
-        ((TextView) findViewById(R.id.tv_source)).setText("Source: " + (type.document != null ? type.document : "SRD"));
         ((TextView) findViewById(R.id.tv_description)).setText(type.description != null ? type.description : "No description.");
         findViewById(R.id.btnManage).setVisibility(View.GONE);
+
+        TextView tvSource = findViewById(R.id.tv_source);
+        String sourceDisplay = "Source: ";
+        String docKey;
+        if (type.document != null && !type.document.isEmpty()) {
+            docKey = extractKeyFromUrl(type.document);
+            String displayName = formatDocumentName(docKey);
+            sourceDisplay += displayName;
+        } else {
+            docKey = null;
+            sourceDisplay += "Unknown";
+        }
+        tvSource.setText(sourceDisplay);
+        tvSource.setVisibility(View.VISIBLE);
+        tvSource.setClickable(true);
+        tvSource.setFocusable(true);
+        tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
+        tvSource.setOnClickListener(v -> {
+            if (docKey != null && !docKey.isEmpty()) {
+                DocumentDetailDialogFragment fragment = DocumentDetailDialogFragment.newInstance(docKey);
+                fragment.show(getSupportFragmentManager(), "document_detail");
+            }
+        });
     }
 }

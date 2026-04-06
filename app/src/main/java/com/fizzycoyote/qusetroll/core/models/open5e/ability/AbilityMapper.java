@@ -16,6 +16,10 @@ public class AbilityMapper {
         e.name = dto.name;
         e.shortDesc = dto.shortDesc;
         e.descriptionsJson = gson.toJson(dto.descriptions);
+        // Dodanie URL dokumentu
+        if (dto.document != null) {
+            e.documentUrl = dto.document;
+        }
         return e;
     }
 

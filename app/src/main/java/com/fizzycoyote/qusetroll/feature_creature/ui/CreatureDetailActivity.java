@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.feature_document.fragment.DocumentDetailDialogFragment;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureDto;
 import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureEntity;
@@ -84,7 +85,19 @@ public class CreatureDetailActivity extends AppCompatActivity {
 
         buildActions(c.actionsJson, gson);
 
-        setIfNotEmpty(R.id.tv_source, "Source: ", c.documentName);
+        TextView tvSource = findViewById(R.id.tv_source);
+        String sourceText = "Source: " + (c.documentName != null ? c.documentName : "");
+        tvSource.setText(sourceText);
+        tvSource.setVisibility(View.VISIBLE);
+        tvSource.setClickable(true);
+        tvSource.setFocusable(true);
+        tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
+        tvSource.setOnClickListener(v -> {
+            if (c.documentKey != null && !c.documentKey.isEmpty()) {
+                DocumentDetailDialogFragment fragment = DocumentDetailDialogFragment.newInstance(c.documentKey);
+                fragment.show(getSupportFragmentManager(), "document_detail");
+            }
+        });
     }
 
     private void buildSpeedText(String speedJson) {

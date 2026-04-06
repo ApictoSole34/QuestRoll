@@ -10,6 +10,7 @@ public class AbilityDto {
     @SerializedName("short_desc") public String shortDesc;
     @SerializedName("descriptions") public List<AbilityDescriptionDto> descriptions;
     @SerializedName("skills")    public List<SkillDto> skills;
+    @SerializedName("document")  public String document;
 
     public static class AbilityDescriptionDto {
         @SerializedName("desc")        public String desc;

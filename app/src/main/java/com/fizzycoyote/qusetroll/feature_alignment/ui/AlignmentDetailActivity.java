@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.feature_document.fragment.DocumentDetailDialogFragment;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.models.open5e.alignment.AlignmentEntity;
 import com.fizzycoyote.qusetroll.feature_alignment.model.CombinedAlignment;
@@ -39,6 +40,21 @@ public class AlignmentDetailActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.tv_morality)).setText("Morality: " + (a.morality != null ? a.morality : ""));
         ((TextView) findViewById(R.id.tv_attitude)).setText("Attitude: " + (a.societalAttitude != null ? a.societalAttitude : ""));
         ((TextView) findViewById(R.id.tv_description)).setText(a.description != null ? a.description : "");
+
+        TextView tvSource = findViewById(R.id.tv_source);
+        String sourceText = "Source: " + (a.documentName != null ? a.documentName : "Unknown");
+        tvSource.setText(sourceText);
+        tvSource.setVisibility(View.VISIBLE);
+        tvSource.setClickable(true);
+        tvSource.setFocusable(true);
+        tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
+        tvSource.setOnClickListener(v -> {
+            if (a.documentKey != null && !a.documentKey.isEmpty()) {
+                DocumentDetailDialogFragment fragment = DocumentDetailDialogFragment.newInstance(a.documentKey);
+                fragment.show(getSupportFragmentManager(), "document_detail");
+            }
+        });
+
         findViewById(R.id.btnManage).setVisibility(View.GONE);
     }
 }
