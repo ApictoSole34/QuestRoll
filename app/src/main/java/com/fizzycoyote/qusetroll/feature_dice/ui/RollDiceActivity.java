@@ -7,6 +7,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -42,9 +44,29 @@ public class RollDiceActivity extends AppCompatActivity implements DialogManageD
     private SensorManager sensorManager;
     private boolean isShakeToRollEnabled = false;
     private Sensor accelerometer;
-    private long lastShakeTime = 0;
-    private float lastX = 0;
-    private int shakeStep = 0;
+
+    private static final float SHAKE_THRESHOLD = 12.0f;
+    private static final int SHAKE_COUNT_REQUIRED = 4;
+    private static final long SHAKE_WINDOW_MS = 1500;
+    private static final long SETTLE_DELAY_MS = 400;
+    private static final long POST_ROLL_COOLDOWN_MS = 2000;
+
+    private int shakeCount = 0;
+    private long firstShakeTime = 0;
+    private long lastRollTime = 0;
+    private boolean shakePrimed = false;
+
+    private final Handler settleHandler = new Handler(Looper.getMainLooper());
+    private final Runnable settleRunnable = () -> {
+        if (shakePrimed && isShakeToRollEnabled) {
+            long now = System.currentTimeMillis();
+            if (now - lastRollTime > POST_ROLL_COOLDOWN_MS) {
+                rollDice();
+                lastRollTime = now;
+            }
+        }
+        resetShakeState();
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,11 +93,9 @@ public class RollDiceActivity extends AppCompatActivity implements DialogManageD
         }
 
         List<Dice> diceList = new ArrayList<>();
-
         diceAdapter = new DiceAdapter(diceList);
         diceRecyclerView.setAdapter(diceAdapter);
 
-        manageDiceButton.setOnClickListener(v -> toggleDiceRecyclerView());
         rollButton.setOnClickListener(v -> rollDice());
 
         showResultSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -89,12 +109,12 @@ public class RollDiceActivity extends AppCompatActivity implements DialogManageD
 
         shakeToRollSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             isShakeToRollEnabled = isChecked;
-
             if (isChecked && accelerometer != null) {
                 sensorManager.registerListener(this, accelerometer,
-                        SensorManager.SENSOR_DELAY_NORMAL);
+                        SensorManager.SENSOR_DELAY_GAME);
             } else {
                 sensorManager.unregisterListener(this);
+                resetShakeState();
             }
         });
 
@@ -107,10 +127,9 @@ public class RollDiceActivity extends AppCompatActivity implements DialogManageD
     @Override
     protected void onResume() {
         super.onResume();
-
-        if (accelerometer != null) {
+        if (isShakeToRollEnabled && accelerometer != null) {
             sensorManager.registerListener(this, accelerometer,
-                    SensorManager.SENSOR_DELAY_NORMAL);
+                    SensorManager.SENSOR_DELAY_GAME);
         }
     }
 
@@ -118,48 +137,57 @@ public class RollDiceActivity extends AppCompatActivity implements DialogManageD
     protected void onPause() {
         super.onPause();
         sensorManager.unregisterListener(this);
+        settleHandler.removeCallbacks(settleRunnable);
+        resetShakeState();
     }
 
+    @Override
     public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            float x = event.values[0];
-            float y = event.values[1];
-            float z = event.values[2];
+        if (!isShakeToRollEnabled) return;
+        if (event.sensor.getType() != Sensor.TYPE_ACCELEROMETER) return;
 
-            float deltaX = Math.abs(x - lastX);
-            lastX = x;
+        float x = event.values[0];
+        float y = event.values[1];
+        float z = event.values[2];
 
-            float shakeThreshold = 2.0f;
+        float magnitude = (float) Math.sqrt(x * x + y * y + z * z);
+        float acceleration = Math.abs(magnitude - SensorManager.GRAVITY_EARTH);
 
-            if (deltaX > shakeThreshold) {
-                long currentTime = System.currentTimeMillis();
-                if (currentTime - lastShakeTime > 500) {
-                    lastShakeTime = currentTime;
+        long now = System.currentTimeMillis();
 
-                    if(x < 0) {
-                        if (shakeStep == 0 || shakeStep == 2){
-                            shakeStep++;
-                        } else {
-                            shakeStep = 0;
-                        }
-                    } else if (x > 0) {
-                        if (shakeStep == 1) {
-                            shakeStep++;
-                        } else {
-                            shakeStep = 0;
-                        }
-                    }
-                    if (shakeStep == 3) {
-                        shakeStep = 0;
-                        rollDice();
-                    }
-                }
+        if (now - lastRollTime < POST_ROLL_COOLDOWN_MS) return;
+
+        if (acceleration > SHAKE_THRESHOLD) {
+            // Reset okna jeśli minęło za dużo czasu od pierwszego uderzenia
+            if (shakeCount == 0 || now - firstShakeTime > SHAKE_WINDOW_MS) {
+                shakeCount = 1;
+                firstShakeTime = now;
+            } else {
+                shakeCount++;
+            }
+
+            Log.d("ShakeDetect", "shake count: " + shakeCount + ", accel: " + acceleration);
+
+            if (shakeCount >= SHAKE_COUNT_REQUIRED) {
+                shakePrimed = true;
+            }
+
+            if (shakePrimed) {
+                settleHandler.removeCallbacks(settleRunnable);
+                settleHandler.postDelayed(settleRunnable, SETTLE_DELAY_MS);
             }
         }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
+    }
+
+    private void resetShakeState() {
+        shakeCount = 0;
+        firstShakeTime = 0;
+        shakePrimed = false;
+        settleHandler.removeCallbacks(settleRunnable);
     }
 
     @Override
@@ -180,7 +208,6 @@ public class RollDiceActivity extends AppCompatActivity implements DialogManageD
     }
 
     private void toggleDiceRecyclerView() {
-        Log.d("UIVisibility", "Dice RecyclerView: " + diceRecyclerView.getVisibility());
         if (diceRecyclerView.getVisibility() == View.VISIBLE) {
             diceRecyclerView.setVisibility(View.GONE);
         } else {
@@ -190,18 +217,23 @@ public class RollDiceActivity extends AppCompatActivity implements DialogManageD
 
     @SuppressLint("NotifyDataSetChanged")
     private void rollDice() {
-        StringBuilder result = new StringBuilder("Roll resoult: ");
+        // Resetujemy stan shake przed rzutem, żeby nie było podwójnego wyzwolenia
+        resetShakeState();
+        lastRollTime = System.currentTimeMillis();
+
+        StringBuilder result = new StringBuilder("Wynik rzutu: ");
         for (int i = 0; i < diceAdapter.getItemCount(); i++) {
             Dice dice = diceAdapter.getItem(i);
             dice.setAnimationPlayed(false);
             int rollResult = dice.roll();
-            result.append(dice.getType()).append(" : ").append(rollResult).append(", ");
+            result.append("d").append(dice.getType()).append(": ").append(rollResult).append(", ");
         }
 
-        result.delete(result.length() - 2, result.length());
+        if (result.length() > 2) {
+            result.delete(result.length() - 2, result.length());
+        }
 
         currentResult = result.toString();
-
         diceAdapter.notifyDataSetChanged();
 
         if (showResultSwitch.isChecked()) {
@@ -209,5 +241,4 @@ public class RollDiceActivity extends AppCompatActivity implements DialogManageD
             resultWindow.setVisibility(View.VISIBLE);
         }
     }
-
 }
