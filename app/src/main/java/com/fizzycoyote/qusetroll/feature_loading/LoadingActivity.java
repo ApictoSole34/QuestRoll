@@ -34,26 +34,35 @@ public class LoadingActivity extends AppCompatActivity {
 
     private ScrollView selectionLayout;
     private LinearLayout fetchingLayout;
+
     private ProgressBar progressBar;
-    private ProgressBar progressBarIndeterminate;
+    private ProgressBar progressBarSection;
+
     private TextView progressText;
     private TextView sectionText;
+    private TextView sectionProgressText;
     private TextView logText;
 
     private final Map<DataSection, CheckBox> checkboxMap = new LinkedHashMap<>();
+    private String lastLoggedSection = "";
+    private int currentOverallProgress = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading);
 
-        selectionLayout = findViewById(R.id.layout_selection);
-        fetchingLayout = findViewById(R.id.layout_fetching);
-        progressBar = findViewById(R.id.progressBar);
-        progressBarIndeterminate = findViewById(R.id.progressBarIndeterminate);
-        progressText = findViewById(R.id.progressText);
-        sectionText = findViewById(R.id.sectionText);
-        logText = findViewById(R.id.logText);
+        selectionLayout      = findViewById(R.id.layout_selection);
+        fetchingLayout       = findViewById(R.id.layout_fetching);
+        progressBar          = findViewById(R.id.progressBar);
+        progressBarSection   = findViewById(R.id.progressBarIndeterminate);
+        progressText         = findViewById(R.id.progressText);
+        sectionText          = findViewById(R.id.sectionText);
+        logText              = findViewById(R.id.logText);
+
+        progressBarSection.setIndeterminate(false);
+        progressBarSection.setMax(100);
+        progressBarSection.setProgress(0);
 
         buildRepository();
         setupCheckboxes();
@@ -66,6 +75,7 @@ public class LoadingActivity extends AppCompatActivity {
             checkDataAndProceed();
         }
     }
+
     private void buildRepository() {
         Open5eDatabase db = Open5eDatabase.getInstance(getApplicationContext());
         Executor executor = Executors.newSingleThreadExecutor();
@@ -154,6 +164,19 @@ public class LoadingActivity extends AppCompatActivity {
         selectionLayout.setVisibility(View.GONE);
         fetchingLayout.setVisibility(View.VISIBLE);
         logText.setText("");
+        lastLoggedSection = "";
+        currentOverallProgress = 0;
+
+        progressBar.setProgress(0);
+        progressText.setText("0%");
+        sectionText.setText("Initializing...");
+
+        progressBar.setVisibility(View.VISIBLE);
+
+        progressBarSection.setProgress(0);
+        progressBarSection.setVisibility(View.VISIBLE);
+
+        if (sectionProgressText != null) sectionProgressText.setText("");
     }
 
     private void startFetchingAll() {
@@ -169,7 +192,7 @@ public class LoadingActivity extends AppCompatActivity {
             if (resource == null) return;
             switch (resource.status) {
                 case LOADING:
-                    updateUI(resource.progress, resource.sectionName);
+                    updateUI(resource.progress, resource.sectionName, resource.sectionProgress);
                     break;
                 case SUCCESS:
                     startMainActivity();
@@ -181,18 +204,43 @@ public class LoadingActivity extends AppCompatActivity {
         });
     }
 
-    private void updateUI(int progress, String sectionName) {
+    private void updateUI(int progress, String sectionName, int sectionProgress) {
         runOnUiThread(() -> {
-            progressBar.setProgress(progress);
-            progressText.setText(progress + "%");
+            if (progress >= 0) {
+                currentOverallProgress = progress;
+                progressBar.setProgress(progress);
+                progressText.setText(progress + "%");
+            }
 
             if (sectionName != null && !sectionName.isEmpty()) {
-                sectionText.setText("Loading: " + sectionName);
-                String current = logText.getText().toString();
-                String newLog = current.isEmpty()
-                        ? "✅ " + sectionName
-                        : current + "\n✅ " + sectionName;
-                logText.setText(newLog);
+                String sectionLabel = "Downloading: " + sectionName;
+                if (sectionProgress >= 0) {
+                    sectionLabel += "  (" + sectionProgress + "%)";
+                }
+                sectionText.setText(sectionLabel);
+
+                if (sectionProgress >= 0) {
+                    progressBarSection.setProgress(sectionProgress);
+                } else {
+                    progressBarSection.setProgress(0);
+                }
+
+                if (sectionProgressText != null) {
+                    sectionProgressText.setText(sectionProgress >= 0 ? sectionProgress + "%" : "");
+                }
+
+                if (!sectionName.equals(lastLoggedSection)) {
+                    String current = logText.getText().toString();
+                    String newLog  = current.isEmpty()
+                            ? "▶ " + sectionName
+                            : current + "\n▶ " + sectionName;
+                    logText.setText(newLog);
+                    lastLoggedSection = sectionName;
+                    final View scrollView = (View) logText.getParent().getParent();
+                    if (scrollView instanceof androidx.core.widget.NestedScrollView) {
+                        ((androidx.core.widget.NestedScrollView) scrollView).fullScroll(View.FOCUS_DOWN);
+                    }
+                }
             }
         });
     }
@@ -214,5 +262,7 @@ public class LoadingActivity extends AppCompatActivity {
                 .show();
     }
 
-    private int dp(int v) { return (int)(v * getResources().getDisplayMetrics().density); }
+    private int dp(int v) {
+        return (int) (v * getResources().getDisplayMetrics().density);
+    }
 }

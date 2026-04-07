@@ -354,847 +354,43 @@ public class Open5eRepository {
         return result;
     }
 
-    private CompletableFuture<Void> processItemSets(AtomicInteger completed, int total,
-                                                    MutableLiveData<Resource<Boolean>> result) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                List<ItemSetEntity> all = new ArrayList<>();
-                int page = 1;
-                boolean hasMore = true;
-                int maxRetries = 3;
-                while (hasMore) {
-                    Response<ItemSetResponse> response = null;
-                    for (int retry = 0; retry < maxRetries; retry++) {
-                        try {
-                            response = api.getItemSetsPage(page).execute();
-                            if (response.isSuccessful()) break;
-                        } catch (Exception e) {
-                            Log.w("Repository", "Retry " + retry + " for item sets page " + page);
-                            if (retry == maxRetries - 1) throw e;
-                            Thread.sleep(2000);
-                        }
-                    }
-                    if (response == null || !response.isSuccessful() || response.body() == null) {
-                        Log.e("Repository", "Failed to fetch item sets page " + page);
-                        updateProgress(completed, total, result);
-                        return;
-                    }
-                    ItemSetResponse body = response.body();
-                    List<ItemSetEntity> entities = body.results.stream()
-                            .map(ItemSetMapper::dtoToEntity)
-                            .collect(Collectors.toList());
-                    all.addAll(entities);
-                    Log.d("Repository", "Item sets page " + page + ": " + entities.size()
-                            + " (total: " + all.size() + "/" + body.count + ")");
-                    hasMore = body.next != null;
-                    page++;
-                }
-                if (!all.isEmpty()) {
-                    itemSetDao.deleteAll();
-                    itemSetDao.insertAll(all);
-                    Log.d("Repository", "Saved " + all.size() + " item sets");
-                }
-                updateProgress(completed, total, result);
-            } catch (Exception e) {
-                handleError("Item Sets", e);
-            }
-        }, executor);
+    private void updateProgress(AtomicInteger completed, int total,
+                                MutableLiveData<Resource<Boolean>> result, String sectionName) {
+        int progress = (int) ((completed.incrementAndGet() / (double) total) * 100);
+        result.postValue(Resource.loading(progress, sectionName, 100));
     }
 
-    private CompletableFuture<Void> processItemCategories(AtomicInteger completed, int total,
-                                                          MutableLiveData<Resource<Boolean>> result) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                List<ItemCategoryEntity> all = new ArrayList<>();
-                int page = 1;
-                boolean hasMore = true;
-                int maxRetries = 3;
+    private void postPageProgress(MutableLiveData<Resource<Boolean>> result,
+                                  AtomicInteger completed, int total,
+                                  String sectionName, int fetched, int totalCount) {
+        double baseProgress  = (completed.get() / (double) total) * 100.0;
+        double sectionSlot   = 100.0 / total;
+        double sectionFrac   = (totalCount > 0) ? (fetched / (double) totalCount) : 0.0;
 
-                while (hasMore) {
-                    Response<ItemCategoryResponse> response = null;
-                    for (int retry = 0; retry < maxRetries; retry++) {
-                        try {
-                            response = api.getItemCategoriesPage(page).execute();
-                            if (response.isSuccessful()) break;
-                        } catch (Exception e) {
-                            Log.w("Repository", "Retry " + retry + " for item categories page " + page);
-                            if (retry == maxRetries - 1) throw e;
-                            Thread.sleep(2000);
-                        }
-                    }
-                    if (response == null || !response.isSuccessful() || response.body() == null) {
-                        Log.e("Repository", "Failed to fetch item categories page " + page);
-                        updateProgress(completed, total, result);
-                        return;
-                    }
-                    ItemCategoryResponse body = response.body();
-                    List<ItemCategoryEntity> entities = body.results.stream()
-                            .map(ItemCategoryMapper::dtoToEntity)
-                            .collect(Collectors.toList());
-                    all.addAll(entities);
-                    Log.d("Repository", "Item categories page " + page + ": " + entities.size()
-                            + " (total: " + all.size() + "/" + body.count + ")");
-                    hasMore = body.next != null;
-                    page++;
-                }
-                if (!all.isEmpty()) {
-                    itemCategoryDao.deleteAll();
-                    itemCategoryDao.insertAll(all);
-                    Log.d("Repository", "Saved " + all.size() + " item categories");
-                }
-                updateProgress(completed, total, result);
-            } catch (Exception e) {
-                handleError("Item Categories", e);
-            }
-        }, executor);
+        int overallPct  = Math.min((int)(baseProgress + sectionSlot) - 1,
+                (int)(baseProgress + sectionSlot * sectionFrac));
+        int sectionPct  = (totalCount > 0) ? Math.min(99, (int)(sectionFrac * 100)) : -1;
+
+        result.postValue(Resource.loading(overallPct, sectionName, sectionPct));
     }
 
-    private CompletableFuture<Void> processCreatureTypes(AtomicInteger completed, int total,
-                                                         MutableLiveData<Resource<Boolean>> result) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                List<CreatureTypeEntity> allTypes = new ArrayList<>();
-                int page = 1;
-                boolean hasMore = true;
-                int maxRetries = 3;
-
-                while (hasMore) {
-                    Response<CreatureTypeResponse> response = null;
-                    for (int retry = 0; retry < maxRetries; retry++) {
-                        try {
-                            response = api.getCreatureTypesPage(page).execute();
-                            if (response.isSuccessful()) break;
-                        } catch (Exception e) {
-                            Log.w("Repository", "Retry " + retry + " for creature types page " + page);
-                            if (retry == maxRetries - 1) throw e;
-                            Thread.sleep(2000);
-                        }
-                    }
-
-                    if (response == null || !response.isSuccessful() || response.body() == null) {
-                        Log.e("Repository", "Failed to fetch creature types page " + page);
-                        updateProgress(completed, total, result);
-                        return;
-                    }
-
-                    CreatureTypeResponse body = response.body();
-                    List<CreatureTypeEntity> entities = body.results.stream()
-                            .map(CreatureTypeMapper::dtoToEntity)
-                            .collect(Collectors.toList());
-                    allTypes.addAll(entities);
-                    Log.d("Repository", "Creature types page " + page + ": " + entities.size()
-                            + " (total: " + allTypes.size() + "/" + body.count + ")");
-                    hasMore = body.next != null;
-                    page++;
-                }
-
-                if (!allTypes.isEmpty()) {
-                    creatureTypeDao.deleteAll();
-                    creatureTypeDao.insertAll(allTypes);
-                    Log.d("Repository", "Saved " + allTypes.size() + " creature types");
-                }
-
-                updateProgress(completed, total, result);
-            } catch (Exception e) {
-                handleError("Creature Types", e);
-            }
-        }, executor);
-    }
-
-    private CompletableFuture<Void> processConditions(AtomicInteger completed, int total,
-                                                      MutableLiveData<Resource<Boolean>> result) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                List<ConditionEntity> allConditions = new ArrayList<>();
-                int page = 1;
-                boolean hasMore = true;
-                int maxRetries = 3;
-
-                while (hasMore) {
-                    Response<ConditionResponse> response = null;
-                    for (int retry = 0; retry < maxRetries; retry++) {
-                        try {
-                            response = api.getConditionsPage(page).execute();
-                            if (response.isSuccessful()) break;
-                        } catch (Exception e) {
-                            Log.w("Repository", "Retry " + retry + " for conditions page " + page);
-                            if (retry == maxRetries - 1) throw e;
-                            Thread.sleep(2000);
-                        }
-                    }
-
-                    if (response == null || !response.isSuccessful() || response.body() == null) {
-                        Log.e("Repository", "Failed to fetch conditions page " + page);
-                        updateProgress(completed, total, result);
-                        return;
-                    }
-
-                    ConditionResponse body = response.body();
-                    List<ConditionEntity> entities = body.results.stream()
-                            .map(ConditionMapper::dtoToEntity)
-                            .collect(Collectors.toList());
-                    allConditions.addAll(entities);
-                    Log.d("Repository", "Conditions page " + page + ": " + entities.size()
-                            + " (total: " + allConditions.size() + "/" + body.count + ")");
-                    hasMore = body.next != null;
-                    page++;
-                }
-
-                if (!allConditions.isEmpty()) {
-                    conditionDao.deleteAll();
-                    conditionDao.insertAll(allConditions);
-                    Log.d("Repository", "Saved " + allConditions.size() + " conditions");
-                }
-
-                updateProgress(completed, total, result);
-            } catch (Exception e) {
-                handleError("Conditions", e);
-            }
-        }, executor);
-    }
-
-    private CompletableFuture<Void> processRulesets(AtomicInteger completed, int total,
-                                                    MutableLiveData<Resource<Boolean>> result) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                List<RulesetEntity> allRulesets = new ArrayList<>();
-                List<RuleEntity> allRules = new ArrayList<>();
-                int page = 1;
-                boolean hasMore = true;
-                int maxRetries = 3;
-
-                while (hasMore) {
-                    Response<RulesetResponse> response = null;
-                    for (int retry = 0; retry < maxRetries; retry++) {
-                        try {
-                            response = api.getRulesetsPage(page).execute();
-                            if (response.isSuccessful()) break;
-                        } catch (Exception e) {
-                            Log.w("Repository", "Retry " + retry + " for rulesets page " + page);
-                            if (retry == maxRetries - 1) throw e;
-                            Thread.sleep(2000);
-                        }
-                    }
-
-                    if (response == null || !response.isSuccessful() || response.body() == null) {
-                        Log.e("Repository", "Failed to fetch rulesets page " + page);
-                        updateProgress(completed, total, result);
-                        return;
-                    }
-
-                    RulesetResponse body = response.body();
-                    for (RulesetDto dto : body.results) {
-                        allRulesets.add(RulesetMapper.dtoToEntity(dto));
-
-                        if (dto.rules != null) {
-                            for (RuleDto ruleDto : dto.rules) {
-                                RuleEntity rule = RuleMapper.dtoToEntity(ruleDto);
-                                rule.rulesetKey = dto.key;
-                                allRules.add(rule);
-                            }
-                        }
-                    }
-
-                    Log.d("Repository", "Rulesets page " + page + ": " + body.results.size()
-                            + " rulesets, total rules so far: " + allRules.size());
-
-                    hasMore = body.next != null;
-                    page++;
-                }
-
-                if (!allRulesets.isEmpty()) {
-                    rulesetDao.deleteAll();
-                    rulesetDao.insertAll(allRulesets);
-                    Log.d("Repository", "Saved " + allRulesets.size() + " rulesets");
-                }
-                if (!allRules.isEmpty()) {
-                    ruleDao.deleteAll();
-                    ruleDao.insertAll(allRules);
-                    Log.d("Repository", "Saved " + allRules.size() + " rules");
-                }
-
-                updateProgress(completed, total, result);
-
-            } catch (Exception e) {
-                handleError("Rulesets", e);
-            }
-        }, executor);
-    }
-
-    private CompletableFuture<Void> processRules(AtomicInteger completed, int total,
-                                                 MutableLiveData<Resource<Boolean>> result) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                List<RuleEntity> allRules = new ArrayList<>();
-                int page = 1;
-                boolean hasMore = true;
-                int maxRetries = 3;
-                while (hasMore) {
-                    Response<RuleResponse> response = null;
-                    for (int retry = 0; retry < maxRetries; retry++) {
-                        try {
-                            response = api.getRulesPage(page).execute();
-                            if (response.isSuccessful()) break;
-                        } catch (Exception e) {
-                            Log.w("Repository", "Retry " + retry + " for rules page " + page);
-                            if (retry == maxRetries - 1) throw e;
-                            Thread.sleep(2000);
-                        }
-                    }
-                    if (response == null || !response.isSuccessful() || response.body() == null) {
-                        Log.e("Repository", "Failed to fetch rules page " + page);
-                        updateProgress(completed, total, result);
-                        return;
-                    }
-                    RuleResponse body = response.body();
-                    List<RuleEntity> entities = body.results.stream()
-                            .map(RuleMapper::dtoToEntity)
-                            .collect(Collectors.toList());
-                    allRules.addAll(entities);
-                    Log.d("Repository", "Rules page " + page + ": " + entities.size()
-                            + " (total: " + allRules.size() + "/" + body.count + ")");
-                    hasMore = body.next != null;
-                    page++;
-                }
-                if (!allRules.isEmpty()) {
-                    ruleDao.deleteAll();
-                    ruleDao.insertAll(allRules);
-                    Log.d("Repository", "Saved " + allRules.size() + " rules");
-                }
-                updateProgress(completed, total, result);
-            } catch (Exception e) {
-                handleError("Rules", e);
-            }
-        }, executor);
-    }
-
-    private CompletableFuture<Void> processEnvironments(AtomicInteger completed, int total,
-                                                        MutableLiveData<Resource<Boolean>> result) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                List<EnvironmentEntity> allEnvironments = new ArrayList<>();
-                int page = 1;
-                boolean hasMore = true;
-                int maxRetries = 3;
-
-                while (hasMore) {
-                    Response<EnvironmentResponse> response = null;
-                    for (int retry = 0; retry < maxRetries; retry++) {
-                        try {
-                            response = api.getEnvironmentsPage(page).execute();
-                            if (response.isSuccessful()) break;
-                        } catch (Exception e) {
-                            Log.w("Repository", "Retry " + retry + " for environments page " + page);
-                            if (retry == maxRetries - 1) throw e;
-                            Thread.sleep(2000);
-                        }
-                    }
-
-                    if (response == null || !response.isSuccessful() || response.body() == null) {
-                        Log.e("Repository", "Failed to fetch environments page " + page);
-                        updateProgress(completed, total, result);
-                        return;
-                    }
-
-                    EnvironmentResponse body = response.body();
-                    List<EnvironmentEntity> entities = body.results.stream()
-                            .map(EnvironmentMapper::dtoToEntity)
-                            .collect(Collectors.toList());
-
-                    allEnvironments.addAll(entities);
-                    Log.d("Repository", "Environments page " + page + ": " + entities.size()
-                            + " (total: " + allEnvironments.size() + "/" + body.count + ")");
-
-                    hasMore = body.next != null;
-                    page++;
-                }
-
-                if (!allEnvironments.isEmpty()) {
-                    environmentDao.deleteAll();
-                    environmentDao.insertAll(allEnvironments);
-                    Log.d("Repository", "Saved " + allEnvironments.size() + " environments");
-                }
-
-                updateProgress(completed, total, result);
-
-            } catch (Exception e) {
-                handleError("Environments", e);
-            }
-        }, executor);
-    }
-
-    private CompletableFuture<Void> processServices(AtomicInteger completed, int total,
-                                                    MutableLiveData<Resource<Boolean>> result) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                Response<ServiceResponse> response = api.getServices().execute();
-                if (!response.isSuccessful() || response.body() == null) {
-                    Log.e("Repository", "Failed to fetch services");
-                    updateProgress(completed, total, result);
-                    return;
-                }
-                List<ServiceEntity> entities = response.body().results.stream()
-                        .map(ServiceMapper::dtoToEntity)
-                        .collect(Collectors.toList());
-
-                serviceDao.deleteAll();
-                serviceDao.insertAll(entities);
-                Log.d("Repository", "Saved " + entities.size() + " services");
-                updateProgress(completed, total, result);
-            } catch (Exception e) {
-                handleError("Services", e);
-            }
-        }, executor);
-    }
-
-    private CompletableFuture<Void> processWeaponProperties(AtomicInteger completed, int total,
-                                                            MutableLiveData<Resource<Boolean>> result) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                Response<WeaponPropertyResponse> response = api.getWeaponProperties().execute();
-                if (!response.isSuccessful() || response.body() == null) {
-                    Log.e("Repository", "Failed to fetch weapon properties");
-                    updateProgress(completed, total, result);
-                    return;
-                }
-                List<WeaponPropertyEntity> entities = response.body().results.stream()
-                        .map(WeaponPropertyMapper::dtoToEntity)
-                        .collect(Collectors.toList());
-
-                weaponPropertyDao.deleteAll();
-                weaponPropertyDao.insertAll(entities);
-                Log.d("Repository", "Saved " + entities.size() + " weapon properties");
-                updateProgress(completed, total, result);
-            } catch (Exception e) {
-                handleError("Weapon Properties", e);
-            }
-        }, executor);
-    }
-
-    private CompletableFuture<Void> processItemRarities(AtomicInteger completed, int total,
-                                                        MutableLiveData<Resource<Boolean>> result) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                Response<ItemRarityResponse> response = api.getItemRarities().execute();
-                if (!response.isSuccessful() || response.body() == null) {
-                    Log.e("Repository", "Failed to fetch item rarities");
-                    updateProgress(completed, total, result);
-                    return;
-                }
-                List<ItemRarityEntity> entities = response.body().results.stream()
-                        .map(ItemRarityMapper::dtoToEntity)
-                        .collect(Collectors.toList());
-
-                itemRarityDao.deleteAll();
-                itemRarityDao.insertAll(entities);
-                Log.d("Repository", "Saved " + entities.size() + " item rarities");
-                updateProgress(completed, total, result);
-            } catch (Exception e) {
-                handleError("Item Rarities", e);
-            }
-        }, executor);
-    }
-
-    private CompletableFuture<Void> processAlignments(AtomicInteger completed, int total,
-                                                      MutableLiveData<Resource<Boolean>> result) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                List<AlignmentEntity> allAlignments = new ArrayList<>();
-                int page = 1;
-                boolean hasMore = true;
-                int maxRetries = 3;
-
-                while (hasMore) {
-                    Response<AlignmentResponse> response = null;
-                    for (int retry = 0; retry < maxRetries; retry++) {
-                        try {
-                            response = api.getAlignmentsPage(page).execute();
-                            if (response.isSuccessful()) break;
-                        } catch (Exception e) {
-                            Log.w("Repository", "Retry " + retry + " for alignments page " + page);
-                            if (retry == maxRetries - 1) throw e;
-                            Thread.sleep(2000);
-                        }
-                    }
-
-                    if (response == null || !response.isSuccessful() || response.body() == null) {
-                        Log.e("Repository", "Failed to fetch alignments page " + page);
-                        updateProgress(completed, total, result);
-                        return;
-                    }
-
-                    AlignmentResponse body = response.body();
-                    List<AlignmentEntity> entities = body.results.stream()
-                            .map(AlignmentMapper::dtoToEntity)
-                            .collect(Collectors.toList());
-
-                    allAlignments.addAll(entities);
-                    Log.d("Repository", "Alignments page " + page + ": " + entities.size()
-                            + " (total: " + allAlignments.size() + "/" + body.count + ")");
-
-                    hasMore = body.next != null;
-                    page++;
-                }
-
-                if (!allAlignments.isEmpty()) {
-                    alignmentDao.deleteAll();
-                    alignmentDao.insertAll(allAlignments);
-                    Log.d("Repository", "Saved " + allAlignments.size() + " alignments");
-                }
-
-                updateProgress(completed, total, result);
-
-            } catch (Exception e) {
-                handleError("Alignments", e);
-            }
-        }, executor);
-    }
-
-    private CompletableFuture<Void> processDamageTypes(AtomicInteger completed, int total,
-                                                     MutableLiveData<Resource<Boolean>> result) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                List<DamageTypeEntity> allTypes = new ArrayList<>();
-                int page = 1;
-                boolean hasMore = true;
-                int maxRetries = 3;
-
-                while (hasMore) {
-                    Response<DamageTypeResponse> response = null;
-                    for (int retry = 0; retry < maxRetries; retry++) {
-                        try {
-                            response = api.getDamageTypesPage(page).execute();
-                            if (response.isSuccessful()) break;
-                        } catch (Exception e) {
-                            Log.w("Repository", "Retry " + retry + " for damage types page " + page);
-                            if (retry == maxRetries - 1) throw e;
-                            Thread.sleep(2000);
-                        }
-                    }
-
-                    if (response == null || !response.isSuccessful() || response.body() == null) {
-                        Log.e("Repository", "Failed to fetch damage types page " + page);
-                        updateProgress(completed, total, result);
-                        return;
-                    }
-
-                    DamageTypeResponse body = response.body();
-                    List<DamageTypeEntity> entities = body.results.stream()
-                            .map(DamageTypeMapper::dtoToEntity)
-                            .collect(Collectors.toList());
-
-                    allTypes.addAll(entities);
-                    Log.d("Repository", "Damage types page " + page + ": " + entities.size()
-                            + " (total: " + allTypes.size() + "/" + body.count + ")");
-
-                    hasMore = body.next != null;
-                    page++;
-                }
-
-                if (!allTypes.isEmpty()) {
-                    damageTypeDao.deleteAll();
-                    damageTypeDao.insertAll(allTypes);
-                    Log.d("Repository", "Saved " + allTypes.size() + " damage types");
-                }
-
-                updateProgress(completed, total, result);
-
-            } catch (Exception e) {
-                handleError("Damage Types", e);
-            }
-        }, executor);
-    }
-
-    private CompletableFuture<Void> processItems(AtomicInteger completed, int total,
-                                                 MutableLiveData<Resource<Boolean>> result) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                List<ItemEntity> allItems = new ArrayList<>();
-                int page = 1;
-                boolean hasMore = true;
-                int maxRetries = 3;
-
-                while (hasMore) {
-                    Response<ItemResponse> response = null;
-
-                    for (int retry = 0; retry < maxRetries; retry++) {
-                        try {
-                            response = api.getItemsPage(page).execute();
-                            if (response.isSuccessful()) break;
-                        } catch (Exception e) {
-                            Log.w("Repository", "Retry " + retry + " for items page " + page);
-                            if (retry == maxRetries - 1) throw e;
-                            Thread.sleep(2000); // wait before retry
-                        }
-                    }
-
-                    if (response == null || !response.isSuccessful() || response.body() == null) {
-                        Log.e("Repository", "❌ Failed to fetch items page " + page);
-                        updateProgress(completed, total, result);
-                        return;
-                    }
-
-                    ItemResponse body = response.body();
-                    List<ItemEntity> entities = body.results.stream()
-                            .map(ItemMapper::dtoToEntity)
-                            .collect(Collectors.toList());
-
-                    allItems.addAll(entities);
-                    Log.d("Repository", "✅ Items page " + page + ": " + entities.size()
-                            + " (total: " + allItems.size() + "/" + body.count + ")");
-
-                    hasMore = body.next != null;
-                    page++;
-                }
-
-                if (!allItems.isEmpty()) {
-                    itemDao.deleteAll();
-                    itemDao.insertAll(allItems);
-                    Log.d("Repository", "✅ Saved " + allItems.size() + " items");
-                }
-
-                updateProgress(completed, total, result);
-
-            } catch (Exception e) {
-                handleError("Items", e);
-            }
-        }, executor);
-    }
-
-    private CompletableFuture<Void> processBackgrounds(AtomicInteger completed, int total,
-                                                       MutableLiveData<Resource<Boolean>> result) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                List<BackgroundEntity> allBackgrounds = new ArrayList<>();
-                int page = 1;
-                boolean hasMore = true;
-                int maxRetries = 3;
-
-                while (hasMore) {
-                    Response<BackgroundResponse> response = null;
-
-                    for (int retry = 0; retry < maxRetries; retry++) {
-                        try {
-                            response = api.getBackgroundsPage(page).execute();
-                            if (response.isSuccessful()) break;
-                        } catch (Exception e) {
-                            Log.w("Repository", "Retry " + retry + " for backgrounds page " + page);
-                            if (retry == maxRetries - 1) throw e;
-                            Thread.sleep(2000);
-                        }
-                    }
-
-                    if (response == null || !response.isSuccessful() || response.body() == null) {
-                        Log.e("Repository", "❌ Failed to fetch backgrounds page " + page);
-                        updateProgress(completed, total, result);
-                        return;
-                    }
-
-                    BackgroundResponse body = response.body();
-                    List<BackgroundEntity> entities = body.results.stream()
-                            .map(BackgroundMapper::dtoToEntity)
-                            .collect(Collectors.toList());
-
-                    allBackgrounds.addAll(entities);
-                    Log.d("Repository", "✅ Backgrounds page " + page + ": " + entities.size()
-                            + " (total: " + allBackgrounds.size() + "/" + body.count + ")");
-
-                    hasMore = body.next != null;
-                    page++;
-                }
-
-                if (!allBackgrounds.isEmpty()) {
-                    backgroundDao.deleteAll();
-                    backgroundDao.insertAll(allBackgrounds);
-                    Log.d("Repository", "✅ Saved " + allBackgrounds.size() + " backgrounds");
-                }
-
-                updateProgress(completed, total, result);
-
-            } catch (Exception e) {
-                handleError("Backgrounds", e);
-            }
-        }, executor);
-    }
-
-    private CompletableFuture<Void> processSpecies(AtomicInteger completed, int total,
-                                                   MutableLiveData<Resource<Boolean>> result) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                List<SpeciesEntity> allSpecies = new ArrayList<>();
-                int page = 1;
-                boolean hasMore = true;
-                int maxRetries = 3;
-
-                while (hasMore) {
-                    Response<SpeciesResponse> response = null;
-
-                    for (int retry = 0; retry < maxRetries; retry++) {
-                        try {
-                            response = api.getSpeciesPage(page).execute();
-                            if (response.isSuccessful()) break;
-                        } catch (Exception e) {
-                            Log.w("Repository", "Retry " + retry + " for species page " + page);
-                            if (retry == maxRetries - 1) throw e;
-                            Thread.sleep(2000);
-                        }
-                    }
-
-                    if (response == null || !response.isSuccessful() || response.body() == null) {
-                        Log.e("Repository", "❌ Failed to fetch species page " + page);
-                        updateProgress(completed, total, result);
-                        return;
-                    }
-
-                    SpeciesResponse body = response.body();
-                    List<SpeciesEntity> entities = body.results.stream()
-                            .map(SpeciesMapper::dtoToEntity)
-                            .collect(Collectors.toList());
-
-                    allSpecies.addAll(entities);
-                    Log.d("Repository", "✅ Species page " + page + ": " + entities.size()
-                            + " (total: " + allSpecies.size() + "/" + body.count + ")");
-
-                    hasMore = body.next != null;
-                    page++;
-                }
-
-                if (!allSpecies.isEmpty()) {
-                    speciesDao.deleteAll();
-                    speciesDao.insertAll(allSpecies);
-                    Log.d("Repository", "✅ Saved " + allSpecies.size() + " species");
-                }
-
-                updateProgress(completed, total, result);
-
-            } catch (Exception e) {
-                handleError("Species", e);
-            }
-        }, executor);
-    }
-
-    private CompletableFuture<Void> processCreatures(AtomicInteger completed, int total,
-                                                     MutableLiveData<Resource<Boolean>> result) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                List<CreatureEntity> allCreatures = new ArrayList<>();
-                int page = 1;
-                boolean hasMore = true;
-                int maxRetries = 3;
-
-                while (hasMore) {
-                    Response<CreatureResponse> response = null;
-
-                    for (int retry = 0; retry < maxRetries; retry++) {
-                        try {
-                            response = api.getCreaturesPage(page).execute();
-                            if (response.isSuccessful()) break;
-                        } catch (Exception e) {
-                            Log.w("Repository", "Retry " + retry + " for creatures page " + page);
-                            if (retry == maxRetries - 1) throw e;
-                            Thread.sleep(2000);
-                        }
-                    }
-
-                    if (response == null || !response.isSuccessful() || response.body() == null) {
-                        Log.e("Repository", "❌ Failed to fetch creatures page " + page);
-                        updateProgress(completed, total, result);
-                        return;
-                    }
-
-                    CreatureResponse body = response.body();
-                    List<CreatureEntity> entities = body.results.stream()
-                            .map(CreatureMapper::dtoToEntity)
-                            .collect(Collectors.toList());
-
-                    allCreatures.addAll(entities);
-                    Log.d("Repository", "✅ Creatures page " + page + ": " + entities.size()
-                            + " (total: " + allCreatures.size() + "/" + body.count + ")");
-
-                    hasMore = body.next != null;
-                    page++;
-                }
-
-                if (allCreatures.size() > 100) {
-                    creatureDao.deleteAll();
-                    creatureDao.insertAll(allCreatures);
-                    Log.d("Repository", "✅ Saved " + allCreatures.size() + " creatures");
-                } else {
-                    Log.w("Repository", "⚠️ Too few creatures (" + allCreatures.size() + "), skipping");
-                }
-
-                updateProgress(completed, total, result);
-
-            } catch (Exception e) {
-                handleError("Creatures", e);
-            }
-        }, executor);
-    }
-
-    private CompletableFuture<Void> processSpellSchools(AtomicInteger completed, int total,
-                                                        MutableLiveData<Resource<Boolean>> result) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                Response<SpellSchoolResponse> response = api.getSpellSchools().execute();
-                if (response.isSuccessful() && response.body() != null) {
-                    List<SpellSchoolEntity> entities = response.body().getResults().stream()
-                            .map(SpellSchoolMapper::dtoToEntity)
-                            .collect(Collectors.toList());
-                    spellSchoolDao.insertAll(entities);
-                    Log.d("Repository", "✅ Saved " + entities.size() + " spell schools");
-                }
-                updateProgress(completed, total, result);
-            } catch (Exception e) {
-                handleError("Spell Schools", e);
-            }
-        }, executor);
-    }
-
-    private CompletableFuture<Void> processSpells(AtomicInteger completed, int total,
-                                                  MutableLiveData<Resource<Boolean>> result) {
-        return CompletableFuture.runAsync(() -> {
-            try {
-                spellDao.deleteAll();
-
-                int page = 1;
-                boolean hasMore = true;
-                int totalSaved = 0;
-
-                while (hasMore) {
-                    Response<SpellResponse> response = api.getSpellsPage(page).execute();
-                    if (!response.isSuccessful() || response.body() == null) break;
-
-                    SpellResponse body = response.body();
-                    List<SpellEntity> entities = body.getResults().stream()
-                            .map(SpellMapper::dtoToEntity)
-                            .collect(Collectors.toList());
-
-                    spellDao.insertAll(entities);
-                    totalSaved += entities.size();
-
-                    hasMore = body.next != null;
-                    page++;
-                }
-
-                updateProgress(completed, total, result);
-
-            } catch (Exception e) {
-                handleError("Spells", e);
-            }
-        }, executor);
+    private void handleError(String sectionName, Exception e) {
+        Log.e("Repository", "Error loading " + sectionName, e);
+        throw new CompletionException(e);
     }
 
     private CompletableFuture<Void> processPublishers(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
         return CompletableFuture.runAsync(() -> {
             try {
+                result.postValue(Resource.loading("Publishers"));
                 Response<PublisherResponse> response = api.getPublishers().execute();
-                List<PublisherEntity> entities = response.body().getResults().stream()
-                        .map(PublisherMapper::dtoToEntity)
-                        .collect(Collectors.toList());
-
-                publisherDao.insertAll(entities);
-                updateProgress(completed, total, result);
-
+                if (response.isSuccessful() && response.body() != null) {
+                    List<PublisherEntity> entities = response.body().getResults().stream()
+                            .map(PublisherMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    publisherDao.insertAll(entities);
+                }
+                updateProgress(completed, total, result, "Publishers");
             } catch (Exception e) {
                 handleError("Publishers", e);
             }
@@ -1204,14 +400,15 @@ public class Open5eRepository {
     private CompletableFuture<Void> processLicenses(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
         return CompletableFuture.runAsync(() -> {
             try {
+                result.postValue(Resource.loading("Licenses"));
                 Response<LicenseResponse> response = api.getLicenses().execute();
-                List<LicenseEntity> entities = response.body().getResults().stream()
-                        .map(LicenseMapper::dtoToEntity)
-                        .collect(Collectors.toList());
-
-                licenseDao.insertAll(entities);
-                updateProgress(completed, total, result);
-
+                if (response.isSuccessful() && response.body() != null) {
+                    List<LicenseEntity> entities = response.body().getResults().stream()
+                            .map(LicenseMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    licenseDao.insertAll(entities);
+                }
+                updateProgress(completed, total, result, "Licenses");
             } catch (Exception e) {
                 handleError("Licenses", e);
             }
@@ -1221,14 +418,15 @@ public class Open5eRepository {
     private CompletableFuture<Void> processDocuments(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
         return CompletableFuture.runAsync(() -> {
             try {
+                result.postValue(Resource.loading("Documents"));
                 Response<DocumentResponse> response = api.getDocuments().execute();
-                List<DocumentEntity> entities = response.body().getResults().stream()
-                        .map(DocumentMapper::dtoToEntity)
-                        .collect(Collectors.toList());
-
-                documentDao.insertAll(entities);
-                updateProgress(completed, total, result);
-
+                if (response.isSuccessful() && response.body() != null) {
+                    List<DocumentEntity> entities = response.body().getResults().stream()
+                            .map(DocumentMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    documentDao.insertAll(entities);
+                }
+                updateProgress(completed, total, result, "Documents");
             } catch (Exception e) {
                 handleError("Documents", e);
             }
@@ -1238,14 +436,15 @@ public class Open5eRepository {
     private CompletableFuture<Void> processGameSystems(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
         return CompletableFuture.runAsync(() -> {
             try {
+                result.postValue(Resource.loading("Game Systems"));
                 Response<GameSystemResponse> response = api.getGameSystems().execute();
-                List<GameSystemEntity> entities = response.body().getResults().stream()
-                        .map(GameSystemMapper::dtoToEntity)
-                        .collect(Collectors.toList());
-
-                gameSystemDao.insertAll(entities);
-                updateProgress(completed, total, result);
-
+                if (response.isSuccessful() && response.body() != null) {
+                    List<GameSystemEntity> entities = response.body().getResults().stream()
+                            .map(GameSystemMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    gameSystemDao.insertAll(entities);
+                }
+                updateProgress(completed, total, result, "Game Systems");
             } catch (Exception e) {
                 handleError("Game Systems", e);
             }
@@ -1255,29 +454,31 @@ public class Open5eRepository {
     private CompletableFuture<Void> processLanguages(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
         return CompletableFuture.runAsync(() -> {
             try {
+                result.postValue(Resource.loading("Languages"));
                 Response<LanguageResponse> response = api.getLanguages().execute();
-                List<LanguageEntity> entities = response.body().getResults().stream()
-                        .map(LanguageMapper::dtoToEntity)
-                        .collect(Collectors.toList());
-
-                languageDao.insertAll(entities);
-                updateProgress(completed, total, result);
-
+                if (response.isSuccessful() && response.body() != null) {
+                    List<LanguageEntity> entities = response.body().getResults().stream()
+                            .map(LanguageMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    languageDao.insertAll(entities);
+                }
+                updateProgress(completed, total, result, "Languages");
             } catch (Exception e) {
                 handleError("Languages", e);
             }
         }, executor);
     }
 
-    private CompletableFuture<Void> processAbilities(AtomicInteger completed, int total,
-                                                     MutableLiveData<Resource<Boolean>> result) {
+    private CompletableFuture<Void> processAbilities(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
         return CompletableFuture.runAsync(() -> {
             try {
+                result.postValue(Resource.loading("Abilities & Skills"));
                 List<AbilityEntity> allAbilities = new ArrayList<>();
                 List<SkillEntity>   allSkills    = new ArrayList<>();
-                int page = 1;
+                int page       = 1;
                 boolean hasMore = true;
-                int maxRetries = 3;
+                int maxRetries  = 3;
+                int totalCount  = 0;
 
                 while (hasMore) {
                     Response<AbilityResponse> response = null;
@@ -1290,33 +491,30 @@ public class Open5eRepository {
                             Thread.sleep(2000);
                         }
                     }
-
-                    if (response == null || !response.isSuccessful() || response.body() == null) {
-                        updateProgress(completed, total, result);
-                        return;
-                    }
-
+                    if (response == null || !response.isSuccessful() || response.body() == null) break;
                     AbilityResponse body = response.body();
+
+                    if (page == 1) totalCount = body.count;
+
                     for (AbilityDto dto : body.results) {
                         allAbilities.add(AbilityMapper.dtoToEntity(dto));
                         allSkills.addAll(AbilityMapper.dtosToSkillEntities(dto));
                     }
-
                     hasMore = body.next != null;
                     page++;
-                }
 
+                    postPageProgress(result, completed, total, "Abilities & Skills",
+                            allAbilities.size(), totalCount);
+                }
                 if (!allAbilities.isEmpty()) {
-                    skillDao.deleteAll();   // delete skills first (FK)
+                    skillDao.deleteAll();
                     abilityDao.deleteAll();
                     abilityDao.insertAll(allAbilities);
                     skillDao.insertAll(allSkills);
                 }
-
-                updateProgress(completed, total, result);
-
+                updateProgress(completed, total, result, "Abilities & Skills");
             } catch (Exception e) {
-                handleError("Abilities", e);
+                handleError("Abilities & Skills", e);
             }
         }, executor);
     }
@@ -1324,25 +522,46 @@ public class Open5eRepository {
     private CompletableFuture<Void> processCharacterClasses(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
         return CompletableFuture.runAsync(() -> {
             try {
-                Response<CharacterClassResponse> response = api.getCharacterClasses().execute();
-                if (response.isSuccessful() && response.body() != null) {
-                    List<CharacterClassDto> dtos = response.body().getResults();
+                result.postValue(Resource.loading("Character Classes"));
+                List<CharacterClassDto> allFilteredDtos = new ArrayList<>();
+                int page = 1;
+                boolean hasMore = true;
+                int maxRetries = 3;
+                int totalCount = 0;
 
+                while (hasMore) {
+                    Response<CharacterClassResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getCharacterClasses(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+                    if (response == null || !response.isSuccessful() || response.body() == null) break;
 
-                    // ignore srd-2024 becuase its empty
-                    // TODO when api will change update thats !
-                    List<CharacterClassDto> filteredDtos = dtos.stream()
+                    CharacterClassResponse body = response.body();
+                    if (page == 1) totalCount = body.getCount();
+
+                    List<CharacterClassDto> pageFiltered = body.getResults().stream()
                             .filter(dto -> dto.document == null || !"srd-2024".equals(dto.document.key))
                             .collect(Collectors.toList());
+                    allFilteredDtos.addAll(pageFiltered);
 
-                    executor.execute(() -> {
-                        for (CharacterClassDto dto : filteredDtos) {
-                            processSingleClass(dto);
-                        }
-                    });
+                    hasMore = body.getNext() != null;
+                    page++;
 
-                    updateProgress(completed, total, result);
+                    postPageProgress(result, completed, total, "Character Classes",
+                            allFilteredDtos.size(), totalCount);
                 }
+
+                for (CharacterClassDto dto : allFilteredDtos) {
+                    processSingleClass(dto);
+                }
+
+                updateProgress(completed, total, result, "Character Classes");
             } catch (Exception e) {
                 handleError("Character Classes", e);
             }
@@ -1350,61 +569,761 @@ public class Open5eRepository {
     }
 
     private void processSingleClass(CharacterClassDto dto) {
-        Log.d("Repository", "🔄 Processing class: " + dto.name);
-
-        // another security
-        //TODO when api will change update thats !
-        if (dto.document != null && "srd-2024".equals(dto.document.key)) {
-            return;
-        }
-
+        if (dto.document != null && "srd-2024".equals(dto.document.key)) return;
         characterClassDao.deleteClass(dto.key);
         featureDao.deleteFeaturesForClass(dto.key);
         hitPointsDao.deleteHitPointsForClass(dto.key);
         savingThrowDao.deleteSavingThrowsForClass(dto.key);
-
         CharacterClassEntity classEntity = CharacterClassMapper.toClassEntity(dto);
         characterClassDao.insertClass(classEntity);
-
-        if(dto.hitPoints != null) {
+        if (dto.hitPoints != null) {
             HitPointsEntity hpEntity = CharacterClassMapper.toHitPointsEntity(dto);
             hitPointsDao.insertHitPoints(hpEntity);
         }
-
-        if(dto.features != null && !dto.features.isEmpty()) {
+        if (dto.features != null && !dto.features.isEmpty()) {
             List<FeatureEntity> features = CharacterClassMapper.toFeatureEntities(dto.key, dto.features);
-
-
-            int featuresWithTableData = 0;
-            int totalTableEntries = 0;
-
-            for (FeatureEntity feature : features) {
-                if (feature.tableData != null && !feature.tableData.isEmpty()) {
-                    featuresWithTableData++;
-                    totalTableEntries += feature.tableData.size();
-
-                    for (int i = 0; i < Math.min(3, feature.tableData.size()); i++) {
-                        TableData td = feature.tableData.get(i);
-                    }
-                }
-            }
             featureDao.insertFeatures(features);
         }
-
-        if(dto.savingThrows != null && !dto.savingThrows.isEmpty()) {
+        if (dto.savingThrows != null && !dto.savingThrows.isEmpty()) {
             List<SavingThrowEntity> savingThrows = CharacterClassMapper.mapSavingThrows(dto);
             savingThrowDao.insertAll(savingThrows);
         }
     }
 
-    private void updateProgress(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
-        int progress = (int) ((completed.incrementAndGet() / (double) total) * 100);
-        result.postValue(Resource.loading(null, progress));
+    private CompletableFuture<Void> processSpells(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                result.postValue(Resource.loading("Spells"));
+                spellDao.deleteAll();
+                List<SpellEntity> allSpells = new ArrayList<>();
+                int page       = 1;
+                boolean hasMore = true;
+                int totalCount  = 0;
+
+                while (hasMore) {
+                    Response<SpellResponse> response = api.getSpellsPage(page).execute();
+                    if (!response.isSuccessful() || response.body() == null) break;
+                    SpellResponse body = response.body();
+
+                    if (page == 1) totalCount = body.count;
+
+                    List<SpellEntity> entities = body.getResults().stream()
+                            .map(SpellMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    allSpells.addAll(entities);
+                    spellDao.insertAll(entities);
+                    hasMore = body.next != null;
+                    page++;
+
+                    postPageProgress(result, completed, total, "Spells",
+                            allSpells.size(), totalCount);
+                }
+                updateProgress(completed, total, result, "Spells");
+            } catch (Exception e) {
+                handleError("Spells", e);
+            }
+        }, executor);
     }
 
-    private void handleError(String sectionName, Exception e) {
-        Log.e("Repository", "Error loading " + sectionName, e);
-        throw new CompletionException(e);
+    private CompletableFuture<Void> processSpellSchools(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                result.postValue(Resource.loading("Spell Schools"));
+                Response<SpellSchoolResponse> response = api.getSpellSchools().execute();
+                if (response.isSuccessful() && response.body() != null) {
+                    List<SpellSchoolEntity> entities = response.body().getResults().stream()
+                            .map(SpellSchoolMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    spellSchoolDao.insertAll(entities);
+                }
+                updateProgress(completed, total, result, "Spell Schools");
+            } catch (Exception e) {
+                handleError("Spell Schools", e);
+            }
+        }, executor);
     }
 
+    private CompletableFuture<Void> processCreatures(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                result.postValue(Resource.loading("Creatures"));
+                List<CreatureEntity> allCreatures = new ArrayList<>();
+                int page       = 1;
+                boolean hasMore = true;
+                int maxRetries  = 3;
+                int totalCount  = 0;
+
+                while (hasMore) {
+                    Response<CreatureResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getCreaturesPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+                    if (response == null || !response.isSuccessful() || response.body() == null) break;
+                    CreatureResponse body = response.body();
+
+                    if (page == 1) totalCount = body.count;
+
+                    List<CreatureEntity> entities = body.results.stream()
+                            .map(CreatureMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    allCreatures.addAll(entities);
+                    hasMore = body.next != null;
+                    page++;
+
+                    postPageProgress(result, completed, total, "Creatures",
+                            allCreatures.size(), totalCount);
+                }
+                if (!allCreatures.isEmpty()) {
+                    creatureDao.deleteAll();
+                    creatureDao.insertAll(allCreatures);
+                }
+                updateProgress(completed, total, result, "Creatures");
+            } catch (Exception e) {
+                handleError("Creatures", e);
+            }
+        }, executor);
+    }
+
+    private CompletableFuture<Void> processSpecies(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                result.postValue(Resource.loading("Species"));
+                List<SpeciesEntity> allSpecies = new ArrayList<>();
+                int page       = 1;
+                boolean hasMore = true;
+                int maxRetries  = 3;
+                int totalCount  = 0;
+
+                while (hasMore) {
+                    Response<SpeciesResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getSpeciesPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+                    if (response == null || !response.isSuccessful() || response.body() == null) break;
+                    SpeciesResponse body = response.body();
+
+                    if (page == 1) totalCount = body.count;
+
+                    List<SpeciesEntity> entities = body.results.stream()
+                            .map(SpeciesMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    allSpecies.addAll(entities);
+                    hasMore = body.next != null;
+                    page++;
+
+                    postPageProgress(result, completed, total, "Species",
+                            allSpecies.size(), totalCount);
+                }
+                if (!allSpecies.isEmpty()) {
+                    speciesDao.deleteAll();
+                    speciesDao.insertAll(allSpecies);
+                }
+                updateProgress(completed, total, result, "Species");
+            } catch (Exception e) {
+                handleError("Species", e);
+            }
+        }, executor);
+    }
+
+    private CompletableFuture<Void> processBackgrounds(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                result.postValue(Resource.loading("Backgrounds"));
+                List<BackgroundEntity> allBackgrounds = new ArrayList<>();
+                int page       = 1;
+                boolean hasMore = true;
+                int maxRetries  = 3;
+                int totalCount  = 0;
+
+                while (hasMore) {
+                    Response<BackgroundResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getBackgroundsPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+                    if (response == null || !response.isSuccessful() || response.body() == null) break;
+                    BackgroundResponse body = response.body();
+
+                    if (page == 1) totalCount = body.count;
+
+                    List<BackgroundEntity> entities = body.results.stream()
+                            .map(BackgroundMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    allBackgrounds.addAll(entities);
+                    hasMore = body.next != null;
+                    page++;
+
+                    postPageProgress(result, completed, total, "Backgrounds",
+                            allBackgrounds.size(), totalCount);
+                }
+                if (!allBackgrounds.isEmpty()) {
+                    backgroundDao.deleteAll();
+                    backgroundDao.insertAll(allBackgrounds);
+                }
+                updateProgress(completed, total, result, "Backgrounds");
+            } catch (Exception e) {
+                handleError("Backgrounds", e);
+            }
+        }, executor);
+    }
+
+    private CompletableFuture<Void> processItems(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                result.postValue(Resource.loading("Items"));
+                List<ItemEntity> allItems = new ArrayList<>();
+                int page       = 1;
+                boolean hasMore = true;
+                int maxRetries  = 3;
+                int totalCount  = 0;
+
+                while (hasMore) {
+                    Response<ItemResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getItemsPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+                    if (response == null || !response.isSuccessful() || response.body() == null) break;
+                    ItemResponse body = response.body();
+
+                    if (page == 1) totalCount = body.count;
+
+                    List<ItemEntity> entities = body.results.stream()
+                            .map(ItemMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    allItems.addAll(entities);
+                    hasMore = body.next != null;
+                    page++;
+
+                    postPageProgress(result, completed, total, "Items",
+                            allItems.size(), totalCount);
+                }
+                if (!allItems.isEmpty()) {
+                    itemDao.deleteAll();
+                    itemDao.insertAll(allItems);
+                }
+                updateProgress(completed, total, result, "Items");
+            } catch (Exception e) {
+                handleError("Items", e);
+            }
+        }, executor);
+    }
+
+    private CompletableFuture<Void> processDamageTypes(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                result.postValue(Resource.loading("Damage Types"));
+                List<DamageTypeEntity> allDamageTypes = new ArrayList<>();
+                int page = 1;
+                boolean hasMore = true;
+                int maxRetries = 3;
+                int totalCount = 0;
+
+                while (hasMore) {
+                    Response<DamageTypeResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getDamageTypesPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+                    if (response == null || !response.isSuccessful() || response.body() == null) break;
+
+                    DamageTypeResponse body = response.body();
+                    if (page == 1) totalCount = body.count;
+
+                    List<DamageTypeEntity> entities = body.results.stream()
+                            .map(DamageTypeMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    allDamageTypes.addAll(entities);
+
+                    hasMore = body.next != null;
+                    page++;
+
+                    postPageProgress(result, completed, total, "Damage Types",
+                            allDamageTypes.size(), totalCount);
+                }
+
+                if (!allDamageTypes.isEmpty()) {
+                    damageTypeDao.deleteAll();
+                    damageTypeDao.insertAll(allDamageTypes);
+                }
+                updateProgress(completed, total, result, "Damage Types");
+            } catch (Exception e) {
+                handleError("Damage Types", e);
+            }
+        }, executor);
+    }
+
+
+    private CompletableFuture<Void> processAlignments(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                result.postValue(Resource.loading("Alignments"));
+                List<AlignmentEntity> allAlignments = new ArrayList<>();
+                int page = 1;
+                boolean hasMore = true;
+                int maxRetries = 3;
+                int totalCount = 0;
+
+                while (hasMore) {
+                    Response<AlignmentResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getAlignmentsPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+                    if (response == null || !response.isSuccessful() || response.body() == null) break;
+
+                    AlignmentResponse body = response.body();
+                    if (page == 1) totalCount = body.count;
+
+                    List<AlignmentEntity> entities = body.results.stream()
+                            .map(AlignmentMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    allAlignments.addAll(entities);
+
+                    hasMore = body.next != null;
+                    page++;
+
+                    postPageProgress(result, completed, total, "Alignments",
+                            allAlignments.size(), totalCount);
+                }
+
+                if (!allAlignments.isEmpty()) {
+                    alignmentDao.deleteAll();
+                    alignmentDao.insertAll(allAlignments);
+                }
+                updateProgress(completed, total, result, "Alignments");
+            } catch (Exception e) {
+                handleError("Alignments", e);
+            }
+        }, executor);
+    }
+
+    private CompletableFuture<Void> processItemRarities(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                result.postValue(Resource.loading("Item Rarities"));
+                Response<ItemRarityResponse> response = api.getItemRarities().execute();
+                if (response.isSuccessful() && response.body() != null) {
+                    List<ItemRarityEntity> entities = response.body().results.stream()
+                            .map(ItemRarityMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    itemRarityDao.deleteAll();
+                    itemRarityDao.insertAll(entities);
+                }
+                updateProgress(completed, total, result, "Item Rarities");
+            } catch (Exception e) {
+                handleError("Item Rarities", e);
+            }
+        }, executor);
+    }
+
+    private CompletableFuture<Void> processWeaponProperties(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                result.postValue(Resource.loading("Weapon Properties"));
+                Response<WeaponPropertyResponse> response = api.getWeaponProperties().execute();
+                if (response.isSuccessful() && response.body() != null) {
+                    List<WeaponPropertyEntity> entities = response.body().results.stream()
+                            .map(WeaponPropertyMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    weaponPropertyDao.deleteAll();
+                    weaponPropertyDao.insertAll(entities);
+                }
+                updateProgress(completed, total, result, "Weapon Properties");
+            } catch (Exception e) {
+                handleError("Weapon Properties", e);
+            }
+        }, executor);
+    }
+
+    private CompletableFuture<Void> processServices(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                result.postValue(Resource.loading("Services"));
+                Response<ServiceResponse> response = api.getServices().execute();
+                if (response.isSuccessful() && response.body() != null) {
+                    List<ServiceEntity> entities = response.body().results.stream()
+                            .map(ServiceMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    serviceDao.deleteAll();
+                    serviceDao.insertAll(entities);
+                }
+                updateProgress(completed, total, result, "Services");
+            } catch (Exception e) {
+                handleError("Services", e);
+            }
+        }, executor);
+    }
+
+    private CompletableFuture<Void> processEnvironments(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                result.postValue(Resource.loading("Environments"));
+                List<EnvironmentEntity> allEnvironments = new ArrayList<>();
+                int page       = 1;
+                boolean hasMore = true;
+                int maxRetries  = 3;
+                int totalCount  = 0;
+
+                while (hasMore) {
+                    Response<EnvironmentResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getEnvironmentsPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+                    if (response == null || !response.isSuccessful() || response.body() == null) break;
+                    EnvironmentResponse body = response.body();
+
+                    if (page == 1) totalCount = body.count;
+
+                    List<EnvironmentEntity> entities = body.results.stream()
+                            .map(EnvironmentMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    allEnvironments.addAll(entities);
+                    hasMore = body.next != null;
+                    page++;
+
+                    postPageProgress(result, completed, total, "Environments",
+                            allEnvironments.size(), totalCount);
+                }
+                if (!allEnvironments.isEmpty()) {
+                    environmentDao.deleteAll();
+                    environmentDao.insertAll(allEnvironments);
+                }
+                updateProgress(completed, total, result, "Environments");
+            } catch (Exception e) {
+                handleError("Environments", e);
+            }
+        }, executor);
+    }
+
+    private CompletableFuture<Void> processRules(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                result.postValue(Resource.loading("Rules"));
+                List<RuleEntity> allRules = new ArrayList<>();
+                int page       = 1;
+                boolean hasMore = true;
+                int maxRetries  = 3;
+                int totalCount  = 0;
+
+                while (hasMore) {
+                    Response<RuleResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getRulesPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+                    if (response == null || !response.isSuccessful() || response.body() == null) break;
+                    RuleResponse body = response.body();
+
+                    if (page == 1) totalCount = body.count;
+
+                    List<RuleEntity> entities = body.results.stream()
+                            .map(RuleMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    allRules.addAll(entities);
+                    hasMore = body.next != null;
+                    page++;
+
+                    postPageProgress(result, completed, total, "Rules",
+                            allRules.size(), totalCount);
+                }
+                if (!allRules.isEmpty()) {
+                    ruleDao.deleteAll();
+                    ruleDao.insertAll(allRules);
+                }
+                updateProgress(completed, total, result, "Rules");
+            } catch (Exception e) {
+                handleError("Rules", e);
+            }
+        }, executor);
+    }
+
+    private CompletableFuture<Void> processRulesets(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                result.postValue(Resource.loading("Rulesets"));
+                List<RulesetEntity> allRulesets = new ArrayList<>();
+                List<RuleEntity>    allRules    = new ArrayList<>();
+                int page       = 1;
+                boolean hasMore = true;
+                int maxRetries  = 3;
+                int totalCount  = 0;
+
+                while (hasMore) {
+                    Response<RulesetResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getRulesetsPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+                    if (response == null || !response.isSuccessful() || response.body() == null) break;
+                    RulesetResponse body = response.body();
+
+                    if (page == 1) totalCount = body.count;
+
+                    for (RulesetDto dto : body.results) {
+                        allRulesets.add(RulesetMapper.dtoToEntity(dto));
+                        if (dto.rules != null) {
+                            for (RuleDto ruleDto : dto.rules) {
+                                RuleEntity rule = RuleMapper.dtoToEntity(ruleDto);
+                                rule.rulesetKey = dto.key;
+                                allRules.add(rule);
+                            }
+                        }
+                    }
+                    hasMore = body.next != null;
+                    page++;
+
+                    postPageProgress(result, completed, total, "Rulesets",
+                            allRulesets.size(), totalCount);
+                }
+                if (!allRulesets.isEmpty()) {
+                    rulesetDao.deleteAll();
+                    rulesetDao.insertAll(allRulesets);
+                }
+                if (!allRules.isEmpty()) {
+                    ruleDao.deleteAll();
+                    ruleDao.insertAll(allRules);
+                }
+                updateProgress(completed, total, result, "Rulesets");
+            } catch (Exception e) {
+                handleError("Rulesets", e);
+            }
+        }, executor);
+    }
+
+    private CompletableFuture<Void> processConditions(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                result.postValue(Resource.loading("Conditions"));
+                List<ConditionEntity> allConditions = new ArrayList<>();
+                int page       = 1;
+                boolean hasMore = true;
+                int maxRetries  = 3;
+                int totalCount  = 0;
+
+                while (hasMore) {
+                    Response<ConditionResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getConditionsPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+                    if (response == null || !response.isSuccessful() || response.body() == null) break;
+                    ConditionResponse body = response.body();
+
+                    if (page == 1) totalCount = body.count;
+
+                    List<ConditionEntity> entities = body.results.stream()
+                            .map(ConditionMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    allConditions.addAll(entities);
+                    hasMore = body.next != null;
+                    page++;
+
+                    postPageProgress(result, completed, total, "Conditions",
+                            allConditions.size(), totalCount);
+                }
+                if (!allConditions.isEmpty()) {
+                    conditionDao.deleteAll();
+                    conditionDao.insertAll(allConditions);
+                }
+                updateProgress(completed, total, result, "Conditions");
+            } catch (Exception e) {
+                handleError("Conditions", e);
+            }
+        }, executor);
+    }
+
+    private CompletableFuture<Void> processCreatureTypes(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                result.postValue(Resource.loading("Creature Types"));
+                List<CreatureTypeEntity> allTypes = new ArrayList<>();
+                int page       = 1;
+                boolean hasMore = true;
+                int maxRetries  = 3;
+                int totalCount  = 0;
+
+                while (hasMore) {
+                    Response<CreatureTypeResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getCreatureTypesPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+                    if (response == null || !response.isSuccessful() || response.body() == null) break;
+                    CreatureTypeResponse body = response.body();
+
+                    if (page == 1) totalCount = body.count;
+
+                    List<CreatureTypeEntity> entities = body.results.stream()
+                            .map(CreatureTypeMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    allTypes.addAll(entities);
+                    hasMore = body.next != null;
+                    page++;
+
+                    postPageProgress(result, completed, total, "Creature Types",
+                            allTypes.size(), totalCount);
+                }
+                if (!allTypes.isEmpty()) {
+                    creatureTypeDao.deleteAll();
+                    creatureTypeDao.insertAll(allTypes);
+                }
+                updateProgress(completed, total, result, "Creature Types");
+            } catch (Exception e) {
+                handleError("Creature Types", e);
+            }
+        }, executor);
+    }
+
+    private CompletableFuture<Void> processItemCategories(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                result.postValue(Resource.loading("Item Categories"));
+                List<ItemCategoryEntity> allCategories = new ArrayList<>();
+                int page       = 1;
+                boolean hasMore = true;
+                int maxRetries  = 3;
+                int totalCount  = 0;
+
+                while (hasMore) {
+                    Response<ItemCategoryResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getItemCategoriesPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+                    if (response == null || !response.isSuccessful() || response.body() == null) break;
+                    ItemCategoryResponse body = response.body();
+
+                    if (page == 1) totalCount = body.count;
+
+                    List<ItemCategoryEntity> entities = body.results.stream()
+                            .map(ItemCategoryMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    allCategories.addAll(entities);
+                    hasMore = body.next != null;
+                    page++;
+
+                    postPageProgress(result, completed, total, "Item Categories",
+                            allCategories.size(), totalCount);
+                }
+                if (!allCategories.isEmpty()) {
+                    itemCategoryDao.deleteAll();
+                    itemCategoryDao.insertAll(allCategories);
+                }
+                updateProgress(completed, total, result, "Item Categories");
+            } catch (Exception e) {
+                handleError("Item Categories", e);
+            }
+        }, executor);
+    }
+
+    private CompletableFuture<Void> processItemSets(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                result.postValue(Resource.loading("Item Sets"));
+                List<ItemSetEntity> all = new ArrayList<>();
+                int page       = 1;
+                boolean hasMore = true;
+                int maxRetries  = 3;
+                int totalCount  = 0;
+
+                while (hasMore) {
+                    Response<ItemSetResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getItemSetsPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+                    if (response == null || !response.isSuccessful() || response.body() == null) break;
+                    ItemSetResponse body = response.body();
+
+                    if (page == 1) totalCount = body.count;
+
+                    List<ItemSetEntity> entities = body.results.stream()
+                            .map(ItemSetMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    all.addAll(entities);
+                    hasMore = body.next != null;
+                    page++;
+
+                    postPageProgress(result, completed, total, "Item Sets",
+                            all.size(), totalCount);
+                }
+                if (!all.isEmpty()) {
+                    itemSetDao.deleteAll();
+                    itemSetDao.insertAll(all);
+                }
+                updateProgress(completed, total, result, "Item Sets");
+            } catch (Exception e) {
+                handleError("Item Sets", e);
+            }
+        }, executor);
+    }
 }

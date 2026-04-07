@@ -50,7 +50,7 @@ public interface Open5eApiService {
     Call<AbilityResponse> getAbilities();
 
     @GET("classes/")
-    Call<CharacterClassResponse> getCharacterClasses();
+    Call<CharacterClassResponse> getCharacterClasses(@Query("page") int page);
 
     @GET("spells/")
     Call<SpellResponse> getSpellsPage(@Query("page") int page);
