@@ -70,6 +70,10 @@ import com.fizzycoyote.qusetroll.core.models.open5e.item_rarity.ItemRarityDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.item_rarity.ItemRarityEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.item_rarity.ItemRarityMapper;
 import com.fizzycoyote.qusetroll.core.models.open5e.item_rarity.ItemRarityResponse;
+import com.fizzycoyote.qusetroll.core.models.open5e.item_set.ItemSetDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.item_set.ItemSetEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.item_set.ItemSetMapper;
+import com.fizzycoyote.qusetroll.core.models.open5e.item_set.ItemSetResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageMapper;
@@ -155,6 +159,7 @@ public class Open5eRepository {
     private final ConditionDao conditionDao;
     private final CreatureTypeDao creatureTypeDao;
     private final ItemCategoryDao itemCategoryDao;
+    private final ItemSetDao itemSetDao;
     private final Executor executor;
 
     public Open5eRepository(Open5eApiService api,
@@ -186,6 +191,7 @@ public class Open5eRepository {
                             ConditionDao conditionDao,
                             CreatureTypeDao creatureTypeDao,
                             ItemCategoryDao itemCategoryDao,
+                            ItemSetDao itemSetDao,
                             Executor executor) {
         this.api = api;
         this.publisherDao = publisherDao;
@@ -216,6 +222,7 @@ public class Open5eRepository {
         this.conditionDao = conditionDao;
         this.creatureTypeDao = creatureTypeDao;
         this.itemCategoryDao = itemCategoryDao;
+        this.itemSetDao = itemSetDao;
         this.executor = executor;
     }
 
@@ -254,6 +261,7 @@ public class Open5eRepository {
                 futures.add(processConditions(completed, totalSections, result));
                 futures.add(processCreatureTypes(completed, totalSections, result));
                 futures.add(processItemCategories(completed, totalSections, result));
+                futures.add(processItemSets(completed, totalSections, result));
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                         .thenRun(() -> result.postValue(Resource.success(true)))
@@ -328,6 +336,8 @@ public class Open5eRepository {
                     futures.add(processCreatureTypes(completed, totalSections, result));
                 if (sections.contains(DataSection.ITEM_CATEGORIES))
                     futures.add(processItemCategories(completed, totalSections, result));
+                if (sections.contains(DataSection.ITEM_SETS))
+                    futures.add(processItemSets(completed, totalSections, result));
 
                 CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
                         .thenRun(() -> result.postValue(Resource.success(true)))
@@ -344,6 +354,53 @@ public class Open5eRepository {
         return result;
     }
 
+    private CompletableFuture<Void> processItemSets(AtomicInteger completed, int total,
+                                                    MutableLiveData<Resource<Boolean>> result) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                List<ItemSetEntity> all = new ArrayList<>();
+                int page = 1;
+                boolean hasMore = true;
+                int maxRetries = 3;
+                while (hasMore) {
+                    Response<ItemSetResponse> response = null;
+                    for (int retry = 0; retry < maxRetries; retry++) {
+                        try {
+                            response = api.getItemSetsPage(page).execute();
+                            if (response.isSuccessful()) break;
+                        } catch (Exception e) {
+                            Log.w("Repository", "Retry " + retry + " for item sets page " + page);
+                            if (retry == maxRetries - 1) throw e;
+                            Thread.sleep(2000);
+                        }
+                    }
+                    if (response == null || !response.isSuccessful() || response.body() == null) {
+                        Log.e("Repository", "Failed to fetch item sets page " + page);
+                        updateProgress(completed, total, result);
+                        return;
+                    }
+                    ItemSetResponse body = response.body();
+                    List<ItemSetEntity> entities = body.results.stream()
+                            .map(ItemSetMapper::dtoToEntity)
+                            .collect(Collectors.toList());
+                    all.addAll(entities);
+                    Log.d("Repository", "Item sets page " + page + ": " + entities.size()
+                            + " (total: " + all.size() + "/" + body.count + ")");
+                    hasMore = body.next != null;
+                    page++;
+                }
+                if (!all.isEmpty()) {
+                    itemSetDao.deleteAll();
+                    itemSetDao.insertAll(all);
+                    Log.d("Repository", "Saved " + all.size() + " item sets");
+                }
+                updateProgress(completed, total, result);
+            } catch (Exception e) {
+                handleError("Item Sets", e);
+            }
+        }, executor);
+    }
+
     private CompletableFuture<Void> processItemCategories(AtomicInteger completed, int total,
                                                           MutableLiveData<Resource<Boolean>> result) {
         return CompletableFuture.runAsync(() -> {
@@ -354,10 +411,10 @@ public class Open5eRepository {
                 int maxRetries = 3;
 
                 while (hasMore) {
-                    Response<ItemCategoryResponse> response = null; // ← poprawny typ
+                    Response<ItemCategoryResponse> response = null;
                     for (int retry = 0; retry < maxRetries; retry++) {
                         try {
-                            response = api.getItemCategoriesPage(page).execute(); // musi zwracać Call<ItemCategoryResponse>
+                            response = api.getItemCategoriesPage(page).execute();
                             if (response.isSuccessful()) break;
                         } catch (Exception e) {
                             Log.w("Repository", "Retry " + retry + " for item categories page " + page);
@@ -370,7 +427,7 @@ public class Open5eRepository {
                         updateProgress(completed, total, result);
                         return;
                     }
-                    ItemCategoryResponse body = response.body(); // ← poprawny typ
+                    ItemCategoryResponse body = response.body();
                     List<ItemCategoryEntity> entities = body.results.stream()
                             .map(ItemCategoryMapper::dtoToEntity)
                             .collect(Collectors.toList());

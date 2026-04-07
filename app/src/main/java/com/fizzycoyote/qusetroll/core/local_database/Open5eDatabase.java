@@ -50,6 +50,8 @@ import com.fizzycoyote.qusetroll.core.models.open5e.item_category.ItemCategoryDa
 import com.fizzycoyote.qusetroll.core.models.open5e.item_category.ItemCategoryEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.item_rarity.ItemRarityDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.item_rarity.ItemRarityEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.item_set.ItemSetDao;
+import com.fizzycoyote.qusetroll.core.models.open5e.item_set.ItemSetEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.license.LicenseDao;
@@ -105,8 +107,9 @@ import java.util.concurrent.Executors;
                 ConditionEntity.class,
                 CreatureTypeEntity.class,
                 ItemCategoryEntity.class,
+                ItemSetEntity.class,
         },
-        version = 44,
+        version = 45,
         exportSchema = false
 )
 @TypeConverters({GainedAtListConverter.class, TableDataListConverter.class, Converters.class})
@@ -141,6 +144,7 @@ public abstract class Open5eDatabase extends RoomDatabase {
     public abstract ConditionDao conditionDao();
     public abstract CreatureTypeDao creatureTypeDao();
     public abstract ItemCategoryDao itemCategoryDao();
+    public abstract ItemSetDao itemSetDao();
 
     public static Open5eDatabase getInstance(Context context) {
         if (INSTANCE == null) {

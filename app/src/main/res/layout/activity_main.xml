@@ -102,6 +102,14 @@
             android:text="Items" />
 
         <Button
+            android:id="@+id/openItemSet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:onClick="openItemSetListActivity"
+            android:text="Item Set" />
+
+        <Button
             android:id="@+id/openDamageType"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

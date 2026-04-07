@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
 
-public class ItemSetResponse implements Serializable {
+public class ItemSetResponse {
     @SerializedName("count") public int count;
     @SerializedName("next") public String next;
     @SerializedName("previous") public String previous;

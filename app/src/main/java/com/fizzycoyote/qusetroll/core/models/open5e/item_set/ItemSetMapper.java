@@ -4,20 +4,20 @@ import com.fizzycoyote.qusetroll.core.models.open5e.item.ItemDto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ItemSetMapper {
     public static ItemSetEntity dtoToEntity(ItemSetDto dto) {
-        ItemSetEntity entity = new ItemSetEntity();
-        entity.key = dto.key;
-        entity.url = dto.url;
-        entity.name = dto.name;
-        entity.desc = dto.desc;
-        entity.document = dto.document;
-        List<String> keys = new ArrayList<>();
-        for (ItemDto item : dto.items) {
-            keys.add(item.key);
+        ItemSetEntity e = new ItemSetEntity();
+        e.key = dto.key;
+        e.name = dto.name;
+        e.desc = dto.desc;
+        e.documentUrl = dto.document;
+        if (dto.items != null) {
+            e.itemKeys = dto.items.stream()
+                    .map(i -> i.key)
+                    .collect(Collectors.toList());
         }
-        entity.itemKeys = keys;
-        return entity;
+        return e;
     }
 }

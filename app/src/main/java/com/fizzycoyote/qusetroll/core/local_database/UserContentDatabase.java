@@ -38,6 +38,8 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_item_category.CustomI
 import com.fizzycoyote.qusetroll.core.models.custom.custom_item_category.CustomItemCategoryEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_item_rarity.CustomItemRarityDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_item_rarity.CustomItemRarityEntity;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_item_set.CustomItemSetDao;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_item_set.CustomItemSetEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_language.CustomLanguageDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_language.CustomLanguageEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_service.CustomServiceDao;
@@ -73,8 +75,9 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_weapon_property.Custo
         CustomEnvironmentEntity.class,
         CustomConditionEntity.class,
         CustomItemCategoryEntity.class,
+        CustomItemSetEntity.class,
         },
-        version = 32,
+        version = 33,
         exportSchema = false
 )
 @TypeConverters({CustomConverters.class})
@@ -102,6 +105,7 @@ public abstract class UserContentDatabase extends RoomDatabase {
     public abstract CustomEnvironmentDao customEnvironmentDao();
     public abstract CustomConditionDao customConditionDao();
     public abstract CustomItemCategoryDao customItemCategoryDao();
+    public abstract CustomItemSetDao customItemSetDao();
 
     public static UserContentDatabase getInstance(Context context) {
         if (INSTANCE == null) {

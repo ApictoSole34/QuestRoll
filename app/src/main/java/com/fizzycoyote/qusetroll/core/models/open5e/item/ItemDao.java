@@ -34,6 +34,12 @@ public interface ItemDao {
     @Query("SELECT * FROM items WHERE key = :key")
     LiveData<ItemEntity> getByKey(String key);
 
+    @Query("SELECT * FROM items WHERE key = :key")
+    ItemEntity getByKeySync(String key);
+
+    @Query("SELECT * FROM items ORDER BY name ASC")
+    List<ItemEntity> getAllSync();
+
     @Query("SELECT DISTINCT document_name FROM items WHERE document_name IS NOT NULL ORDER BY document_name ASC")
     List<String> getDistinctSources();
 

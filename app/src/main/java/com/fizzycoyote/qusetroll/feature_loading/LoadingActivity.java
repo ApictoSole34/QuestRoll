@@ -80,6 +80,7 @@ public class LoadingActivity extends AppCompatActivity {
                 db.alignmentDao(), db.itemRarityDao(), db.weaponPropertyDao(),
                 db.serviceDao(), db.environmentDao(), db.ruleDao(), db.rulesetDao(),
                 db.conditionDao(), db.creatureTypeDao(), db.itemCategoryDao(),
+                db.itemSetDao(),
                 executor
         );
     }
