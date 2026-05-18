@@ -1,13 +1,19 @@
 package com.fizzycoyote.qusetroll.feature_background.ui;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -19,7 +25,11 @@ import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.character.CharacterCreationDTO;
 import com.fizzycoyote.qusetroll.core.models.character.CharacterTraitEntity;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_ability.CustomSkillEntity;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_language.CustomLanguageEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.ability.skill.SkillEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageEntity;
 import com.fizzycoyote.qusetroll.feature_background.adapter.GenericItemAdapter;
 import com.fizzycoyote.qusetroll.feature_background.view_model.CustomBackgroundCreateViewModel;
 import com.google.android.material.textfield.TextInputEditText;
@@ -90,8 +100,8 @@ public class CustomBackgroundCreateActivity extends AppCompatActivity {
         });
 
         findViewById(R.id.btnAddEquipment).setOnClickListener(v -> showAddItemDialog("Equipment", equipmentAdapter, viewModel::addEquipmentItem));
-        findViewById(R.id.btnAddLanguage).setOnClickListener(v -> showAddStringDialog("Language", languagesAdapter, viewModel::addLanguage, viewModel::getLanguageItems));
-        findViewById(R.id.btnAddSkill).setOnClickListener(v -> showAddStringDialog("Skill", skillsAdapter, viewModel::addSkill, viewModel::getSkillItems));
+        findViewById(R.id.btnAddLanguage).setOnClickListener(v -> showAddLanguageDialog());
+        findViewById(R.id.btnAddSkill).setOnClickListener(v -> showAddSkillDialog());
         findViewById(R.id.btnAddTool).setOnClickListener(v -> showAddStringDialog("Tool", toolsAdapter, viewModel::addTool, viewModel::getToolItems));
         findViewById(R.id.btnAddFeature).setOnClickListener(v -> showAddFeatureDialog());
         findViewById(R.id.btnSave).setOnClickListener(v -> save());
@@ -229,6 +239,129 @@ public class CustomBackgroundCreateActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
+    }
+
+    private void showAddLanguageDialog() {
+        new Thread(() -> {
+            List<LanguageEntity> standardLanguages = Open5eDatabase.getInstance(this)
+                    .languageDao()
+                    .getAllSync();
+
+            List<CustomLanguageEntity> customLanguages = UserContentDatabase.getInstance(this)
+                    .customLanguageDao()
+                    .getAll();
+
+            List<Object> allLanguages = new ArrayList<>();
+            allLanguages.addAll(standardLanguages);
+            allLanguages.addAll(customLanguages);
+
+            runOnUiThread(() -> showSearchableListDialog("Select Language", allLanguages, selected -> {
+                String langName = null;
+                if (selected instanceof LanguageEntity) {
+                    langName = ((LanguageEntity) selected).name;
+                } else if (selected instanceof CustomLanguageEntity) {
+                    langName = ((CustomLanguageEntity) selected).name;
+                }
+                if (langName != null && !langName.isEmpty()) {
+                    viewModel.addLanguage(langName);
+                    languagesAdapter.setItems(viewModel.getLanguageItems());
+                }
+            }));
+        }).start();
+    }
+
+    private void showAddSkillDialog() {
+        new Thread(() -> {
+            List<SkillEntity> standardSkills = Open5eDatabase.getInstance(this)
+                    .skillDao()
+                    .getAllSync();
+
+            List<CustomSkillEntity> customSkills = UserContentDatabase.getInstance(this)
+                    .customSkillDao()
+                    .getAllSync();
+
+            List<Object> allSkills = new ArrayList<>();
+            allSkills.addAll(standardSkills);
+            allSkills.addAll(customSkills);
+
+            runOnUiThread(() -> showSearchableListDialog("Select Skill", allSkills, selected -> {
+                String skillName = null;
+                if (selected instanceof SkillEntity) {
+                    skillName = ((SkillEntity) selected).name;
+                } else if (selected instanceof CustomSkillEntity) {
+                    skillName = ((CustomSkillEntity) selected).name;
+                }
+                if (skillName != null && !skillName.isEmpty()) {
+                    viewModel.addSkill(skillName);
+                    skillsAdapter.setItems(viewModel.getSkillItems());
+                }
+            }));
+        }).start();
+    }
+
+    private <T> void showSearchableListDialog(String title, List<T> items, java.util.function.Consumer<T> onSelect) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_searchable_list, null);
+        EditText searchInput = dialogView.findViewById(R.id.search_input);
+        ListView listView = dialogView.findViewById(R.id.list_view);
+
+        List<T> filteredItems = new ArrayList<>(items);
+        ArrayAdapter<T> adapter = new ArrayAdapter<T>(this, android.R.layout.simple_list_item_1, filteredItems) {
+            @NonNull
+            @Override
+            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+                TextView view = (TextView) super.getView(position, convertView, parent);
+                T item = getItem(position);
+                String display;
+                if (item instanceof LanguageEntity) {
+                    display = ((LanguageEntity) item).name;
+                } else if (item instanceof SkillEntity) {
+                    display = ((SkillEntity) item).name;
+                } else if (item instanceof CustomLanguageEntity) {
+                    display = ((CustomLanguageEntity) item).name;
+                } else if (item instanceof CustomSkillEntity) {
+                    display = ((CustomSkillEntity) item).name;
+                } else {
+                    display = item.toString();
+                }
+                view.setText(display);
+                return view;
+            }
+        };
+        listView.setAdapter(adapter);
+
+        searchInput.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override public void afterTextChanged(Editable s) {
+                String query = s.toString().toLowerCase();
+                filteredItems.clear();
+                for (T item : items) {
+                    String name = "";
+                    if (item instanceof LanguageEntity) name = ((LanguageEntity) item).name;
+                    else if (item instanceof SkillEntity) name = ((SkillEntity) item).name;
+                    else if (item instanceof CustomLanguageEntity) name = ((CustomLanguageEntity) item).name;
+                    else if (item instanceof CustomSkillEntity) name = ((CustomSkillEntity) item).name;
+                    else name = item.toString();
+                    if (name.toLowerCase().contains(query)) {
+                        filteredItems.add(item);
+                    }
+                }
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        builder.setView(dialogView);
+        builder.setNegativeButton("Cancel", null);
+        AlertDialog dialog = builder.create();
+
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            T selected = filteredItems.get(position);
+            onSelect.accept(selected);
+            dialog.dismiss();
+        });
+
+        dialog.show();
     }
 
     private void showAddFeatureDialog() {

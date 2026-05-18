@@ -24,6 +24,9 @@ public interface CustomSkillDao {
     @Query("SELECT * FROM custom_skills ORDER BY name ASC")
     LiveData<List<CustomSkillEntity>> getAll();
 
+    @Query("SELECT * FROM custom_skills ORDER BY name ASC")
+    List<CustomSkillEntity> getAllSync();
+
     @Query("""
         SELECT * FROM custom_skills
         WHERE abilityKey = :abilityKey AND parentIsCustom = :isCustom
