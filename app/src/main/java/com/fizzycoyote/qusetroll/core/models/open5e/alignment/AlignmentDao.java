@@ -16,8 +16,20 @@ public interface AlignmentDao {
     @Query("SELECT COUNT(*) FROM alignments")
     int getCount();
 
+    @Query("SELECT * FROM alignments WHERE key = :key")
+    AlignmentEntity getByKeySync(String key);
+
     @Query("DELETE FROM alignments")
     void deleteAll();
+
+    @Query("SELECT * FROM alignments")
+    List<AlignmentEntity> getAllSync();
+
+    @Query("SELECT a.* FROM alignments a " +
+            "INNER JOIN documents d ON a.document_key = d.key " +
+            "WHERE d.gamesystem = :gameSystem " +
+            "ORDER BY a.short_name ASC")
+    List<AlignmentEntity> getByGameSystem(String gameSystem);
 
     @Query("SELECT * FROM alignments ORDER BY key ASC")
     LiveData<List<AlignmentEntity>> getAll();

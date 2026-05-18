@@ -19,6 +19,15 @@ public interface SkillDao {
     @Query("SELECT * FROM skills ORDER BY name ASC")
     LiveData<List<SkillEntity>> getAll();
 
+    @Query("SELECT * FROM skills")
+    List<SkillEntity> getAllSync();
+
+    @Query("SELECT s.* FROM skills s " +
+            "INNER JOIN documents d ON s.documentKey = d.key " +
+            "WHERE d.gamesystem = :gameSystem " +
+            "ORDER BY s.name ASC")
+    List<SkillEntity> getAllByGameSystem(String gameSystem);
+
     @Query("SELECT * FROM skills WHERE abilityKey = :abilityKey ORDER BY name ASC")
     LiveData<List<SkillEntity>> getByAbility(String abilityKey);
 

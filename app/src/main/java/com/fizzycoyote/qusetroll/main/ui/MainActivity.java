@@ -44,16 +44,16 @@ public class MainActivity extends AppCompatActivity {
 
     // ── NAVIGATION
 
+    public void openCharacterListActivity(View view) {
+        startActivity(new Intent(this, CharacterListActivity.class));
+    }
+
     public void openRollDiceActivity(View view) {
         startActivity(new Intent(this, RollDiceActivity.class));
     }
 
     public void openSpellListActivity(View view) {
         startActivity(new Intent(this, SpellListActivity.class));
-    }
-
-    public void openCharacterListActivity(View view) {
-        startActivity(new Intent(this, CharacterListActivity.class));
     }
 
     public void openLanguageListActivity(View view) {

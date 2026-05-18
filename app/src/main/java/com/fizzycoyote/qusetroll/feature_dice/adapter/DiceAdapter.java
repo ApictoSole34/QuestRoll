@@ -34,7 +34,7 @@ public class DiceAdapter extends RecyclerView.Adapter<DiceAdapter.DiceViewHolder
 
         public DiceViewHolder(@NonNull View itemView) {
             super(itemView);
-            diceGifImageView = itemView.findViewById(R.id.diceGifImageView); // Upewnij się, że ID się zgadza
+            diceGifImageView = itemView.findViewById(R.id.diceGifImageView);
         }
     }
 
@@ -53,7 +53,7 @@ public class DiceAdapter extends RecyclerView.Adapter<DiceAdapter.DiceViewHolder
         Log.d("DiceAdapter", "Binding dice: " + dice.getType() + ", result: " + dice.getResult() + ", GIF resource: " + gifResource);
 
         if (holder.diceGifImageView != null) {
-            if (dice.isRolled() && !dice.isAnimationPlayed()) { // If the dice has been rolled
+            if (dice.isRolled() && !dice.isAnimationPlayed()) {
                 Glide.with(holder.itemView.getContext())
                         .asGif()
                         .load(gifResource)

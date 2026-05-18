@@ -8,6 +8,10 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="32"
         tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"
+        tools:ignore="PhotoAndVideoPolicy" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
 
     <application
         android:allowBackup="true"
@@ -44,6 +48,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".feature_character.ui.wizard.CharacterWizardActivity"
+            android:parentActivityName=".main.ui.MainActivity" />
+        <activity android:name=".feature_character.ui.list.CharacterListActivity"/>
         <activity android:name=".feature_item.item_set.ui.CustomItemSetCreateActivity"/>
         <activity android:name=".feature_item.item_set.ui.CustomItemSetDetailActivity"/>
         <activity android:name=".feature_item.item_set.ui.ItemSetDetailActivity"/>
@@ -120,9 +128,6 @@
         <activity android:name=".feature_spell.ui.CustomSpellDetailActivity"/>
         <activity android:name=".feature_dice.ui.RollDiceActivity" />
         <activity android:name=".feature_character.ui.list.CharacterListActivity"/>
-        <activity android:name=".feature_character.ui.create.CreateCharacterActivity"/>
-        <activity android:name=".feature_character.ui.edit.EditCharacterActivity"/>
-        <activity android:name=".feature_character.ui.details.CharacterDetailsActivity"/>
         <activity android:name=".feature_language.ui.language_list.LanguageListActivity"/>
         <activity android:name=".feature_language.ui.language_details.LanguageDetailActivity"/>
         <activity android:name=".feature_class.ui.ClassListActivity"/>

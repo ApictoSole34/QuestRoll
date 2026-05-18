@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph_wizard"
+    app:startDestination="@id/gameSystemStepFragment">
+
+    <fragment
+        android:id="@+id/gameSystemStepFragment"
+        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.GameSystemStepFragment"
+        android:label="System gry">
+        <action android:id="@+id/next_action" app:destination="@id/identityStepFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/identityStepFragment"
+        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.IdentityStepFragment"
+        android:label="Imię postaci">
+        <action android:id="@+id/next_action" app:destination="@id/raceStepFragment" />
+        <action android:id="@+id/back_action" app:destination="@id/gameSystemStepFragment" app:popUpTo="@id/gameSystemStepFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/raceStepFragment"
+        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.RaceStepFragment"
+        android:label="Rasa">
+        <action android:id="@+id/next_action" app:destination="@id/backgroundStepFragment" />
+        <action android:id="@+id/back_action" app:destination="@id/identityStepFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/backgroundStepFragment"
+        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.BackgroundStepFragment"
+        android:label="Background">
+        <action android:id="@+id/next_action" app:destination="@id/alignmentStepFragment" />
+        <action android:id="@+id/back_action" app:destination="@id/raceStepFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/alignmentStepFragment"
+        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.AlignmentStepFragment"
+        android:label="Alignment">
+        <action android:id="@+id/next_action" app:destination="@id/classStepFragment" />
+        <action android:id="@+id/back_action" app:destination="@id/backgroundStepFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/classStepFragment"
+        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.ClassStepFragment"
+        android:label="Classes">
+        <action android:id="@+id/next_action" app:destination="@id/attributesStepFragment" />
+        <action android:id="@+id/back_action" app:destination="@id/alignmentStepFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/attributesStepFragment"
+        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.AttributesStepFragment"
+        android:label="Attributes">
+        <action android:id="@+id/next_action" app:destination="@id/languagesStepFragment" />
+        <action android:id="@+id/back_action" app:destination="@id/classStepFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/languagesStepFragment"
+        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.LanguagesStepFragment"
+        android:label="Languages">
+        <action android:id="@+id/next_action" app:destination="@id/skillsStepFragment" />
+        <action android:id="@+id/back_action" app:destination="@id/attributesStepFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/skillsStepFragment"
+        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.SkillsStepFragment"
+        android:label="Umiejętności">
+        <action android:id="@+id/next_action" app:destination="@id/spellsStepFragment" />
+        <action android:id="@+id/back_action" app:destination="@id/languagesStepFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/spellsStepFragment"
+        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.SpellsStepFragment"
+        android:label="Zaklęcia">
+        <action android:id="@+id/next_action" app:destination="@id/imageStepFragment" />
+        <action android:id="@+id/back_action" app:destination="@id/skillsStepFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/imageStepFragment"
+        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.ImageStepFragment"
+        android:label="Photos">
+        <action android:id="@+id/next_action" app:destination="@id/equipmentStepFragment" />
+        <action android:id="@+id/back_action" app:destination="@id/imageStepFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/equipmentStepFragment"
+        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.EquipmentStepFragment"
+        android:label="EQ">
+        <action android:id="@+id/action_equipment_to_item_search" app:destination="@id/itemSearchStepFragment" />
+        <action android:id="@+id/action_equipment_to_summary" app:destination="@id/summaryStepFragment" />
+        <action android:id="@+id/back_action" app:destination="@id/imageStepFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/itemSearchStepFragment"
+        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.ItemSearchStepFragment"
+        android:label="Przedmioty">
+        <action android:id="@+id/back_action" app:destination="@id/equipmentStepFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/summaryStepFragment"
+        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.SummaryStepFragment"
+        android:label="Podsumowanie">
+        <action android:id="@+id/back_action" app:destination="@id/equipmentStepFragment" />
+    </fragment>
+</navigation>

@@ -49,10 +49,15 @@ android {
 
 dependencies {
 
+    implementation libs.gson
+    implementation libs.ucrop
+    implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation libs.ext.tables
     implementation libs.core
     implementation libs.androidx.appcompat.v161
     implementation libs.material
+    implementation libs.androidx.navigation.fragment.ktx
+    implementation libs.androidx.navigation.ui.ktx
     testImplementation libs.androidx.core.testing
     testImplementation libs.mockito.inline
     testImplementation libs.mockito.core.v5110
@@ -68,7 +73,6 @@ dependencies {
     implementation libs.androidx.room.runtime
     implementation libs.retrofit
     implementation libs.converter.gson
-    implementation libs.ucrop
     implementation libs.glide.v4151
     implementation libs.androidx.room.common.jvm
     implementation libs.androidx.recyclerview

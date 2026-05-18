@@ -19,6 +19,9 @@ public interface ItemSetDao {
     @Query("DELETE FROM item_sets")
     void deleteAll();
 
+    @Query("SELECT * FROM item_sets")
+    List<ItemSetEntity> getAllSync();
+
     @Query("SELECT * FROM item_sets ORDER BY name ASC")
     LiveData<List<ItemSetEntity>> getAll();
 

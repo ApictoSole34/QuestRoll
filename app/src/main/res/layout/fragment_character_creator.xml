@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Character name input -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Character name">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/character_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Alignment picker -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Alignment"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp" />
+        <Spinner
+            android:id="@+id/alignment_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Background picker -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Background"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp" />
+        <Spinner
+            android:id="@+id/background_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Species (race) picker -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Species"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp" />
+        <Spinner
+            android:id="@+id/species_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Class selection (multiclass) -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Classes (multiclass)"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp" />
+        <Button
+            android:id="@+id/add_class_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add class" />
+        <LinearLayout
+            android:id="@+id/class_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="8dp" />
+
+        <!-- Attribute generation method -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Attribute generation"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp" />
+        <RadioGroup
+            android:id="@+id/attr_method_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/radio_standard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Standard"
+                android:checked="true" />
+            <RadioButton
+                android:id="@+id/radio_roll"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Roll 4d6" />
+            <RadioButton
+                android:id="@+id/radio_point_buy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Point buy" />
+        </RadioGroup>
+
+        <!-- Container for static attribute display (standard / roll) -->
+        <LinearLayout
+            android:id="@+id/attributes_static_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible" />
+
+        <!-- Container for point‑buy controls (seek bars) -->
+        <LinearLayout
+            android:id="@+id/attributes_pointbuy_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone" />
+
+        <!-- Save button -->
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save character"
+            android:layout_marginTop="24dp" />
+
+    </LinearLayout>
+</ScrollView>

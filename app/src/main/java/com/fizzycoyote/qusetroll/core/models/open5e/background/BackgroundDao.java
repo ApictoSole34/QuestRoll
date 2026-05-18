@@ -20,6 +20,12 @@ public interface BackgroundDao {
     @Query("DELETE FROM backgrounds")
     void deleteAll();
 
+    @Query("SELECT b.* FROM backgrounds b " +
+            "INNER JOIN documents d ON b.document_key = d.key " +
+            "WHERE d.gamesystem = :gameSystem " +
+            "ORDER BY b.name ASC")
+    List<BackgroundEntity> getByGameSystem(String gameSystem);
+
     @Query("SELECT * FROM backgrounds WHERE " +
             "(:query = '' OR name LIKE '%' || :query || '%') AND " +
             "(:source = '' OR document_name LIKE '%' || :source || '%') " +
@@ -31,4 +37,10 @@ public interface BackgroundDao {
 
     @Query("SELECT DISTINCT document_name FROM backgrounds WHERE document_name IS NOT NULL ORDER BY document_name ASC")
     List<String> getDistinctSources();
+
+    @Query("SELECT * FROM backgrounds")
+    List<BackgroundEntity> getAll();
+
+    @Query("SELECT * FROM backgrounds WHERE key = :key")
+    BackgroundEntity getByKeySync(String key);
 }

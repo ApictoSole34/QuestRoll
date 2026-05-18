@@ -19,8 +19,21 @@ public interface CharacterClassDao {
     @Query("SELECT * FROM classes WHERE subclass_of_key IS NULL")
     LiveData<List<CharacterClassEntity>> getBaseClasses();
 
+    @Query("SELECT * FROM classes WHERE class_key = :key")
+    CharacterClassEntity getClassByKeySync(String key);
+
+    @Query("SELECT * FROM classes WHERE subclass_of_key IS NULL")
+    List<CharacterClassEntity> getBaseClassesSync();
+
     @Query("SELECT * FROM classes WHERE subclass_of_key = :parentKey")
     LiveData<List<CharacterClassEntity>> getSubclasses(String parentKey);
+
+    @Query("SELECT c.* FROM classes c " +
+            "INNER JOIN documents d ON c.document = d.key " +
+            "WHERE d.gamesystem = :gameSystem " +
+            "AND c.subclass_of_key IS NULL " +
+            "ORDER BY c.name ASC")
+    List<CharacterClassEntity> getBaseClassesByGameSystem(String gameSystem);
 
     @Query("SELECT * FROM classes ORDER BY name ASC")
     LiveData<List<CharacterClassEntity>> getAllClasses();

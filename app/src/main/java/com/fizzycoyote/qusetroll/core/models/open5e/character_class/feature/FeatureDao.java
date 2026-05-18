@@ -13,6 +13,9 @@ public interface FeatureDao {
     @Query("SELECT * FROM features WHERE class_key_ref = :classKey")
     LiveData<List<FeatureEntity>> getFeaturesForClass(String classKey);
 
+    @Query("SELECT * FROM features WHERE class_key_ref = :classKey")
+    List<FeatureEntity> getFeaturesForClassSync(String classKey);
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertFeatures(List<FeatureEntity> features);
 

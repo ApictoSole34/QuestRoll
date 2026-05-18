@@ -16,6 +16,9 @@ public interface LanguageDao {
     List<LanguageEntity> getAllLanguages();
 
     @Query("SELECT * FROM languages")
+    List<LanguageEntity> getAllSync();
+
+    @Query("SELECT * FROM languages")
     LiveData<List<LanguageEntity>> getAllLive();
 
 

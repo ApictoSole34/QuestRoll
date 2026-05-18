@@ -20,6 +20,17 @@ public interface ItemDao {
     @Query("DELETE FROM items")
     void deleteAll();
 
+    @Query("SELECT i.* FROM items i " +
+            "INNER JOIN documents d ON i.document_key = d.key " +
+            "WHERE d.gamesystem = :gameSystem " +
+            "ORDER BY i.name ASC")
+    List<ItemEntity> getAllByGameSystem(String gameSystem);
+
+    @Query("SELECT i.* FROM items i " +
+            "INNER JOIN documents d ON i.document_key = d.key " +
+            "WHERE i.key IN (:keys) AND d.gamesystem = :gameSystem")
+    List<ItemEntity> getByKeysAndGameSystemSync(List<String> keys, String gameSystem);
+
     @Query("SELECT * FROM items WHERE " +
             "(:query = '' OR name LIKE '%' || :query || '%') AND " +
             "(:categoryName = '' OR category_name = :categoryName) AND " +

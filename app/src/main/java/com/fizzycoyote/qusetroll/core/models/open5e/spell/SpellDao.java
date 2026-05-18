@@ -20,6 +20,12 @@ public interface SpellDao {
     @Query("DELETE FROM spells")
     void deleteAll();
 
+    @Query("SELECT s.* FROM spells s " +
+            "INNER JOIN documents d ON s.document_key = d.key " +
+            "WHERE d.gamesystem = :gameSystem " +
+            "ORDER BY s.level ASC, s.name ASC")
+    List<SpellEntity> getAllByGameSystem(String gameSystem);
+
     @Query("SELECT * FROM spells WHERE " +
             "(:query = '' OR name LIKE '%' || :query || '%') AND " +
             "(:level = -1 OR level = :level) AND " +
@@ -36,6 +42,9 @@ public interface SpellDao {
             boolean concentration,
             String source
     );
+
+    @Query("SELECT * FROM spells")
+    List<SpellEntity> getAllSync();
 
     @Query("SELECT DISTINCT document_name FROM spells WHERE document_name IS NOT NULL ORDER BY document_name ASC")
     List<String> getDistinctSources();

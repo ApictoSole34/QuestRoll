@@ -20,6 +20,32 @@ public interface SpeciesDao {
     @Query("DELETE FROM species")
     void deleteAll();
 
+    @Query("SELECT * FROM species WHERE key = :key")
+    SpeciesEntity getByKeySync(String key);
+
+    @Query("SELECT * FROM species")
+    List<SpeciesEntity> getAllSync();
+
+    @Query("SELECT s.* FROM species s " +
+            "INNER JOIN documents d ON s.document_key = d.`key` " +
+            "WHERE d.gamesystem = :gameSystem " +
+            "ORDER BY s.name ASC")
+    List<SpeciesEntity> getByGameSystem(String gameSystem);
+
+    @Query("SELECT s.* FROM species s " +
+            "INNER JOIN documents d ON s.document_key = d.`key` " +
+            "WHERE d.gamesystem = :gameSystem " +
+            "AND s.is_subspecies = 0 " +
+            "ORDER BY s.name ASC")
+    List<SpeciesEntity> getBaseSpeciesByGameSystem(String gameSystem);
+
+    @Query("SELECT s.* FROM species s " +
+            "INNER JOIN documents d ON s.document_key = d.`key` " +
+            "WHERE d.gamesystem = :gameSystem " +
+            "AND s.subspecies_of = :parentKey " +
+            "ORDER BY s.name ASC")
+    List<SpeciesEntity> getSubspeciesByParent(String parentKey, String gameSystem);
+
     @Query("SELECT * FROM species WHERE " +
             "(:query = '' OR name LIKE '%' || :query || '%') AND " +
             "(:subspeciesOnly = 0 OR is_subspecies != 0) AND " +

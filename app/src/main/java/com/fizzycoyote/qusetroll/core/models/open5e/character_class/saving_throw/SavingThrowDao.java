@@ -17,5 +17,8 @@ public interface SavingThrowDao {
     void deleteSavingThrowsForClass(String classKey);
 
     @Query("SELECT * FROM saving_throws WHERE class_key_ref = :classKey")
+    List<SavingThrowEntity> getSavingThrowsForClassSync(String classKey);
+
+    @Query("SELECT * FROM saving_throws WHERE class_key_ref = :classKey")
     LiveData<List<SavingThrowEntity>> getSavingThrowsForClass(String classKey);
 }
