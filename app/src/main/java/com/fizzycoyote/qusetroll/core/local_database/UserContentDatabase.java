@@ -77,7 +77,7 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_weapon_property.Custo
         CustomItemCategoryEntity.class,
         CustomItemSetEntity.class,
         },
-        version = 33,
+        version = 34,
         exportSchema = false
 )
 @TypeConverters({CustomConverters.class})

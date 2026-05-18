@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.fizzycoyote.qusetroll.core.models.character.CharacterCreationDTO;
+import com.fizzycoyote.qusetroll.core.models.character.CharacterTraitEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_background.CustomBackgroundDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_background.CustomBackgroundEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.background.BackgroundDto;
@@ -24,11 +26,14 @@ public class CustomBackgroundCreateViewModel extends ViewModel {
     private final CustomBackgroundDao dao;
     private final long editId;
     private final Executor executor;
-
     private final MutableLiveData<CustomBackgroundEntity> editData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> saveResult = new MutableLiveData<>();
-    private final MutableLiveData<List<BackgroundDto.BenefitDto>> benefits =
-            new MutableLiveData<>(new ArrayList<>());
+
+    private final List<CharacterCreationDTO.InventoryItemDTO> equipment = new ArrayList<>();
+    private final List<String> languages = new ArrayList<>();
+    private final List<String> skills = new ArrayList<>();
+    private final List<String> tools = new ArrayList<>();
+    private final List<CharacterTraitEntity> features = new ArrayList<>();
 
     public CustomBackgroundCreateViewModel(CustomBackgroundDao dao, long editId, Executor executor) {
         this.dao = dao;
@@ -40,52 +45,87 @@ public class CustomBackgroundCreateViewModel extends ViewModel {
     public boolean isEditMode() { return editId != NO_ID; }
 
     private void loadExisting() {
-        dao.getById(editId).observeForever(b -> {
-            if (b != null && editData.getValue() == null) {
-                editData.setValue(b);
-                try {
-                    Type type = new TypeToken<List<BackgroundDto.BenefitDto>>(){}.getType();
-                    List<BackgroundDto.BenefitDto> list = new Gson().fromJson(b.benefitsJson, type);
-                    benefits.setValue(list != null ? list : new ArrayList<>());
-                } catch (Exception ignored) {}
+        dao.getById(editId).observeForever(entity -> {
+            if (entity != null && editData.getValue() == null) {
+                editData.setValue(entity);
+                if (entity.equipmentJson != null) {
+                    Type type = new TypeToken<List<CharacterCreationDTO.InventoryItemDTO>>(){}.getType();
+                    equipment.addAll(new Gson().fromJson(entity.equipmentJson, type));
+                }
+                if (entity.languagesJson != null) {
+                    Type type = new TypeToken<List<String>>(){}.getType();
+                    languages.addAll(new Gson().fromJson(entity.languagesJson, type));
+                }
+                if (entity.skillProficienciesJson != null) {
+                    Type type = new TypeToken<List<String>>(){}.getType();
+                    skills.addAll(new Gson().fromJson(entity.skillProficienciesJson, type));
+                }
+                if (entity.toolProficienciesJson != null) {
+                    Type type = new TypeToken<List<String>>(){}.getType();
+                    tools.addAll(new Gson().fromJson(entity.toolProficienciesJson, type));
+                }
+                if (entity.featuresJson != null) {
+                    Type type = new TypeToken<List<CharacterTraitEntity>>(){}.getType();
+                    features.addAll(new Gson().fromJson(entity.featuresJson, type));
+                }
             }
         });
     }
 
     public LiveData<CustomBackgroundEntity> getEditData() { return editData; }
     public LiveData<Boolean> getSaveResult() { return saveResult; }
-    public LiveData<List<BackgroundDto.BenefitDto>> getBenefits() { return benefits; }
 
-    public void addBenefit(String name, String desc, String type) {
-        BackgroundDto.BenefitDto b = new BackgroundDto.BenefitDto();
-        b.name = name; b.desc = desc; b.type = type;
-        List<BackgroundDto.BenefitDto> list = new ArrayList<>(
-                benefits.getValue() != null ? benefits.getValue() : new ArrayList<>());
-        list.add(b); benefits.setValue(list);
-    }
+    public List<CharacterCreationDTO.InventoryItemDTO> getEquipmentItems() { return equipment; }
+    public List<String> getLanguageItems() { return languages; }
+    public List<String> getSkillItems() { return skills; }
+    public List<String> getToolItems() { return tools; }
+    public List<CharacterTraitEntity> getFeatureItems() { return features; }
 
-    public void removeBenefit(int i) {
-        List<BackgroundDto.BenefitDto> list = new ArrayList<>(
-                benefits.getValue() != null ? benefits.getValue() : new ArrayList<>());
-        if (i >= 0 && i < list.size()) { list.remove(i); benefits.setValue(list); }
-    }
+    public void addEquipmentItem(CharacterCreationDTO.InventoryItemDTO item) { equipment.add(item); }
+    public void addLanguage(String lang) { languages.add(lang); }
+    public void addSkill(String skill) { skills.add(skill); }
+    public void addTool(String tool) { tools.add(tool); }
+    public void addFeature(CharacterTraitEntity feature) { features.add(feature); }
 
-    public void save(String name, String desc) {
+    public void removeEquipmentItem(CharacterCreationDTO.InventoryItemDTO item) { equipment.remove(item); }
+    public void removeLanguage(String lang) { languages.remove(lang); }
+    public void removeSkill(String skill) { skills.remove(skill); }
+    public void removeTool(String tool) { tools.remove(tool); }
+    public void removeFeature(CharacterTraitEntity feature) { features.remove(feature); }
+
+    public void save(String name, String desc, String gameSystem, int startingGold) {
         executor.execute(() -> {
             try {
                 CustomBackgroundEntity e = new CustomBackgroundEntity();
-                if (isEditMode()) e.id = editId;
+                if (isEditMode()) {
+                    e = editData.getValue();
+                    if (e == null) return;
+                } else {
+                    e.key = "custom_bg_" + System.currentTimeMillis();
+                }
                 e.name = name;
                 e.desc = desc;
-                e.benefitsJson = new Gson().toJson(benefits.getValue());
+                e.gameSystem = gameSystem;
+                e.startingGold = startingGold;
+                e.equipmentJson = new Gson().toJson(equipment);
+                e.languagesJson = new Gson().toJson(languages);
+                e.skillProficienciesJson = new Gson().toJson(skills);
+                e.toolProficienciesJson = new Gson().toJson(tools);
+                e.featuresJson = new Gson().toJson(features);
 
-                if (isEditMode()) { dao.update(e); }
-                else {
-                    if (dao.countByName(name) > 0) { saveResult.postValue(false); return; }
+                if (isEditMode()) {
+                    dao.update(e);
+                } else {
+                    if (dao.countByName(name) > 0) {
+                        saveResult.postValue(false);
+                        return;
+                    }
                     dao.insert(e);
                 }
                 saveResult.postValue(true);
-            } catch (Exception ex) { saveResult.postValue(false); }
+            } catch (Exception ex) {
+                saveResult.postValue(false);
+            }
         });
     }
 
@@ -93,11 +133,9 @@ public class CustomBackgroundCreateViewModel extends ViewModel {
         private final CustomBackgroundDao dao;
         private final long editId;
         private final Executor executor;
-
         public Factory(CustomBackgroundDao dao, long editId, Executor executor) {
             this.dao = dao; this.editId = editId; this.executor = executor;
         }
-
         @NonNull @Override
         public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {
             return (T) new CustomBackgroundCreateViewModel(dao, editId, executor);

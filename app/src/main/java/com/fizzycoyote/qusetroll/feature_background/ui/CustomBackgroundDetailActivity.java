@@ -13,6 +13,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.fizzycoyote.qusetroll.R;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
+import com.fizzycoyote.qusetroll.core.models.character.CharacterCreationDTO;
+import com.fizzycoyote.qusetroll.core.models.character.CharacterTraitEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_background.CustomBackgroundEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.background.BackgroundDto;
 import com.google.gson.Gson;
@@ -35,20 +37,27 @@ public class CustomBackgroundDetailActivity extends AppCompatActivity {
         markwon = Markwon.create(this);
 
         long id = getIntent().getLongExtra(EXTRA_ID, -1);
-        if (id == -1) { finish(); return; }
+        if (id == -1) {
+            finish();
+            return;
+        }
 
         UserContentDatabase.getInstance(this).customBackgroundDao()
-                .getById(id).observe(this, b -> { if (b != null) populateUI(b, id); });
+                .getById(id).observe(this, entity -> {
+                    if (entity != null) populateUI(entity);
+                });
     }
 
-    private void populateUI(CustomBackgroundEntity b, long id) {
-        ((TextView) findViewById(R.id.tv_background_name)).setText(b.name);
-
+    private void populateUI(CustomBackgroundEntity b) {
+        TextView tvName = findViewById(R.id.tv_background_name);
         TextView tvSource = findViewById(R.id.tv_source);
-        tvSource.setText("Custom");
+        TextView tvDesc = findViewById(R.id.tv_desc);
+        LinearLayout container = findViewById(R.id.benefits_container);
+
+        tvName.setText(b.name);
+        tvSource.setText("Custom (" + (b.gameSystem != null ? b.gameSystem : "?") + ")");
         tvSource.setVisibility(View.VISIBLE);
 
-        TextView tvDesc = findViewById(R.id.tv_desc);
         if (b.desc != null && !b.desc.isEmpty()) {
             markwon.setMarkdown(tvDesc, b.desc);
             tvDesc.setVisibility(View.VISIBLE);
@@ -56,57 +65,97 @@ public class CustomBackgroundDetailActivity extends AppCompatActivity {
             tvDesc.setVisibility(View.GONE);
         }
 
-        buildBenefits(b.benefitsJson);
+        container.removeAllViews();
+
+        // Starting Gold
+        addSimpleRow(container, "Starting Gold", b.startingGold + " gp");
+
+        // Equipment
+        if (b.equipmentJson != null && !b.equipmentJson.isEmpty()) {
+            Type type = new TypeToken<List<CharacterCreationDTO.InventoryItemDTO>>(){}.getType();
+            List<CharacterCreationDTO.InventoryItemDTO> items = new Gson().fromJson(b.equipmentJson, type);
+            if (items != null && !items.isEmpty()) {
+                addHeader(container, "Equipment");
+                for (CharacterCreationDTO.InventoryItemDTO item : items) {
+                    addSimpleRow(container, null, "• " + item.customName + " (x" + item.quantity + ", " + item.customWeight + " lb)");
+                }
+            }
+        }
+
+        // Languages
+        if (b.languagesJson != null && !b.languagesJson.isEmpty()) {
+            Type type = new TypeToken<List<String>>(){}.getType();
+            List<String> languages = new Gson().fromJson(b.languagesJson, type);
+            if (languages != null && !languages.isEmpty()) {
+                addHeader(container, "Languages");
+                for (String lang : languages) {
+                    addSimpleRow(container, null, "• " + lang);
+                }
+            }
+        }
+
+        // Skill Proficiencies
+        if (b.skillProficienciesJson != null && !b.skillProficienciesJson.isEmpty()) {
+            Type type = new TypeToken<List<String>>(){}.getType();
+            List<String> skills = new Gson().fromJson(b.skillProficienciesJson, type);
+            if (skills != null && !skills.isEmpty()) {
+                addHeader(container, "Skill Proficiencies");
+                for (String skill : skills) {
+                    addSimpleRow(container, null, "• " + skill);
+                }
+            }
+        }
+
+        // Tool Proficiencies
+        if (b.toolProficienciesJson != null && !b.toolProficienciesJson.isEmpty()) {
+            Type type = new TypeToken<List<String>>(){}.getType();
+            List<String> tools = new Gson().fromJson(b.toolProficienciesJson, type);
+            if (tools != null && !tools.isEmpty()) {
+                addHeader(container, "Tool Proficiencies");
+                for (String tool : tools) {
+                    addSimpleRow(container, null, "• " + tool);
+                }
+            }
+        }
+
+        // Features
+        if (b.featuresJson != null && !b.featuresJson.isEmpty()) {
+            Type type = new TypeToken<List<CharacterTraitEntity>>(){}.getType();
+            List<CharacterTraitEntity> features = new Gson().fromJson(b.featuresJson, type);
+            if (features != null && !features.isEmpty()) {
+                addHeader(container, "Features");
+                for (CharacterTraitEntity feature : features) {
+                    addSimpleRow(container, feature.name, feature.description);
+                }
+            }
+        }
 
         View btnManage = findViewById(R.id.btnManage);
         if (btnManage != null) {
             btnManage.setVisibility(View.VISIBLE);
-            btnManage.setOnClickListener(v -> showManageMenu(v, id));
+            btnManage.setOnClickListener(v -> showManageMenu(v, b.id));
         }
     }
 
-    private void buildBenefits(String json) {
-        LinearLayout container = findViewById(R.id.benefits_container);
-        container.removeAllViews();
-        if (json == null || json.isEmpty()) return;
-
-        try {
-            Type type = new TypeToken<List<BackgroundDto.BenefitDto>>(){}.getType();
-            List<BackgroundDto.BenefitDto> benefits = new Gson().fromJson(json, type);
-            if (benefits == null) return;
-            for (BackgroundDto.BenefitDto benefit : benefits) {
-                addBenefitView(container, benefit.name, benefit.desc);
-            }
-        } catch (Exception ignored) {}
+    private void addHeader(LinearLayout container, String title) {
+        TextView header = new TextView(this);
+        header.setText(title);
+        header.setTypeface(null, Typeface.BOLD);
+        header.setTextSize(16);
+        header.setPadding(0, dp(16), 0, dp(4));
+        container.addView(header);
     }
 
-    private void addBenefitView(LinearLayout container, String name, String desc) {
-        LinearLayout row = new LinearLayout(this);
-        row.setOrientation(LinearLayout.VERTICAL);
-        row.setPadding(0, dp(10), 0, dp(4));
-
-        TextView tvName = new TextView(this);
-        tvName.setText(name);
-        tvName.setTypeface(null, Typeface.BOLD);
-        tvName.setTextSize(15);
-        row.addView(tvName);
-
-        if (desc != null && !desc.isEmpty()) {
-            TextView tvDesc = new TextView(this);
-            markwon.setMarkdown(tvDesc, desc);
-            tvDesc.setTextSize(14);
-            tvDesc.setPadding(0, dp(4), 0, 0);
-            row.addView(tvDesc);
+    private void addSimpleRow(LinearLayout container, String label, String value) {
+        TextView row = new TextView(this);
+        if (label != null) {
+            row.setText(label + ": " + value);
+            row.setTypeface(null, Typeface.BOLD);
+        } else {
+            row.setText(value);
         }
-
-        View divider = new View(this);
-        divider.setBackgroundColor(0x1A000000);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, 1);
-        params.topMargin = dp(8);
-        divider.setLayoutParams(params);
-        row.addView(divider);
-
+        row.setTextSize(14);
+        row.setPadding(0, dp(4), 0, dp(4));
         container.addView(row);
     }
 
@@ -118,7 +167,8 @@ public class CustomBackgroundDetailActivity extends AppCompatActivity {
             if (item.getItemId() == 1) {
                 Intent i = new Intent(this, CustomBackgroundCreateActivity.class);
                 i.putExtra(CustomBackgroundCreateActivity.EXTRA_EDIT_ID, id);
-                startActivity(i); return true;
+                startActivity(i);
+                return true;
             } else if (item.getItemId() == 2) {
                 new AlertDialog.Builder(this)
                         .setTitle("Delete Background")
@@ -130,7 +180,8 @@ public class CustomBackgroundDetailActivity extends AppCompatActivity {
                                                     .customBackgroundDao().delete(id);
                                             runOnUiThread(this::finish);
                                         }))
-                        .setNegativeButton("Cancel", null).show();
+                        .setNegativeButton("Cancel", null)
+                        .show();
                 return true;
             }
             return false;
@@ -138,5 +189,7 @@ public class CustomBackgroundDetailActivity extends AppCompatActivity {
         popup.show();
     }
 
-    private int dp(int v) { return (int)(v * getResources().getDisplayMetrics().density); }
+    private int dp(int v) {
+        return (int) (v * getResources().getDisplayMetrics().density);
+    }
 }
