@@ -51,6 +51,19 @@
                 android:gravity="top"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- ── GAME SYSTEM ───────────────────────────── -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Game System"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_marginBottom="12dp">
+            <Spinner
+                android:id="@+id/spinnerGameSystem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
         <!-- ── HIT DICE ──────────────────────────────── -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
@@ -81,6 +94,19 @@
                 android:inputType="none"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- ── SPELLCASTING ABILITY ───────────────────── -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Spellcasting Ability"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_marginBottom="12dp">
+            <Spinner
+                android:id="@+id/spinnerSpellcastingAbility"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
         <!-- ── SUBCLASS OF ───────────────────────────── -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
@@ -103,7 +129,117 @@
             android:layout_height="wrap_content"
             android:text="Select Saving Throws"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_marginBottom="20dp"/>
+            android:layout_marginBottom="12dp"/>
+
+        <!-- ── STARTING GOLD DICE ─────────────────────── -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Starting Gold Dice (e.g., 5d4)"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_marginBottom="12dp">
+            <EditText
+                android:id="@+id/etStartingGoldDice"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:text="5d4"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ── LANGUAGES ─────────────────────────────── -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Languages"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="?attr/colorPrimary"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvLanguageKeys"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:layout_marginBottom="8dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAddLanguage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Language"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_marginBottom="12dp"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Number of chooseable languages"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_marginBottom="12dp">
+            <EditText
+                android:id="@+id/etLanguageChoices"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:text="0"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ── SKILL CHOICES ─────────────────────────── -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Number of Skill Choices"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_marginBottom="12dp">
+            <EditText
+                android:id="@+id/etSkillChoicesCount"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:text="0"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- ── SKILL OPTIONS ─────────────────────────── -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Skill Options (available choices)"
+            android:textAppearance="?attr/textAppearanceTitleMedium"
+            android:textColor="?attr/colorPrimary"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvSkillOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:layout_marginBottom="8dp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnAddSkillOption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Skill Option"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_marginBottom="12dp"/>
+
+        <!-- ── EQUIPMENT DESCRIPTION ─────────────────── -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Starting Equipment Description (optional)"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_marginBottom="12dp">
+            <EditText
+                android:id="@+id/etEquipmentDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:minLines="2"
+                android:maxLines="4"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"

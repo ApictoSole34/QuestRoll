@@ -32,10 +32,33 @@ public class CustomCharacterClassEntity {
     @TypeConverters(Converters.class)
     public List<String> savingThrows;
 
-    //json:
+    @ColumnInfo(name = "game_system")
+    public String gameSystem = "5e-2014";
+
+    @ColumnInfo(name = "spellcasting_ability")
+    public String spellcastingAbility = "NONE";
+
+    @ColumnInfo(name = "starting_gold_dice")
+    public String startingGoldDice = "5d4";
+
+    @ColumnInfo(name = "skill_choices_count")
+    public int skillChoicesCount = 0;
+
+    @ColumnInfo(name = "skill_options_json")
+    public String skillOptionsJson = "[]";
+
+    @ColumnInfo(name = "equipment_description")
+    public String equipmentDescription = "";
+
     @ColumnInfo(name = "resource_data")
     public String resourceData;
 
     @ColumnInfo(name = "custom_data")
     public String customData;
+
+    @ColumnInfo(name = "language_keys_json")
+    public String languageKeysJson = "[]";
+
+    @ColumnInfo(name = "language_choices")
+    public int languageChoices = 0;
 }

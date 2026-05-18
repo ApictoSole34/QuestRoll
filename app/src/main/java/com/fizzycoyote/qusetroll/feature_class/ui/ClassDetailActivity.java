@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -38,7 +39,10 @@ import com.fizzycoyote.qusetroll.core.models.open5e.character_class.hit_points.H
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.table_data.TableData;
 import com.fizzycoyote.qusetroll.feature_class.class_adapter.FeatureAdapter;
 import com.fizzycoyote.qusetroll.feature_class.view_model.ClassDetailViewModel;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -53,6 +57,7 @@ public class ClassDetailActivity extends AppCompatActivity {
     private TextView className, hitDiceTextView, tvHitPoints, tvSavingThrows;
     private RecyclerView featuresRecycler;
     private ClassDetailViewModel viewModel;
+    private LinearLayout detailsContainer;
 
     private static final Map<String, String> COLUMN_TITLES = new HashMap<String, String>() {{
         put("PROFICIENCY_BONUS", "Prof Bonus");
@@ -97,8 +102,6 @@ public class ClassDetailActivity extends AppCompatActivity {
         }
     }
 
-    // ── SETUP
-
     private void initViews() {
         className = findViewById(R.id.tv_class_name);
         hitDiceTextView = findViewById(R.id.tv_hit_dice);
@@ -131,8 +134,7 @@ public class ClassDetailActivity extends AppCompatActivity {
         }
     }
 
-    // ── CUSTOM CLASS MENU
-
+    //------class menu -----
     private void setupCustomClassMenu(String classKey) {
         Button btnManage = findViewById(R.id.btnManage);
         btnManage.setVisibility(View.VISIBLE);
@@ -145,13 +147,12 @@ public class ClassDetailActivity extends AppCompatActivity {
         popup.getMenu().add(0, 2, 1, "Delete Class");
 
         popup.setOnMenuItemClickListener(item -> {
-            switch (item.getItemId()) {
-                case 1:
-                    openEditClass(classKey);
-                    return true;
-                case 2:
-                    confirmDeleteClass(classKey);
-                    return true;
+            if (item.getItemId() == 1) {
+                openEditClass(classKey);
+                return true;
+            } else if (item.getItemId() == 2) {
+                confirmDeleteClass(classKey);
+                return true;
             }
             return false;
         });
@@ -186,8 +187,7 @@ public class ClassDetailActivity extends AppCompatActivity {
                 });
     }
 
-    // ── OPEN5E
-
+    // --- Open5e ---
     private void observeOpen5eData() {
         viewModel.getClassWithDetails().observe(this, classWithDetails -> {
             if (classWithDetails != null) {
@@ -237,8 +237,7 @@ public class ClassDetailActivity extends AppCompatActivity {
                 .collect(Collectors.toList());
     }
 
-    // ── CUSTOM
-
+    // --- Custom ---
     private void observeCustomData() {
         viewModel.getCustomClass().observe(this, data -> {
             if (data != null) {
@@ -247,11 +246,43 @@ public class ClassDetailActivity extends AppCompatActivity {
         });
     }
 
+    private int dp(int v) {
+        return dpToPx(v);
+    }
+
     private void updateCustomClassInfo(CustomCharacterClassWithFeatures data) {
         CustomCharacterClassEntity entity = data.characterClassEntity;
         if (entity == null) return;
 
         className.setText(entity.name);
+
+        LinearLayout mainContainer = findViewById(R.id.traits_container);
+        if (mainContainer != null && detailsContainer == null) {
+            ViewGroup parent = (ViewGroup) mainContainer.getParent();
+            int index = parent.indexOfChild(mainContainer);
+            detailsContainer = new LinearLayout(this);
+            detailsContainer.setOrientation(LinearLayout.VERTICAL);
+            detailsContainer.setPadding(0, 0, 0, dp(16));
+            parent.addView(detailsContainer, index);
+        }
+
+        if (detailsContainer != null) {
+            detailsContainer.removeAllViews();
+            addDetailRow(detailsContainer, "Game System", entity.gameSystem);
+            addDetailRow(detailsContainer, "Hit Dice", entity.hitDice);
+            addDetailRow(detailsContainer, "Caster Type", entity.casterType);
+            addDetailRow(detailsContainer, "Spellcasting Ability", entity.spellcastingAbility);
+            addDetailRow(detailsContainer, "Starting Gold", entity.startingGoldDice);
+            addDetailRow(detailsContainer, "Skill Choices", String.valueOf(entity.skillChoicesCount));
+            if (entity.skillOptionsJson != null && !entity.skillOptionsJson.isEmpty()) {
+                try {
+                    Type listType = new TypeToken<List<String>>(){}.getType();
+                    List<String> opts = new Gson().fromJson(entity.skillOptionsJson, listType);
+                    addDetailRow(detailsContainer, "Skill Options", TextUtils.join(", ", opts));
+                } catch (Exception e) {}
+            }
+            addDetailRow(detailsContainer, "Equipment Description", entity.equipmentDescription);
+        }
 
         boolean isSubclass = entity.subclassOf != null;
         if (isSubclass) {
@@ -264,6 +295,15 @@ public class ClassDetailActivity extends AppCompatActivity {
 
         processCustomClassTable(data.features);
         updateCustomFeatures(data.features);
+    }
+
+    private void addDetailRow(LinearLayout container, String label, String value) {
+        if (value == null || value.isEmpty()) return;
+        TextView row = new TextView(this);
+        row.setText(label + ": " + value);
+        row.setPadding(0, dp(4), 0, dp(4));
+        row.setTextSize(14);
+        container.addView(row);
     }
 
     private void processCustomClassTable(List<CustomFeatureEntity> features) {
@@ -324,8 +364,7 @@ public class ClassDetailActivity extends AppCompatActivity {
         adapter.submitList(features != null ? new ArrayList<>(features) : new ArrayList<>());
     }
 
-    // ── CLASS TABLE (open5e)
-
+    // --- Class table (Open5e) ---
     private void processClassTable(List<FeatureEntity> features) {
         Map<Integer, Map<String, String>> levelData = new HashMap<>();
         Set<String> availableColumns = new HashSet<>();
@@ -386,8 +425,6 @@ public class ClassDetailActivity extends AppCompatActivity {
             findViewById(R.id.class_table_section).setVisibility(View.GONE);
         }
     }
-
-    // ── TABLE RENDERING
 
     private void setupFullClassTable(List<String> columnHeaders,
                                      Map<Integer, Map<String, String>> levelData) {
@@ -481,14 +518,10 @@ public class ClassDetailActivity extends AppCompatActivity {
         }
     }
 
-    // ── HELPERS
-
     private FeatureAdapter buildReadOnlyFeatureAdapter() {
         return new FeatureAdapter(new FeatureAdapter.OnFeatureClickListener() {
-            @Override
-            public void onEdit(CustomFeatureEntity feature, int index) {}
-            @Override
-            public void onDelete(int index) {}
+            @Override public void onEdit(CustomFeatureEntity feature, int index) {}
+            @Override public void onDelete(int index) {}
         });
     }
 

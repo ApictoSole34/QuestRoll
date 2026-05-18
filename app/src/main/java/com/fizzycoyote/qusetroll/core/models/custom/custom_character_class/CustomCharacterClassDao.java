@@ -3,6 +3,7 @@ package com.fizzycoyote.qusetroll.core.models.custom.custom_character_class;
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
 import androidx.room.Update;
@@ -14,36 +15,41 @@ import java.util.List;
 @Dao
 public interface CustomCharacterClassDao {
 
-    @Query("SELECT COUNT(*) FROM custom_character_classes WHERE name = :name")
-    int countByName(String name);
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    long insertClass(CustomCharacterClassEntity clazz);
 
-    @Query("DELETE FROM custom_features WHERE class_id = :classId")
-    void deleteFeaturesForClass(long classId);
+    @Update
+    void updateClass(CustomCharacterClassEntity clazz);
 
     @Query("DELETE FROM custom_character_classes WHERE id = :classId")
     void deleteClass(long classId);
 
-    @Insert
-    long insertClass(CustomCharacterClassEntity entity);
-
-    @Insert
-    void insertFeatures(List<CustomFeatureEntity> features);
-
-    @Update
-    void updateClass(CustomCharacterClassEntity entity);
-
     @Transaction
-    @Query("SELECT * FROM custom_character_classes WHERE id = :id")
-    CustomCharacterClassWithFeatures getClassWithFeaturesSync(long id);
-
-    @Transaction
-    @Query("SELECT * FROM custom_character_classes")
+    @Query("SELECT * FROM custom_character_classes ORDER BY name ASC")
     LiveData<List<CustomCharacterClassWithFeatures>> getAllClasses();
+
+    @Query("SELECT * FROM custom_character_classes WHERE game_system = :gameSystem ORDER BY name ASC")
+    LiveData<List<CustomCharacterClassEntity>> getClassesByGameSystem(String gameSystem);
+
+    @Query("SELECT * FROM custom_character_classes WHERE game_system = :gameSystem AND (subclass_of IS NULL OR subclass_of = '') ORDER BY name ASC")
+    List<CustomCharacterClassEntity> getBaseClassesSync(String gameSystem);
+
+    @Query("SELECT * FROM custom_character_classes WHERE id = :id")
+    LiveData<CustomCharacterClassEntity> getClassById(long id);
+
+    @Query("SELECT * FROM custom_character_classes WHERE id = :id")
+    CustomCharacterClassEntity getClassByIdSync(long id);
+
+    @Query("SELECT COUNT(*) FROM custom_character_classes WHERE name = :name")
+    int countByName(String name);
 
     @Transaction
     @Query("SELECT * FROM custom_character_classes WHERE id = :classId")
     LiveData<CustomCharacterClassWithFeatures> getClassWithFeatures(long classId);
 
-    @Query("SELECT * FROM custom_character_classes WHERE subclass_of = :parentKey")
-    LiveData<List<CustomCharacterClassEntity>> getSubclasses(String parentKey);
+    @Insert
+    void insertFeatures(List<CustomFeatureEntity> features);
+
+    @Query("DELETE FROM custom_features WHERE class_id = :classId")
+    void deleteFeaturesForClass(long classId);
 }

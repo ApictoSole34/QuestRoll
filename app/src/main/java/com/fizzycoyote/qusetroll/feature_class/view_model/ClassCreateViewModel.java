@@ -11,7 +11,10 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.Custo
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custom_feature.CustomFeatureEntity;
 import com.fizzycoyote.qusetroll.feature_class.model.CombinedClass;
 import com.fizzycoyote.qusetroll.feature_class.repository.ClassRepository;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -30,6 +33,12 @@ public class ClassCreateViewModel extends ViewModel {
     private final MutableLiveData<Set<String>> selectedSavingThrows =
             new MutableLiveData<>(new HashSet<>());
     private final MutableLiveData<Boolean> saveResult = new MutableLiveData<>();
+
+    private final MutableLiveData<List<String>> skillOptions =
+            new MutableLiveData<>(new ArrayList<>());
+
+    private final MutableLiveData<List<String>> languageKeys =
+            new MutableLiveData<>(new ArrayList<>());
 
     private final MutableLiveData<CustomCharacterClassWithFeatures> editData =
             new MutableLiveData<>();
@@ -63,6 +72,26 @@ public class ClassCreateViewModel extends ViewModel {
                             selectedSavingThrows.setValue(
                                     new HashSet<>(data.characterClassEntity.savingThrows));
                         }
+
+                        if (data.characterClassEntity.skillOptionsJson != null &&
+                                !data.characterClassEntity.skillOptionsJson.isEmpty()) {
+                            try {
+                                Type listType = new TypeToken<List<String>>(){}.getType();
+                                List<String> loaded = new Gson().fromJson(
+                                        data.characterClassEntity.skillOptionsJson, listType);
+                                skillOptions.setValue(new ArrayList<>(loaded));
+                            } catch (Exception ignored) {}
+                        }
+
+                        if (data.characterClassEntity.languageKeysJson != null &&
+                                !data.characterClassEntity.languageKeysJson.isEmpty()) {
+                            try {
+                                Type listType = new TypeToken<List<String>>(){}.getType();
+                                List<String> loaded = new Gson().fromJson(
+                                        data.characterClassEntity.languageKeysJson, listType);
+                                languageKeys.setValue(new ArrayList<>(loaded));
+                            } catch (Exception ignored) {}
+                        }
                     }
                 });
     }
@@ -79,6 +108,8 @@ public class ClassCreateViewModel extends ViewModel {
     public LiveData<Set<String>> getSelectedSavingThrows() { return selectedSavingThrows; }
     public LiveData<Boolean> getSaveResult() { return saveResult; }
     public LiveData<CustomCharacterClassWithFeatures> getEditData() { return editData; }
+    public LiveData<List<String>> getSkillOptions() { return skillOptions; }
+    public LiveData<List<String>> getLanguageKeys() { return languageKeys; }
 
     public void setSelectedSavingThrows(Set<String> throws_) {
         selectedSavingThrows.setValue(throws_);
@@ -109,9 +140,38 @@ public class ClassCreateViewModel extends ViewModel {
         }
     }
 
-    public void saveClass(CustomCharacterClassEntity entity) {
+    public void addSkillOption(String skillKey) {
+        List<String> list = new ArrayList<>(skillOptions.getValue());
+        list.add(skillKey);
+        skillOptions.setValue(list);
+    }
+
+    public void removeSkillOption(int position) {
+        List<String> list = new ArrayList<>(skillOptions.getValue());
+        if (position >= 0 && position < list.size()) list.remove(position);
+        skillOptions.setValue(list);
+    }
+
+    public void addLanguageKey(String key) {
+        List<String> list = new ArrayList<>(languageKeys.getValue());
+        list.add(key);
+        languageKeys.setValue(list);
+    }
+
+    public void removeLanguageKey(int position) {
+        List<String> list = new ArrayList<>(languageKeys.getValue());
+        if (position >= 0 && position < list.size()) list.remove(position);
+        languageKeys.setValue(list);
+    }
+
+    public void saveClass(CustomCharacterClassEntity entity, int languageChoices) {
         repository.getExecutor().execute(() -> {
             try {
+                Gson gson = new Gson();
+                entity.skillOptionsJson = gson.toJson(skillOptions.getValue());
+                entity.languageKeysJson = gson.toJson(languageKeys.getValue());
+                entity.languageChoices = languageChoices;
+
                 if (isEditMode()) {
                     updateExistingClass(entity);
                 } else {

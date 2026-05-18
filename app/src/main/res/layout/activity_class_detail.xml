@@ -17,6 +17,15 @@
             android:textSize="24sp"
             android:textStyle="bold"/>
 
+        <!-- Kontener na szczegóły (dla custom class) -->
+        <LinearLayout
+            android:id="@+id/traits_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"/>
+
         <!-- Hit Points Section -->
         <LinearLayout
             android:id="@+id/hit_points_section"
@@ -46,12 +55,13 @@
 
         </LinearLayout>
 
-        <!-- Class Table Section - UPROSZCZONE -->
+        <!-- Class Table Section -->
         <LinearLayout
             android:id="@+id/class_table_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
             <TextView
                 android:layout_width="match_parent"
@@ -61,7 +71,6 @@
                 android:layout_marginTop="16dp"
                 android:textStyle="bold"/>
 
-            <!-- POJEDYNCZY TableLayout dla całej tabeli -->
             <HorizontalScrollView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -73,7 +82,6 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <!-- TableLayout dla nagłówków i danych RAZEM -->
                     <TableLayout
                         android:id="@+id/full_class_table"
                         android:layout_width="wrap_content"
