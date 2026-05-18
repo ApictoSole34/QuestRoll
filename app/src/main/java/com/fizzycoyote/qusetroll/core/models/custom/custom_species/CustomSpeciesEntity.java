@@ -20,5 +20,24 @@ public class CustomSpeciesEntity {
     @ColumnInfo(name = "subspecies_of_key") public String subspeciesOfKey = "";
     @ColumnInfo(name = "subspecies_of_name") public String subspeciesOfName = "";
 
-    @ColumnInfo(name = "traits_json") public String traitsJson = "";
+    @ColumnInfo(name = "speed")
+    public String speed = "";
+
+    @ColumnInfo(name = "size")
+    public String size = "";
+
+    @ColumnInfo(name = "ability_bonuses_json")
+    public String abilityBonusesJson = "[]";
+
+    @ColumnInfo(name = "language_keys_json")
+    public String languageKeysJson = "[]";
+
+    @ColumnInfo(name = "language_choices")
+    public int languageChoices = 0;
+
+    @ColumnInfo(name = "other_traits_json")
+    public String otherTraitsJson = "[]";
+
+    @ColumnInfo(name = "game_system")
+    public String gameSystem = "";
 }

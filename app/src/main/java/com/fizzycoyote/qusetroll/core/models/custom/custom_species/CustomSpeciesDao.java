@@ -32,4 +32,10 @@ public interface CustomSpeciesDao {
 
     @Query("SELECT COUNT(*) FROM custom_species WHERE name = :name")
     int countByName(String name);
+
+    @Query("SELECT * FROM custom_species WHERE is_subspecies = 0 AND game_system = :gameSystem ORDER BY name ASC")
+    List<CustomSpeciesEntity> getBaseSpeciesSync(String gameSystem);
+
+    @Query("SELECT * FROM custom_species WHERE subspecies_of_key = :parentKey AND game_system = :gameSystem ORDER BY name ASC")
+    List<CustomSpeciesEntity> getSubspeciesByParentKey(String parentKey, String gameSystem);
 }

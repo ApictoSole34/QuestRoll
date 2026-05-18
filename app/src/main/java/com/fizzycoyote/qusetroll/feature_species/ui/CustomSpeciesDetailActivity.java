@@ -16,6 +16,7 @@ import com.fizzycoyote.qusetroll.R;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureAction;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_species.CustomSpeciesEntity;
+import com.fizzycoyote.qusetroll.feature_species.viewmodel.CustomSpeciesCreateViewModel;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -28,6 +29,7 @@ public class CustomSpeciesDetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_ID = "CUSTOM_SPECIES_ID";
     private Markwon markwon;
+    private boolean detailsAdded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,10 +38,15 @@ public class CustomSpeciesDetailActivity extends AppCompatActivity {
         markwon = Markwon.create(this);
 
         long id = getIntent().getLongExtra(EXTRA_ID, -1);
-        if (id == -1) { finish(); return; }
+        if (id == -1) {
+            finish();
+            return;
+        }
 
         UserContentDatabase.getInstance(this).customSpeciesDao()
-                .getById(id).observe(this, s -> { if (s != null) populateUI(s); });
+                .getById(id).observe(this, s -> {
+                    if (s != null) populateUI(s);
+                });
     }
 
     private void populateUI(CustomSpeciesEntity s) {
@@ -56,7 +63,7 @@ public class CustomSpeciesDetailActivity extends AppCompatActivity {
                 if (key.startsWith("custom_")) {
                     long id = Long.parseLong(key.replace("custom_", ""));
                     Intent i = new Intent(this, CustomSpeciesDetailActivity.class);
-                    i.putExtra("CUSTOM_SPECIES_ID", id);
+                    i.putExtra(EXTRA_ID, id);
                     startActivity(i);
                 } else {
                     Intent i = new Intent(this, SpeciesDetailActivity.class);
@@ -79,7 +86,52 @@ public class CustomSpeciesDetailActivity extends AppCompatActivity {
             tvDesc.setVisibility(View.GONE);
         }
 
-        buildTraits(s.traitsJson);
+        LinearLayout traitsContainer = findViewById(R.id.traits_container);
+        View parent = (View) traitsContainer.getParent();
+        if (parent instanceof LinearLayout && !detailsAdded) {
+            LinearLayout detailsContainer = new LinearLayout(this);
+            detailsContainer.setOrientation(LinearLayout.VERTICAL);
+            detailsContainer.setPadding(0, 0, 0, dp(16));
+            ((LinearLayout) parent).addView(detailsContainer, ((LinearLayout) parent).indexOfChild(traitsContainer));
+            detailsAdded = true;
+
+            if (s.speed != null && !s.speed.isEmpty()) {
+                addDetailRow(detailsContainer, "Speed", s.speed);
+            }
+            if (s.size != null && !s.size.isEmpty()) {
+                addDetailRow(detailsContainer, "Size", s.size);
+            }
+            if (s.abilityBonusesJson != null && !s.abilityBonusesJson.isEmpty()) {
+                try {
+                    Type type = new TypeToken<List<CustomSpeciesCreateViewModel.AbilityBonus>>(){}.getType();
+                    List<CustomSpeciesCreateViewModel.AbilityBonus> bonuses = new Gson().fromJson(s.abilityBonusesJson, type);
+                    if (bonuses != null && !bonuses.isEmpty()) {
+                        StringBuilder sb = new StringBuilder();
+                        for (CustomSpeciesCreateViewModel.AbilityBonus ab : bonuses) {
+                            if (sb.length() > 0) sb.append(", ");
+                            sb.append(ab.ability).append(" +").append(ab.bonus);
+                        }
+                        addDetailRow(detailsContainer, "Ability Score Bonuses", sb.toString());
+                    }
+                } catch (Exception e) { /* ignore */ }
+            }
+            if (s.languageKeysJson != null && !s.languageKeysJson.isEmpty()) {
+                try {
+                    Type type = new TypeToken<List<String>>(){}.getType();
+                    List<String> langKeys = new Gson().fromJson(s.languageKeysJson, type);
+                    if (langKeys != null && !langKeys.isEmpty()) {
+                        addDetailRow(detailsContainer, "Known Languages", String.join(", ", langKeys));
+                    }
+                } catch (Exception e) { /* ignore */ }
+            }
+            if (s.languageChoices > 0) {
+                addDetailRow(detailsContainer, "Additional Language Choices", String.valueOf(s.languageChoices));
+            }
+        }
+
+        buildOtherTraits(s.otherTraitsJson);
+
+        findViewById(R.id.traits_section).setVisibility(View.GONE);
         findViewById(R.id.subspecies_section).setVisibility(View.GONE);
 
         View btnManage = findViewById(R.id.btnManage);
@@ -89,18 +141,24 @@ public class CustomSpeciesDetailActivity extends AppCompatActivity {
         }
     }
 
-    private void buildTraits(String traitsJson) {
+    private void addDetailRow(LinearLayout container, String label, String value) {
+        TextView row = new TextView(this);
+        row.setText(label + ": " + value);
+        row.setPadding(0, dp(4), 0, dp(4));
+        row.setTextSize(14);
+        container.addView(row);
+    }
+
+    private void buildOtherTraits(String otherTraitsJson) {
         LinearLayout container = findViewById(R.id.traits_container);
         container.removeAllViews();
-
-        if (traitsJson == null || traitsJson.isEmpty()) {
+        if (otherTraitsJson == null || otherTraitsJson.isEmpty()) {
             findViewById(R.id.traits_section).setVisibility(View.GONE);
             return;
         }
-
         try {
             Type type = new TypeToken<List<CustomCreatureAction>>(){}.getType();
-            List<CustomCreatureAction> traits = new Gson().fromJson(traitsJson, type);
+            List<CustomCreatureAction> traits = new Gson().fromJson(otherTraitsJson, type);
             if (traits == null || traits.isEmpty()) {
                 findViewById(R.id.traits_section).setVisibility(View.GONE);
                 return;
@@ -138,7 +196,8 @@ public class CustomSpeciesDetailActivity extends AppCompatActivity {
             if (item.getItemId() == 1) {
                 Intent i = new Intent(this, CustomSpeciesCreateActivity.class);
                 i.putExtra(CustomSpeciesCreateActivity.EXTRA_EDIT_ID, id);
-                startActivity(i); return true;
+                startActivity(i);
+                return true;
             } else if (item.getItemId() == 2) {
                 new AlertDialog.Builder(this)
                         .setTitle("Delete Species")
@@ -158,5 +217,7 @@ public class CustomSpeciesDetailActivity extends AppCompatActivity {
         popup.show();
     }
 
-    private int dp(int v) { return (int)(v * getResources().getDisplayMetrics().density); }
+    private int dp(int v) {
+        return (int) (v * getResources().getDisplayMetrics().density);
+    }
 }
