@@ -88,7 +88,7 @@
         android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.ImageStepFragment"
         android:label="Photos">
         <action android:id="@+id/next_action" app:destination="@id/equipmentStepFragment" />
-        <action android:id="@+id/back_action" app:destination="@id/imageStepFragment" />
+        <action android:id="@+id/back_action" app:destination="@id/spellsStepFragment" />
     </fragment>
 
     <fragment
