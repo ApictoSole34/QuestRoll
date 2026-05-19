@@ -160,7 +160,6 @@ public class ClassCreateActivity extends AppCompatActivity {
         rvSkillOptions = findViewById(R.id.rvSkillOptions);
         btnAddSkillOption = findViewById(R.id.btnAddSkillOption);
 
-        // Języki
         etLanguageChoices = findViewById(R.id.etLanguageChoices);
         rvLanguageKeys = findViewById(R.id.rvLanguageKeys);
         btnAddLanguage = findViewById(R.id.btnAddLanguage);
