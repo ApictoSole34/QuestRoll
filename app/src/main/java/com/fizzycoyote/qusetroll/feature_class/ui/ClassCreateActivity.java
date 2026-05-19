@@ -195,18 +195,12 @@ public class ClassCreateActivity extends AppCompatActivity {
         rvFeatures.setAdapter(featureAdapter);
         rvFeatures.setNestedScrollingEnabled(false);
 
-        skillOptionAdapter = new SkillOptionAdapter(
-                position -> viewModel.removeSkillOption(position),
-                this::showAddSkillOptionDialog
-        );
+        skillOptionAdapter = new SkillOptionAdapter(position -> viewModel.removeSkillOption(position));
         rvSkillOptions.setLayoutManager(new LinearLayoutManager(this));
         rvSkillOptions.setAdapter(skillOptionAdapter);
         rvSkillOptions.setNestedScrollingEnabled(false);
 
-        languageKeyAdapter = new LanguageKeyAdapter(
-                position -> viewModel.removeLanguageKey(position),
-                this::showAddLanguageDialog
-        );
+        languageKeyAdapter = new LanguageKeyAdapter(position -> viewModel.removeLanguageKey(position));
         rvLanguageKeys.setLayoutManager(new LinearLayoutManager(this));
         rvLanguageKeys.setAdapter(languageKeyAdapter);
         rvLanguageKeys.setNestedScrollingEnabled(false);
