@@ -50,6 +50,9 @@ public class CustomCharacterClassEntity {
     @ColumnInfo(name = "equipment_description")
     public String equipmentDescription = "";
 
+    @ColumnInfo(name = "starting_items_json")
+    public String startingItemsJson = "[]";
+
     @ColumnInfo(name = "resource_data")
     public String resourceData;
 

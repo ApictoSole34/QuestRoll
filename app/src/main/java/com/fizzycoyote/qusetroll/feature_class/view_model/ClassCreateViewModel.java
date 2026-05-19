@@ -7,6 +7,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import com.fizzycoyote.qusetroll.core.models.character.CharacterCreationDTO;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.CustomCharacterClassEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.CustomCharacterClassWithFeatures;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custom_feature.CustomFeatureEntity;
@@ -42,6 +43,10 @@ public class ClassCreateViewModel extends ViewModel {
     private final MutableLiveData<CustomCharacterClassWithFeatures> editData =
             new MutableLiveData<>();
 
+    private final MutableLiveData<List<CharacterCreationDTO.InventoryItemDTO>> startingItems =
+            new MutableLiveData<>(new ArrayList<>());
+    public LiveData<List<CharacterCreationDTO.InventoryItemDTO>> getStartingItems() { return startingItems; }
+
     private LiveData<CustomCharacterClassWithFeatures> editLiveData;
     private Observer<CustomCharacterClassWithFeatures> editObserver;
 
@@ -58,6 +63,18 @@ public class ClassCreateViewModel extends ViewModel {
         return editClassId != NO_ID;
     }
 
+    public void addStartingItem(CharacterCreationDTO.InventoryItemDTO item) {
+        List<CharacterCreationDTO.InventoryItemDTO> list = new ArrayList<>(startingItems.getValue());
+        list.add(item);
+        startingItems.setValue(list);
+    }
+
+    public void removeStartingItem(int position) {
+        List<CharacterCreationDTO.InventoryItemDTO> list = new ArrayList<>(startingItems.getValue());
+        if (position >= 0 && position < list.size()) list.remove(position);
+        startingItems.setValue(list);
+    }
+
     private void loadExistingClass() {
         editLiveData = repository.getCustomDao().getClassWithFeatures(editClassId);
         editObserver = data -> {
@@ -68,6 +85,15 @@ public class ClassCreateViewModel extends ViewModel {
                 features.setValue(data.features != null
                         ? new ArrayList<>(data.features)
                         : new ArrayList<>());
+
+                if (data.characterClassEntity.startingItemsJson != null && !data.characterClassEntity.startingItemsJson.isEmpty()) {
+                    try {
+                        Type listType = new TypeToken<List<CharacterCreationDTO.InventoryItemDTO>>(){}.getType();
+                        List<CharacterCreationDTO.InventoryItemDTO> loaded = new Gson().fromJson(
+                                data.characterClassEntity.startingItemsJson, listType);
+                        startingItems.setValue(new ArrayList<>(loaded));
+                    } catch (Exception ignored) {}
+                }
 
                 if (data.characterClassEntity.savingThrows != null) {
                     selectedSavingThrows.setValue(
@@ -181,6 +207,7 @@ public class ClassCreateViewModel extends ViewModel {
                 entity.skillOptionsJson = gson.toJson(skillOptions.getValue());
                 entity.languageKeysJson = gson.toJson(languageKeys.getValue());
                 entity.languageChoices = languageChoices;
+                entity.startingItemsJson = new Gson().toJson(startingItems.getValue());
 
                 if (isEditMode()) {
                     updateExistingClass(entity);
