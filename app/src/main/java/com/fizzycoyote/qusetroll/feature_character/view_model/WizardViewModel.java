@@ -7,11 +7,13 @@ import androidx.lifecycle.ViewModel;
 
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.PlayerCharacterDatabase;
+import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.character.CharacterAttributesEntity;
 import com.fizzycoyote.qusetroll.core.models.character.CharacterClassAssignmentEntity;
 import com.fizzycoyote.qusetroll.core.models.character.CharacterCreationDTO;
 import com.fizzycoyote.qusetroll.core.models.character.CharacterEntity;
 import com.fizzycoyote.qusetroll.core.models.character.CharacterTraitEntity;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.CustomCharacterClassEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.CharacterClassEntity;
 
 import java.util.ArrayList;
@@ -39,6 +41,15 @@ public class WizardViewModel extends ViewModel {
     public String alignmentKey = "";
     private boolean isEditMode = false;
     private long editingCharacterId = -1;
+
+    // Class
+    public String raceSpeed = "";
+    public String raceSize = "";
+    public String classHitDice = "";
+    public String classCasterType = "";
+    public String classSpellcastingAbility = "";
+    public List<String> classFixedLanguages = new ArrayList<>();
+    public int classLanguageChoices = 0;
 
     // Equipment
     public List<CharacterCreationDTO.InventoryItemDTO> backgroundEquipment = new ArrayList<>();
@@ -119,6 +130,7 @@ public class WizardViewModel extends ViewModel {
 
     /**
      * Loads an existing character for editing.
+     * FIX: Now correctly loads both open5e AND custom class assignments.
      */
     public void setEditMode(long characterId, Context context) {
         this.isEditMode = true;
@@ -128,6 +140,8 @@ public class WizardViewModel extends ViewModel {
             try {
                 PlayerCharacterDatabase db = PlayerCharacterDatabase.getInstance(context);
                 Open5eDatabase open5eDb = Open5eDatabase.getInstance(context);
+                UserContentDatabase userDb = UserContentDatabase.getInstance(context);
+
                 CharacterEntity character = db.characterDao().getCharacterSync(characterId);
                 if (character != null) {
                     this.gameSystem = character.gameSystem;
@@ -149,12 +163,31 @@ public class WizardViewModel extends ViewModel {
                         this.attributes = new ArrayList<>(this.baseAttributes);
                     }
 
-                    List<CharacterClassAssignmentEntity> assignments = db.classAssignmentDao().getByCharacterId(characterId);
+                    List<CharacterClassAssignmentEntity> assignments =
+                            db.classAssignmentDao().getByCharacterId(characterId);
                     this.classAssignments.clear();
+
                     for (CharacterClassAssignmentEntity ca : assignments) {
-                        CharacterClassEntity cls = open5eDb.characterClassDao().getClassByKeySync(ca.classKey);
-                        if (cls != null) {
-                            this.classAssignments.add(new ClassAssignment(cls.key, cls.name, ca.level));
+                        if (ca.classKey != null && ca.classKey.startsWith("custom_")) {
+                            try {
+                                String idStr = ca.classKey.replace("custom_", "");
+                                long customId = Long.parseLong(idStr);
+                                CustomCharacterClassEntity customCls =
+                                        userDb.customCharacterClassDao().getClassByIdSync(customId);
+                                if (customCls != null) {
+                                    this.classAssignments.add(
+                                            new ClassAssignment(ca.classKey, customCls.name, ca.level));
+                                }
+                            } catch (NumberFormatException e) {
+                                errorLiveData.postValue("Invalid custom class key: " + ca.classKey);
+                            }
+                        } else {
+                            CharacterClassEntity cls =
+                                    open5eDb.characterClassDao().getClassByKeySync(ca.classKey);
+                            if (cls != null) {
+                                this.classAssignments.add(
+                                        new ClassAssignment(cls.key, cls.name, ca.level));
+                            }
                         }
                     }
                 }

@@ -28,6 +28,10 @@ public interface CustomCharacterClassDao {
     @Query("SELECT * FROM custom_character_classes ORDER BY name ASC")
     LiveData<List<CustomCharacterClassWithFeatures>> getAllClasses();
 
+    @Transaction
+    @Query("SELECT * FROM custom_character_classes WHERE id = :classId")
+    CustomCharacterClassWithFeatures getClassWithFeaturesSync(long classId);
+
     @Query("SELECT * FROM custom_character_classes WHERE game_system = :gameSystem ORDER BY name ASC")
     LiveData<List<CustomCharacterClassEntity>> getClassesByGameSystem(String gameSystem);
 

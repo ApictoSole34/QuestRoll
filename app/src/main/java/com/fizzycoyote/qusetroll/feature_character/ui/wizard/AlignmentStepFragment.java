@@ -60,11 +60,15 @@ public class AlignmentStepFragment extends Fragment {
 
     private void loadAlignments() {
         new Thread(() -> {
+            if (!isAdded()) return;
             alignmentList = Open5eDatabase.getInstance(requireContext())
                     .alignmentDao()
                     .getByGameSystem(viewModel.gameSystem);
+
+            if (!isAdded()) return;
             requireActivity().runOnUiThread(() -> {
-                // Custom adapter to display 'shortName'
+                if (!isAdded()) return;
+
                 ArrayAdapter<AlignmentEntity> adapter = new ArrayAdapter<AlignmentEntity>(requireContext(),
                         android.R.layout.simple_spinner_item, alignmentList) {
                     @NonNull

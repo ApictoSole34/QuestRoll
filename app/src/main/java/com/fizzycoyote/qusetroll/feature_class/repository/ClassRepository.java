@@ -89,12 +89,8 @@ public class ClassRepository {
             if (custom != null) {
                 for (CustomCharacterClassWithFeatures c : custom) {
                     String customKey = "custom_" + c.characterClassEntity.id;
-                    String parentKey = c.characterClassEntity.subclassOf;
-
-                    if (parentKey != null && parentKey.startsWith("custom_")) {
-                        parentKey = parentKey.replace("custom_", "");
-                    }
-
+                    String parentKey = c.characterClassEntity.subclassOf; // np. "custom_7" lub "fighter"
+                    // Poprawka: nie modyfikujemy parentKey przy szukaniu – zostawiamy oryginał
                     combined.add(new CombinedClass(
                             customKey,
                             c.characterClassEntity.name,

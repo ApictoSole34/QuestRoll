@@ -3,6 +3,7 @@ package com.fizzycoyote.qusetroll.feature_class.view_model;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
@@ -36,12 +37,13 @@ public class ClassCreateViewModel extends ViewModel {
 
     private final MutableLiveData<List<String>> skillOptions =
             new MutableLiveData<>(new ArrayList<>());
-
     private final MutableLiveData<List<String>> languageKeys =
             new MutableLiveData<>(new ArrayList<>());
-
     private final MutableLiveData<CustomCharacterClassWithFeatures> editData =
             new MutableLiveData<>();
+
+    private LiveData<CustomCharacterClassWithFeatures> editLiveData;
+    private Observer<CustomCharacterClassWithFeatures> editObserver;
 
     public ClassCreateViewModel(@NonNull ClassRepository repository, long editClassId) {
         this.repository = repository;
@@ -57,43 +59,51 @@ public class ClassCreateViewModel extends ViewModel {
     }
 
     private void loadExistingClass() {
-        repository.getCustomDao().getClassWithFeatures(editClassId)
-                .observeForever(data -> {
-                    if (data == null) return;
+        editLiveData = repository.getCustomDao().getClassWithFeatures(editClassId);
+        editObserver = data -> {
+            if (data == null) return;
+            if (editData.getValue() == null) {
+                editData.setValue(data);
 
-                    if (editData.getValue() == null) {
-                        editData.setValue(data);
+                features.setValue(data.features != null
+                        ? new ArrayList<>(data.features)
+                        : new ArrayList<>());
 
-                        features.setValue(data.features != null
-                                ? new ArrayList<>(data.features)
-                                : new ArrayList<>());
+                if (data.characterClassEntity.savingThrows != null) {
+                    selectedSavingThrows.setValue(
+                            new HashSet<>(data.characterClassEntity.savingThrows));
+                }
 
-                        if (data.characterClassEntity.savingThrows != null) {
-                            selectedSavingThrows.setValue(
-                                    new HashSet<>(data.characterClassEntity.savingThrows));
-                        }
+                if (data.characterClassEntity.skillOptionsJson != null &&
+                        !data.characterClassEntity.skillOptionsJson.isEmpty()) {
+                    try {
+                        Type listType = new TypeToken<List<String>>(){}.getType();
+                        List<String> loaded = new Gson().fromJson(
+                                data.characterClassEntity.skillOptionsJson, listType);
+                        skillOptions.setValue(new ArrayList<>(loaded));
+                    } catch (Exception ignored) {}
+                }
 
-                        if (data.characterClassEntity.skillOptionsJson != null &&
-                                !data.characterClassEntity.skillOptionsJson.isEmpty()) {
-                            try {
-                                Type listType = new TypeToken<List<String>>(){}.getType();
-                                List<String> loaded = new Gson().fromJson(
-                                        data.characterClassEntity.skillOptionsJson, listType);
-                                skillOptions.setValue(new ArrayList<>(loaded));
-                            } catch (Exception ignored) {}
-                        }
+                if (data.characterClassEntity.languageKeysJson != null &&
+                        !data.characterClassEntity.languageKeysJson.isEmpty()) {
+                    try {
+                        Type listType = new TypeToken<List<String>>(){}.getType();
+                        List<String> loaded = new Gson().fromJson(
+                                data.characterClassEntity.languageKeysJson, listType);
+                        languageKeys.setValue(new ArrayList<>(loaded));
+                    } catch (Exception ignored) {}
+                }
+            }
+        };
+        editLiveData.observeForever(editObserver);
+    }
 
-                        if (data.characterClassEntity.languageKeysJson != null &&
-                                !data.characterClassEntity.languageKeysJson.isEmpty()) {
-                            try {
-                                Type listType = new TypeToken<List<String>>(){}.getType();
-                                List<String> loaded = new Gson().fromJson(
-                                        data.characterClassEntity.languageKeysJson, listType);
-                                languageKeys.setValue(new ArrayList<>(loaded));
-                            } catch (Exception ignored) {}
-                        }
-                    }
-                });
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        if (editLiveData != null && editObserver != null) {
+            editLiveData.removeObserver(editObserver);
+        }
     }
 
     public LiveData<List<CombinedClass>> getBaseClasses() {
@@ -196,7 +206,6 @@ public class ClassCreateViewModel extends ViewModel {
     private void updateExistingClass(CustomCharacterClassEntity entity) {
         entity.id = editClassId;
         repository.getCustomDao().updateClass(entity);
-
         repository.getCustomDao().deleteFeaturesForClass(editClassId);
         insertFeatures(editClassId);
         saveResult.postValue(true);
@@ -206,10 +215,19 @@ public class ClassCreateViewModel extends ViewModel {
         List<CustomFeatureEntity> toInsert =
                 features.getValue() != null ? features.getValue() : new ArrayList<>();
 
-        List<CustomFeatureEntity> withId = toInsert.stream()
-                .map(f -> { f.classId = classId; return f; })
+        List<CustomFeatureEntity> copies = toInsert.stream()
+                .map(original -> {
+                    CustomFeatureEntity copy = new CustomFeatureEntity();
+                    copy.classId = classId;
+                    copy.name = original.name;
+                    copy.description = original.description;
+                    copy.type = original.type;
+                    copy.customGainedAt = new ArrayList<>(original.customGainedAt);
+                    copy.customTableData = new ArrayList<>(original.customTableData);
+                    return copy;
+                })
                 .collect(Collectors.toList());
 
-        repository.getCustomDao().insertFeatures(withId);
+        repository.getCustomDao().insertFeatures(copies);
     }
 }

@@ -16,18 +16,13 @@ import java.util.List;
 public class SkillOptionAdapter extends RecyclerView.Adapter<SkillOptionAdapter.ViewHolder> {
     private List<String> items = new ArrayList<>();
     private final OnItemRemoveListener removeListener;
-    private final OnAddClickListener addListener;
 
     public interface OnItemRemoveListener {
         void onRemove(int position);
     }
-    public interface OnAddClickListener {
-        void onAdd();
-    }
 
-    public SkillOptionAdapter(OnItemRemoveListener removeListener, OnAddClickListener addListener) {
+    public SkillOptionAdapter(OnItemRemoveListener removeListener) {
         this.removeListener = removeListener;
-        this.addListener = addListener;
     }
 
     public void submitList(List<String> list) {
@@ -38,7 +33,8 @@ public class SkillOptionAdapter extends RecyclerView.Adapter<SkillOptionAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_skill_option, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_skill_option, parent, false);
         return new ViewHolder(view);
     }
 
@@ -47,7 +43,6 @@ public class SkillOptionAdapter extends RecyclerView.Adapter<SkillOptionAdapter.
         String skillKey = items.get(position);
         holder.tvSkillKey.setText(skillKey);
         holder.btnDelete.setOnClickListener(v -> removeListener.onRemove(position));
-        holder.btnAdd.setOnClickListener(v -> addListener.onAdd());
     }
 
     @Override
@@ -55,12 +50,11 @@ public class SkillOptionAdapter extends RecyclerView.Adapter<SkillOptionAdapter.
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvSkillKey;
-        View btnDelete, btnAdd;
+        View btnDelete;
         ViewHolder(View itemView) {
             super(itemView);
             tvSkillKey = itemView.findViewById(R.id.tv_skill_key);
             btnDelete = itemView.findViewById(R.id.btn_delete);
-            btnAdd = itemView.findViewById(R.id.btn_add);
         }
     }
 }

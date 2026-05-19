@@ -81,14 +81,18 @@ public class ItemSearchStepFragment extends Fragment {
 
     private void loadData() {
         new Thread(() -> {
+            if (!isAdded()) return;
             String gameSystem = viewModel.gameSystem;
             allItems = Open5eDatabase.getInstance(requireContext())
                     .itemDao()
                     .getAllByGameSystem(gameSystem);
             allItemSets = Open5eDatabase.getInstance(requireContext())
                     .itemSetDao()
-                    .getAllSync(); // wymaga metody getAllSync w ItemSetDao
+                    .getAllSync();
+
+            if (!isAdded()) return;
             requireActivity().runOnUiThread(() -> {
+                if (!isAdded()) return;
                 filterItems("");
             });
         }).start();
@@ -137,7 +141,6 @@ public class ItemSearchStepFragment extends Fragment {
                 holder.nameText.setText(item.name);
                 holder.descText.setText(item.desc != null ? item.desc : "");
                 holder.selectButton.setOnClickListener(v -> {
-                    // Dodaj pojedynczy przedmiot
                     CharacterCreationDTO.InventoryItemDTO dtoItem = new CharacterCreationDTO.InventoryItemDTO();
                     dtoItem.itemKey = item.key;
                     dtoItem.customName = item.name;
@@ -157,9 +160,7 @@ public class ItemSearchStepFragment extends Fragment {
                 ItemSetEntity set = (ItemSetEntity) obj;
                 holder.nameText.setText(set.name);
                 holder.descText.setText(set.desc != null ? set.desc : "");
-                holder.selectButton.setOnClickListener(v -> {
-                    showItemSetSelectionDialog(set);
-                });
+                holder.selectButton.setOnClickListener(v -> showItemSetSelectionDialog(set));
             }
         }
 
@@ -180,16 +181,18 @@ public class ItemSearchStepFragment extends Fragment {
 
     private void showItemSetSelectionDialog(ItemSetEntity set) {
         new Thread(() -> {
-            // Pobierz przedmioty z zestawu, które należą do bieżącego systemu gry
+            if (!isAdded()) return;
             List<ItemEntity> items = Open5eDatabase.getInstance(requireContext())
                     .itemDao()
                     .getByKeysAndGameSystemSync(set.itemKeys, viewModel.gameSystem);
+
+            if (!isAdded()) return;
             requireActivity().runOnUiThread(() -> {
+                if (!isAdded()) return;
                 if (items.isEmpty()) {
                     Toast.makeText(getContext(), "Brak przedmiotów w tym zestawie dla wybranego systemu", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                // Dialog z listą przedmiotów (checkboxy)
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setTitle("Wybierz przedmioty z zestawu: " + set.name);
                 String[] itemNames = items.stream().map(i -> i.name).toArray(String[]::new);
@@ -214,8 +217,10 @@ public class ItemSearchStepFragment extends Fragment {
                         }
                     }
                     Toast.makeText(getContext(), "Dodano zaznaczone przedmioty", Toast.LENGTH_SHORT).show();
-                    NavController navController = Navigation.findNavController(requireView());
-                    navController.popBackStack();
+                    if (isAdded()) {
+                        NavController navController = Navigation.findNavController(requireView());
+                        navController.popBackStack();
+                    }
                 });
                 builder.setNegativeButton("Anuluj", null);
                 builder.show();

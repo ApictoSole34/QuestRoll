@@ -75,12 +75,12 @@ public class BackgroundStepFragment extends Fragment {
 
     private void loadBackgrounds() {
         new Thread(() -> {
-            // Load open5e backgrounds for the selected game system
+            if (!isAdded()) return;
+
             List<BackgroundEntity> open5eList = Open5eDatabase.getInstance(requireContext())
                     .backgroundDao()
                     .getByGameSystem(viewModel.gameSystem);
 
-            // Load custom backgrounds for the same game system
             List<CustomBackgroundEntity> customList = UserContentDatabase.getInstance(requireContext())
                     .customBackgroundDao()
                     .getByGameSystemSync(viewModel.gameSystem);
@@ -94,7 +94,10 @@ public class BackgroundStepFragment extends Fragment {
                 return nameA.compareTo(nameB);
             });
 
+            if (!isAdded()) return;
             requireActivity().runOnUiThread(() -> {
+                if (!isAdded()) return;
+
                 ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(requireContext(),
                         android.R.layout.simple_spinner_item, combinedList) {
                     @NonNull
@@ -154,6 +157,8 @@ public class BackgroundStepFragment extends Fragment {
             viewModel.backgroundFixedLanguages.addAll(benefits.fixedLanguages);
             viewModel.backgroundLanguageChoices = benefits.languageChoices;
             viewModel.backgroundSkillProficiencies = benefits.skillProficiencies;
+
+            viewModel.characterTraits.removeIf(t -> "BACKGROUND".equals(t.sourceType));
             viewModel.characterTraits.addAll(parseFeaturesFromBackground(selected));
         } else {
             clearBackgroundData();
@@ -166,7 +171,6 @@ public class BackgroundStepFragment extends Fragment {
         viewModel.startingGold = custom.startingGold;
         viewModel.backgroundGold = custom.startingGold;
 
-        // Equipment
         if (custom.equipmentJson != null && !custom.equipmentJson.isEmpty()) {
             Type itemType = new TypeToken<List<CharacterCreationDTO.InventoryItemDTO>>() {}.getType();
             List<CharacterCreationDTO.InventoryItemDTO> items = new Gson().fromJson(custom.equipmentJson, itemType);
@@ -176,7 +180,6 @@ public class BackgroundStepFragment extends Fragment {
             viewModel.backgroundEquipment.clear();
         }
 
-        // Languages
         if (custom.languagesJson != null && !custom.languagesJson.isEmpty()) {
             Type langType = new TypeToken<List<String>>() {}.getType();
             List<String> langs = new Gson().fromJson(custom.languagesJson, langType);
@@ -187,7 +190,6 @@ public class BackgroundStepFragment extends Fragment {
         }
         viewModel.backgroundLanguageChoices = 0;
 
-        // Skill proficiencies
         if (custom.skillProficienciesJson != null && !custom.skillProficienciesJson.isEmpty()) {
             Type skillType = new TypeToken<List<String>>() {}.getType();
             List<String> skills = new Gson().fromJson(custom.skillProficienciesJson, skillType);
@@ -197,7 +199,7 @@ public class BackgroundStepFragment extends Fragment {
             viewModel.backgroundSkillProficiencies.clear();
         }
 
-        // Features
+        viewModel.characterTraits.removeIf(t -> "BACKGROUND".equals(t.sourceType));
         if (custom.featuresJson != null && !custom.featuresJson.isEmpty()) {
             Type featureType = new TypeToken<List<CharacterTraitEntity>>() {}.getType();
             List<CharacterTraitEntity> features = new Gson().fromJson(custom.featuresJson, featureType);
@@ -216,6 +218,7 @@ public class BackgroundStepFragment extends Fragment {
         viewModel.backgroundFixedLanguages.clear();
         viewModel.backgroundLanguageChoices = 0;
         viewModel.backgroundSkillProficiencies.clear();
+        viewModel.characterTraits.removeIf(t -> "BACKGROUND".equals(t.sourceType));
     }
 
     private List<CharacterTraitEntity> parseFeaturesFromBackground(BackgroundEntity background) {

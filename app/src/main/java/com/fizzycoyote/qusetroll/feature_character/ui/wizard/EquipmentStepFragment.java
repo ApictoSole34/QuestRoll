@@ -111,15 +111,20 @@ public class EquipmentStepFragment extends Fragment {
 
         rerollGoldButton.setOnClickListener(v -> {
             String[] parts = viewModel.classGoldDice.split("d");
-            int diceCount = Integer.parseInt(parts[0]);
-            int diceSides = Integer.parseInt(parts[1]);
-            int total = 0;
-            for (int i = 0; i < diceCount; i++) {
-                total += (int) (Math.random() * diceSides) + 1;
+            if (parts.length < 2) return;
+            try {
+                int diceCount = Integer.parseInt(parts[0]);
+                int diceSides = Integer.parseInt(parts[1]);
+                int total = 0;
+                for (int i = 0; i < diceCount; i++) {
+                    total += (int) (Math.random() * diceSides) + 1;
+                }
+                int newGold = total * 10;
+                viewModel.classStartingGold = newGold;
+                classGoldAmount.setText("Gold: " + newGold + " gp (" + viewModel.classGoldDice + " × 10)");
+            } catch (NumberFormatException e) {
+                Toast.makeText(getContext(), "Invalid gold dice format", Toast.LENGTH_SHORT).show();
             }
-            int newGold = total * 10;
-            viewModel.classStartingGold = newGold;
-            classGoldAmount.setText("Gold: " + newGold + " gp (" + viewModel.classGoldDice + " × 10)");
         });
 
         nextButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.action_equipment_to_summary));
@@ -145,9 +150,12 @@ public class EquipmentStepFragment extends Fragment {
                 tv.setText(item.customName + " (x" + item.quantity + ", weight: " + item.customWeight + ")");
                 tv.setPadding(16, 8, 16, 8);
                 tv.setOnLongClickListener(v -> {
-                    viewModel.backgroundCustomItems.remove(item);
-                    updateBackgroundItemsList();
-                    Toast.makeText(getContext(), "Removed", Toast.LENGTH_SHORT).show();
+                    int index = viewModel.backgroundCustomItems.indexOf(item);
+                    if (index != -1) {
+                        viewModel.backgroundCustomItems.remove(index);
+                        updateBackgroundItemsList();
+                        Toast.makeText(getContext(), "Removed", Toast.LENGTH_SHORT).show();
+                    }
                     return true;
                 });
                 backgroundItemsContainer.addView(tv);
@@ -167,9 +175,12 @@ public class EquipmentStepFragment extends Fragment {
                 tv.setText(item.customName + " (x" + item.quantity + ", weight: " + item.customWeight + ")");
                 tv.setPadding(16, 8, 16, 8);
                 tv.setOnLongClickListener(v -> {
-                    viewModel.classEquipment.remove(item);
-                    updateClassItemsList();
-                    Toast.makeText(getContext(), "Removed", Toast.LENGTH_SHORT).show();
+                    int index = viewModel.classEquipment.indexOf(item);
+                    if (index != -1) {
+                        viewModel.classEquipment.remove(index);
+                        updateClassItemsList();
+                        Toast.makeText(getContext(), "Removed", Toast.LENGTH_SHORT).show();
+                    }
                     return true;
                 });
                 classItemsContainer.addView(tv);

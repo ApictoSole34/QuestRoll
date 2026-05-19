@@ -16,18 +16,13 @@ import java.util.List;
 public class LanguageKeyAdapter extends RecyclerView.Adapter<LanguageKeyAdapter.ViewHolder> {
     private List<String> items = new ArrayList<>();
     private final OnItemRemoveListener removeListener;
-    private final OnAddClickListener addListener;
 
     public interface OnItemRemoveListener {
         void onRemove(int position);
     }
-    public interface OnAddClickListener {
-        void onAdd();
-    }
 
-    public LanguageKeyAdapter(OnItemRemoveListener removeListener, OnAddClickListener addListener) {
+    public LanguageKeyAdapter(OnItemRemoveListener removeListener) {
         this.removeListener = removeListener;
-        this.addListener = addListener;
     }
 
     public void submitList(List<String> list) {
@@ -38,7 +33,8 @@ public class LanguageKeyAdapter extends RecyclerView.Adapter<LanguageKeyAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_language_key, parent, false);
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_language_key, parent, false);
         return new ViewHolder(view);
     }
 
@@ -47,7 +43,6 @@ public class LanguageKeyAdapter extends RecyclerView.Adapter<LanguageKeyAdapter.
         String langKey = items.get(position);
         holder.tvLanguageKey.setText(langKey);
         holder.btnDelete.setOnClickListener(v -> removeListener.onRemove(position));
-        holder.btnAdd.setOnClickListener(v -> addListener.onAdd());
     }
 
     @Override
@@ -55,12 +50,11 @@ public class LanguageKeyAdapter extends RecyclerView.Adapter<LanguageKeyAdapter.
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvLanguageKey;
-        View btnDelete, btnAdd;
+        View btnDelete;
         ViewHolder(View itemView) {
             super(itemView);
             tvLanguageKey = itemView.findViewById(R.id.tv_language_key);
             btnDelete = itemView.findViewById(R.id.btn_delete);
-            btnAdd = itemView.findViewById(R.id.btn_add);
         }
     }
 }
