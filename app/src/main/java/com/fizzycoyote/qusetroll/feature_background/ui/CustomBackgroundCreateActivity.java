@@ -50,7 +50,7 @@ public class CustomBackgroundCreateActivity extends AppCompatActivity {
     private EditText etStartingGold;
     private List<GameSystemEntity> gameSystems = new ArrayList<>();
 
-    private GenericItemAdapter<CharacterCreationDTO.InventoryItemDTO> equipmentAdapter;
+    private GenericItemAdapter<String> equipmentAdapter;
     private GenericItemAdapter<String> languagesAdapter;
     private GenericItemAdapter<String> skillsAdapter;
     private GenericItemAdapter<String> toolsAdapter;
@@ -156,7 +156,7 @@ public class CustomBackgroundCreateActivity extends AppCompatActivity {
                     viewModel.removeEquipmentItem(item);
                     equipmentAdapter.setItems(viewModel.getEquipmentItems());
                 },
-                item -> item.customName + " (x" + item.quantity + ", " + item.customWeight + " lb)"
+                item -> item
         );
         languagesAdapter = new GenericItemAdapter<>(
                 item -> {
@@ -200,96 +200,20 @@ public class CustomBackgroundCreateActivity extends AppCompatActivity {
     }
 
     private void showAddItemDialog() {
-        new Thread(() -> {
-            String gameSystem = getCurrentGameSystemKey();
-            List<ItemEntity> standardItems = Open5eDatabase.getInstance(this)
-                    .itemDao().getAllByGameSystem(gameSystem);
-            List<CustomItemEntity> customItems = UserContentDatabase.getInstance(this)
-                    .customItemDao().getAllSync();
-            List<Object> all = new ArrayList<>();
-            all.addAll(standardItems);
-            all.addAll(customItems);
-            runOnUiThread(() -> showItemSelectionDialog(all));
-        }).start();
-    }
-
-    private void showItemSelectionDialog(List<Object> items) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_searchable_list, null);
-        EditText searchInput = dialogView.findViewById(R.id.search_input);
-        ListView listView = dialogView.findViewById(R.id.list_view);
-
-        List<Object> filteredItems = new ArrayList<>(items);
-        ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(this, android.R.layout.simple_list_item_1, filteredItems) {
-            @NonNull
-            @Override
-            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-                TextView tv = (TextView) super.getView(position, convertView, parent);
-                Object item = getItem(position);
-                String display = (item instanceof ItemEntity) ? ((ItemEntity) item).name : ((CustomItemEntity) item).name;
-                tv.setText(display);
-                return tv;
-            }
-        };
-        listView.setAdapter(adapter);
-
-        searchInput.addTextChangedListener(new TextWatcher() {
-            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
-            @Override public void afterTextChanged(Editable s) {
-                String query = s.toString().toLowerCase();
-                filteredItems.clear();
-                for (Object item : items) {
-                    String name = (item instanceof ItemEntity) ? ((ItemEntity) item).name : ((CustomItemEntity) item).name;
-                    if (name.toLowerCase().contains(query)) filteredItems.add(item);
-                }
-                adapter.notifyDataSetChanged();
-            }
-        });
-
-        listView.setOnItemClickListener((parent, view, position, id) -> {
-            Object selected = filteredItems.get(position);
-            builder.create().dismiss();
-            showItemQuantityDialog(selected);
-        });
-
-        builder.setView(dialogView).setNegativeButton("Cancel", null).show();
-    }
-
-    private void showItemQuantityDialog(Object selectedItem) {
-        View view = LayoutInflater.from(this).inflate(R.layout.dialog_add_item, null);
-        EditText etName = view.findViewById(R.id.item_name);
-        EditText etQty = view.findViewById(R.id.item_quantity);
-        EditText etWeight = view.findViewById(R.id.item_weight);
-
-        String name = (selectedItem instanceof ItemEntity) ? ((ItemEntity) selectedItem).name : ((CustomItemEntity) selectedItem).name;
-        float weight = (selectedItem instanceof ItemEntity) ? ((ItemEntity) selectedItem).weight : ((CustomItemEntity) selectedItem).weight;
-        etName.setText(name);
-        etName.setEnabled(false);
-        etQty.setText("1");
-        etWeight.setText(String.valueOf(weight));
-
+        EditText input = new EditText(this);
+        input.setHint("Item name");
         new AlertDialog.Builder(this)
-                .setTitle("Add Item")
-                .setView(view)
+                .setTitle("Add Equipment")
+                .setView(input)
                 .setPositiveButton("Add", (d, w) -> {
-                    int qty = Integer.parseInt(etQty.getText().toString());
-                    float finalWeight = Float.parseFloat(etWeight.getText().toString());
-                    CharacterCreationDTO.InventoryItemDTO dto = new CharacterCreationDTO.InventoryItemDTO();
-                    dto.itemKey = (selectedItem instanceof ItemEntity) ? ((ItemEntity) selectedItem).key : "custom_" + ((CustomItemEntity) selectedItem).id;
-                    dto.customName = name;
-                    dto.quantity = qty;
-                    dto.customWeight = finalWeight;
-                    viewModel.addEquipmentItem(dto);
-                    equipmentAdapter.setItems(viewModel.getEquipmentItems()); // odśwież adapter
+                    String name = input.getText().toString().trim();
+                    if (!name.isEmpty()) {
+                        viewModel.addEquipmentItem(name);
+                        equipmentAdapter.setItems(viewModel.getEquipmentItems());
+                    }
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
-    }
-
-    private String getCurrentGameSystemKey() {
-        int pos = spinnerGameSystem.getSelectedItemPosition();
-        return (pos >= 0 && pos < gameSystems.size()) ? gameSystems.get(pos).key : "5e-2014";
     }
 
     private void showAddStringDialog(String title, GenericItemAdapter<String> adapter,
@@ -314,17 +238,12 @@ public class CustomBackgroundCreateActivity extends AppCompatActivity {
     private void showAddLanguageDialog() {
         new Thread(() -> {
             List<LanguageEntity> standardLanguages = Open5eDatabase.getInstance(this)
-                    .languageDao()
-                    .getAllSync();
-
+                    .languageDao().getAllSync();
             List<CustomLanguageEntity> customLanguages = UserContentDatabase.getInstance(this)
-                    .customLanguageDao()
-                    .getAll();
-
+                    .customLanguageDao().getAll();
             List<Object> allLanguages = new ArrayList<>();
             allLanguages.addAll(standardLanguages);
             allLanguages.addAll(customLanguages);
-
             runOnUiThread(() -> showSearchableListDialog("Select Language", allLanguages, selected -> {
                 String langName = null;
                 if (selected instanceof LanguageEntity) {
@@ -343,17 +262,12 @@ public class CustomBackgroundCreateActivity extends AppCompatActivity {
     private void showAddSkillDialog() {
         new Thread(() -> {
             List<SkillEntity> standardSkills = Open5eDatabase.getInstance(this)
-                    .skillDao()
-                    .getAllSync();
-
+                    .skillDao().getAllSync();
             List<CustomSkillEntity> customSkills = UserContentDatabase.getInstance(this)
-                    .customSkillDao()
-                    .getAllSync();
-
+                    .customSkillDao().getAllSync();
             List<Object> allSkills = new ArrayList<>();
             allSkills.addAll(standardSkills);
             allSkills.addAll(customSkills);
-
             runOnUiThread(() -> showSearchableListDialog("Select Skill", allSkills, selected -> {
                 String skillName = null;
                 if (selected instanceof SkillEntity) {
@@ -383,17 +297,11 @@ public class CustomBackgroundCreateActivity extends AppCompatActivity {
                 TextView view = (TextView) super.getView(position, convertView, parent);
                 T item = getItem(position);
                 String display;
-                if (item instanceof LanguageEntity) {
-                    display = ((LanguageEntity) item).name;
-                } else if (item instanceof SkillEntity) {
-                    display = ((SkillEntity) item).name;
-                } else if (item instanceof CustomLanguageEntity) {
-                    display = ((CustomLanguageEntity) item).name;
-                } else if (item instanceof CustomSkillEntity) {
-                    display = ((CustomSkillEntity) item).name;
-                } else {
-                    display = item.toString();
-                }
+                if (item instanceof LanguageEntity) display = ((LanguageEntity) item).name;
+                else if (item instanceof SkillEntity) display = ((SkillEntity) item).name;
+                else if (item instanceof CustomLanguageEntity) display = ((CustomLanguageEntity) item).name;
+                else if (item instanceof CustomSkillEntity) display = ((CustomSkillEntity) item).name;
+                else display = item.toString();
                 view.setText(display);
                 return view;
             }
@@ -413,9 +321,7 @@ public class CustomBackgroundCreateActivity extends AppCompatActivity {
                     else if (item instanceof CustomLanguageEntity) name = ((CustomLanguageEntity) item).name;
                     else if (item instanceof CustomSkillEntity) name = ((CustomSkillEntity) item).name;
                     else name = item.toString();
-                    if (name.toLowerCase().contains(query)) {
-                        filteredItems.add(item);
-                    }
+                    if (name.toLowerCase().contains(query)) filteredItems.add(item);
                 }
                 adapter.notifyDataSetChanged();
             }

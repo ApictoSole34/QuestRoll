@@ -29,7 +29,7 @@ public class CustomBackgroundCreateViewModel extends ViewModel {
     private final MutableLiveData<CustomBackgroundEntity> editData = new MutableLiveData<>();
     private final MutableLiveData<Boolean> saveResult = new MutableLiveData<>();
 
-    private final List<CharacterCreationDTO.InventoryItemDTO> equipment = new ArrayList<>();
+    private final List<String> equipment = new ArrayList<>();
     private final List<String> languages = new ArrayList<>();
     private final List<String> skills = new ArrayList<>();
     private final List<String> tools = new ArrayList<>();
@@ -49,7 +49,7 @@ public class CustomBackgroundCreateViewModel extends ViewModel {
             if (entity != null && editData.getValue() == null) {
                 editData.setValue(entity);
                 if (entity.equipmentJson != null) {
-                    Type type = new TypeToken<List<CharacterCreationDTO.InventoryItemDTO>>(){}.getType();
+                    Type type = new TypeToken<List<String>>(){}.getType();
                     equipment.addAll(new Gson().fromJson(entity.equipmentJson, type));
                 }
                 if (entity.languagesJson != null) {
@@ -75,19 +75,19 @@ public class CustomBackgroundCreateViewModel extends ViewModel {
     public LiveData<CustomBackgroundEntity> getEditData() { return editData; }
     public LiveData<Boolean> getSaveResult() { return saveResult; }
 
-    public List<CharacterCreationDTO.InventoryItemDTO> getEquipmentItems() { return equipment; }
+    public List<String> getEquipmentItems() { return equipment; }
     public List<String> getLanguageItems() { return languages; }
     public List<String> getSkillItems() { return skills; }
     public List<String> getToolItems() { return tools; }
     public List<CharacterTraitEntity> getFeatureItems() { return features; }
 
-    public void addEquipmentItem(CharacterCreationDTO.InventoryItemDTO item) { equipment.add(item); }
+    public void addEquipmentItem(String itemName) { equipment.add(itemName); }
     public void addLanguage(String lang) { languages.add(lang); }
     public void addSkill(String skill) { skills.add(skill); }
     public void addTool(String tool) { tools.add(tool); }
     public void addFeature(CharacterTraitEntity feature) { features.add(feature); }
 
-    public void removeEquipmentItem(CharacterCreationDTO.InventoryItemDTO item) { equipment.remove(item); }
+    public void removeEquipmentItem(String itemName) { equipment.remove(itemName); }
     public void removeLanguage(String lang) { languages.remove(lang); }
     public void removeSkill(String skill) { skills.remove(skill); }
     public void removeTool(String tool) { tools.remove(tool); }
