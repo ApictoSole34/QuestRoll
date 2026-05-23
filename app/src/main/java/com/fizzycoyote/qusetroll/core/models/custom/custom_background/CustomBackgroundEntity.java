@@ -20,8 +20,14 @@ public class CustomBackgroundEntity {
     @ColumnInfo(name = "equipment_json")
     public String equipmentJson;
 
+    @ColumnInfo(name = "equipment_description")
+    public String equipmentDescription;
+
     @ColumnInfo(name = "languages_json")
     public String languagesJson;
+
+    @ColumnInfo(name = "languages_description")
+    public String languagesDescription;
 
     @ColumnInfo(name = "skill_proficiencies_json")
     public String skillProficienciesJson;

@@ -27,10 +27,12 @@ import com.fizzycoyote.qusetroll.core.models.character.CharacterCreationDTO;
 import com.fizzycoyote.qusetroll.core.models.character.CharacterTraitEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_ability.CustomSkillEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_item.CustomItemEntity;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_item_set.CustomItemSetEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_language.CustomLanguageEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.ability.skill.SkillEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.item.ItemEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.item_set.ItemSetEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageEntity;
 import com.fizzycoyote.qusetroll.feature_background.adapter.GenericItemAdapter;
 import com.fizzycoyote.qusetroll.feature_background.view_model.CustomBackgroundCreateViewModel;
@@ -48,6 +50,7 @@ public class CustomBackgroundCreateActivity extends AppCompatActivity {
     private TextInputEditText etName, etDesc;
     private Spinner spinnerGameSystem;
     private EditText etStartingGold;
+    private EditText etEquipmentDescription, etLanguagesDescription;
     private List<GameSystemEntity> gameSystems = new ArrayList<>();
 
     private GenericItemAdapter<String> equipmentAdapter;
@@ -73,6 +76,8 @@ public class CustomBackgroundCreateActivity extends AppCompatActivity {
         etDesc = findViewById(R.id.etDesc);
         spinnerGameSystem = findViewById(R.id.spinnerGameSystem);
         etStartingGold = findViewById(R.id.etStartingGold);
+        etEquipmentDescription = findViewById(R.id.etEquipmentDescription);
+        etLanguagesDescription = findViewById(R.id.etLanguagesDescription);
 
         loadGameSystems();
         setupRecyclerViews();
@@ -88,6 +93,8 @@ public class CustomBackgroundCreateActivity extends AppCompatActivity {
                 skillsAdapter.setItems(viewModel.getSkillItems());
                 toolsAdapter.setItems(viewModel.getToolItems());
                 featuresAdapter.setItems(viewModel.getFeatureItems());
+                etEquipmentDescription.setText(viewModel.getEquipmentDescription());
+                etLanguagesDescription.setText(viewModel.getLanguagesDescription());
             }
         });
 
@@ -200,20 +207,222 @@ public class CustomBackgroundCreateActivity extends AppCompatActivity {
     }
 
     private void showAddItemDialog() {
-        EditText input = new EditText(this);
-        input.setHint("Item name");
-        new AlertDialog.Builder(this)
-                .setTitle("Add Equipment")
-                .setView(input)
-                .setPositiveButton("Add", (d, w) -> {
-                    String name = input.getText().toString().trim();
-                    if (!name.isEmpty()) {
-                        viewModel.addEquipmentItem(name);
-                        equipmentAdapter.setItems(viewModel.getEquipmentItems());
+        String gameSystem = getCurrentGameSystemKey();
+        new Thread(() -> {
+            List<ItemEntity> standardItems = Open5eDatabase.getInstance(this)
+                    .itemDao().getAllByGameSystem(gameSystem);
+            List<CustomItemEntity> customItems = UserContentDatabase.getInstance(this)
+                    .customItemDao().getAllSync();
+            List<ItemSetEntity> standardSets = Open5eDatabase.getInstance(this)
+                    .itemSetDao().getAllByGameSystem(gameSystem);
+            List<CustomItemSetEntity> customSets = UserContentDatabase.getInstance(this)
+                    .customItemSetDao().getAllSync();
+
+            List<Object> all = new ArrayList<>();
+            all.addAll(standardItems);
+            all.addAll(customItems);
+            all.addAll(standardSets);
+            all.addAll(customSets);
+
+            runOnUiThread(() -> showItemSelectionDialog(all));
+        }).start();
+    }
+
+    private void showItemSelectionDialog(List<Object> items) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_searchable_list, null);
+        EditText searchInput = dialogView.findViewById(R.id.search_input);
+        ListView listView = dialogView.findViewById(R.id.list_view);
+
+        List<Object> filteredItems = new ArrayList<>(items);
+        ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(this, android.R.layout.simple_list_item_1, filteredItems) {
+            @NonNull
+            @Override
+            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+                TextView tv = (TextView) super.getView(position, convertView, parent);
+                Object item = getItem(position);
+                String display;
+                if (item instanceof ItemEntity) display = ((ItemEntity) item).name;
+                else if (item instanceof CustomItemEntity) display = ((CustomItemEntity) item).name;
+                else if (item instanceof ItemSetEntity) display = ((ItemSetEntity) item).name;
+                else display = ((CustomItemSetEntity) item).name;
+                tv.setText(display);
+                return tv;
+            }
+        };
+        listView.setAdapter(adapter);
+
+        searchInput.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override public void afterTextChanged(Editable s) {
+                String query = s.toString().toLowerCase();
+                filteredItems.clear();
+                for (Object item : items) {
+                    String name = "";
+                    if (item instanceof ItemEntity) name = ((ItemEntity) item).name;
+                    else if (item instanceof CustomItemEntity) name = ((CustomItemEntity) item).name;
+                    else if (item instanceof ItemSetEntity) name = ((ItemSetEntity) item).name;
+                    else name = ((CustomItemSetEntity) item).name;
+                    if (name.toLowerCase().contains(query)) filteredItems.add(item);
+                }
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        builder.setView(dialogView);
+        builder.setNegativeButton("Cancel", null);
+        AlertDialog dialog = builder.create();
+
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            Object selected = filteredItems.get(position);
+            dialog.dismiss();
+            if (selected instanceof ItemEntity || selected instanceof CustomItemEntity) {
+                String name = (selected instanceof ItemEntity) ? ((ItemEntity) selected).name : ((CustomItemEntity) selected).name;
+                viewModel.addEquipmentItem(name);
+            } else if (selected instanceof ItemSetEntity) {
+                showItemSetSelectionDialog((ItemSetEntity) selected);
+            } else if (selected instanceof CustomItemSetEntity) {
+                showCustomItemSetSelectionDialog((CustomItemSetEntity) selected);
+            }
+            equipmentAdapter.setItems(viewModel.getEquipmentItems());
+        });
+
+        dialog.show();
+    }
+
+    private void showItemSetSelectionDialog(ItemSetEntity set) {
+        new Thread(() -> {
+            List<ItemEntity> items = Open5eDatabase.getInstance(this)
+                    .itemDao().getByKeysAndGameSystemSync(set.itemKeys, getCurrentGameSystemKey());
+            runOnUiThread(() -> {
+                if (items.isEmpty()) {
+                    Toast.makeText(this, "No items in this set for selected game system", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Select items from set: " + set.name);
+                String[] itemNames = items.stream().map(i -> i.name).toArray(String[]::new);
+                boolean[] checkedItems = new boolean[items.size()];
+                builder.setMultiChoiceItems(itemNames, checkedItems, (dialog, which, isChecked) -> checkedItems[which] = isChecked);
+                builder.setPositiveButton("Add", (dialog, which) -> {
+                    for (int i = 0; i < items.size(); i++) {
+                        if (checkedItems[i]) {
+                            viewModel.addEquipmentItem(items.get(i).name);
+                        }
                     }
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+                    equipmentAdapter.setItems(viewModel.getEquipmentItems());
+                    Toast.makeText(this, "Items added", Toast.LENGTH_SHORT).show();
+                });
+                builder.setNegativeButton("Cancel", null);
+                builder.show();
+            });
+        }).start();
+    }
+
+    private void showCustomItemSetSelectionDialog(CustomItemSetEntity set) {
+        new Thread(() -> {
+            List<String> keys = set.itemKeys;
+            if (keys == null || keys.isEmpty()) {
+                runOnUiThread(() -> Toast.makeText(this, "Set contains no items", Toast.LENGTH_SHORT).show());
+                return;
+            }
+            List<String> itemNames = new ArrayList<>();
+            for (String key : keys) {
+                if (key.startsWith("custom_")) {
+                    long id = Long.parseLong(key.replace("custom_", ""));
+                    CustomItemEntity customItem = UserContentDatabase.getInstance(this).customItemDao().getByIdSync(id);
+                    if (customItem != null) itemNames.add(customItem.name);
+                } else {
+                    ItemEntity stdItem = Open5eDatabase.getInstance(this).itemDao().getByKeySync(key);
+                    if (stdItem != null) itemNames.add(stdItem.name);
+                }
+            }
+            if (itemNames.isEmpty()) {
+                runOnUiThread(() -> Toast.makeText(this, "No valid items found in this set", Toast.LENGTH_SHORT).show());
+                return;
+            }
+            runOnUiThread(() -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Select items from set: " + set.name);
+                String[] namesArray = itemNames.toArray(new String[0]);
+                boolean[] checkedItems = new boolean[itemNames.size()];
+                builder.setMultiChoiceItems(namesArray, checkedItems, (dialog, which, isChecked) -> checkedItems[which] = isChecked);
+                builder.setPositiveButton("Add", (dialog, which) -> {
+                    for (int i = 0; i < itemNames.size(); i++) {
+                        if (checkedItems[i]) {
+                            viewModel.addEquipmentItem(itemNames.get(i));
+                        }
+                    }
+                    equipmentAdapter.setItems(viewModel.getEquipmentItems());
+                    Toast.makeText(this, "Items added", Toast.LENGTH_SHORT).show();
+                });
+                builder.setNegativeButton("Cancel", null);
+                builder.show();
+            });
+        }).start();
+    }
+
+    private void showAddLanguageDialog() {
+        new Thread(() -> {
+            List<LanguageEntity> standardLangs = Open5eDatabase.getInstance(this)
+                    .languageDao().getAllSync();
+            List<CustomLanguageEntity> customLangs = UserContentDatabase.getInstance(this)
+                    .customLanguageDao().getAll();
+            List<Object> all = new ArrayList<>();
+            all.addAll(standardLangs);
+            all.addAll(customLangs);
+            runOnUiThread(() -> showLanguageSelectionDialog(all));
+        }).start();
+    }
+
+    private void showLanguageSelectionDialog(List<Object> items) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_searchable_list, null);
+        EditText searchInput = dialogView.findViewById(R.id.search_input);
+        ListView listView = dialogView.findViewById(R.id.list_view);
+
+        List<Object> filteredItems = new ArrayList<>(items);
+        ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(this, android.R.layout.simple_list_item_1, filteredItems) {
+            @NonNull
+            @Override
+            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+                TextView tv = (TextView) super.getView(position, convertView, parent);
+                Object item = getItem(position);
+                String display = (item instanceof LanguageEntity) ? ((LanguageEntity) item).name : ((CustomLanguageEntity) item).name;
+                tv.setText(display);
+                return tv;
+            }
+        };
+        listView.setAdapter(adapter);
+
+        searchInput.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override public void afterTextChanged(Editable s) {
+                String query = s.toString().toLowerCase();
+                filteredItems.clear();
+                for (Object item : items) {
+                    String name = (item instanceof LanguageEntity) ? ((LanguageEntity) item).name : ((CustomLanguageEntity) item).name;
+                    if (name.toLowerCase().contains(query)) filteredItems.add(item);
+                }
+                adapter.notifyDataSetChanged();
+            }
+        });
+
+        builder.setView(dialogView);
+        builder.setNegativeButton("Cancel", null);
+        AlertDialog dialog = builder.create();
+
+        listView.setOnItemClickListener((parent, view, position, id) -> {
+            Object selected = filteredItems.get(position);
+            dialog.dismiss();
+            String name = (selected instanceof LanguageEntity) ? ((LanguageEntity) selected).name : ((CustomLanguageEntity) selected).name;
+            viewModel.addLanguage(name);
+            languagesAdapter.setItems(viewModel.getLanguageItems());
+        });
+
+        dialog.show();
     }
 
     private void showAddStringDialog(String title, GenericItemAdapter<String> adapter,
@@ -233,30 +442,6 @@ public class CustomBackgroundCreateActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("Cancel", null)
                 .show();
-    }
-
-    private void showAddLanguageDialog() {
-        new Thread(() -> {
-            List<LanguageEntity> standardLanguages = Open5eDatabase.getInstance(this)
-                    .languageDao().getAllSync();
-            List<CustomLanguageEntity> customLanguages = UserContentDatabase.getInstance(this)
-                    .customLanguageDao().getAll();
-            List<Object> allLanguages = new ArrayList<>();
-            allLanguages.addAll(standardLanguages);
-            allLanguages.addAll(customLanguages);
-            runOnUiThread(() -> showSearchableListDialog("Select Language", allLanguages, selected -> {
-                String langName = null;
-                if (selected instanceof LanguageEntity) {
-                    langName = ((LanguageEntity) selected).name;
-                } else if (selected instanceof CustomLanguageEntity) {
-                    langName = ((CustomLanguageEntity) selected).name;
-                }
-                if (langName != null && !langName.isEmpty()) {
-                    viewModel.addLanguage(langName);
-                    languagesAdapter.setItems(viewModel.getLanguageItems());
-                }
-            }));
-        }).start();
     }
 
     private void showAddSkillDialog() {
@@ -372,6 +557,15 @@ public class CustomBackgroundCreateActivity extends AppCompatActivity {
         String gameSystem = selectedPos >= 0 && selectedPos < gameSystems.size() ?
                 gameSystems.get(selectedPos).key : "5e-2014";
         int gold = Integer.parseInt(etStartingGold.getText().toString());
-        viewModel.save(name, desc, gameSystem, gold);
+
+        String equipmentDesc = etEquipmentDescription.getText().toString().trim();
+        String languagesDesc = etLanguagesDescription.getText().toString().trim();
+
+        viewModel.save(name, desc, gameSystem, gold, equipmentDesc, languagesDesc);
+    }
+
+    private String getCurrentGameSystemKey() {
+        int pos = spinnerGameSystem.getSelectedItemPosition();
+        return (pos >= 0 && pos < gameSystems.size()) ? gameSystems.get(pos).key : "5e-2014";
     }
 }
