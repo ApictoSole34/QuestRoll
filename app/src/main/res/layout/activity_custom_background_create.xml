@@ -132,6 +132,20 @@
                 android:maxLines="4"/>
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Number of chooseable languages"
+            android:layout_marginTop="12dp">
+            <EditText
+                android:id="@+id/etLanguageChoices"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:text="0"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvLanguages"
             android:layout_width="match_parent"

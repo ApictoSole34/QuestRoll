@@ -29,6 +29,9 @@ public class CustomBackgroundEntity {
     @ColumnInfo(name = "languages_description")
     public String languagesDescription;
 
+    @ColumnInfo(name = "language_choices")
+    public int languageChoices = 0;
+
     @ColumnInfo(name = "skill_proficiencies_json")
     public String skillProficienciesJson;
 

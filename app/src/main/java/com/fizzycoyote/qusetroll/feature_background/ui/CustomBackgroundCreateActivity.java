@@ -50,7 +50,7 @@ public class CustomBackgroundCreateActivity extends AppCompatActivity {
     private TextInputEditText etName, etDesc;
     private Spinner spinnerGameSystem;
     private EditText etStartingGold;
-    private EditText etEquipmentDescription, etLanguagesDescription;
+    private EditText etEquipmentDescription, etLanguagesDescription, etLanguageChoices;
     private List<GameSystemEntity> gameSystems = new ArrayList<>();
 
     private GenericItemAdapter<String> equipmentAdapter;
@@ -78,6 +78,7 @@ public class CustomBackgroundCreateActivity extends AppCompatActivity {
         etStartingGold = findViewById(R.id.etStartingGold);
         etEquipmentDescription = findViewById(R.id.etEquipmentDescription);
         etLanguagesDescription = findViewById(R.id.etLanguagesDescription);
+        etLanguageChoices = findViewById(R.id.etLanguageChoices);
 
         loadGameSystems();
         setupRecyclerViews();
@@ -95,6 +96,7 @@ public class CustomBackgroundCreateActivity extends AppCompatActivity {
                 featuresAdapter.setItems(viewModel.getFeatureItems());
                 etEquipmentDescription.setText(viewModel.getEquipmentDescription());
                 etLanguagesDescription.setText(viewModel.getLanguagesDescription());
+                etLanguageChoices.setText(String.valueOf(viewModel.getLanguageChoices()));
             }
         });
 
@@ -560,8 +562,13 @@ public class CustomBackgroundCreateActivity extends AppCompatActivity {
 
         String equipmentDesc = etEquipmentDescription.getText().toString().trim();
         String languagesDesc = etLanguagesDescription.getText().toString().trim();
+        int languageChoices = 0;
+        try {
+            languageChoices = Integer.parseInt(etLanguageChoices.getText().toString());
+        } catch (NumberFormatException ignored) {}
 
-        viewModel.save(name, desc, gameSystem, gold, equipmentDesc, languagesDesc);
+        viewModel.setLanguageChoices(languageChoices);
+        viewModel.save(name, desc, gameSystem, gold, equipmentDesc, languagesDesc, languageChoices);
     }
 
     private String getCurrentGameSystemKey() {

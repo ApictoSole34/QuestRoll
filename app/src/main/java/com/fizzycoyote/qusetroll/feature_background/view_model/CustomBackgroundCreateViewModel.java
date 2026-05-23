@@ -37,6 +37,7 @@ public class CustomBackgroundCreateViewModel extends ViewModel {
 
     private String equipmentDescription = "";
     private String languagesDescription = "";
+    private int languageChoices = 0;
 
     public CustomBackgroundCreateViewModel(CustomBackgroundDao dao, long editId, Executor executor) {
         this.dao = dao;
@@ -73,6 +74,7 @@ public class CustomBackgroundCreateViewModel extends ViewModel {
                 }
                 equipmentDescription = entity.equipmentDescription != null ? entity.equipmentDescription : "";
                 languagesDescription = entity.languagesDescription != null ? entity.languagesDescription : "";
+                languageChoices = entity.languageChoices;   // NOWE
             }
         });
     }
@@ -87,9 +89,11 @@ public class CustomBackgroundCreateViewModel extends ViewModel {
     public List<CharacterTraitEntity> getFeatureItems() { return features; }
     public String getEquipmentDescription() { return equipmentDescription; }
     public String getLanguagesDescription() { return languagesDescription; }
+    public int getLanguageChoices() { return languageChoices; }   // NOWE
 
     public void setEquipmentDescription(String desc) { this.equipmentDescription = desc; }
     public void setLanguagesDescription(String desc) { this.languagesDescription = desc; }
+    public void setLanguageChoices(int choices) { this.languageChoices = choices; }   // NOWE
 
     public void addEquipmentItem(String itemName) { equipment.add(itemName); }
     public void addLanguage(String lang) { languages.add(lang); }
@@ -104,7 +108,7 @@ public class CustomBackgroundCreateViewModel extends ViewModel {
     public void removeFeature(CharacterTraitEntity feature) { features.remove(feature); }
 
     public void save(String name, String desc, String gameSystem, int startingGold,
-                     String equipmentDescription, String languagesDescription) {
+                     String equipmentDescription, String languagesDescription, int languageChoices) {
         executor.execute(() -> {
             try {
                 CustomBackgroundEntity e = new CustomBackgroundEntity();
@@ -122,6 +126,7 @@ public class CustomBackgroundCreateViewModel extends ViewModel {
                 e.equipmentDescription = equipmentDescription;
                 e.languagesJson = new Gson().toJson(languages);
                 e.languagesDescription = languagesDescription;
+                e.languageChoices = languageChoices;
                 e.skillProficienciesJson = new Gson().toJson(skills);
                 e.toolProficienciesJson = new Gson().toJson(tools);
                 e.featuresJson = new Gson().toJson(features);
