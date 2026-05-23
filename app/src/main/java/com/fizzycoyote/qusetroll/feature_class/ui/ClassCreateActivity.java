@@ -2,6 +2,8 @@ package com.fizzycoyote.qusetroll.feature_class.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,22 +28,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fizzycoyote.qusetroll.R;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
-import com.fizzycoyote.qusetroll.core.models.character.CharacterCreationDTO;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_ability.CustomSkillEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.CustomCharacterClassEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custom_feature.CustomFeatureEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_item.CustomItemEntity;
+import com.fizzycoyote.qusetroll.core.models.custom.custom_item_set.CustomItemSetEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_language.CustomLanguageEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.ability.AbilityEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.ability.skill.SkillEntity;
-import com.fizzycoyote.qusetroll.core.models.open5e.character_class.CharacterClassEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.game_system.GameSystemEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.item.ItemEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.item_set.ItemSetEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.language.LanguageEntity;
 import com.fizzycoyote.qusetroll.feature_class.class_adapter.FeatureAdapter;
 import com.fizzycoyote.qusetroll.feature_class.class_adapter.LanguageKeyAdapter;
 import com.fizzycoyote.qusetroll.feature_class.class_adapter.SkillOptionAdapter;
-import com.fizzycoyote.qusetroll.feature_class.class_adapter.StartingItemAdapter;
+import com.fizzycoyote.qusetroll.feature_class.class_adapter.StringItemAdapter;
 import com.fizzycoyote.qusetroll.feature_class.model.CombinedClass;
 import com.fizzycoyote.qusetroll.feature_class.repository.ClassRepository;
 import com.fizzycoyote.qusetroll.feature_class.view_model.ClassCreateViewModel;
@@ -71,6 +73,7 @@ public class ClassCreateActivity extends AppCompatActivity {
     private FeatureAdapter featureAdapter;
     private SkillOptionAdapter skillOptionAdapter;
     private LanguageKeyAdapter languageKeyAdapter;
+    private StringItemAdapter startingItemsAdapter;
 
     private TextInputEditText etClassName;
     private TextInputEditText etDescription;
@@ -93,7 +96,6 @@ public class ClassCreateActivity extends AppCompatActivity {
 
     private RecyclerView rvStartingItems;
     private Button btnAddStartingItem;
-    private StartingItemAdapter startingItemAdapter;
 
     private List<String> gameSystemKeys = new ArrayList<>();
     private List<String> gameSystemNames = new ArrayList<>();
@@ -217,9 +219,10 @@ public class ClassCreateActivity extends AppCompatActivity {
         rvLanguageKeys.setAdapter(languageKeyAdapter);
         rvLanguageKeys.setNestedScrollingEnabled(false);
 
-        startingItemAdapter = new StartingItemAdapter(position -> viewModel.removeStartingItem(position));
+        startingItemsAdapter = new StringItemAdapter(position -> viewModel.removeStartingItem(position));
         rvStartingItems.setLayoutManager(new LinearLayoutManager(this));
-        rvStartingItems.setAdapter(startingItemAdapter);
+        rvStartingItems.setAdapter(startingItemsAdapter);
+        rvStartingItems.setNestedScrollingEnabled(false);
     }
 
     private void setupObservers() {
@@ -232,7 +235,8 @@ public class ClassCreateActivity extends AppCompatActivity {
         viewModel.getLanguageKeys().observe(this, keys ->
                 languageKeyAdapter.submitList(keys));
 
-        viewModel.getStartingItems().observe(this, items -> startingItemAdapter.submitList(items));
+        viewModel.getStartingItems().observe(this, items ->
+                startingItemsAdapter.setItems(items));
 
         viewModel.getEditData().observe(this, data -> {
             if (data == null) return;
@@ -358,16 +362,23 @@ public class ClassCreateActivity extends AppCompatActivity {
     }
 
     private void showAddItemDialog() {
-        int pos = spinnerGameSystem.getSelectedItemPosition();
-        String gameSystem = (pos >= 0 && pos < gameSystemKeys.size()) ? gameSystemKeys.get(pos) : "5e-2014";
+        String gameSystem = getCurrentGameSystemKey();
         new Thread(() -> {
             List<ItemEntity> standardItems = Open5eDatabase.getInstance(this)
                     .itemDao().getAllByGameSystem(gameSystem);
             List<CustomItemEntity> customItems = UserContentDatabase.getInstance(this)
                     .customItemDao().getAllSync();
+            List<ItemSetEntity> standardSets = Open5eDatabase.getInstance(this)
+                    .itemSetDao().getAllByGameSystem(gameSystem);
+            List<CustomItemSetEntity> customSets = UserContentDatabase.getInstance(this)
+                    .customItemSetDao().getAllSync();
+
             List<Object> all = new ArrayList<>();
             all.addAll(standardItems);
             all.addAll(customItems);
+            all.addAll(standardSets);
+            all.addAll(customSets);
+
             runOnUiThread(() -> showItemSelectionDialog(all));
         }).start();
     }
@@ -385,64 +396,123 @@ public class ClassCreateActivity extends AppCompatActivity {
             public View getView(int position, View convertView, @NonNull ViewGroup parent) {
                 TextView tv = (TextView) super.getView(position, convertView, parent);
                 Object item = getItem(position);
-                String display = (item instanceof ItemEntity) ? ((ItemEntity) item).name : ((CustomItemEntity) item).name;
+                String display;
+                if (item instanceof ItemEntity) display = ((ItemEntity) item).name;
+                else if (item instanceof CustomItemEntity) display = ((CustomItemEntity) item).name;
+                else if (item instanceof ItemSetEntity) display = ((ItemSetEntity) item).name;
+                else display = ((CustomItemSetEntity) item).name;
                 tv.setText(display);
                 return tv;
             }
         };
         listView.setAdapter(adapter);
 
-        searchInput.addTextChangedListener(new android.text.TextWatcher() {
+        searchInput.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
-            @Override public void afterTextChanged(android.text.Editable s) {
+            @Override public void afterTextChanged(Editable s) {
                 String query = s.toString().toLowerCase();
                 filteredItems.clear();
                 for (Object item : items) {
-                    String name = (item instanceof ItemEntity) ? ((ItemEntity) item).name : ((CustomItemEntity) item).name;
+                    String name = "";
+                    if (item instanceof ItemEntity) name = ((ItemEntity) item).name;
+                    else if (item instanceof CustomItemEntity) name = ((CustomItemEntity) item).name;
+                    else if (item instanceof ItemSetEntity) name = ((ItemSetEntity) item).name;
+                    else name = ((CustomItemSetEntity) item).name;
                     if (name.toLowerCase().contains(query)) filteredItems.add(item);
                 }
                 adapter.notifyDataSetChanged();
             }
         });
 
+        builder.setView(dialogView);
+        builder.setNegativeButton("Cancel", null);
+        AlertDialog dialog = builder.create();
+
         listView.setOnItemClickListener((parent, view, position, id) -> {
             Object selected = filteredItems.get(position);
-            builder.create().dismiss();
-            showItemQuantityDialog(selected);
+            dialog.dismiss();
+            if (selected instanceof ItemEntity || selected instanceof CustomItemEntity) {
+                String name = (selected instanceof ItemEntity) ? ((ItemEntity) selected).name : ((CustomItemEntity) selected).name;
+                viewModel.addStartingItem(name);
+            } else if (selected instanceof ItemSetEntity) {
+                showItemSetSelectionDialog((ItemSetEntity) selected);
+            } else if (selected instanceof CustomItemSetEntity) {
+                showCustomItemSetSelectionDialog((CustomItemSetEntity) selected);
+            }
         });
 
-        builder.setView(dialogView).setNegativeButton("Cancel", null).show();
+        dialog.show();
     }
 
-    private void showItemQuantityDialog(Object selectedItem) {
-        View view = LayoutInflater.from(this).inflate(R.layout.dialog_add_item, null);
-        EditText etName = view.findViewById(R.id.item_name);
-        EditText etQty = view.findViewById(R.id.item_quantity);
-        EditText etWeight = view.findViewById(R.id.item_weight);
+    private void showItemSetSelectionDialog(ItemSetEntity set) {
+        new Thread(() -> {
+            List<ItemEntity> items = Open5eDatabase.getInstance(this)
+                    .itemDao().getByKeysAndGameSystemSync(set.itemKeys, getCurrentGameSystemKey());
+            runOnUiThread(() -> {
+                if (items.isEmpty()) {
+                    Toast.makeText(this, "No items in this set for selected game system", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Select items from set: " + set.name);
+                String[] itemNames = items.stream().map(i -> i.name).toArray(String[]::new);
+                boolean[] checkedItems = new boolean[items.size()];
+                builder.setMultiChoiceItems(itemNames, checkedItems, (dialog, which, isChecked) -> checkedItems[which] = isChecked);
+                builder.setPositiveButton("Add", (dialog, which) -> {
+                    for (int i = 0; i < items.size(); i++) {
+                        if (checkedItems[i]) {
+                            viewModel.addStartingItem(items.get(i).name);
+                        }
+                    }
+                    Toast.makeText(this, "Items added", Toast.LENGTH_SHORT).show();
+                });
+                builder.setNegativeButton("Cancel", null);
+                builder.show();
+            });
+        }).start();
+    }
 
-        String name = (selectedItem instanceof ItemEntity) ? ((ItemEntity) selectedItem).name : ((CustomItemEntity) selectedItem).name;
-        float weight = (selectedItem instanceof ItemEntity) ? ((ItemEntity) selectedItem).weight : ((CustomItemEntity) selectedItem).weight;
-        etName.setText(name);
-        etName.setEnabled(false);
-        etQty.setText("1");
-        etWeight.setText(String.valueOf(weight));
-
-        new AlertDialog.Builder(this)
-                .setTitle("Add Item")
-                .setView(view)
-                .setPositiveButton("Add", (d, w) -> {
-                    int qty = Integer.parseInt(etQty.getText().toString());
-                    float finalWeight = Float.parseFloat(etWeight.getText().toString());
-                    CharacterCreationDTO.InventoryItemDTO dto = new CharacterCreationDTO.InventoryItemDTO();
-                    dto.itemKey = (selectedItem instanceof ItemEntity) ? ((ItemEntity) selectedItem).key : "custom_" + ((CustomItemEntity) selectedItem).id;
-                    dto.customName = name;
-                    dto.quantity = qty;
-                    dto.customWeight = finalWeight;
-                    viewModel.addStartingItem(dto);
-                })
-                .setNegativeButton("Cancel", null)
-                .show();
+    private void showCustomItemSetSelectionDialog(CustomItemSetEntity set) {
+        new Thread(() -> {
+            List<String> keys = set.itemKeys;
+            if (keys == null || keys.isEmpty()) {
+                runOnUiThread(() -> Toast.makeText(this, "Set contains no items", Toast.LENGTH_SHORT).show());
+                return;
+            }
+            List<String> itemNames = new ArrayList<>();
+            for (String key : keys) {
+                if (key.startsWith("custom_")) {
+                    long id = Long.parseLong(key.replace("custom_", ""));
+                    CustomItemEntity customItem = UserContentDatabase.getInstance(this).customItemDao().getByIdSync(id);
+                    if (customItem != null) itemNames.add(customItem.name);
+                } else {
+                    ItemEntity stdItem = Open5eDatabase.getInstance(this).itemDao().getByKeySync(key);
+                    if (stdItem != null) itemNames.add(stdItem.name);
+                }
+            }
+            if (itemNames.isEmpty()) {
+                runOnUiThread(() -> Toast.makeText(this, "No valid items found in this set", Toast.LENGTH_SHORT).show());
+                return;
+            }
+            runOnUiThread(() -> {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Select items from set: " + set.name);
+                String[] namesArray = itemNames.toArray(new String[0]);
+                boolean[] checkedItems = new boolean[itemNames.size()];
+                builder.setMultiChoiceItems(namesArray, checkedItems, (dialog, which, isChecked) -> checkedItems[which] = isChecked);
+                builder.setPositiveButton("Add", (dialog, which) -> {
+                    for (int i = 0; i < itemNames.size(); i++) {
+                        if (checkedItems[i]) {
+                            viewModel.addStartingItem(itemNames.get(i));
+                        }
+                    }
+                    Toast.makeText(this, "Items added", Toast.LENGTH_SHORT).show();
+                });
+                builder.setNegativeButton("Cancel", null);
+                builder.show();
+            });
+        }).start();
     }
 
     private void showSavingThrowsDialog() {
@@ -519,13 +589,13 @@ public class ClassCreateActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_searchable_list, null);
         EditText searchInput = dialogView.findViewById(R.id.search_input);
-        android.widget.ListView listView = dialogView.findViewById(R.id.list_view);
+        ListView listView = dialogView.findViewById(R.id.list_view);
 
         List<T> filteredItems = new ArrayList<>(items);
         ArrayAdapter<T> adapter = new ArrayAdapter<T>(this, android.R.layout.simple_list_item_1, filteredItems) {
-            @androidx.annotation.NonNull
+            @NonNull
             @Override
-            public View getView(int position, View convertView, @androidx.annotation.NonNull ViewGroup parent) {
+            public View getView(int position, View convertView, @NonNull ViewGroup parent) {
                 TextView tv = (TextView) super.getView(position, convertView, parent);
                 T item = getItem(position);
                 String display = "";
@@ -539,10 +609,10 @@ public class ClassCreateActivity extends AppCompatActivity {
         };
         listView.setAdapter(adapter);
 
-        searchInput.addTextChangedListener(new android.text.TextWatcher() {
+        searchInput.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
-            @Override public void afterTextChanged(android.text.Editable s) {
+            @Override public void afterTextChanged(Editable s) {
                 String query = s.toString().toLowerCase();
                 filteredItems.clear();
                 for (T item : items) {
@@ -556,12 +626,18 @@ public class ClassCreateActivity extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
             }
         });
+
+        builder.setView(dialogView);
+        builder.setNegativeButton("Cancel", null);
+        AlertDialog dialog = builder.create();
+
         listView.setOnItemClickListener((parent, view, position, id) -> {
             T selected = filteredItems.get(position);
             onSelect.accept(selected);
-            builder.create().dismiss();
+            dialog.dismiss();
         });
-        builder.setView(dialogView).setNegativeButton("Cancel", null).show();
+
+        dialog.show();
     }
 
     private void saveClass() {
@@ -632,5 +708,10 @@ public class ClassCreateActivity extends AppCompatActivity {
                 return tv;
             }
         };
+    }
+
+    private String getCurrentGameSystemKey() {
+        int pos = spinnerGameSystem.getSelectedItemPosition();
+        return (pos >= 0 && pos < gameSystemKeys.size()) ? gameSystemKeys.get(pos) : "5e-2014";
     }
 }

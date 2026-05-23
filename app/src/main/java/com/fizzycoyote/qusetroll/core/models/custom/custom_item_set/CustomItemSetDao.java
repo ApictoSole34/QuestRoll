@@ -23,6 +23,9 @@ public interface CustomItemSetDao {
     void delete(long id);
 
     @Query("SELECT * FROM custom_item_sets ORDER BY name ASC")
+    List<CustomItemSetEntity> getAllSync();
+
+    @Query("SELECT * FROM custom_item_sets ORDER BY name ASC")
     LiveData<List<CustomItemSetEntity>> getAll();
 
     @Query("SELECT * FROM custom_item_sets WHERE id = :id")

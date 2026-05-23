@@ -30,4 +30,10 @@ public interface ItemSetDao {
 
     @Query("SELECT DISTINCT document_url FROM item_sets WHERE document_url IS NOT NULL ORDER BY document_url ASC")
     LiveData<List<String>> getDistinctSources();
+
+    @Query("SELECT iset.* FROM item_sets iset " +
+            "INNER JOIN documents d ON iset.document_url = d.url " +
+            "WHERE d.gamesystem = :gameSystem " +
+            "ORDER BY iset.name ASC")
+    List<ItemSetEntity> getAllByGameSystem(String gameSystem);
 }
