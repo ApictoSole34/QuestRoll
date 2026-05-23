@@ -133,6 +133,7 @@ public class ClassStepFragment extends Fragment {
     }
 
     private void handleOpen5eClass(CharacterClassEntity selected) {
+        viewModel.classFixedItems.clear();
         viewModel.classAssignments.clear();
         viewModel.classAssignments.add(new WizardViewModel.ClassAssignment(selected.key, selected.name, 1));
         loadClassEquipment(selected.key);
@@ -186,6 +187,19 @@ public class ClassStepFragment extends Fragment {
         viewModel.classLanguageChoices = selected.languageChoices;
 
         loadCustomClassFeatures(selected.id);
+
+        if (selected.startingItemsJson != null && !selected.startingItemsJson.isEmpty()) {
+            try {
+                Type itemType = new TypeToken<List<String>>() {}.getType();
+                List<String> items = new Gson().fromJson(selected.startingItemsJson, itemType);
+                viewModel.classFixedItems.clear();
+                viewModel.classFixedItems.addAll(items);
+            } catch (Exception e) {
+                viewModel.classFixedItems.clear();
+            }
+        } else {
+            viewModel.classFixedItems.clear();
+        }
 
         if (!"NONE".equals(selected.casterType)) {
             viewModel.cantripsCount = 2;

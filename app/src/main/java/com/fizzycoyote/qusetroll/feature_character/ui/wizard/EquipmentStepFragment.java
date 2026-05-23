@@ -23,6 +23,7 @@ public class EquipmentStepFragment extends Fragment {
     private EditText backgroundGoldEdit;
     private Button addBackgroundItemButton;
     private LinearLayout backgroundItemsContainer;
+    private LinearLayout backgroundFixedItemsContainer; // NOWE
 
     // Class
     private TextView classDescText;
@@ -33,6 +34,7 @@ public class EquipmentStepFragment extends Fragment {
     private Button rerollGoldButton;
     private Button addClassItemButton;
     private LinearLayout classItemsContainer;
+    private LinearLayout classFixedItemsContainer;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -49,6 +51,7 @@ public class EquipmentStepFragment extends Fragment {
         backgroundGoldEdit = view.findViewById(R.id.background_gold_edit);
         addBackgroundItemButton = view.findViewById(R.id.add_background_item_button);
         backgroundItemsContainer = view.findViewById(R.id.background_items_container);
+        backgroundFixedItemsContainer = view.findViewById(R.id.background_fixed_items_container); // NOWE
 
         // Class
         classDescText = view.findViewById(R.id.class_equipment_desc);
@@ -59,6 +62,7 @@ public class EquipmentStepFragment extends Fragment {
         rerollGoldButton = view.findViewById(R.id.reroll_gold_button);
         addClassItemButton = view.findViewById(R.id.add_class_item_button);
         classItemsContainer = view.findViewById(R.id.class_items_container);
+        classFixedItemsContainer = view.findViewById(R.id.class_fixed_items_container);
 
         Button nextButton = view.findViewById(R.id.next_button);
         Button backButton = view.findViewById(R.id.back_button);
@@ -67,8 +71,10 @@ public class EquipmentStepFragment extends Fragment {
         backgroundGoldEdit.setText(String.valueOf(viewModel.backgroundGold));
         classDescText.setText(viewModel.classEquipmentDescription);
 
+        updateBackgroundFixedItemsList();
         updateBackgroundItemsList();
         updateClassItemsList();
+        updateClassFixedItemsList();
 
         backgroundGoldEdit.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -136,6 +142,39 @@ public class EquipmentStepFragment extends Fragment {
         super.onResume();
         updateBackgroundItemsList();
         updateClassItemsList();
+        updateClassFixedItemsList();
+    }
+
+    private void updateClassFixedItemsList() {
+        classFixedItemsContainer.removeAllViews();
+        if (viewModel.classFixedItems.isEmpty()) {
+            TextView empty = new TextView(getContext());
+            empty.setText("No fixed items");
+            classFixedItemsContainer.addView(empty);
+        } else {
+            for (String itemName : viewModel.classFixedItems) {
+                TextView tv = new TextView(getContext());
+                tv.setText("• " + itemName);
+                tv.setPadding(16, 4, 0, 4);
+                classFixedItemsContainer.addView(tv);
+            }
+        }
+    }
+
+    private void updateBackgroundFixedItemsList() {
+        backgroundFixedItemsContainer.removeAllViews();
+        if (viewModel.backgroundFixedItems.isEmpty()) {
+            TextView empty = new TextView(getContext());
+            empty.setText("No fixed items");
+            backgroundFixedItemsContainer.addView(empty);
+        } else {
+            for (String itemName : viewModel.backgroundFixedItems) {
+                TextView tv = new TextView(getContext());
+                tv.setText("• " + itemName);
+                tv.setPadding(16, 4, 0, 4);
+                backgroundFixedItemsContainer.addView(tv);
+            }
+        }
     }
 
     private void updateBackgroundItemsList() {

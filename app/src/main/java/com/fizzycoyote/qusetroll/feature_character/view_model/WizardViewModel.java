@@ -62,6 +62,8 @@ public class WizardViewModel extends ViewModel {
     public List<CharacterCreationDTO.InventoryItemDTO> backgroundCustomItems = new ArrayList<>();
     public String classGoldDice = "5d4";
     public boolean useClassEquipment = true;
+    public List<String> backgroundFixedItems = new ArrayList<>();
+    public List<String> classFixedItems = new ArrayList<>();
 
     // Languages
     public List<String> racialFixedLanguages = new ArrayList<>();
@@ -71,6 +73,7 @@ public class WizardViewModel extends ViewModel {
     public int bonusLanguagesFromInt = 0;
     public List<String> classSecretLanguages = new ArrayList<>();
     public List<String> chosenBonusLanguages = new ArrayList<>();
+    public String backgroundLanguagesDescription = "";
 
     // Skill proficiencies
     public List<String> backgroundSkillProficiencies = new ArrayList<>();

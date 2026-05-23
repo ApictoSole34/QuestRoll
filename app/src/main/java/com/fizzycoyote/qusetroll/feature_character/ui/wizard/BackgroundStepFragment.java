@@ -167,48 +167,69 @@ public class BackgroundStepFragment extends Fragment {
 
     private void handleCustomBackground(CustomBackgroundEntity custom) {
         viewModel.backgroundKey = "custom_" + custom.id;
-        viewModel.backgroundEquipmentDescription = "Custom background equipment";
+        viewModel.backgroundEquipmentDescription = custom.equipmentDescription != null ? custom.equipmentDescription : "Custom background equipment";
+        viewModel.backgroundLanguagesDescription = custom.languagesDescription;
         viewModel.startingGold = custom.startingGold;
         viewModel.backgroundGold = custom.startingGold;
 
+        // Fixed items
         if (custom.equipmentJson != null && !custom.equipmentJson.isEmpty()) {
-            Type itemType = new TypeToken<List<CharacterCreationDTO.InventoryItemDTO>>() {}.getType();
-            List<CharacterCreationDTO.InventoryItemDTO> items = new Gson().fromJson(custom.equipmentJson, itemType);
-            viewModel.backgroundEquipment.clear();
-            viewModel.backgroundEquipment.addAll(items);
+            try {
+                Type itemType = new TypeToken<List<String>>() {}.getType();
+                List<String> items = new Gson().fromJson(custom.equipmentJson, itemType);
+                viewModel.backgroundFixedItems.clear();
+                viewModel.backgroundFixedItems.addAll(items);
+            } catch (Exception e) {
+                viewModel.backgroundFixedItems.clear();
+            }
         } else {
-            viewModel.backgroundEquipment.clear();
+            viewModel.backgroundFixedItems.clear();
         }
 
+        // Languages
         if (custom.languagesJson != null && !custom.languagesJson.isEmpty()) {
-            Type langType = new TypeToken<List<String>>() {}.getType();
-            List<String> langs = new Gson().fromJson(custom.languagesJson, langType);
-            viewModel.backgroundFixedLanguages.clear();
-            viewModel.backgroundFixedLanguages.addAll(langs);
+            try {
+                Type langType = new TypeToken<List<String>>(){}.getType();
+                List<String> langs = new Gson().fromJson(custom.languagesJson, langType);
+                viewModel.backgroundFixedLanguages.clear();
+                viewModel.backgroundFixedLanguages.addAll(langs);
+            } catch (Exception e) {
+                viewModel.backgroundFixedLanguages.clear();
+            }
         } else {
             viewModel.backgroundFixedLanguages.clear();
         }
-        viewModel.backgroundLanguageChoices = 0;
+        viewModel.backgroundLanguageChoices = custom.languageChoices;
 
+        // Skills
         if (custom.skillProficienciesJson != null && !custom.skillProficienciesJson.isEmpty()) {
-            Type skillType = new TypeToken<List<String>>() {}.getType();
-            List<String> skills = new Gson().fromJson(custom.skillProficienciesJson, skillType);
-            viewModel.backgroundSkillProficiencies.clear();
-            viewModel.backgroundSkillProficiencies.addAll(skills);
+            try {
+                Type skillType = new TypeToken<List<String>>(){}.getType();
+                List<String> skills = new Gson().fromJson(custom.skillProficienciesJson, skillType);
+                viewModel.backgroundSkillProficiencies.clear();
+                viewModel.backgroundSkillProficiencies.addAll(skills);
+            } catch (Exception e) {
+                viewModel.backgroundSkillProficiencies.clear();
+            }
         } else {
             viewModel.backgroundSkillProficiencies.clear();
         }
 
+        // Features
         viewModel.characterTraits.removeIf(t -> "BACKGROUND".equals(t.sourceType));
         if (custom.featuresJson != null && !custom.featuresJson.isEmpty()) {
-            Type featureType = new TypeToken<List<CharacterTraitEntity>>() {}.getType();
-            List<CharacterTraitEntity> features = new Gson().fromJson(custom.featuresJson, featureType);
-            for (CharacterTraitEntity t : features) {
-                t.sourceType = "BACKGROUND";
-                t.sourceKey = custom.key;
-                t.levelRequirement = 1;
+            try {
+                Type featureType = new TypeToken<List<CharacterTraitEntity>>(){}.getType();
+                List<CharacterTraitEntity> features = new Gson().fromJson(custom.featuresJson, featureType);
+                for (CharacterTraitEntity t : features) {
+                    t.sourceType = "BACKGROUND";
+                    t.sourceKey = custom.key;
+                    t.levelRequirement = 1;
+                }
+                viewModel.characterTraits.addAll(features);
+            } catch (Exception e) {
+                // ignore
             }
-            viewModel.characterTraits.addAll(features);
         }
     }
 

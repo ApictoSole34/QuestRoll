@@ -101,6 +101,15 @@ public class LanguagesStepFragment extends Fragment {
                 } else {
                     knownNames.add(item);
                 }
+
+                if (viewModel.backgroundLanguagesDescription != null && !viewModel.backgroundLanguagesDescription.isEmpty()) {
+                    TextView descView = new TextView(getContext());
+                    descView.setText(viewModel.backgroundLanguagesDescription);
+                    descView.setPadding(0, 8, 0, 8);
+                    descView.setTextColor(0xFF666666);
+                    descView.setTextSize(14);
+                    container.addView(descView);
+                }
             }
 
             allLanguages.clear();
