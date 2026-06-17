@@ -17,7 +17,6 @@ import com.fizzycoyote.qusetroll.core.models.open5e.alignment.AlignmentEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.background.BackgroundEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.CharacterClassEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.species.SpeciesEntity;
-import com.fizzycoyote.qusetroll.feature_character.engine.CharacterEngine;
 import com.fizzycoyote.qusetroll.feature_character.utils.AttributeGenerator;
 
 import java.util.ArrayList;
@@ -182,7 +181,7 @@ public class CharacterCreatorViewModel extends AndroidViewModel {
                 long charId = pcDb.characterDao().insert(character);
 
                 CharacterAttributesEntity attrs = CharacterMapper.toAttributesEntity(charId, dto);
-                pcDb.attributesDao().insert(attrs);
+                pcDb.characterAttributesDao().insert(attrs);
 
                 List<CharacterClassAssignmentEntity> classAssigns = CharacterMapper.toClassAssignments(charId, dto);
                 pcDb.classAssignmentDao().insertAll(classAssigns);

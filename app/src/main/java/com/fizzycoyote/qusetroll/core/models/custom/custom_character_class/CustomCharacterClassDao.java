@@ -44,6 +44,9 @@ public interface CustomCharacterClassDao {
     @Query("SELECT * FROM custom_character_classes WHERE id = :id")
     CustomCharacterClassEntity getClassByIdSync(long id);
 
+    @Query("SELECT * FROM custom_character_classes WHERE subclass_of = :parentKey AND game_system = :gameSystem ORDER BY name ASC")
+    List<CustomCharacterClassEntity> getSubclassesByParentKeySync(String parentKey, String gameSystem);
+
     @Query("SELECT COUNT(*) FROM custom_character_classes WHERE name = :name")
     int countByName(String name);
 

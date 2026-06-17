@@ -22,7 +22,10 @@ public interface CharacterDao {
     LiveData<CharacterEntity> getCharacter(long id);
 
     @Query("SELECT * FROM characters WHERE id = :id")
-    CharacterEntity getCharacterSync(long id);  // DODAJ TĘ METODĘ
+    CharacterEntity getCharacterSync(long id);
+
+    @Query("SELECT * FROM characters ORDER BY name ASC")
+    List<CharacterEntity> getAllCharactersSync();
 
     @Query("SELECT * FROM characters ORDER BY name ASC")
     LiveData<List<CharacterEntity>> getAllCharacters();

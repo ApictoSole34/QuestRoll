@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <!-- Search bar -->
+    <EditText
+        android:id="@+id/et_shop_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Search items…"
+        android:drawableStart="@android:drawable/ic_menu_search"
+        android:drawablePadding="8dp"
+        android:padding="12dp"
+        android:background="?attr/editTextBackground"
+        android:inputType="text"
+        android:imeOptions="actionSearch"
+        android:maxLines="1" />
+
+    <!-- Loading state -->
+    <TextView
+        android:id="@+id/tv_shop_loading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Loading items…"
+        android:gravity="center"
+        android:padding="16dp"
+        android:textColor="?android:attr/textColorSecondary"
+        android:visibility="visible" />
+
+    <!-- Results list — fixed height so dialog doesn't fill screen -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_shop_items"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:overScrollMode="never" />
+
+</LinearLayout>

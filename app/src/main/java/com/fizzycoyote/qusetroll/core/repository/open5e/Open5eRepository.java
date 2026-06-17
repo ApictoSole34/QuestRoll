@@ -586,7 +586,12 @@ public class Open5eRepository {
         }
         if (dto.savingThrows != null && !dto.savingThrows.isEmpty()) {
             List<SavingThrowEntity> savingThrows = CharacterClassMapper.mapSavingThrows(dto);
-            savingThrowDao.insertAll(savingThrows);
+            List<SavingThrowEntity> validSavingThrows = savingThrows.stream()
+                    .filter(st -> st.abilityKey != null && !st.abilityKey.isEmpty())
+                    .collect(Collectors.toList());
+            if (!validSavingThrows.isEmpty()) {
+                savingThrowDao.insertAll(validSavingThrows);
+            }
         }
     }
 

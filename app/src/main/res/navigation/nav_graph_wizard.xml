@@ -47,8 +47,23 @@
         android:id="@+id/classStepFragment"
         android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.ClassStepFragment"
         android:label="Classes">
+        <action
+            android:id="@+id/next_action"
+            app:destination="@id/subclassChoiceStepFragment" />
+        <action
+            android:id="@+id/action_class_to_attributes"
+            app:destination="@id/attributesStepFragment" />
+        <action
+            android:id="@+id/back_action"
+            app:destination="@id/alignmentStepFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/subclassChoiceStepFragment"
+        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.SubclassChoiceStepFragment"
+        android:label="Classes">
         <action android:id="@+id/next_action" app:destination="@id/attributesStepFragment" />
-        <action android:id="@+id/back_action" app:destination="@id/alignmentStepFragment" />
+        <action android:id="@+id/back_action" app:destination="@id/classStepFragment" />
     </fragment>
 
     <fragment

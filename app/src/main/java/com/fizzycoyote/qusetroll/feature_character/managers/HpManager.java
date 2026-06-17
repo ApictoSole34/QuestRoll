@@ -22,7 +22,7 @@ public class HpManager {
         CharacterEntity character = pcDb.characterDao().getCharacterSync(characterId);
         if (character == null) return 0;
         List<CharacterClassAssignmentEntity> assignments = pcDb.classAssignmentDao().getByCharacterId(characterId);
-        CharacterAttributesEntity attrs = pcDb.attributesDao().getByCharacterId(characterId);
+        CharacterAttributesEntity attrs = pcDb.characterAttributesDao().getByCharacterId(characterId);
         int conMod = (attrs != null) ? attrs.constitutionMod : 0;
         int totalHp = 0;
         for (CharacterClassAssignmentEntity ca : assignments) {

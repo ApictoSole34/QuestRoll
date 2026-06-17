@@ -15,20 +15,24 @@ import com.fizzycoyote.qusetroll.core.models.character.*;
                 CharacterTraitEntity.class,
                 CharacterSpellEntity.class,
                 CharacterLanguageEntity.class,
-                CharacterSkillProficiencyEntity.class
+                CharacterSkillProficiencyEntity.class,
+                CharacterSavingThrowEntity.class,
+                CharacterSubclassAssignmentEntity.class
         },
-        version = 5,
+        version = 11,
         exportSchema = false
 )
 public abstract class PlayerCharacterDatabase extends RoomDatabase {
     public abstract CharacterDao characterDao();
-    public abstract CharacterAttributesDao attributesDao();
+    public abstract CharacterAttributesDao characterAttributesDao();
     public abstract CharacterClassAssignmentDao classAssignmentDao();
     public abstract InventoryItemDao inventoryItemDao();
     public abstract CharacterTraitDao traitDao();
     public abstract CharacterSpellDao spellDao();
     public abstract CharacterLanguageDao languageDao();
     public abstract CharacterSkillProficiencyDao characterSkillProficiencyDao();
+    public abstract CharacterSavingThrowDao characterSavingThrowDao();
+    public abstract CharacterSubclassAssignmentDao characterSubclassAssignmentDao();
 
     private static volatile PlayerCharacterDatabase INSTANCE;
 

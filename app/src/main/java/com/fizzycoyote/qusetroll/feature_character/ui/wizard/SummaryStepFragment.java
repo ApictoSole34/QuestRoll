@@ -16,6 +16,7 @@ import com.fizzycoyote.qusetroll.R;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.PlayerCharacterDatabase;
 import com.fizzycoyote.qusetroll.core.models.character.*;
+import com.fizzycoyote.qusetroll.core.models.open5e.character_class.CharacterClassEntity;
 import com.fizzycoyote.qusetroll.feature_character.view_model.WizardViewModel;
 import java.util.*;
 
@@ -126,6 +127,26 @@ public class SummaryStepFragment extends Fragment {
         summaryText.setText(sb.toString());
     }
 
+    // ------------------------------------------------------------------------
+    // HP calculation helper
+    // ------------------------------------------------------------------------
+    private int calculateMaxHp(String classKey, int totalLevel, int conMod) {
+        try {
+            CharacterClassEntity classEntity = open5eDb.characterClassDao().getClassByKeySync(classKey);
+            if (classEntity == null || classEntity.hitDice == null) return 10 + conMod * totalLevel;
+
+            String hitDice = classEntity.hitDice;
+            int diceSides = Integer.parseInt(hitDice.substring(1));
+            int firstLevelHp = diceSides + conMod;
+            int additionalLevels = totalLevel - 1;
+            int averageRoll = (diceSides / 2) + 1;
+            int hp = firstLevelHp + additionalLevels * (averageRoll + conMod);
+            return Math.max(1, hp);
+        } catch (Exception e) {
+            return 10 + conMod * totalLevel;
+        }
+    }
+
     private void saveTraits(long characterId) {
         if (viewModel.characterTraits.isEmpty()) return;
         List<CharacterTraitEntity> entities = new ArrayList<>();
@@ -177,6 +198,19 @@ public class SummaryStepFragment extends Fragment {
         }
     }
 
+    private void saveSavingThrows(long characterId, Set<String> proficientAbilities) {
+        if (proficientAbilities == null || proficientAbilities.isEmpty()) return;
+        List<CharacterSavingThrowEntity> list = new ArrayList<>();
+        for (String ability : proficientAbilities) {
+            CharacterSavingThrowEntity st = new CharacterSavingThrowEntity();
+            st.characterId = characterId;
+            st.abilityKey = ability;
+            st.isProficient = true;
+            list.add(st);
+        }
+        pcDb.characterSavingThrowDao().insertAll(list);
+    }
+
     private void saveCharacter() {
         CharacterCreationDTO dto = new CharacterCreationDTO();
         dto.name = viewModel.characterName;
@@ -223,6 +257,18 @@ public class SummaryStepFragment extends Fragment {
         dto.startingTraits = new ArrayList<>();
         dto.startingSpellKeys = new ArrayList<>();
 
+        final int totalLevel = classDTOs.stream().mapToInt(c -> c.level).sum();
+        String firstClassKey = classDTOs.isEmpty() ? null : classDTOs.get(0).classKey;
+        int conMod = 0;
+        if (dto.attributes.containsKey("CON")) {
+            int con = dto.attributes.get("CON");
+            conMod = (con - 10) / 2;
+        }
+        final int maxHp = (firstClassKey != null) ? calculateMaxHp(firstClassKey, totalLevel, conMod) : 10 + conMod * totalLevel;
+
+        final Set<String> savingThrows = viewModel.selectedSavingThrows != null
+                ? new HashSet<>(viewModel.selectedSavingThrows) : new HashSet<>();
+
         viewModel.executor.execute(() -> {
             try {
                 if (viewModel.isEditMode()) {
@@ -234,20 +280,34 @@ public class SummaryStepFragment extends Fragment {
                         existing.alignmentKey = dto.alignmentKey;
                         existing.backgroundKey = dto.backgroundKey;
                         existing.speciesKey = dto.speciesKey;
-                        existing.totalLevel = dto.classAssignments.stream()
-                                .mapToInt(c -> c.level).sum();
+                        existing.totalLevel = totalLevel;
                         existing.imagePath = viewModel.characterImagePath;
                         existing.thumbnailPath = viewModel.characterThumbnailPath;
                         pcDb.characterDao().update(existing);
 
                         CharacterAttributesEntity attrs =
                                 CharacterMapper.toAttributesEntity(charId, dto);
-                        pcDb.attributesDao().update(attrs);
+                        pcDb.characterAttributesDao().update(attrs);
 
                         pcDb.classAssignmentDao().deleteForCharacter(charId);
                         List<CharacterClassAssignmentEntity> classAssigns =
                                 CharacterMapper.toClassAssignments(charId, dto);
                         pcDb.classAssignmentDao().insertAll(classAssigns);
+
+                        // --- Zapis subklasy (edycja) ---
+                        if (viewModel.chosenSubclassKey != null && !viewModel.classAssignments.isEmpty()) {
+                            String classKey = viewModel.classAssignments.get(0).classKey;
+                            pcDb.characterSubclassAssignmentDao().deleteForCharacterAndClass(charId, classKey);
+                            CharacterSubclassAssignmentEntity subAssign = new CharacterSubclassAssignmentEntity();
+                            subAssign.characterId = charId;
+                            subAssign.classKey = classKey;
+                            subAssign.subclassKey = viewModel.chosenSubclassKey;
+                            pcDb.characterSubclassAssignmentDao().insert(subAssign);
+                        }
+
+                        // Delete old saving throws and insert new
+                        pcDb.characterSavingThrowDao().deleteForCharacter(charId);
+                        saveSavingThrows(charId, savingThrows);
 
                         saveInventory(charId, dto.startingItems);
                         pcDb.languageDao().deleteForCharacter(charId);
@@ -257,18 +317,33 @@ public class SummaryStepFragment extends Fragment {
                         saveSpells(charId);
                     }
                 } else {
+                    // --- Tworzenie nowej postaci ---
                     CharacterEntity character = CharacterMapper.toEntity(dto);
                     character.imagePath = viewModel.characterImagePath;
                     character.thumbnailPath = viewModel.characterThumbnailPath;
+                    character.maxHp = maxHp;
+                    character.currentHp = maxHp;
                     long charId = pcDb.characterDao().insert(character);
 
                     CharacterAttributesEntity attrs =
                             CharacterMapper.toAttributesEntity(charId, dto);
-                    pcDb.attributesDao().insert(attrs);
+                    pcDb.characterAttributesDao().insert(attrs);
 
                     List<CharacterClassAssignmentEntity> classAssigns =
                             CharacterMapper.toClassAssignments(charId, dto);
                     pcDb.classAssignmentDao().insertAll(classAssigns);
+
+                    // --- Zapis subklasy (nowa postać) ---
+                    if (viewModel.chosenSubclassKey != null && !viewModel.classAssignments.isEmpty()) {
+                        String classKey = viewModel.classAssignments.get(0).classKey;
+                        CharacterSubclassAssignmentEntity subAssign = new CharacterSubclassAssignmentEntity();
+                        subAssign.characterId = charId;
+                        subAssign.classKey = classKey;
+                        subAssign.subclassKey = viewModel.chosenSubclassKey;
+                        pcDb.characterSubclassAssignmentDao().insert(subAssign);
+                    }
+
+                    saveSavingThrows(charId, savingThrows);
 
                     saveInventory(charId, dto.startingItems);
                     saveLanguages(charId);
@@ -296,7 +371,6 @@ public class SummaryStepFragment extends Fragment {
 
     private void saveLanguages(long characterId) {
         List<CharacterLanguageEntity> entities = new ArrayList<>();
-
         for (String lang : viewModel.racialFixedLanguages) {
             entities.add(createLanguageEntity(characterId, lang, false));
         }
@@ -309,12 +383,10 @@ public class SummaryStepFragment extends Fragment {
         for (String langKey : viewModel.classSecretLanguages) {
             entities.add(createLanguageEntity(characterId, langKey, true));
         }
-
         Map<String, CharacterLanguageEntity> deduped = new LinkedHashMap<>();
         for (CharacterLanguageEntity e : entities) {
             deduped.putIfAbsent(e.languageKey, e);
         }
-
         if (!deduped.isEmpty()) {
             pcDb.languageDao().insertAll(new ArrayList<>(deduped.values()));
         }
@@ -341,8 +413,7 @@ public class SummaryStepFragment extends Fragment {
         return e;
     }
 
-    private CharacterLanguageEntity createLanguageEntity(long characterId, String languageKey,
-                                                         boolean isSecret) {
+    private CharacterLanguageEntity createLanguageEntity(long characterId, String languageKey, boolean isSecret) {
         CharacterLanguageEntity entity = new CharacterLanguageEntity();
         entity.characterId = characterId;
         entity.languageKey = languageKey;
@@ -350,8 +421,7 @@ public class SummaryStepFragment extends Fragment {
         return entity;
     }
 
-    private void saveInventory(long characterId,
-                               List<CharacterCreationDTO.InventoryItemDTO> items) {
+    private void saveInventory(long characterId, List<CharacterCreationDTO.InventoryItemDTO> items) {
         pcDb.inventoryItemDao().deleteForCharacter(characterId);
         for (CharacterCreationDTO.InventoryItemDTO dtoItem : items) {
             InventoryItemEntity entity = new InventoryItemEntity();

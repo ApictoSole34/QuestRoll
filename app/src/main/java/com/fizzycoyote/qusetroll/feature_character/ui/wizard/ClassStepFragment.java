@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -20,6 +21,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.config.SubclassLevelConfig;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.character.CharacterCreationDTO;
@@ -30,6 +32,8 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custo
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custom_gained_at.CustomGainedAt;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.CharacterClassEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.feature.FeatureEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.character_class.saving_throw.SavingThrowEntity;
+import com.fizzycoyote.qusetroll.core.models.open5e.character_class.table_data.TableData;
 import com.fizzycoyote.qusetroll.feature_character.utils.BenefitParser;
 import com.fizzycoyote.qusetroll.feature_character.utils.ClassCastingAbility;
 import com.fizzycoyote.qusetroll.feature_character.utils.ClassStartingGold;
@@ -39,7 +43,9 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ClassStepFragment extends Fragment {
 
@@ -79,9 +85,30 @@ public class ClassStepFragment extends Fragment {
             @Override public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        nextButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.next_action));
+        nextButton.setOnClickListener(v -> {
+            if (viewModel.classAssignments.isEmpty()) {
+                Toast.makeText(getContext(), "Please select a class", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            String classKey = viewModel.classAssignments.get(0).classKey;
+
+            // FIX: używamy SubclassLevelConfig.needsSubclassAtLevel(classKey, 1)
+            // który poprawnie obsługuje klucze w formacie "srd-cleric", "a5e-cleric" itp.
+            if (SubclassLevelConfig.needsSubclassAtLevel(classKey, 1)) {
+                // Klasy z subklasą na poziomie 1: Cleric, Sorcerer, Warlock
+                // → idź do SubclassChoiceStepFragment
+                Navigation.findNavController(v).navigate(R.id.next_action);
+            } else {
+                // Pozostałe klasy → idź bezpośrednio do atrybutów
+                Navigation.findNavController(v).navigate(R.id.action_class_to_attributes);
+            }
+        });
+
         backButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.back_action));
     }
+
+    // ── Load classes ─────────────────────────────────────────────────────────
 
     private void loadClasses() {
         new Thread(() -> {
@@ -90,6 +117,7 @@ public class ClassStepFragment extends Fragment {
                     .characterClassDao().getBaseClassesByGameSystem(viewModel.gameSystem);
             List<CustomCharacterClassEntity> customClasses = UserContentDatabase.getInstance(requireContext())
                     .customCharacterClassDao().getBaseClassesSync(viewModel.gameSystem);
+
             combinedClasses.clear();
             combinedClasses.addAll(open5eClasses);
             combinedClasses.addAll(customClasses);
@@ -120,48 +148,64 @@ public class ClassStepFragment extends Fragment {
         }).start();
     }
 
-    private String getName(Object obj) {
-        if (obj instanceof CharacterClassEntity) return ((CharacterClassEntity) obj).name;
-        if (obj instanceof CustomCharacterClassEntity) return ((CustomCharacterClassEntity) obj).name;
-        return "";
-    }
-
-    private String getKey(Object obj) {
-        if (obj instanceof CharacterClassEntity) return ((CharacterClassEntity) obj).key;
-        if (obj instanceof CustomCharacterClassEntity) return "custom_" + ((CustomCharacterClassEntity) obj).id;
-        return "";
-    }
+    // ── Class handlers ───────────────────────────────────────────────────────
 
     private void handleOpen5eClass(CharacterClassEntity selected) {
         viewModel.classFixedItems.clear();
         viewModel.classAssignments.clear();
         viewModel.classAssignments.add(new WizardViewModel.ClassAssignment(selected.key, selected.name, 1));
+        // Reset subclass when changing class
+        viewModel.chosenSubclassKey = null;
+
         loadClassEquipment(selected.key);
         loadClassSkillProficiencies(selected.key);
+
         ClassStartingGold goldInfo = ClassStartingGold.fromClassName(selected.name);
-        viewModel.classGoldDice = goldInfo.getDiceCount() + "d" + goldInfo.getDiceSides();
+        viewModel.classGoldDice    = goldInfo.getDiceCount() + "d" + goldInfo.getDiceSides();
         viewModel.classStartingGold = goldInfo.rollGold();
+
         loadClassTraits(selected.key);
         parseSpellcastingInfo(selected.key, selected.name);
-        viewModel.classHitDice = selected.hitDice;
-        viewModel.classCasterType = "";
+
+        viewModel.classHitDice             = selected.hitDice;
+        viewModel.classCasterType          = "";
         viewModel.classSpellcastingAbility = viewModel.spellcastingAbility;
         viewModel.classFixedLanguages.clear();
         viewModel.classLanguageChoices = 0;
+
+        new Thread(() -> {
+            if (!isAdded()) return;
+            List<SavingThrowEntity> savingThrows = Open5eDatabase.getInstance(requireContext())
+                    .savingThrowDao().getSavingThrowsForClassSync(selected.key);
+            Set<String> abilities = new HashSet<>();
+            if (savingThrows != null) {
+                for (SavingThrowEntity st : savingThrows) {
+                    if (st.abilityKey != null) abilities.add(st.abilityKey);
+                }
+            }
+            if (!isAdded()) return;
+            requireActivity().runOnUiThread(() -> {
+                if (!isAdded()) return;
+                viewModel.selectedSavingThrows = abilities;
+            });
+        }).start();
     }
 
     private void handleCustomClass(CustomCharacterClassEntity selected) {
         viewModel.classAssignments.clear();
-        viewModel.classAssignments.add(new WizardViewModel.ClassAssignment("custom_" + selected.id, selected.name, 1));
-        viewModel.classHitDice = selected.hitDice;
-        viewModel.classCasterType = selected.casterType;
+        viewModel.classAssignments.add(
+                new WizardViewModel.ClassAssignment("custom_" + selected.id, selected.name, 1));
+        viewModel.chosenSubclassKey = null;
+
+        viewModel.classHitDice             = selected.hitDice;
+        viewModel.classCasterType          = selected.casterType;
         viewModel.classSpellcastingAbility = selected.spellcastingAbility;
-        viewModel.classSkillChoices = selected.skillChoicesCount;
+        viewModel.classSkillChoices        = selected.skillChoicesCount;
 
         if (selected.skillOptionsJson != null && !selected.skillOptionsJson.isEmpty()) {
             try {
-                Type listType = new TypeToken<List<String>>(){}.getType();
-                viewModel.classSkillOptions = new Gson().fromJson(selected.skillOptionsJson, listType);
+                Type t = new TypeToken<List<String>>(){}.getType();
+                viewModel.classSkillOptions = new Gson().fromJson(selected.skillOptionsJson, t);
             } catch (Exception e) {
                 viewModel.classSkillOptions = new ArrayList<>();
             }
@@ -170,14 +214,14 @@ public class ClassStepFragment extends Fragment {
         }
 
         viewModel.classEquipmentDescription = selected.equipmentDescription;
-        viewModel.classStartingGold = 0;
-        viewModel.classGoldDice = "0d0";
+        viewModel.classStartingGold         = 0;
+        viewModel.classGoldDice             = "0d0";
         viewModel.classEquipment.clear();
 
         if (selected.languageKeysJson != null && !selected.languageKeysJson.isEmpty()) {
             try {
-                Type listType = new TypeToken<List<String>>(){}.getType();
-                viewModel.classFixedLanguages = new Gson().fromJson(selected.languageKeysJson, listType);
+                Type t = new TypeToken<List<String>>(){}.getType();
+                viewModel.classFixedLanguages = new Gson().fromJson(selected.languageKeysJson, t);
             } catch (Exception e) {
                 viewModel.classFixedLanguages = new ArrayList<>();
             }
@@ -190,8 +234,8 @@ public class ClassStepFragment extends Fragment {
 
         if (selected.startingItemsJson != null && !selected.startingItemsJson.isEmpty()) {
             try {
-                Type itemType = new TypeToken<List<String>>() {}.getType();
-                List<String> items = new Gson().fromJson(selected.startingItemsJson, itemType);
+                Type t = new TypeToken<List<String>>(){}.getType();
+                List<String> items = new Gson().fromJson(selected.startingItemsJson, t);
                 viewModel.classFixedItems.clear();
                 viewModel.classFixedItems.addAll(items);
             } catch (Exception e) {
@@ -202,17 +246,22 @@ public class ClassStepFragment extends Fragment {
         }
 
         if (!"NONE".equals(selected.casterType)) {
-            viewModel.cantripsCount = 2;
+            viewModel.cantripsCount    = 2;
             viewModel.spellsKnownCount = 2;
             viewModel.isPreparedCaster = false;
             viewModel.spellcastingAbility = selected.spellcastingAbility;
         } else {
-            viewModel.cantripsCount = 0;
+            viewModel.cantripsCount    = 0;
             viewModel.spellsKnownCount = 0;
             viewModel.isPreparedCaster = false;
             viewModel.spellcastingAbility = "NONE";
         }
+
+        viewModel.selectedSavingThrows = new HashSet<>(
+                selected.savingThrows != null ? selected.savingThrows : new ArrayList<>());
     }
+
+    // ── Background threads ───────────────────────────────────────────────────
 
     private void loadCustomClassFeatures(long classId) {
         new Thread(() -> {
@@ -234,13 +283,14 @@ public class ClassStepFragment extends Fragment {
                     available = true;
                 }
                 if (!available) continue;
+
                 CharacterTraitEntity t = new CharacterTraitEntity();
-                t.sourceType = "CLASS";
-                t.sourceKey = "custom_" + classId;
-                t.name = f.name;
-                t.description = f.description;
+                t.sourceType       = "CLASS";
+                t.sourceKey        = "custom_" + classId;
+                t.name             = f.name;
+                t.description      = f.description;
                 t.levelRequirement = 1;
-                t.displayOrder = order++;
+                t.displayOrder     = order++;
                 traits.add(t);
             }
 
@@ -257,11 +307,14 @@ public class ClassStepFragment extends Fragment {
             if (!isAdded()) return;
             List<FeatureEntity> features = Open5eDatabase.getInstance(requireContext())
                     .featureDao().getFeaturesForClassSync(classKey);
+            // Reset traits for this class before adding new ones
+            viewModel.characterTraits.removeIf(t -> "CLASS".equals(t.sourceType));
+
             List<CharacterTraitEntity> classTraits = new ArrayList<>();
             int order = 0;
             for (FeatureEntity f : features) {
                 if (f.featureType == null) continue;
-                if (f.featureType.equals("STARTING_EQUIPMENT") || f.featureType.equals("PROFICIENCIES")) continue;
+                if ("STARTING_EQUIPMENT".equals(f.featureType) || "PROFICIENCIES".equals(f.featureType)) continue;
                 boolean available = false;
                 if (f.gainedAt != null) {
                     for (var gained : f.gainedAt) {
@@ -271,13 +324,14 @@ public class ClassStepFragment extends Fragment {
                     available = true;
                 }
                 if (!available) continue;
+
                 CharacterTraitEntity t = new CharacterTraitEntity();
-                t.sourceType = "CLASS";
-                t.sourceKey = classKey;
-                t.name = f.name;
-                t.description = f.desc;
+                t.sourceType       = "CLASS";
+                t.sourceKey        = classKey;
+                t.name             = f.name;
+                t.description      = f.desc;
                 t.levelRequirement = 1;
-                t.displayOrder = order++;
+                t.displayOrder     = order++;
                 classTraits.add(t);
             }
 
@@ -294,39 +348,70 @@ public class ClassStepFragment extends Fragment {
             if (!isAdded()) return;
             List<FeatureEntity> features = Open5eDatabase.getInstance(requireContext())
                     .featureDao().getFeaturesForClassSync(classKey);
-            FeatureEntity spellFeature = null;
-            for (FeatureEntity f : features) {
-                if (f.name != null && f.name.equals("Spellcasting")) {
-                    spellFeature = f;
-                    break;
-                }
-            }
-            if (spellFeature == null || spellFeature.desc == null) {
-                if (!isAdded()) return;
-                requireActivity().runOnUiThread(() -> {
-                    if (!isAdded()) return;
-                    viewModel.cantripsCount = 0;
-                    viewModel.spellsKnownCount = 0;
-                    viewModel.preparedCount = 0;
-                    viewModel.isPreparedCaster = false;
-                });
-                return;
-            }
-            String desc = spellFeature.desc;
+
+            // Domyślne wartości
             int cantrips = 0;
             int known = 0;
             boolean prepared = false;
 
-            java.util.regex.Pattern pCantrip = java.util.regex.Pattern.compile("(\\d+) cantrips?");
-            java.util.regex.Matcher mCantrip = pCantrip.matcher(desc);
-            if (mCantrip.find()) cantrips = Integer.parseInt(mCantrip.group(1));
+            // 1. Odczytaj Kantripy z tabeli "Cantrips Known"
+            for (FeatureEntity f : features) {
+                if ("Cantrips Known".equals(f.name) && f.tableData != null) {
+                    for (TableData td : f.tableData) {
+                        if (td.level == 1) {
+                            try {
+                                cantrips = Integer.parseInt(td.columnValue);
+                            } catch (NumberFormatException e) { cantrips = 0; }
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
 
-            if (desc.contains("prepare") || desc.contains("prepared")) {
-                prepared = true;
-            } else {
-                java.util.regex.Pattern pKnown = java.util.regex.Pattern.compile("(\\d+) (?:spells?|spells? known)");
-                java.util.regex.Matcher mKnown = pKnown.matcher(desc);
-                if (mKnown.find()) known = Integer.parseInt(mKnown.group(1));
+            // 2. Odczytaj Znane zaklęcia 1 poziomu z tabeli "Spells Known"
+            for (FeatureEntity f : features) {
+                if ("Spells Known".equals(f.name) && f.tableData != null) {
+                    for (TableData td : f.tableData) {
+                        if (td.level == 1) {
+                            try {
+                                known = Integer.parseInt(td.columnValue);
+                            } catch (NumberFormatException e) { known = 0; }
+                            break;
+                        }
+                    }
+                    break;
+                }
+            }
+
+            // 3. Jeśli nie udało się odczytać z tabel, spróbuj z opisu (fallback)
+            if (known == 0 || cantrips == 0) {
+                FeatureEntity spellFeature = null;
+                for (FeatureEntity f : features) {
+                    if (f.name != null && f.name.equals("Spellcasting")) {
+                        spellFeature = f;
+                        break;
+                    }
+                }
+                if (spellFeature != null && spellFeature.desc != null) {
+                    String desc = spellFeature.desc;
+                    if (cantrips == 0) {
+                        java.util.regex.Matcher m = java.util.regex.Pattern
+                                .compile("(\\d+) cantrips?").matcher(desc);
+                        if (m.find()) cantrips = Integer.parseInt(m.group(1));
+                    }
+                    if (known == 0) {
+                        if (desc.contains("prepare") || desc.contains("prepared")) {
+                            prepared = true;
+                            // Dla prepared caster znane zaklęcia = mod + poziom (uproszczone)
+                            // Tu możesz dodać później dokładniejsze obliczenia
+                        } else {
+                            java.util.regex.Matcher m = java.util.regex.Pattern
+                                    .compile("(\\d+) (?:spells?|spells? known)").matcher(desc);
+                            if (m.find()) known = Integer.parseInt(m.group(1));
+                        }
+                    }
+                }
             }
 
             String castingAbility = ClassCastingAbility.getCastingAbilityForClass(className);
@@ -366,7 +451,8 @@ public class ClassStepFragment extends Fragment {
                     .featureDao().getFeaturesForClassSync(classKey);
             FeatureEntity profFeature = null;
             for (FeatureEntity f : features) {
-                if ("PROFICIENCIES".equals(f.featureType) || (f.name != null && f.name.equals("Proficiencies"))) {
+                if ("PROFICIENCIES".equals(f.featureType)
+                        || (f.name != null && f.name.equals("Proficiencies"))) {
                     profFeature = f;
                     break;
                 }
@@ -374,18 +460,18 @@ public class ClassStepFragment extends Fragment {
             if (profFeature != null && profFeature.desc != null) {
                 String desc = profFeature.desc;
                 String skillsPart = "";
-                if (desc.contains("**Skills:**")) {
+                if (desc.contains("**Skills:**"))
                     skillsPart = desc.split("\\*\\*Skills:\\*\\*")[1].split("\n")[0];
-                } else if (desc.contains("Skills:")) {
+                else if (desc.contains("Skills:"))
                     skillsPart = desc.split("Skills:")[1].split("\n")[0];
-                }
+
                 int choices = 0;
-                if (skillsPart.toLowerCase().contains("two")) choices = 2;
-                else if (skillsPart.toLowerCase().contains("one")) choices = 1;
+                if      (skillsPart.toLowerCase().contains("two"))   choices = 2;
+                else if (skillsPart.toLowerCase().contains("one"))   choices = 1;
                 else if (skillsPart.toLowerCase().contains("three")) choices = 3;
-                String[] options = skillsPart.split(",");
+
                 List<String> skillOptions = new ArrayList<>();
-                for (String opt : options) {
+                for (String opt : skillsPart.split(",")) {
                     String trimmed = opt.trim();
                     if (trimmed.startsWith("and ")) trimmed = trimmed.substring(4);
                     if (!trimmed.isEmpty()) skillOptions.add(trimmed);
@@ -404,19 +490,25 @@ public class ClassStepFragment extends Fragment {
             if (!isAdded()) return;
             List<FeatureEntity> features = Open5eDatabase.getInstance(requireContext())
                     .featureDao().getFeaturesForClassSync(classKey);
-            FeatureEntity equipmentFeature = null;
             parseClassSecretLanguages(features);
+            FeatureEntity equipmentFeature = null;
             for (FeatureEntity f : features) {
                 if ("STARTING_EQUIPMENT".equals(f.featureType) || "Equipment".equals(f.name)) {
                     equipmentFeature = f;
                     break;
                 }
             }
-            if (equipmentFeature != null && equipmentFeature.desc != null) {
-                viewModel.classEquipmentDescription = equipmentFeature.desc;
-            } else {
-                viewModel.classEquipmentDescription = "";
-            }
+            viewModel.classEquipmentDescription =
+                    (equipmentFeature != null && equipmentFeature.desc != null)
+                            ? equipmentFeature.desc : "";
         }).start();
+    }
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    private String getName(Object obj) {
+        if (obj instanceof CharacterClassEntity)    return ((CharacterClassEntity) obj).name;
+        if (obj instanceof CustomCharacterClassEntity) return ((CustomCharacterClassEntity) obj).name;
+        return "";
     }
 }

@@ -18,9 +18,9 @@ import com.fizzycoyote.qusetroll.core.models.open5e.character_class.CharacterCla
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -50,6 +50,7 @@ public class WizardViewModel extends ViewModel {
     public String classSpellcastingAbility = "";
     public List<String> classFixedLanguages = new ArrayList<>();
     public int classLanguageChoices = 0;
+    public String chosenSubclassKey = null;
 
     // Equipment
     public List<CharacterCreationDTO.InventoryItemDTO> backgroundEquipment = new ArrayList<>();
@@ -80,6 +81,9 @@ public class WizardViewModel extends ViewModel {
     public int classSkillChoices = 0;
     public List<String> classSkillOptions = new ArrayList<>();
     public List<String> chosenSkillProficiencies = new ArrayList<>();
+
+    // Saving throws (nowe pole)
+    public Set<String> selectedSavingThrows = new HashSet<>();
 
     // Traits
     public List<CharacterTraitEntity> characterTraits = new ArrayList<>();
@@ -153,7 +157,7 @@ public class WizardViewModel extends ViewModel {
                     this.backgroundKey = character.backgroundKey;
                     this.alignmentKey = character.alignmentKey;
 
-                    CharacterAttributesEntity attrs = db.attributesDao().getByCharacterId(characterId);
+                    CharacterAttributesEntity attrs = db.characterAttributesDao().getByCharacterId(characterId);
                     if (attrs != null) {
                         this.baseAttributes = Arrays.asList(
                                 attrs.strength, attrs.dexterity, attrs.constitution,

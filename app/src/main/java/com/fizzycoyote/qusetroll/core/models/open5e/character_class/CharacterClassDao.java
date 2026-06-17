@@ -50,4 +50,6 @@ public interface CharacterClassDao {
     @Query("SELECT * FROM classes WHERE class_key = :key")
     LiveData<CharacterClassEntity> getClassByKey(String key);
 
+    @Query("SELECT * FROM classes WHERE subclass_of_key = :parentKey")
+    List<CharacterClassEntity> getSubclassesByParentKeySync(String parentKey);
 }

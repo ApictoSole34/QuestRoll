@@ -23,8 +23,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 public class CharacterSheetViewModel extends ViewModel {
@@ -109,7 +107,7 @@ public class CharacterSheetViewModel extends ViewModel {
                 int totalLevel = engine.getTotalLevel(characterId);
                 proficiencyBonus.postValue(engine.getProficiencyBonus(totalLevel));
 
-                CharacterAttributesEntity attrs = pcDb.attributesDao().getByCharacterId(characterId);
+                CharacterAttributesEntity attrs = pcDb.characterAttributesDao().getByCharacterId(characterId);
                 if (attrs != null) {
                     Map<String, Integer> attrMap = new HashMap<>();
                     attrMap.put("STR", attrs.strength);

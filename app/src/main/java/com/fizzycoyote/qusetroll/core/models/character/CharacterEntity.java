@@ -30,8 +30,23 @@ public class CharacterEntity {
     @ColumnInfo(name = "game_system")
     public String gameSystem;
 
+    @ColumnInfo(name = "current_hp")
     public int currentHp;
+
+    @ColumnInfo(name = "current_gold")
+    public float currentGold = 0f;
+
+    @ColumnInfo(name = "max_hp")
+    public int maxHp;
+
+    @ColumnInfo(name = "temporary_hp")
     public int temporaryHp;
+
+    @ColumnInfo(name = "exhaustion_level", defaultValue = "0")
+    public int exhaustionLevel = 0;
+
+    @ColumnInfo(name = "has_inspiration", defaultValue = "0")
+    public boolean hasInspiration = false;
 
     public String imagePath;
     public String thumbnailPath;

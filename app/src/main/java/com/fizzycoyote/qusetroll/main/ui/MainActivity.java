@@ -6,12 +6,13 @@ import android.view.View;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
+import androidx.compose.ui.platform.ComposeView;
 
 import com.fizzycoyote.qusetroll.R;
 import com.fizzycoyote.qusetroll.feature_ability.ui.AbilityListActivity;
 import com.fizzycoyote.qusetroll.feature_alignment.ui.AlignmentListActivity;
 import com.fizzycoyote.qusetroll.feature_background.ui.BackgroundListActivity;
+import com.fizzycoyote.qusetroll.feature_campaign.ui.CampaignListActivity;
 import com.fizzycoyote.qusetroll.feature_character.ui.list.CharacterListActivity;
 import com.fizzycoyote.qusetroll.feature_class.ui.ClassListActivity;
 import com.fizzycoyote.qusetroll.feature_condition.ui.ConditionListActivity;
@@ -36,13 +37,19 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         setContentView(R.layout.activity_main);
+
+        ComposeView composeView = findViewById(R.id.composeBackground);
+        BackgroundSetup.applyBackground(composeView);
 
         findViewById(R.id.btnManageData).setOnClickListener(v -> showDataManagementDialog());
     }
 
     // ── NAVIGATION
+
+    public void openCampaignListActivity(View view) {
+        startActivity(new Intent(this, CampaignListActivity.class));
+    }
 
     public void openCharacterListActivity(View view) {
         startActivity(new Intent(this, CharacterListActivity.class));

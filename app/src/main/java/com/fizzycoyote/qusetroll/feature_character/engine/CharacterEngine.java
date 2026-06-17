@@ -42,12 +42,12 @@ public class CharacterEngine {
     }
 
     public int getInitiative(long characterId) {
-        CharacterAttributesEntity attrs = pcDb.attributesDao().getByCharacterId(characterId);
+        CharacterAttributesEntity attrs = pcDb.characterAttributesDao().getByCharacterId(characterId);
         return (attrs != null) ? attrs.dexterityMod : 0;
     }
 
     public int getArmorClass(long characterId) {
-        CharacterAttributesEntity attrs = pcDb.attributesDao().getByCharacterId(characterId);
+        CharacterAttributesEntity attrs = pcDb.characterAttributesDao().getByCharacterId(characterId);
         int dexMod = (attrs != null) ? attrs.dexterityMod : 0;
         int baseAc = 10 + dexMod;
         List<InventoryItemEntity> inventory = pcDb.inventoryItemDao().getByCharacterId(characterId);
@@ -63,7 +63,7 @@ public class CharacterEngine {
         CharacterEntity character = pcDb.characterDao().getCharacterSync(characterId);
         if (character == null) return 0;
         List<CharacterClassAssignmentEntity> assignments = pcDb.classAssignmentDao().getByCharacterId(characterId);
-        CharacterAttributesEntity attrs = pcDb.attributesDao().getByCharacterId(characterId);
+        CharacterAttributesEntity attrs = pcDb.characterAttributesDao().getByCharacterId(characterId);
         int conMod = (attrs != null) ? attrs.constitutionMod : 0;
         int totalHp = 0;
         for (CharacterClassAssignmentEntity ca : assignments) {
@@ -111,7 +111,7 @@ public class CharacterEngine {
 
     public Map<String, Integer> getSkillBonuses(long characterId) {
         Map<String, Integer> bonuses = new HashMap<>();
-        CharacterAttributesEntity attrs = pcDb.attributesDao().getByCharacterId(characterId);
+        CharacterAttributesEntity attrs = pcDb.characterAttributesDao().getByCharacterId(characterId);
         if (attrs == null) return bonuses;
 
         List<SkillEntity> allSkills = open5eDb.skillDao().getAllSync();

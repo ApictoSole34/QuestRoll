@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_step_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/rg_asi_mode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginBottom="12dp">
+
+        <RadioButton
+            android:id="@+id/rb_one_stat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+2 to one stat" />
+
+        <RadioButton
+            android:id="@+id/rb_two_stats"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+1 to two stats"
+            android:layout_marginStart="16dp" />
+    </RadioGroup>
+
+    <LinearLayout
+        android:id="@+id/attr_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" />
+
+    <Button
+        android:id="@+id/btn_confirm_asi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        android:text="Confirm" />
+
+</LinearLayout>

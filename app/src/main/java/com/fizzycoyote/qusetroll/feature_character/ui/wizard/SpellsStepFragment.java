@@ -95,7 +95,8 @@ public class SpellsStepFragment extends Fragment {
             List<SpellEntity> firstLevelSpells = new ArrayList<>();
 
             for (SpellEntity spell : allSpells) {
-                if (spell.classes != null && spell.classes.contains(className)) {
+                // Case-insensitive sprawdzenie nazwy klasy
+                if (spell.classes != null && spell.classes.stream().anyMatch(c -> c.equalsIgnoreCase(className))) {
                     if (spell.level == 0) {
                         cantrips.add(spell);
                     } else if (spell.level == 1) {
@@ -108,6 +109,15 @@ public class SpellsStepFragment extends Fragment {
                 container.removeAllViews();
                 cantripCheckboxes.clear();
                 spellCheckboxes.clear();
+
+                // Jeśli klasa nie ma żadnych zaklęć, pokaż info i pozwól przejść dalej
+                if (cantrips.isEmpty() && firstLevelSpells.isEmpty()) {
+                    TextView info = new TextView(getContext());
+                    info.setText("No spells available for this class (or data missing).");
+                    info.setPadding(0, 16, 0, 0);
+                    container.addView(info);
+                    return;
+                }
 
                 if (maxCantrips > 0 && !cantrips.isEmpty()) {
                     TextView header = new TextView(getContext());
@@ -154,10 +164,7 @@ public class SpellsStepFragment extends Fragment {
                 }
 
                 if (cantrips.isEmpty() && firstLevelSpells.isEmpty()) {
-                    TextView info = new TextView(getContext());
-                    info.setText("No spells available for this class (or data missing).");
-                    info.setPadding(0, 16, 0, 0);
-                    container.addView(info);
+                    // Już obsłużone wyżej
                 } else if (maxCantrips == 0 && maxSpells == 0) {
                     TextView info = new TextView(getContext());
                     info.setText("This class does not cast spells at 1st level.");

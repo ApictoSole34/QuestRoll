@@ -54,6 +54,9 @@ public interface ItemDao {
     @Query("SELECT DISTINCT document_name FROM items WHERE document_name IS NOT NULL ORDER BY document_name ASC")
     List<String> getDistinctSources();
 
+    @Query("SELECT * FROM items WHERE key = :key LIMIT 1")
+    ItemEntity getByKeySyncLimit(String key);
+
     @Query("SELECT DISTINCT category_name FROM items ORDER BY category_name ASC")
     List<String> getDistinctCategories();
 }

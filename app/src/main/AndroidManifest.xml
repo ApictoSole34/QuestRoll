@@ -51,6 +51,9 @@
         <activity
             android:name=".feature_character.ui.wizard.CharacterWizardActivity"
             android:parentActivityName=".main.ui.MainActivity" />
+        <activity android:name=".feature_campaign.ui.CampaignListActivity"/>
+        <activity android:name=".feature_campaign.ui.CampaignDetailActivity"/>
+        <activity android:name=".feature_campaign.ui.CreateEditCampaignActivity"/>
         <activity android:name=".feature_character.ui.list.CharacterListActivity"/>
         <activity android:name=".feature_item.item_set.ui.CustomItemSetCreateActivity"/>
         <activity android:name=".feature_item.item_set.ui.CustomItemSetDetailActivity"/>
@@ -127,7 +130,6 @@
         <activity android:name=".feature_spell.ui.CustomSpellCreateActivity"/>
         <activity android:name=".feature_spell.ui.CustomSpellDetailActivity"/>
         <activity android:name=".feature_dice.ui.RollDiceActivity" />
-        <activity android:name=".feature_character.ui.list.CharacterListActivity"/>
         <activity android:name=".feature_language.ui.language_list.LanguageListActivity"/>
         <activity android:name=".feature_language.ui.language_details.LanguageDetailActivity"/>
         <activity android:name=".feature_class.ui.ClassListActivity"/>

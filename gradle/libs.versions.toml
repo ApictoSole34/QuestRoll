@@ -5,6 +5,7 @@ androidImageCropperVersion = "2.8.0"
 androidxAppcompat = "1.6.1"
 androidxJunit = "1.1.3"
 appcompatVersion = "1.4.0"
+cardview = "1.0.0"
 compiler = "4.15.1"
 constraintlayout = "2.2.0"
 converterGson = "2.9.0"
@@ -15,7 +16,7 @@ espressoCoreVersion = "3.4.0"
 glide = "4.15.0"
 glideVersion = "4.15.1"
 gson = "2.14.0"
-kotlin = "1.9.0"
+kotlin = "2.1.21"
 coreKtx = "1.15.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
@@ -24,6 +25,7 @@ lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.9.3"
 composeBom = "2024.04.01"
 appcompat = "1.7.0"
+materialVersion = "1.9.0"
 mockitoAndroid = "5.11.0"
 mockitoCore = "3.12.4"
 mockitoCoreVersion = "5.11.0"
@@ -45,6 +47,7 @@ navigationUiKtx = "2.9.7"
 android-image-cropper = { module = "com.github.CanHub:Android-Image-Cropper", version.ref = "androidImageCropper" }
 androidx-appcompat-v140 = { module = "androidx.appcompat:appcompat", version.ref = "appcompatVersion" }
 androidx-appcompat-v161 = { module = "androidx.appcompat:appcompat", version.ref = "androidxAppcompat" }
+androidx-cardview = { module = "androidx.cardview:cardview", version.ref = "cardview" }
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 #noinspection SimilarGradleDependency
@@ -87,6 +90,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 #noinspection SimilarGradleDependency
 androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 androidx-gridlayout = { group = "androidx.gridlayout", name = "gridlayout", version.ref = "gridlayout" }
+material-v190 = { module = "com.google.android.material:material", version.ref = "materialVersion" }
 mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockitoAndroid" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 mockito-core-v5110 = { module = "org.mockito:mockito-core", version.ref = "mockitoCoreVersion" }
@@ -99,6 +103,6 @@ androidx-navigation-fragment-ktx = { group = "androidx.navigation", name = "navi
 androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "navigationUiKtx" }
 
 [plugins]
-android-application = { id = "com.android.application", version.ref = "agp" }
+android-application = { id = "com.android.application", version = "8.10.1" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

@@ -23,4 +23,16 @@ public class CharacterWithRelations {
 
     @Relation(parentColumn = "id", entityColumn = "character_id", entity = CharacterSpellEntity.class)
     public List<CharacterSpellEntity> spells;
+
+    @Relation(parentColumn = "id", entityColumn = "character_id", entity = CharacterLanguageEntity.class)
+    public List<CharacterLanguageEntity> languages;
+
+    @Relation(parentColumn = "id", entityColumn = "character_id", entity = CharacterSkillProficiencyEntity.class)
+    public List<CharacterSkillProficiencyEntity> skillProficiencies;
+
+    @Relation(parentColumn = "id", entityColumn = "character_id", entity = CharacterSavingThrowEntity.class)
+    public List<CharacterSavingThrowEntity> savingThrows;
+
+    @Relation(parentColumn = "id", entityColumn = "characterId", entity = CharacterSubclassAssignmentEntity.class)
+    public List<CharacterSubclassAssignmentEntity> subclassAssignments;
 }
