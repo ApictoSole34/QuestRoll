@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.feature_ability.adapter.AbilityAdapter;
@@ -18,7 +19,7 @@ import com.fizzycoyote.qusetroll.feature_ability.view_model.AbilityListViewModel
 
 import java.util.concurrent.Executor;
 
-public class AbilityListActivity extends AppCompatActivity {
+public class AbilityListActivity extends BaseActivity {
 
     private AbilityListViewModel viewModel;
     private AbilityAdapter adapter;

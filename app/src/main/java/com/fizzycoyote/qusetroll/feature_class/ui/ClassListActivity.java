@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.CharacterClassEntity;
@@ -20,7 +21,7 @@ import com.fizzycoyote.qusetroll.feature_class.view_model.ClassListViewModelFact
 
 import java.util.concurrent.Executors;
 
-public class ClassListActivity extends AppCompatActivity {
+public class ClassListActivity extends BaseActivity {
     private RecyclerView recyclerView;
     private ClassAdapter adapter;
     private ClassListViewModel viewModel;

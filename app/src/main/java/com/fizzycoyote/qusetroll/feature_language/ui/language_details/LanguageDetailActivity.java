@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.feature_document.fragment.DocumentDetailDialogFragment;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
@@ -28,7 +29,7 @@ import java.util.Objects;
 import java.util.concurrent.Executors;
 
 
-public class LanguageDetailActivity extends AppCompatActivity {
+public class LanguageDetailActivity extends BaseActivity {
 
     public static final int REQUEST_EDIT = 1001;
     public static final String EXTRA_LANGUAGE = "combinedLanguage";

@@ -1,108 +1,123 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <ImageView
+        android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"/>
 
-    <FrameLayout
-        android:id="@+id/fragment_container"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <!-- Custom bottom navigation bar -->
     <LinearLayout
-        android:id="@+id/bottom_nav_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="?attr/colorSurface"
-        android:elevation="8dp"
-        android:paddingTop="4dp"
-        android:paddingBottom="8dp"
-        android:gravity="center">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@android:color/transparent">
 
-        <Button
-            android:id="@+id/nav_sheet"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Character"
-            android:drawableTop="@android:drawable/ic_menu_edit"
-            android:gravity="center"
-            android:padding="8dp"
-            android:textSize="12sp" />
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
-        <Button
-            android:id="@+id/nav_spells"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1"
-            android:text="Spells"
-            android:drawableTop="@android:drawable/ic_menu_agenda"
-            android:gravity="center"
-            android:padding="8dp"
-            android:textSize="12sp" />
+            android:background="@android:color/transparent" />
 
-        <Button
-            android:id="@+id/nav_equipment"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/bottom_nav_bar"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Equipment"
-            android:drawableTop="@android:drawable/ic_menu_manage"
+            android:orientation="horizontal"
+            android:background="?attr/colorSurface"
+            android:elevation="8dp"
             android:gravity="center"
-            android:padding="8dp"
-            android:textSize="12sp" />
+            android:paddingTop="4dp"
+            android:paddingBottom="8dp">
 
-        <Button
-            android:id="@+id/nav_traits"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Traits"
-            android:drawableTop="@android:drawable/ic_menu_info_details"
-            android:gravity="center"
-            android:padding="8dp"
-            android:textSize="12sp" />
+            <Button
+                android:id="@+id/nav_sheet"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@android:drawable/ic_menu_edit"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="Character"
+                android:textSize="12sp" />
 
-        <Button
-            android:id="@+id/nav_notes"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Notes"
-            android:drawableTop="@android:drawable/ic_menu_edit"
-            android:gravity="center"
-            android:padding="8dp"
-            android:textSize="12sp" />
+            <Button
+                android:id="@+id/nav_spells"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@android:drawable/ic_menu_agenda"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="Spells"
+                android:textSize="12sp" />
 
-        <Button
-            android:id="@+id/nav_dice"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Dice"
-            android:drawableTop="@android:drawable/ic_menu_my_calendar"
-            android:gravity="center"
-            android:padding="8dp"
-            android:textSize="12sp" />
+            <Button
+                android:id="@+id/nav_equipment"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@android:drawable/ic_menu_manage"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="Equipment"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/nav_traits"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@android:drawable/ic_menu_info_details"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="Traits"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/nav_notes"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@android:drawable/ic_menu_edit"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="Notes"
+                android:textSize="12sp" />
+
+            <Button
+                android:id="@+id/nav_dice"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@android:drawable/ic_menu_my_calendar"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="Dice"
+                android:textSize="12sp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+</FrameLayout>

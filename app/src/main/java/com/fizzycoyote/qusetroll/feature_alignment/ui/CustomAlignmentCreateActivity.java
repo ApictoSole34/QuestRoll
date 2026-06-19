@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_alignment.CustomAlignmentEntity;
 import com.fizzycoyote.qusetroll.feature_alignment.view_model.CustomAlignmentCreateViewModel;
@@ -15,7 +16,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.concurrent.Executors;
 
-public class CustomAlignmentCreateActivity extends AppCompatActivity {
+public class CustomAlignmentCreateActivity extends BaseActivity {
 
     public static final String EXTRA_EDIT_ID = "edit_alignment_id";
 

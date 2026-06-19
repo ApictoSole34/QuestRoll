@@ -4,10 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+<ImageView
+    android:id="@+id/backgroundImage"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scaleType="centerCrop" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@android:color/transparent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -15,6 +23,7 @@
             android:orientation="vertical"
             android:padding="8dp">
 
+            <!-- Search + Filter -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -26,6 +35,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:iconifiedByDefault="false"
                     android:queryHint="Search items..." />
 
                 <ImageButton
@@ -35,9 +46,11 @@
                     android:src="@android:drawable/ic_menu_sort_by_size"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:padding="8dp"
+                    android:tint="?attr/colorOnSurface"
                     android:contentDescription="Filter" />
             </LinearLayout>
 
+            <!-- Category Spinner -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -49,6 +62,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Category:"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:textSize="14sp"
                     android:layout_marginEnd="8dp" />
 
@@ -65,10 +79,12 @@
                     android:src="@android:drawable/ic_menu_edit"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:padding="8dp"
+                    android:tint="?attr/colorOnSurface"
                     android:contentDescription="Manage Categories" />
             </LinearLayout>
         </LinearLayout>
 
+        <!-- Source Chips -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -76,6 +92,7 @@
             android:paddingStart="8dp"
             android:paddingEnd="8dp"
             android:paddingBottom="4dp">
+
             <com.google.android.material.chip.ChipGroup
                 android:id="@+id/chip_group_sources"
                 android:layout_width="wrap_content"
@@ -84,6 +101,7 @@
                 app:selectionRequired="false" />
         </HorizontalScrollView>
 
+        <!-- Active Filters -->
         <TextView
             android:id="@+id/tv_active_filters"
             android:layout_width="match_parent"
@@ -95,6 +113,7 @@
             android:textColor="?attr/colorPrimary"
             android:visibility="gone" />
 
+        <!-- Item Count -->
         <TextView
             android:id="@+id/tv_item_count"
             android:layout_width="match_parent"
@@ -103,12 +122,13 @@
             android:paddingEnd="16dp"
             android:paddingBottom="4dp"
             android:textSize="12sp"
-            android:textColor="@android:color/darker_gray" />
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_items"
             android:layout_width="match_parent"
@@ -117,8 +137,10 @@
 
     </LinearLayout>
 
+    <!-- FAB -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabCreateItem"
+        style="@style/Widget.QuestRoll.FAB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"

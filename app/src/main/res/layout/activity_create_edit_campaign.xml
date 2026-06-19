@@ -1,87 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"/>
 
-        <com.google.android.material.textfield.TextInputLayout
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        android:background="@android:color/transparent">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Campaign Name">
-            <EditText
-                android:id="@+id/et_name"
+            android:orientation="vertical"
+            android:background="@android:color/transparent">
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textCapWords" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="Campaign Name">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Description (optional)">
-            <EditText
-                android:id="@+id/et_description"
+                <EditText
+                    android:id="@+id/et_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapWords" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:minLines="3" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="Description (optional)">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Game System">
-            <Spinner
-                android:id="@+id/spinner_game_system"
+                <EditText
+                    android:id="@+id/et_description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:minLines="3" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="wrap_content"
+                android:hint="Game System">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Characters"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp" />
+                <Spinner
+                    android:id="@+id/spinner_game_system"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_selected_characters"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            android:layout_marginTop="8dp" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
-            android:id="@+id/btn_add_character"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Character"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_marginTop="8dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Characters"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tv_selected_character"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="No character selected" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_selected_characters"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@android:color/transparent"
+                android:nestedScrollingEnabled="false" />
 
-        <Button
-            android:id="@+id/btn_select_character"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Select Character" />
+            <Button
+                android:id="@+id/btn_add_character"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Add Character" />
 
-        <Button
-            android:id="@+id/btn_save"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Save Campaign"
-            android:layout_marginTop="24dp" />
+            <TextView
+                android:id="@+id/tv_selected_character"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No character selected" />
 
-    </LinearLayout>
-</ScrollView>
+            <Button
+                android:id="@+id/btn_select_character"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Select Character" />
+
+            <Button
+                android:id="@+id/btn_save"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:text="Save Campaign" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</FrameLayout>

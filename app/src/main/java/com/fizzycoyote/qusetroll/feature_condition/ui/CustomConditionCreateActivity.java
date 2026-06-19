@@ -5,6 +5,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_condition.CustomConditionEntity;
 import com.fizzycoyote.qusetroll.feature_condition.view_model.CustomConditionCreateViewModel;
@@ -12,7 +13,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import java.util.concurrent.Executors;
 
-public class CustomConditionCreateActivity extends AppCompatActivity {
+public class CustomConditionCreateActivity extends BaseActivity {
     public static final String EXTRA_EDIT_ID = "edit_condition_id";
     private CustomConditionCreateViewModel viewModel;
     private TextInputEditText etName, etDesc;

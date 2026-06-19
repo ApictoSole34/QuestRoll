@@ -1,43 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="?attr/colorSurface">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"/>
 
-        <TextView
-            android:id="@+id/tv_name"
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="26sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="12dp" />
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="@android:color/transparent">
 
-        <TextView
-            android:id="@+id/tv_desc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="15sp"
-            android:layout_marginBottom="12dp" />
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:textSize="26sp"
+                android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tv_source"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="13sp"
-            android:textColor="@android:color/darker_gray" />
+            <TextView
+                android:id="@+id/tv_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:textSize="15sp" />
 
-        <Button
-            android:id="@+id/btnManage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Manage"
-            android:visibility="gone" />
+            <TextView
+                android:id="@+id/tv_source"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="13sp" />
 
-    </LinearLayout>
-</ScrollView>
+            <Button
+                android:id="@+id/btnManage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Manage"
+                android:visibility="gone" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</FrameLayout>

@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.feature_dice.adapter.DiceAdapter;
 import com.fizzycoyote.qusetroll.feature_dice.model.Dice;
 
@@ -30,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class RollDiceActivity extends AppCompatActivity implements DialogManageDice.DiceManageListener, SensorEventListener {
+public class RollDiceActivity extends BaseActivity implements DialogManageDice.DiceManageListener, SensorEventListener {
 
     @SuppressLint("UseSwitchCompatOrMaterialCode")
     private Switch showResultSwitch;

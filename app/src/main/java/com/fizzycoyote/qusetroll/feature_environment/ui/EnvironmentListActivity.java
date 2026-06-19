@@ -1,24 +1,22 @@
 package com.fizzycoyote.qusetroll.feature_environment.ui;
 
-import static androidx.core.content.ContextCompat.startActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.SearchView;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.feature_environment.adapter.EnvironmentAdapter;
 import com.fizzycoyote.qusetroll.feature_environment.view_model.EnvironmentListViewModel;
 
-public class EnvironmentListActivity extends AppCompatActivity {
+public class EnvironmentListActivity extends BaseActivity {
     private EnvironmentListViewModel viewModel;
     private EnvironmentAdapter adapter;
     private RecyclerView rv;

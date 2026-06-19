@@ -1,257 +1,424 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="?attr/colorSurface">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+
+    <ImageView
+        android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"/>
 
-        <!-- Header -->
-        <TextView
-            android:id="@+id/tv_creature_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="26sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:fillViewport="true">
 
-        <TextView
-            android:id="@+id/tv_size_type_alignment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textStyle="italic"
-            android:textColor="@android:color/darker_gray"
-            android:layout_marginBottom="4dp"/>
-
-        <Button
-            android:id="@+id/btnManage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Manage"
-            android:visibility="gone" />
-
-        <TextView
-            android:id="@+id/tv_cr"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="?attr/colorPrimary"
-            android:layout_marginBottom="12dp"/>
-
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"/>
-
-        <!-- Combat stats -->
-        <TextView android:id="@+id/tv_ac"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:textSize="14sp" android:layout_marginBottom="4dp"/>
-        <TextView android:id="@+id/tv_hp"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:textSize="14sp" android:layout_marginBottom="4dp"/>
-        <TextView android:id="@+id/tv_speed"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:textSize="14sp" android:layout_marginBottom="12dp"/>
-
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"/>
-
-        <!-- Ability scores grid -->
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="12dp">
-
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="STR" android:textStyle="bold" android:textSize="12sp"/>
-                <TextView android:id="@+id/tv_str" android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:textSize="14sp"/>
-                <TextView android:id="@+id/tv_str_mod" android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:textSize="13sp"
-                    android:textColor="@android:color/darker_gray"/>
-            </LinearLayout>
-
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="DEX" android:textStyle="bold" android:textSize="12sp"/>
-                <TextView android:id="@+id/tv_dex" android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:textSize="14sp"/>
-                <TextView android:id="@+id/tv_dex_mod" android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:textSize="13sp"
-                    android:textColor="@android:color/darker_gray"/>
-            </LinearLayout>
-
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="CON" android:textStyle="bold" android:textSize="12sp"/>
-                <TextView android:id="@+id/tv_con" android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:textSize="14sp"/>
-                <TextView android:id="@+id/tv_con_mod" android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:textSize="13sp"
-                    android:textColor="@android:color/darker_gray"/>
-            </LinearLayout>
-
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="INT" android:textStyle="bold" android:textSize="12sp"/>
-                <TextView android:id="@+id/tv_int" android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:textSize="14sp"/>
-                <TextView android:id="@+id/tv_int_mod" android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:textSize="13sp"
-                    android:textColor="@android:color/darker_gray"/>
-            </LinearLayout>
-
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="WIS" android:textStyle="bold" android:textSize="12sp"/>
-                <TextView android:id="@+id/tv_wis" android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:textSize="14sp"/>
-                <TextView android:id="@+id/tv_wis_mod" android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:textSize="13sp"
-                    android:textColor="@android:color/darker_gray"/>
-            </LinearLayout>
-
-            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
-                android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="CHA" android:textStyle="bold" android:textSize="12sp"/>
-                <TextView android:id="@+id/tv_cha" android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:textSize="14sp"/>
-                <TextView android:id="@+id/tv_cha_mod" android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" android:textSize="13sp"
-                    android:textColor="@android:color/darker_gray"/>
-            </LinearLayout>
-
-        </LinearLayout>
-
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"/>
-
-        <!-- Saving throws, skills, senses etc. -->
-        <TextView android:id="@+id/tv_saving_throws"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:textSize="14sp" android:layout_marginBottom="4dp"/>
-        <TextView android:id="@+id/tv_skills"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:textSize="14sp" android:layout_marginBottom="4dp"/>
-        <TextView android:id="@+id/tv_damage_immunities"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:textSize="14sp" android:layout_marginBottom="4dp"/>
-        <TextView android:id="@+id/tv_damage_resistances"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:textSize="14sp" android:layout_marginBottom="4dp"/>
-        <TextView android:id="@+id/tv_damage_vulnerabilities"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:textSize="14sp" android:layout_marginBottom="4dp"/>
-        <TextView android:id="@+id/tv_condition_immunities"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:textSize="14sp" android:layout_marginBottom="4dp"/>
-        <TextView android:id="@+id/tv_senses"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:textSize="14sp" android:layout_marginBottom="4dp"/>
-        <TextView android:id="@+id/tv_languages"
-            android:layout_width="match_parent" android:layout_height="wrap_content"
-            android:textSize="14sp" android:layout_marginBottom="12dp"/>
-
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"/>
-
-        <!-- Traits -->
-        <LinearLayout
-            android:id="@+id/traits_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginBottom="12dp">
+            android:padding="16dp">
 
-            <LinearLayout
-                android:id="@+id/traits_container"
+            <!-- Header -->
+            <TextView
+                android:id="@+id/tv_creature_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"/>
-
-        </LinearLayout>
-
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"/>
-
-        <!-- Actions -->
-        <LinearLayout
-            android:id="@+id/actions_section"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="12dp">
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="4dp" />
 
             <TextView
+                android:id="@+id/tv_size_type_alignment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Actions"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp"/>
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="14sp"
+                android:textStyle="italic"
+                android:layout_marginBottom="4dp" />
 
-            <LinearLayout
-                android:id="@+id/actions_container"
-                android:layout_width="match_parent"
+            <Button
+                android:id="@+id/btnManage"
+                style="@style/QuestRollButton"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"/>
-
-        </LinearLayout>
-
-        <!-- Legendary Actions -->
-        <LinearLayout
-            android:id="@+id/legendary_actions_section"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="12dp">
+                android:text="Manage"
+                android:visibility="gone" />
 
             <TextView
+                android:id="@+id/tv_cr"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Legendary Actions"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp"/>
+                android:textColor="?attr/colorPrimary"
+                android:textSize="14sp"
+                android:layout_marginBottom="12dp" />
 
-            <LinearLayout
-                android:id="@+id/legendary_actions_container"
+            <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"/>
+                android:layout_marginBottom="12dp" />
+
+            <!-- Combat stats -->
+            <TextView
+                android:id="@+id/tv_ac"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/tv_hp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/tv_speed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="14sp"
+                android:layout_marginBottom="12dp" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Ability scores grid -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <!-- STR -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="STR"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textStyle="bold"
+                        android:textSize="12sp" />
+                    <TextView
+                        android:id="@+id/tv_str"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/tv_str_mod"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <!-- DEX -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="DEX"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textStyle="bold"
+                        android:textSize="12sp" />
+                    <TextView
+                        android:id="@+id/tv_dex"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/tv_dex_mod"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <!-- CON -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CON"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textStyle="bold"
+                        android:textSize="12sp" />
+                    <TextView
+                        android:id="@+id/tv_con"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/tv_con_mod"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <!-- INT -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="INT"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textStyle="bold"
+                        android:textSize="12sp" />
+                    <TextView
+                        android:id="@+id/tv_int"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/tv_int_mod"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <!-- WIS -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="WIS"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textStyle="bold"
+                        android:textSize="12sp" />
+                    <TextView
+                        android:id="@+id/tv_wis"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/tv_wis_mod"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <!-- CHA -->
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="CHA"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textStyle="bold"
+                        android:textSize="12sp" />
+                    <TextView
+                        android:id="@+id/tv_cha"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnSurface"
+                        android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/tv_cha_mod"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnSurfaceVariant"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Saving throws, skills, senses etc. -->
+            <TextView
+                android:id="@+id/tv_saving_throws"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+            <TextView
+                android:id="@+id/tv_skills"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+            <TextView
+                android:id="@+id/tv_damage_immunities"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+            <TextView
+                android:id="@+id/tv_damage_resistances"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+            <TextView
+                android:id="@+id/tv_damage_vulnerabilities"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+            <TextView
+                android:id="@+id/tv_condition_immunities"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+            <TextView
+                android:id="@+id/tv_senses"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+            <TextView
+                android:id="@+id/tv_languages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="14sp"
+                android:layout_marginBottom="12dp" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Traits -->
+            <LinearLayout
+                android:id="@+id/traits_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="12dp">
+
+                <LinearLayout
+                    android:id="@+id/traits_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Actions -->
+            <LinearLayout
+                android:id="@+id/actions_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Actions"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <LinearLayout
+                    android:id="@+id/actions_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+
+            <!-- Legendary Actions -->
+            <LinearLayout
+                android:id="@+id/legendary_actions_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Legendary Actions"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <LinearLayout
+                    android:id="@+id/legendary_actions_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+
+            </LinearLayout>
+
+            <!-- Source -->
+            <TextView
+                android:id="@+id/tv_source"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp" />
 
         </LinearLayout>
+    </ScrollView>
 
-        <!-- Source -->
-        <TextView
-            android:id="@+id/tv_source"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:textColor="@android:color/darker_gray"
-            android:layout_marginTop="8dp"/>
-
-    </LinearLayout>
-</ScrollView>
+</FrameLayout>

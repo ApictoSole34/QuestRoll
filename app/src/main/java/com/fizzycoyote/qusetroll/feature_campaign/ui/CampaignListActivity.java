@@ -10,11 +10,12 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.feature_campaign.adapter.CampaignAdapter;
 import com.fizzycoyote.qusetroll.feature_campaign.view_model.CampaignListViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class CampaignListActivity extends AppCompatActivity {
+public class CampaignListActivity extends BaseActivity {
 
     private CampaignListViewModel viewModel;
     private CampaignAdapter adapter;

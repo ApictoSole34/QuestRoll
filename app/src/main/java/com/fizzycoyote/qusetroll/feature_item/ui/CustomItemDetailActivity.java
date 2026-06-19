@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_item.CustomItemDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_item.CustomItemEntity;
@@ -23,7 +24,7 @@ import com.google.gson.Gson;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
 
-public class CustomItemDetailActivity extends AppCompatActivity {
+public class CustomItemDetailActivity extends BaseActivity {
 
     public static final String EXTRA_ID = "CUSTOM_ITEM_ID";
 

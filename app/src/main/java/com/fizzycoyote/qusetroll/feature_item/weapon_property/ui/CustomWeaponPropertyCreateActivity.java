@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_weapon_property.CustomWeaponPropertyEntity;
 import com.fizzycoyote.qusetroll.feature_item.weapon_property.view_model.CustomWeaponPropertyCreateViewModel;
@@ -15,7 +16,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.concurrent.Executors;
 
-public class CustomWeaponPropertyCreateActivity extends AppCompatActivity {
+public class CustomWeaponPropertyCreateActivity extends BaseActivity {
 
     public static final String EXTRA_EDIT_ID = "edit_property_id";
 

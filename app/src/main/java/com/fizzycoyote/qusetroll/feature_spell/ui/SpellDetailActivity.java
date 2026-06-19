@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.feature_document.fragment.DocumentDetailDialogFragment;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.models.open5e.spell.SpellEntity;
@@ -23,7 +24,7 @@ import java.util.Map;
 import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
 
-public class SpellDetailActivity extends AppCompatActivity {
+public class SpellDetailActivity extends BaseActivity {
 
     private Markwon markwon;
 

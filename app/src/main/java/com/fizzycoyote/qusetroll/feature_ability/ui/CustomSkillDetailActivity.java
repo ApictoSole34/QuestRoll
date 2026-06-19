@@ -6,6 +6,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_ability.CustomSkillDao;
@@ -15,7 +16,7 @@ import java.util.concurrent.Executor;
 
 import io.noties.markwon.Markwon;
 
-public class CustomSkillDetailActivity extends AppCompatActivity {
+public class CustomSkillDetailActivity extends BaseActivity {
 
     private CustomSkillDao skillDao;
     private Executor executor;

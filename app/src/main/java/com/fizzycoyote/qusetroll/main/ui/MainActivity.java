@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.compose.ui.platform.ComposeView;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.feature_ability.ui.AbilityListActivity;
 import com.fizzycoyote.qusetroll.feature_alignment.ui.AlignmentListActivity;
 import com.fizzycoyote.qusetroll.feature_background.ui.BackgroundListActivity;
@@ -32,15 +33,12 @@ import com.fizzycoyote.qusetroll.feature_service.ui.ServiceListActivity;
 import com.fizzycoyote.qusetroll.feature_species.ui.SpeciesListActivity;
 import com.fizzycoyote.qusetroll.feature_spell.ui.SpellListActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        ComposeView composeView = findViewById(R.id.composeBackground);
-        BackgroundSetup.applyBackground(composeView);
 
         findViewById(R.id.btnManageData).setOnClickListener(v -> showDataManagementDialog());
     }

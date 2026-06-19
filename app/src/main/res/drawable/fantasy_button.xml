@@ -1,41 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- cień -->
-
-    <item
-        android:left="2dp"
-        android:top="3dp">
-
-        <shape>
-            <corners android:radius="18dp"/>
-
-            <solid
-                android:color="#22000000"/>
-        </shape>
-
-    </item>
-
-    <!-- karta -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#25D4AF37">
 
     <item>
 
-        <shape>
+        <shape android:shape="rectangle">
 
-            <corners android:radius="18dp"/>
-
-            <gradient
-                android:angle="270"
-                android:startColor="#182235"
-                android:centerColor="#121B2B"
-                android:endColor="#0D1420"/>
+            <solid
+                android:color="#1A000000" />
 
             <stroke
-                android:width="2dp"
-                android:color="#C9A227"/>
+                android:width="1dp"
+                android:color="#35D4AF37" />
+
+            <corners
+                android:radius="18dp" />
+
+            <padding
+                android:left="20dp"
+                android:top="12dp"
+                android:right="20dp"
+                android:bottom="12dp" />
 
         </shape>
 
     </item>
 
-</layer-list>
+</ripple>

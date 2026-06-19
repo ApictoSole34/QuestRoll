@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.feature_language.data.repository.LanguageRepository;
@@ -24,9 +25,7 @@ import com.fizzycoyote.qusetroll.feature_language.view_model.ViewModelFactory;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 
-
-
-public class LanguageListActivity extends AppCompatActivity {
+public class LanguageListActivity extends BaseActivity {
     private LanguageListAdapter adapter;
     private LanguageListViewModel viewModel;
     private boolean isFirstLoad = true;

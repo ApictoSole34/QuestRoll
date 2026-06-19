@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.character.CharacterCreationDTO;
 import com.fizzycoyote.qusetroll.core.models.character.CharacterTraitEntity;
@@ -25,7 +26,7 @@ import java.util.List;
 
 import io.noties.markwon.Markwon;
 
-public class CustomBackgroundDetailActivity extends AppCompatActivity {
+public class CustomBackgroundDetailActivity extends BaseActivity {
 
     public static final String EXTRA_ID = "CUSTOM_BACKGROUND_ID";
     private Markwon markwon;

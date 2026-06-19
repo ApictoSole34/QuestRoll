@@ -1,127 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+<ImageView
+    android:id="@+id/backgroundImage"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface">
+    android:scaleType="centerCrop" />
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:fillViewport="true">
 
-        <!-- Feature Name -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Feature Name"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_marginBottom="12dp">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etFeatureName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textCapWords"
-                android:maxLines="1"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Feature Type -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Feature Type"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
-            android:layout_marginBottom="12dp">
-            <AutoCompleteTextView
-                android:id="@+id/actvFeatureType"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:focusable="false"
-                android:inputType="none"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Description -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Description"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_marginBottom="16dp">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etFeatureDesc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:minLines="4"
-                android:maxLines="10"
-                android:gravity="top"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Gained At Levels -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
-            <TextView
-                android:layout_width="0dp"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Feature Name -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Gained at Levels"
-                android:textAppearance="?attr/textAppearanceTitleSmall"/>
+                android:hint="Feature Name"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginBottom="12dp"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:hintTextColor="?attr/colorOnSurfaceVariant"
+                app:boxStrokeColor="?attr/colorOutline">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etFeatureName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurface"
+                    android:inputType="textCapWords"
+                    android:maxLines="1"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Feature Type -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Feature Type"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                android:layout_marginBottom="12dp"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:hintTextColor="?attr/colorOnSurfaceVariant"
+                app:boxStrokeColor="?attr/colorOutline">
+                <AutoCompleteTextView
+                    android:id="@+id/actvFeatureType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurface"
+                    android:focusable="false"
+                    android:inputType="none"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Description -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Description"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginBottom="16dp"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:hintTextColor="?attr/colorOnSurfaceVariant"
+                app:boxStrokeColor="?attr/colorOutline">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etFeatureDesc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurface"
+                    android:inputType="textMultiLine"
+                    android:minLines="4"
+                    android:maxLines="10"
+                    android:gravity="top"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Gained At Levels -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Gained at Levels"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textAppearance="?attr/textAppearanceTitleSmall"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAddLevel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add Level"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:textColor="?attr/colorPrimary"/>
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvLevels"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginBottom="16dp"/>
+
+            <!-- Table Data -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginBottom="8dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Class Table Data"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textAppearance="?attr/textAppearanceTitleSmall"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAddTableRow"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Add Row"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:textColor="?attr/colorPrimary"/>
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvTableData"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginBottom="24dp"/>
+
+            <!-- Save Button -->
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnAddLevel"
-                android:layout_width="wrap_content"
+                android:id="@+id/btnSaveFeature"
+                style="@style/QuestRollButton"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Add Level"
-                style="@style/Widget.MaterialComponents.Button.TextButton"/>
+                android:text="Save Feature"
+                android:padding="14dp"
+                android:layout_marginBottom="16dp"/>
+
         </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvLevels"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            android:layout_marginBottom="16dp"/>
-
-        <!-- Table Data -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="8dp">
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Class Table Data"
-                android:textAppearance="?attr/textAppearanceTitleSmall"/>
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnAddTableRow"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Add Row"
-                style="@style/Widget.MaterialComponents.Button.TextButton"/>
-        </LinearLayout>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvTableData"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            android:layout_marginBottom="24dp"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSaveFeature"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Save Feature"
-            android:padding="14dp"
-            android:layout_marginBottom="16dp"/>
-
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+</FrameLayout>

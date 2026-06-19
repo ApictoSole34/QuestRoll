@@ -11,12 +11,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.feature_alignment.adapter.AlignmentAdapter;
 import com.fizzycoyote.qusetroll.feature_alignment.view_model.AlignmentListViewModel;
 
-public class AlignmentListActivity extends AppCompatActivity {
+public class AlignmentListActivity extends BaseActivity {
 
     private AlignmentListViewModel viewModel;
     private AlignmentAdapter adapter;

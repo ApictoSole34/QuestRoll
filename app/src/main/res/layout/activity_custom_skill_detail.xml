@@ -1,67 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+<ImageView
+    android:id="@+id/backgroundImage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface">
+    android:scaleType="centerCrop" />
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:fillViewport="true">
 
-        <!-- Przycisk Manage (trzy kropki) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="end"
-            android:layout_marginBottom="8dp">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <ImageButton
-                android:id="@+id/btn_manage"
-                android:layout_width="wrap_content"
+            <!-- Przycisk Manage (trzy kropki) -->
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@android:drawable/ic_menu_more"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="12dp"
-                android:contentDescription="Manage"/>
+                android:orientation="horizontal"
+                android:gravity="end"
+                android:layout_marginBottom="8dp">
+
+                <ImageButton
+                    android:id="@+id/btn_manage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/ic_menu_more"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="12dp"
+                    android:contentDescription="Manage"
+                    android:tint="?attr/colorOnSurface" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_skill_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/tv_ability_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorPrimary"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                android:layout_marginBottom="16dp" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                android:textColor="?attr/colorPrimary"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/tv_skill_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:lineSpacingMultiplier="1.4" />
+
         </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
-        <TextView
-            android:id="@+id/tv_skill_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceHeadlineMedium"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
-
-        <TextView
-            android:id="@+id/tv_ability_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceBodyLarge"
-            android:textColor="?attr/colorPrimary"
-            android:layout_marginBottom="16dp"/>
-
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Description"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:textColor="?attr/colorPrimary"
-            android:layout_marginBottom="8dp"/>
-
-        <TextView
-            android:id="@+id/tv_skill_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:lineSpacingMultiplier="1.4"/>
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+</FrameLayout>

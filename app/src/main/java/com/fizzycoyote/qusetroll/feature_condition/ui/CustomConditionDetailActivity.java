@@ -10,11 +10,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_condition.CustomConditionDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_condition.CustomConditionEntity;
 
-public class CustomConditionDetailActivity extends AppCompatActivity {
+public class CustomConditionDetailActivity extends BaseActivity {
     public static final String EXTRA_ID = "CUSTOM_CONDITION_ID";
     private long id;
     private CustomConditionDao dao;

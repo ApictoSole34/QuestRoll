@@ -6,6 +6,7 @@ import android.widget.*;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.CampaignDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.PlayerCharacterDatabase;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class CreateEditCampaignActivity extends AppCompatActivity {
+public class CreateEditCampaignActivity extends BaseActivity {
 
     public static final String EXTRA_CAMPAIGN_ID = "campaign_id";
 

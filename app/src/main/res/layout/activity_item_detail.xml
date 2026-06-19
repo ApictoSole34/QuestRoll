@@ -1,86 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
-    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:orientation="vertical" android:padding="16dp">
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-        <TextView android:id="@+id/tv_item_name" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:textSize="26sp" android:textStyle="bold"/>
 
-        <TextView android:id="@+id/tv_item_category" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:textSize="14sp" android:textStyle="italic"
-            android:textColor="?attr/colorPrimary" android:layout_marginBottom="12dp"/>
+<ImageView
+    android:id="@+id/backgroundImage"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scaleType="centerCrop" />
 
-        <com.google.android.material.divider.MaterialDivider android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:layout_marginBottom="12dp"/>
-
-        <TextView android:id="@+id/tv_item_desc" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:textSize="15sp" android:layout_marginBottom="12dp"/>
-
-        <TextView android:id="@+id/tv_item_rarity" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:textSize="14sp" android:layout_marginBottom="4dp"/>
-
-        <TextView android:id="@+id/tv_magic" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:textSize="14sp" android:layout_marginBottom="4dp"/>
-
-        <TextView android:id="@+id/tv_weight" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:textSize="14sp" android:layout_marginBottom="4dp"/>
-
-        <TextView android:id="@+id/tv_cost" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:textSize="14sp" android:layout_marginBottom="4dp"/>
-
-        <TextView android:id="@+id/tv_attunement" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:textSize="14sp" android:layout_marginBottom="4dp"/>
-
-        <TextView android:id="@+id/tv_source" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:textSize="13sp" android:textColor="@android:color/darker_gray"
-            android:layout_marginBottom="12dp"/>
-
-        <com.google.android.material.divider.MaterialDivider android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:layout_marginBottom="12dp"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:fillViewport="true">
 
         <LinearLayout
-            android:id="@+id/weapon_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone"
-            android:layout_marginBottom="12dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="?attr/selectableItemBackground">
-
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:text="Weapon Properties" android:textSize="18sp" android:textStyle="bold"/>
+            android:padding="16dp">
 
             <TextView
-                android:id="@+id/tv_weapon_name"
+                android:id="@+id/tv_item_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:layout_marginBottom="8dp" />
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="26sp"
+                android:textStyle="bold" />
 
-            <TextView android:id="@+id/tv_weapon_damage" android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:layout_marginTop="8dp"/>
-            <TextView android:id="@+id/tv_weapon_range" android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-            <TextView android:id="@+id/tv_weapon_type" android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+            <TextView
+                android:id="@+id/tv_item_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="14sp"
+                android:textStyle="italic"
+                android:layout_marginBottom="12dp" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:id="@+id/tv_item_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="15sp"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:id="@+id/tv_item_rarity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/tv_magic"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/tv_weight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/tv_cost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/tv_attunement"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="14sp"
+                android:layout_marginBottom="4dp" />
+
+            <TextView
+                android:id="@+id/tv_source"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="13sp"
+                android:layout_marginBottom="12dp" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp" />
+
+            <!-- Weapon Section -->
+            <LinearLayout
+                android:id="@+id/weapon_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginBottom="12dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?attr/selectableItemBackground">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Weapon Properties"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_weapon_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/tv_weapon_damage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:layout_marginTop="8dp" />
+
+                <TextView
+                    android:id="@+id/tv_weapon_range"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <TextView
+                    android:id="@+id/tv_weapon_type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+            </LinearLayout>
+
+            <!-- Armor Section -->
+            <LinearLayout
+                android:id="@+id/armor_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginBottom="12dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Armor Properties"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_armor_ac"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:layout_marginTop="8dp" />
+
+                <TextView
+                    android:id="@+id/tv_armor_stealth"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tv_armor_str"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:visibility="gone" />
+            </LinearLayout>
+
         </LinearLayout>
+    </ScrollView>
 
-        <LinearLayout android:id="@+id/armor_section" android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:orientation="vertical"
-            android:visibility="gone" android:layout_marginBottom="12dp">
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                android:text="Armor Properties" android:textSize="18sp" android:textStyle="bold"/>
-            <TextView android:id="@+id/tv_armor_ac" android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:layout_marginTop="8dp"/>
-            <TextView android:id="@+id/tv_armor_stealth" android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:visibility="gone"/>
-            <TextView android:id="@+id/tv_armor_str" android:layout_width="match_parent"
-                android:layout_height="wrap_content" android:visibility="gone"/>
-        </LinearLayout>
-
-    </LinearLayout>
-</ScrollView>
+</FrameLayout>

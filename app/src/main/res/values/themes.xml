@@ -26,21 +26,25 @@
 
     <style name="QuestRollMenuItem">
 
-        <item name="android:textColor">#E8D7A8</item>
-
-        <item name="android:textSize">17sp</item>
-
-        <item name="android:textStyle">bold</item>
-
-        <item name="android:gravity">center</item>
-
-        <item name="android:minHeight">72dp</item>
-
         <item name="android:background">@drawable/fantasy_button</item>
 
-        <item name="android:paddingStart">20dp</item>
+        <item name="android:textColor">#D8D3C5</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textStyle">normal</item>
 
+        <item name="android:gravity">center_vertical</item>
+
+        <item name="android:paddingStart">20dp</item>
         <item name="android:paddingEnd">20dp</item>
 
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">56dp</item>
+
+    </style>
+
+    <style name="Widget.QuestRoll.FAB" parent="Widget.MaterialComponents.FloatingActionButton">
+        <item name="backgroundTint">@color/threads_gold</item>
+        <item name="tint">@color/threads_dark</item>
+        <item name="elevation">4dp</item>
     </style>
 </resources>

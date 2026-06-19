@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomCastingOption;
@@ -36,7 +37,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executors;
 
-public class CustomSpellCreateActivity extends AppCompatActivity {
+public class CustomSpellCreateActivity extends BaseActivity {
 
     public static final String EXTRA_EDIT_SPELL_ID = "edit_spell_id";
 

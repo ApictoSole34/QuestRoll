@@ -9,11 +9,12 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_damage_types.CustomDamageTypeDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_damage_types.CustomDamageTypeEntity;
 
-public class CustomDamageTypeDetailActivity extends AppCompatActivity {
+public class CustomDamageTypeDetailActivity extends BaseActivity {
 
     public static final String EXTRA_ID = "CUSTOM_DAMAGE_TYPE_ID";
     private long id;

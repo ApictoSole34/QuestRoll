@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.feature_damage_types.adapter.DamageTypeAdapter;
@@ -20,7 +21,7 @@ import com.fizzycoyote.qusetroll.feature_damage_types.view_model.DamageTypeListV
 import java.util.ArrayList;
 import java.util.List;
 
-public class DamageTypeListActivity extends AppCompatActivity {
+public class DamageTypeListActivity extends BaseActivity {
     private DamageTypeAdapter adapter;
     private DamageTypeListViewModel viewModel;
 

@@ -14,6 +14,7 @@ import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_species.CustomSpeciesEntity;
@@ -28,7 +29,7 @@ import java.util.List;
 
 import io.noties.markwon.Markwon;
 
-public class SpeciesDetailActivity extends AppCompatActivity {
+public class SpeciesDetailActivity extends BaseActivity {
 
     private Markwon markwon;
 

@@ -1,123 +1,143 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+<ImageView
+    android:id="@+id/backgroundImage"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".feature_dice.ui.RollDiceActivity">
+    android:scaleType="centerCrop" />
 
-    <LinearLayout
-        android:id="@+id/resultWindow"
-        android:layout_width="379dp"
-        android:layout_height="253dp"
-        android:background="#BB000000"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:visibility="gone"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintWidth_percent="0.9"
-        app:layout_constraintHeight_percent="0.3"
-        android:layout_marginTop="16dp">
-
-        <TextView
-            android:id="@+id/resultText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Result will be displayed here"
-            android:textColor="@android:color/white"
-            android:textSize="16sp" />
-    </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/diceRecyclerView"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottomButtonLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/resultWindow">
-
-    </androidx.recyclerview.widget.RecyclerView>
-
-    <LinearLayout
-        android:id="@+id/bottomButtonLayout"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:layout_marginBottom="16dp"
-        android:gravity="center"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <!-- Przełącznik "Show Result" z tekstem nad nim -->
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Show Result"
-                android:textSize="14sp"
-                android:layout_marginBottom="4dp" />
-
-            <Switch
-                android:id="@+id/showResultSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="16dp" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/rollButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="2"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:minWidth="100dp"
-            android:padding="12dp"
-            android:text="Roll" />
-
-        <Button
-            android:id="@+id/manageDiceButton"
-            android:layout_width="0dp"
-            android:layout_height="48dp"
-            android:layout_weight="1"
-            android:minWidth="100dp"
-            android:padding="8dp"
-            android:text="Manage Dice" />
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        tools:context=".feature_dice.ui.RollDiceActivity">
 
         <LinearLayout
+            android:id="@+id/resultWindow"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:background="@color/threads_surface"
             android:orientation="vertical"
-            android:gravity="center">
+            android:padding="16dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintWidth_percent="0.9"
+            app:layout_constraintHeight_percent="0.3"
+            android:layout_marginTop="16dp">
 
             <TextView
+                android:id="@+id/resultText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Shake 2 Roll"
-                android:textSize="14sp"
-                android:layout_marginBottom="4dp" />
-
-            <Switch
-                android:id="@+id/shakeToRollSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="16dp" />
+                android:text="Result will be displayed here"
+                android:textColor="?attr/colorOnSurface"
+                android:textSize="16sp" />
         </LinearLayout>
-    </LinearLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/diceRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/bottomButtonLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/resultWindow" />
+
+        <LinearLayout
+            android:id="@+id/bottomButtonLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_marginBottom="16dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <!-- Show Result Switch -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Show Result"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="4dp" />
+
+                <Switch
+                    android:id="@+id/showResultSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="16dp" />
+            </LinearLayout>
+
+            <!-- Roll Button -->
+            <Button
+                android:id="@+id/rollButton"
+                style="@style/QuestRollButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
+                android:minWidth="100dp"
+                android:padding="12dp"
+                android:text="Roll" />
+
+            <!-- Manage Dice Button -->
+            <Button
+                android:id="@+id/manageDiceButton"
+                style="@style/QuestRollButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:minWidth="100dp"
+                android:padding="8dp"
+                android:text="Manage Dice" />
+
+            <!-- Shake to Roll Switch -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Shake 2 Roll"
+                    android:textColor="?attr/colorOnSurface"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="4dp" />
+
+                <Switch
+                    android:id="@+id/shakeToRollSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:padding="16dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

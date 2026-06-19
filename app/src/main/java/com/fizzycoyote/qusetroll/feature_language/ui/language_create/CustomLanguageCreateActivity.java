@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.feature_language.data.repository.LanguageRepository;
@@ -25,7 +26,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 
-public class CustomLanguageCreateActivity extends AppCompatActivity {
+public class CustomLanguageCreateActivity extends BaseActivity {
     private EditText etName, etDesc;
     private CheckBox cbExotic, cbSecret;
     private Spinner spinnerScript;

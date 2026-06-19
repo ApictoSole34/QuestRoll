@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_service.CustomServiceEntity;
 import com.fizzycoyote.qusetroll.feature_service.view_model.CustomServiceCreateViewModel;
@@ -17,7 +18,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.concurrent.Executors;
 
-public class CustomServiceCreateActivity extends AppCompatActivity {
+public class CustomServiceCreateActivity extends BaseActivity {
 
     public static final String EXTRA_EDIT_ID = "edit_service_id";
 

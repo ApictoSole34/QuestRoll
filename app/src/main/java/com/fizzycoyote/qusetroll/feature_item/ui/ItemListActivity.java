@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.feature_item.adapter.ItemAdapter;
@@ -33,7 +34,7 @@ import com.google.android.material.chip.ChipGroup;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ItemListActivity extends AppCompatActivity {
+public class ItemListActivity extends BaseActivity {
 
     private ItemListViewModel viewModel;
     private ItemAdapter adapter;

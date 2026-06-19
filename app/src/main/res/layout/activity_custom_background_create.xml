@@ -1,239 +1,287 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+
+    <ImageView
+        android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"/>
 
-        <!-- Name -->
-        <com.google.android.material.textfield.TextInputLayout
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:fillViewport="true">
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Name"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_marginBottom="12dp">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etName"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!-- Name -->
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textCapWords"
-                android:maxLines="1"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="Name"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginBottom="12dp"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:hintTextColor="?attr/colorOnSurfaceVariant"
+                app:boxStrokeColor="?attr/colorOutline">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurface"
+                    android:inputType="textCapWords"
+                    android:maxLines="1"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Description -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Description"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_marginBottom="16dp">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etDesc"
+            <!-- Description -->
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:minLines="3"
-                android:maxLines="8"
-                android:gravity="top"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="Description"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginBottom="16dp"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:hintTextColor="?attr/colorOnSurfaceVariant"
+                app:boxStrokeColor="?attr/colorOutline">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDesc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurface"
+                    android:inputType="textMultiLine"
+                    android:minLines="3"
+                    android:maxLines="8"
+                    android:gravity="top"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Game System -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Game System"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_marginBottom="16dp">
-            <Spinner
-                android:id="@+id/spinnerGameSystem"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Starting Gold -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Starting Gold (gp)"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_marginBottom="16dp">
-            <EditText
-                android:id="@+id/etStartingGold"
+            <!-- Game System -->
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:text="0"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="Game System"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginBottom="16dp"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:hintTextColor="?attr/colorOnSurfaceVariant"
+                app:boxStrokeColor="?attr/colorOutline">
+                <Spinner
+                    android:id="@+id/spinnerGameSystem"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Equipment Section -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Equipment"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:textColor="?attr/colorPrimary"
-            android:layout_marginBottom="8dp"/>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Equipment Description (optional)"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_marginBottom="8dp">
-            <EditText
-                android:id="@+id/etEquipmentDescription"
+            <!-- Starting Gold -->
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:minLines="2"
-                android:maxLines="4"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="Starting Gold (gp)"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginBottom="16dp"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:hintTextColor="?attr/colorOnSurfaceVariant"
+                app:boxStrokeColor="?attr/colorOutline">
+                <EditText
+                    android:id="@+id/etStartingGold"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurface"
+                    android:inputType="number"
+                    android:text="0"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvEquipment"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            android:layout_marginBottom="16dp"/>
-        <Button
-            android:id="@+id/btnAddEquipment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Item"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_marginBottom="24dp"/>
-
-        <!-- Languages Section -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Languages"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:textColor="?attr/colorPrimary"
-            android:layout_marginBottom="8dp"/>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Languages Description (optional)"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_marginBottom="8dp">
-            <EditText
-                android:id="@+id/etLanguagesDescription"
+            <!-- Equipment Section -->
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:minLines="2"
-                android:maxLines="4"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:text="Equipment"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="?attr/colorPrimary"
+                android:layout_marginBottom="8dp"/>
 
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Number of chooseable languages"
-            android:layout_marginTop="12dp">
-            <EditText
-                android:id="@+id/etLanguageChoices"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:text="0"/>
-        </com.google.android.material.textfield.TextInputLayout>
+                android:hint="Equipment Description (optional)"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginBottom="8dp"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:hintTextColor="?attr/colorOnSurfaceVariant"
+                app:boxStrokeColor="?attr/colorOutline">
+                <EditText
+                    android:id="@+id/etEquipmentDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurface"
+                    android:inputType="textMultiLine"
+                    android:minLines="2"
+                    android:maxLines="4"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvLanguages"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            android:layout_marginBottom="16dp"/>
-        <Button
-            android:id="@+id/btnAddLanguage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Language"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_marginBottom="24dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvEquipment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginBottom="16dp"/>
+            <Button
+                android:id="@+id/btnAddEquipment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Item"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:textColor="?attr/colorPrimary"
+                android:layout_marginBottom="24dp"/>
 
-        <!-- Skill Proficiencies -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Skill Proficiencies"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:textColor="?attr/colorPrimary"
-            android:layout_marginBottom="8dp"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvSkillProficiencies"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            android:layout_marginBottom="16dp"/>
-        <Button
-            android:id="@+id/btnAddSkill"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Skill"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_marginBottom="24dp"/>
+            <!-- Languages Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Languages"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="?attr/colorPrimary"
+                android:layout_marginBottom="8dp"/>
 
-        <!-- Tool Proficiencies -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Tool Proficiencies"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:textColor="?attr/colorPrimary"
-            android:layout_marginBottom="8dp"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvToolProficiencies"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            android:layout_marginBottom="16dp"/>
-        <Button
-            android:id="@+id/btnAddTool"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Tool"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_marginBottom="24dp"/>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Languages Description (optional)"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_marginBottom="8dp"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:hintTextColor="?attr/colorOnSurfaceVariant"
+                app:boxStrokeColor="?attr/colorOutline">
+                <EditText
+                    android:id="@+id/etLanguagesDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurface"
+                    android:inputType="textMultiLine"
+                    android:minLines="2"
+                    android:maxLines="4"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Features -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Features"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:textColor="?attr/colorPrimary"
-            android:layout_marginBottom="8dp"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvFeatures"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            android:layout_marginBottom="16dp"/>
-        <Button
-            android:id="@+id/btnAddFeature"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Feature"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_marginBottom="24dp"/>
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Number of chooseable languages"
+                android:layout_marginTop="12dp"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:hintTextColor="?attr/colorOnSurfaceVariant"
+                app:boxStrokeColor="?attr/colorOutline">
+                <EditText
+                    android:id="@+id/etLanguageChoices"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurface"
+                    android:inputType="number"
+                    android:text="0"/>
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Save Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSave"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Save Background"
-            android:padding="14dp"
-            android:layout_marginBottom="16dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvLanguages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginBottom="16dp"/>
+            <Button
+                android:id="@+id/btnAddLanguage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Language"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:textColor="?attr/colorPrimary"
+                android:layout_marginBottom="24dp"/>
 
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+            <!-- Skill Proficiencies -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Skill Proficiencies"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="?attr/colorPrimary"
+                android:layout_marginBottom="8dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvSkillProficiencies"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginBottom="16dp"/>
+            <Button
+                android:id="@+id/btnAddSkill"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Skill"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:textColor="?attr/colorPrimary"
+                android:layout_marginBottom="24dp"/>
+
+            <!-- Tool Proficiencies -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tool Proficiencies"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="?attr/colorPrimary"
+                android:layout_marginBottom="8dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvToolProficiencies"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginBottom="16dp"/>
+            <Button
+                android:id="@+id/btnAddTool"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Tool"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:textColor="?attr/colorPrimary"
+                android:layout_marginBottom="24dp"/>
+
+            <!-- Features -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Features"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="?attr/colorPrimary"
+                android:layout_marginBottom="8dp"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvFeatures"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginBottom="16dp"/>
+            <Button
+                android:id="@+id/btnAddFeature"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Feature"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:textColor="?attr/colorPrimary"
+                android:layout_marginBottom="24dp"/>
+
+            <!-- Save Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
+                style="@style/QuestRollButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Save Background"
+                android:padding="14dp"
+                android:layout_marginBottom="16dp"/>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</FrameLayout>

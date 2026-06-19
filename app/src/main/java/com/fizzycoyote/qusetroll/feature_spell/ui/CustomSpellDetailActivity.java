@@ -12,6 +12,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomCastingOption;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellEntity;
@@ -23,7 +24,7 @@ import java.util.List;
 
 import io.noties.markwon.Markwon;
 
-public class CustomSpellDetailActivity extends AppCompatActivity {
+public class CustomSpellDetailActivity extends BaseActivity {
 
     public static final String EXTRA_SPELL_ID = "CUSTOM_SPELL_ID";
 

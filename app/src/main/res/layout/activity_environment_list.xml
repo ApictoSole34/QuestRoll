@@ -4,17 +4,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+<ImageView
+    android:id="@+id/backgroundImage"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scaleType="centerCrop" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@android:color/transparent">
 
         <SearchView
             android:id="@+id/search_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:queryHint="Search environments..."
-            android:padding="8dp" />
+            android:padding="8dp"
+            android:background="@android:color/transparent"
+            android:iconifiedByDefault="false" />
 
         <TextView
             android:id="@+id/tv_count"
@@ -24,7 +34,7 @@
             android:paddingEnd="16dp"
             android:paddingBottom="4dp"
             android:textSize="12sp"
-            android:textColor="@android:color/darker_gray" />
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
@@ -40,6 +50,7 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabCreate"
+        style="@style/Widget.QuestRoll.FAB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"

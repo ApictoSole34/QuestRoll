@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custom_feature.CustomFeatureEntity;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custom_gained_at.CustomGainedAt;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_character_class.custom_table_data.CustomTableData;
@@ -19,7 +20,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 
-public class FeatureEditorActivity extends AppCompatActivity {
+public class FeatureEditorActivity extends BaseActivity {
 
     public static final String EXTRA_FEATURE = "feature";
     public static final String EXTRA_FEATURE_INDEX = "feature_index";

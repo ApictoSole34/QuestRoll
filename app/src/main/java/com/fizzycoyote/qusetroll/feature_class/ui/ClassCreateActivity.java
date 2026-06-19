@@ -26,6 +26,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_ability.CustomSkillEntity;
@@ -58,7 +59,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
 
-public class ClassCreateActivity extends AppCompatActivity {
+public class ClassCreateActivity extends BaseActivity {
 
     public static final String EXTRA_EDIT_CLASS_ID = "edit_class_id";
 

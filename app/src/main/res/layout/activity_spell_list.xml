@@ -4,11 +4,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+<ImageView
+    android:id="@+id/backgroundImage"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scaleType="centerCrop" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@android:color/transparent">
 
+        <!-- Wyszukiwarka + przyciski -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -21,7 +30,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:queryHint="Search spells..."/>
+                android:queryHint="Search spells..."
+                android:background="@android:color/transparent"
+                android:iconifiedByDefault="false" />
 
             <ImageButton
                 android:id="@+id/btnFilter"
@@ -30,7 +41,8 @@
                 android:src="@android:drawable/ic_menu_sort_by_size"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
-                android:contentDescription="Filter"/>
+                android:tint="?attr/colorOnSurface"
+                android:contentDescription="Filter" />
 
             <ImageButton
                 android:id="@+id/btnManageSchools"
@@ -39,10 +51,12 @@
                 android:src="@android:drawable/ic_menu_manage"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
-                android:contentDescription="Manage Schools"/>
+                android:tint="?attr/colorOnSurface"
+                android:contentDescription="Manage Schools" />
 
         </LinearLayout>
 
+        <!-- Źródła (chipy) -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -64,12 +78,16 @@
                     android:layout_height="wrap_content"
                     android:text="All"
                     style="@style/Widget.MaterialComponents.Chip.Filter"
-                    android:checked="true"/>
+                    android:textColor="?attr/colorOnSurface"
+                    app:chipBackgroundColor="?attr/colorSurfaceVariant"
+                    app:chipStrokeColor="?attr/colorOutline"
+                    android:checked="true" />
 
             </com.google.android.material.chip.ChipGroup>
 
         </HorizontalScrollView>
 
+        <!-- Aktywne filtry -->
         <TextView
             android:id="@+id/tv_active_filters"
             android:layout_width="match_parent"
@@ -79,8 +97,9 @@
             android:paddingBottom="4dp"
             android:textSize="12sp"
             android:textColor="?attr/colorPrimary"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
+        <!-- Licznik zaklęć -->
         <TextView
             android:id="@+id/tv_spell_count"
             android:layout_width="match_parent"
@@ -89,26 +108,29 @@
             android:paddingEnd="16dp"
             android:paddingBottom="4dp"
             android:textSize="12sp"
-            android:textColor="@android:color/darker_gray"/>
+            android:textColor="?attr/colorOnSurfaceVariant" />
 
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
 
+        <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_spells"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 
+    <!-- FAB -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabCreateSpell"
+        style="@style/Widget.QuestRoll.FAB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:src="@android:drawable/ic_input_add"
-        android:contentDescription="Create Spell"/>
+        android:contentDescription="Create Spell" />
 
 </FrameLayout>

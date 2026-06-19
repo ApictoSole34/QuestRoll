@@ -13,12 +13,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.feature_service.adapter.ServiceAdapter;
 import com.fizzycoyote.qusetroll.feature_service.view_model.ServiceListViewModel;
 
-public class ServiceListActivity extends AppCompatActivity {
+public class ServiceListActivity extends BaseActivity {
 
     private ServiceListViewModel viewModel;
     private ServiceAdapter adapter;

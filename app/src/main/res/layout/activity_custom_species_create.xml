@@ -1,190 +1,253 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+<ImageView
+    android:id="@+id/backgroundImage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:scaleType="centerCrop" />
 
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:fillViewport="true">
 
-        <!-- Name -->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Species Name">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textCapWords"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Description -->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Description"
-            android:layout_marginTop="12dp">
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etDesc"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textMultiLine"
-                android:minLines="3"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Is Subspecies? -->
-        <CheckBox
-            android:id="@+id/cbIsSubspecies"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="This is a subspecies"
-            android:layout_marginTop="12dp"/>
-
-        <!-- Parent species selection (visible only if subspecies) -->
         <LinearLayout
-            android:id="@+id/layoutParent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:visibility="gone"
-            android:layout_marginTop="8dp">
-            <TextView
+            android:padding="16dp">
+
+            <!-- Name -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Species Name"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:hintTextColor="?attr/colorOnSurfaceVariant"
+                app:boxStrokeColor="?attr/colorOutline">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurface"
+                    android:inputType="textCapWords"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Description -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Description"
+                android:layout_marginTop="12dp"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:hintTextColor="?attr/colorOnSurfaceVariant"
+                app:boxStrokeColor="?attr/colorOutline">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDesc"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurface"
+                    android:inputType="textMultiLine"
+                    android:minLines="3"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Is Subspecies? -->
+            <CheckBox
+                android:id="@+id/cbIsSubspecies"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Parent species"/>
-            <AutoCompleteTextView
-                android:id="@+id/actvParent"
+                android:text="This is a subspecies"
+                android:textColor="?attr/colorOnSurface"
+                android:layout_marginTop="12dp"/>
+
+            <!-- Parent species selection (visible only if subspecies) -->
+            <LinearLayout
+                android:id="@+id/layoutParent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none"/>
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_marginTop="8dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Parent species"
+                    android:textColor="?attr/colorOnSurface"
+                    android:layout_marginBottom="8dp"/>
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:boxBackgroundColor="@android:color/transparent"
+                    app:hintTextColor="?attr/colorOnSurfaceVariant"
+                    app:boxStrokeColor="?attr/colorOutline">
+                    <AutoCompleteTextView
+                        android:id="@+id/actvParent"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="?attr/colorOnSurface"
+                        android:inputType="none"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+
+            <!-- Game System -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Game System"
+                android:layout_marginTop="16dp"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:hintTextColor="?attr/colorOnSurfaceVariant"
+                app:boxStrokeColor="?attr/colorOutline">
+                <Spinner
+                    android:id="@+id/spinnerGameSystem"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Speed (String) -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Speed (e.g., 30 ft.)"
+                android:layout_marginTop="12dp"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:hintTextColor="?attr/colorOnSurfaceVariant"
+                app:boxStrokeColor="?attr/colorOutline">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etSpeed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurface"
+                    android:inputType="text"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Size -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Size (e.g., Medium)"
+                android:layout_marginTop="12dp"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:hintTextColor="?attr/colorOnSurfaceVariant"
+                app:boxStrokeColor="?attr/colorOutline">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etSize"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurface"
+                    android:inputType="textCapWords"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Ability Bonuses Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ability Score Bonuses"
+                android:textColor="?attr/colorOnSurface"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:layout_marginTop="16dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAbilityBonuses"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"/>
+
+            <Button
+                android:id="@+id/btnAddAbilityBonus"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Bonus"
+                android:textColor="?attr/colorPrimary"/>
+
+            <!-- Languages Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Languages (fixed)"
+                android:textColor="?attr/colorOnSurface"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:layout_marginTop="16dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvLanguages"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"/>
+
+            <Button
+                android:id="@+id/btnAddLanguage"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Language"
+                android:textColor="?attr/colorPrimary"/>
+
+            <!-- Language Choices (number of selectable languages) -->
+            <com.google.android.material.textfield.TextInputLayout
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Number of chooseable languages"
+                android:layout_marginTop="12dp"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:hintTextColor="?attr/colorOnSurfaceVariant"
+                app:boxStrokeColor="?attr/colorOutline">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etLanguageChoices"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurface"
+                    android:inputType="number"
+                    android:text="0"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Other Traits Section -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Other Traits"
+                android:textColor="?attr/colorOnSurface"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:layout_marginTop="16dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvOtherTraits"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"/>
+
+            <Button
+                android:id="@+id/btnAddTrait"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add Trait"
+                android:textColor="?attr/colorPrimary"/>
+
+            <!-- Save Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
+                style="@style/QuestRollButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Save Species"
+                android:layout_marginTop="24dp"/>
+
         </LinearLayout>
+    </ScrollView>
 
-        <!-- Game System -->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Game System"
-            android:layout_marginTop="16dp">
-            <Spinner
-                android:id="@+id/spinnerGameSystem"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Speed (String) -->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Speed (e.g., 30 ft.)"
-            android:layout_marginTop="12dp">
-            <EditText
-                android:id="@+id/etSpeed"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="text"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Size -->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Size (e.g., Medium)"
-            android:layout_marginTop="12dp">
-            <EditText
-                android:id="@+id/etSize"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textCapWords"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Ability Bonuses Section -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Ability Score Bonuses"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:layout_marginTop="16dp"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvAbilityBonuses"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"/>
-        <Button
-            android:id="@+id/btnAddAbilityBonus"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Bonus"/>
-
-        <!-- Languages Section -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Languages (fixed)"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:layout_marginTop="16dp"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvLanguages"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"/>
-        <Button
-            android:id="@+id/btnAddLanguage"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Language"/>
-
-        <!-- Language Choices (number of selectable languages) -->
-        <com.google.android.material.textfield.TextInputLayout
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Number of chooseable languages"
-            android:layout_marginTop="12dp">
-            <EditText
-                android:id="@+id/etLanguageChoices"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number"
-                android:text="0"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Other Traits Section -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Other Traits"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:layout_marginTop="16dp"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvOtherTraits"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"/>
-        <Button
-            android:id="@+id/btnAddTrait"
-            style="@style/Widget.MaterialComponents.Button.TextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Add Trait"/>
-
-        <!-- Save Button -->
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSave"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Save Species"
-            android:layout_marginTop="24dp"/>
-
-    </LinearLayout>
-</ScrollView>
+</FrameLayout>

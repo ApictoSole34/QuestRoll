@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 
 import java.util.HashMap;
 import java.util.Map;

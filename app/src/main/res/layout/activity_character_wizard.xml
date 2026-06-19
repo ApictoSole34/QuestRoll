@@ -1,17 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- Navigation host fragment for the character creation wizard -->
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/nav_host_fragment_wizard"
-        android:name="androidx.navigation.fragment.NavHostFragment"
+    <ImageView
+        android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:navGraph="@navigation/nav_graph_wizard"
-        app:defaultNavHost="true" />
+        android:scaleType="centerCrop"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/nav_host_fragment_wizard"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/nav_graph_wizard" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

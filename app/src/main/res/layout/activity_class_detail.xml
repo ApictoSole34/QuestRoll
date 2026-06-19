@@ -1,124 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fillViewport="true">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"/>
 
-        <TextView
-            android:id="@+id/tv_class_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:textStyle="bold"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:background="@android:color/transparent">
 
-        <!-- Kontener na szczegóły (dla custom class) -->
         <LinearLayout
-            android:id="@+id/traits_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"/>
-
-        <!-- Hit Points Section -->
-        <LinearLayout
-            android:id="@+id/hit_points_section"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:padding="16dp"
+            android:background="@android:color/transparent">
 
             <TextView
+                android:id="@+id/tv_class_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Hit Points"
-                android:textSize="20sp"
-                android:layout_marginTop="16dp"
-                android:textStyle="bold"/>
+                android:textSize="24sp"
+                android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tv_hit_points"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"/>
-
-            <TextView
-                android:id="@+id/tv_hit_dice"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"/>
-
-        </LinearLayout>
-
-        <!-- Class Table Section -->
-        <LinearLayout
-            android:id="@+id/class_table_section"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Class Features by Level"
-                android:textSize="20sp"
-                android:layout_marginTop="16dp"
-                android:textStyle="bold"/>
-
-            <HorizontalScrollView
+            <!-- Kontener na szczegóły (dla custom class) -->
+            <LinearLayout
+                android:id="@+id/traits_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:scrollbars="horizontal">
+                android:layout_marginBottom="8dp"
+                android:orientation="vertical" />
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
+            <!-- Hit Points Section -->
+            <LinearLayout
+                android:id="@+id/hit_points_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_marginTop="16dp"
+                    android:text="Hit Points"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
 
-                    <TableLayout
-                        android:id="@+id/full_class_table"
+                <TextView
+                    android:id="@+id/tv_hit_points"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp" />
+
+                <TextView
+                    android:id="@+id/tv_hit_dice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp" />
+
+            </LinearLayout>
+
+            <!-- Class Table Section -->
+            <LinearLayout
+                android:id="@+id/class_table_section"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Class Features by Level"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:scrollbars="horizontal">
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
 
-                </LinearLayout>
-            </HorizontalScrollView>
-        </LinearLayout>
+                        <TableLayout
+                            android:id="@+id/full_class_table"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
 
-        <!-- Features Section -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+                    </LinearLayout>
 
-            <TextView
+                </HorizontalScrollView>
+
+            </LinearLayout>
+
+            <!-- Features Section -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Class Features"
-                android:textSize="20sp"
-                android:layout_marginTop="16dp"
-                android:textStyle="bold"/>
+                android:orientation="vertical">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_features"
-                android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Class Features"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recycler_features"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:background="@android:color/transparent" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnManage"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"/>
+                android:text="Manage"
+                android:visibility="gone" />
 
         </LinearLayout>
 
-        <Button
-            android:id="@+id/btnManage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Manage"
-            android:visibility="gone"/>
+    </ScrollView>
 
-    </LinearLayout>
-</ScrollView>
+</FrameLayout>

@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.feature_creature.adapter.CreatureAdapter;
@@ -30,7 +31,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class CreatureListActivity extends AppCompatActivity {
+public class CreatureListActivity extends BaseActivity {
 
     private CreatureListViewModel viewModel;
     private CreatureAdapter adapter;

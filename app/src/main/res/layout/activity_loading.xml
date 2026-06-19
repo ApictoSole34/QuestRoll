@@ -4,10 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+<ImageView
+    android:id="@+id/backgroundImage"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:scaleType="centerCrop" />
+
     <ScrollView
         android:id="@+id/layout_selection"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@android:color/transparent"
         android:visibility="gone">
 
         <LinearLayout
@@ -20,20 +28,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="QusetRoll"
+                android:textColor="?attr/colorPrimary"
                 android:textSize="28sp"
                 android:textStyle="bold"
-                android:textColor="?attr/colorPrimary"
                 android:gravity="center"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="8dp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Select data to download"
+                android:textColor="?attr/colorOnSurfaceVariant"
                 android:textSize="16sp"
                 android:gravity="center"
-                android:textColor="@android:color/darker_gray"
-                android:layout_marginBottom="24dp"/>
+                android:layout_marginBottom="24dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -48,7 +56,9 @@
                     android:layout_weight="1"
                     android:text="Select All"
                     android:layout_marginEnd="4dp"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    app:strokeColor="?attr/colorOutline" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnSelectNone"
@@ -57,7 +67,9 @@
                     android:layout_weight="1"
                     android:text="Select None"
                     android:layout_marginStart="4dp"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    app:strokeColor="?attr/colorOutline" />
 
             </LinearLayout>
 
@@ -66,24 +78,26 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 app:cardCornerRadius="8dp"
-                app:cardElevation="2dp">
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/threads_surface">
 
                 <LinearLayout
                     android:id="@+id/checkbox_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp"/>
+                    android:padding="16dp" />
 
             </androidx.cardview.widget.CardView>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnFetchAll"
+                style="@style/QuestRollButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Download All"
                 android:padding="14dp"
-                android:layout_marginBottom="8dp"/>
+                android:layout_marginBottom="8dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnFetchSelected"
@@ -92,7 +106,9 @@
                 android:text="Download Selected"
                 android:padding="14dp"
                 android:layout_marginBottom="8dp"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                app:strokeColor="?attr/colorOutline" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSkip"
@@ -100,7 +116,8 @@
                 android:layout_height="wrap_content"
                 android:text="Skip (Enter without data)"
                 android:padding="14dp"
-                style="@style/Widget.MaterialComponents.Button.TextButton"/>
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:textColor="?attr/colorPrimary" />
 
         </LinearLayout>
     </ScrollView>
@@ -112,17 +129,18 @@
         android:orientation="vertical"
         android:gravity="center"
         android:padding="32dp"
+        android:background="@android:color/transparent"
         android:visibility="gone">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="QusetRoll"
+            android:textColor="?attr/colorPrimary"
             android:textSize="28sp"
             android:textStyle="bold"
-            android:textColor="?attr/colorPrimary"
             android:gravity="center"
-            android:layout_marginBottom="32dp"/>
+            android:layout_marginBottom="32dp" />
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -130,16 +148,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:max="100"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="8dp"
+            android:progressTint="?attr/colorPrimary" />
 
         <TextView
             android:id="@+id/progressText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0%"
+            android:textColor="?attr/colorOnSurface"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:layout_marginBottom="16dp"/>
+            android:layout_marginBottom="16dp" />
 
         <ProgressBar
             android:id="@+id/progressBarIndeterminate"
@@ -147,23 +167,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:indeterminate="true"
-            android:layout_marginBottom="8dp"/>
+            android:layout_marginBottom="8dp"
+            android:indeterminateTint="?attr/colorPrimary" />
 
         <TextView
             android:id="@+id/sectionText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Initializing..."
-            android:textSize="14sp"
             android:textColor="?attr/colorPrimary"
+            android:textSize="14sp"
             android:gravity="center"
-            android:layout_marginBottom="24dp"/>
+            android:layout_marginBottom="24dp" />
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="200dp"
             app:cardCornerRadius="8dp"
-            app:cardElevation="2dp">
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/threads_surface">
 
             <ScrollView
                 android:layout_width="match_parent"
@@ -174,9 +196,9 @@
                     android:id="@+id/logText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurface"
                     android:textSize="13sp"
-                    android:fontFamily="monospace"
-                    android:textColor="@android:color/darker_gray"/>
+                    android:fontFamily="monospace" />
 
             </ScrollView>
 

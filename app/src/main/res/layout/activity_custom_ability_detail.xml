@@ -1,111 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="?attr/colorSurface">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+
+    <ImageView
+        android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"/>
 
-        <!-- Przycisk Manage (trzy kropki) -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:fillViewport="true">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="end"
-            android:layout_marginBottom="8dp">
+            android:orientation="vertical"
+            android:padding="16dp">
 
-            <ImageButton
-                android:id="@+id/btn_manage"
+            <!-- Przycisk Manage (trzy kropki) -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="end"
+                android:layout_marginBottom="8dp">
+
+                <ImageButton
+                    android:id="@+id/btn_manage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@android:drawable/ic_menu_more"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="12dp"
+                    android:contentDescription="Manage"
+                    android:tint="?attr/colorOnSurface" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_ability_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                android:textColor="?attr/colorOnSurface"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/tv_ability_short_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                android:textColor="?attr/colorPrimary"
+                android:layout_marginBottom="16dp" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="?attr/colorPrimary"
+                android:layout_marginBottom="8dp" />
+
+            <TextView
+                android:id="@+id/tv_ability_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnSurface"
+                android:lineSpacingMultiplier="1.4"
+                android:layout_marginBottom="24dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Custom Skills"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:textColor="?attr/colorPrimary"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:id="@+id/tv_no_custom_skills"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="No custom skills yet"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:gravity="center"
+                android:visibility="gone"
+                android:layout_marginBottom="12dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_skills_custom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
+                android:layout_marginBottom="16dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_add_custom_skill"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Add Custom Skill"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                app:strokeColor="?attr/colorOutline"
+                android:layout_marginBottom="16dp" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_add_custom_skill"
+                style="@style/Widget.QuestRoll.FAB"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@android:drawable/ic_menu_more"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:padding="12dp"
-                android:contentDescription="Manage"/>
+                android:layout_gravity="bottom|end"
+                android:layout_margin="16dp"
+                android:src="@android:drawable/ic_input_add"
+                android:contentDescription="Add custom skill" />
+
         </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
-        <TextView
-            android:id="@+id/tv_ability_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceHeadlineMedium"
-            android:textStyle="bold"
-            android:layout_marginBottom="8dp"/>
-
-        <TextView
-            android:id="@+id/tv_ability_short_desc"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceBodyLarge"
-            android:textColor="?attr/colorPrimary"
-            android:layout_marginBottom="16dp"/>
-
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Description"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:textColor="?attr/colorPrimary"
-            android:layout_marginBottom="8dp"/>
-
-        <TextView
-            android:id="@+id/tv_ability_description"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:lineSpacingMultiplier="1.4"
-            android:layout_marginBottom="24dp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Custom Skills"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:textColor="?attr/colorPrimary"
-            android:layout_marginBottom="12dp"/>
-
-        <TextView
-            android:id="@+id/tv_no_custom_skills"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="No custom skills yet"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:textColor="@android:color/darker_gray"
-            android:gravity="center"
-            android:visibility="gone"
-            android:layout_marginBottom="12dp"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_skills_custom"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            android:layout_marginBottom="16dp"/>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btn_add_custom_skill"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Add Custom Skill"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:layout_marginBottom="16dp"/>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_add_custom_skill"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="16dp"
-            android:src="@android:drawable/ic_input_add"
-            android:contentDescription="Add custom skill"/>
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+</FrameLayout>

@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_item.CustomItemEntity;
@@ -31,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
 
-public class CustomItemCreateActivity extends AppCompatActivity {
+public class CustomItemCreateActivity extends BaseActivity {
 
     public static final String EXTRA_EDIT_ID = "edit_item_id";
 

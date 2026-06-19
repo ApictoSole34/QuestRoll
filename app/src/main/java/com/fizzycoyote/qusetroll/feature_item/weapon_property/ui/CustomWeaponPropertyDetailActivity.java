@@ -11,11 +11,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_weapon_property.CustomWeaponPropertyDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_weapon_property.CustomWeaponPropertyEntity;
 
-public class CustomWeaponPropertyDetailActivity extends AppCompatActivity {
+public class CustomWeaponPropertyDetailActivity extends BaseActivity {
 
     public static final String EXTRA_ID = "CUSTOM_WEAPON_PROPERTY_ID";
     private long id;

@@ -1,57 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+<ImageView
+    android:id="@+id/backgroundImage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface">
+    android:scaleType="centerCrop" />
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <TextView
-            android:id="@+id/tv_skill_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceHeadlineMedium"
-            android:textStyle="bold"
-            android:layout_marginBottom="12dp"/>
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_ability"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Ability"
-            style="@style/Widget.MaterialComponents.Chip.Entry"
-            android:layout_marginBottom="16dp"/>
-
-        <!-- NOWE: Źródło (dokument) -->
-        <TextView
-            android:id="@+id/tv_source"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="13sp"
-            android:textColor="@android:color/darker_gray"
-            android:layout_marginBottom="16dp"/>
-
-        <com.google.android.material.divider.MaterialDivider
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Descriptions"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
-            android:textColor="?attr/colorPrimary"
-            android:layout_marginBottom="8dp"/>
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:fillViewport="true">
 
         <LinearLayout
-            android:id="@+id/descriptions_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"/>
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/tv_skill_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:textAppearance="?attr/textAppearanceHeadlineMedium"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_ability"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ability"
+                style="@style/Widget.MaterialComponents.Chip.Entry"
+                android:textColor="?attr/colorOnSurface"
+                app:chipBackgroundColor="?attr/colorSurfaceVariant"
+                app:chipStrokeColor="?attr/colorOutline"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:id="@+id/tv_source"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurfaceVariant"
+                android:textSize="13sp"
+                android:layout_marginBottom="16dp" />
+
+            <com.google.android.material.divider.MaterialDivider
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Descriptions"
+                android:textColor="?attr/colorPrimary"
+                android:textAppearance="?attr/textAppearanceTitleMedium"
+                android:layout_marginBottom="8dp" />
+
+            <LinearLayout
+                android:id="@+id/descriptions_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</FrameLayout>

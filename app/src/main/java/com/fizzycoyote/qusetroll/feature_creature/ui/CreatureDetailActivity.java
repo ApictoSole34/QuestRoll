@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.feature_document.fragment.DocumentDetailDialogFragment;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.models.open5e.creature.CreatureDto;
@@ -24,7 +25,7 @@ import java.util.stream.Collectors;
 
 import io.noties.markwon.Markwon;
 
-public class CreatureDetailActivity extends AppCompatActivity {
+public class CreatureDetailActivity extends BaseActivity {
 
     private Markwon markwon;
 

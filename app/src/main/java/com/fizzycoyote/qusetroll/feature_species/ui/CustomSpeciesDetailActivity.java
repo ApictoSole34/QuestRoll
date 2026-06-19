@@ -13,6 +13,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_creature.CustomCreatureAction;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_species.CustomSpeciesEntity;
@@ -25,7 +26,7 @@ import java.util.List;
 
 import io.noties.markwon.Markwon;
 
-public class CustomSpeciesDetailActivity extends AppCompatActivity {
+public class CustomSpeciesDetailActivity extends BaseActivity {
 
     public static final String EXTRA_ID = "CUSTOM_SPECIES_ID";
     private Markwon markwon;
