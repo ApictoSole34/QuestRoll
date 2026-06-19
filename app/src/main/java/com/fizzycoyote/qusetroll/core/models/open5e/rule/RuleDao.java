@@ -22,8 +22,8 @@ public interface RuleDao {
     @Query("SELECT * FROM rules WHERE rulesetKey = :rulesetKey ORDER BY `index` ASC")
     LiveData<List<RuleEntity>> getByRuleset(String rulesetKey);
 
-    @Query("SELECT * FROM rules WHERE url = :url")
-    LiveData<RuleEntity> getByUrl(String url);
+    @Query("SELECT * FROM rules WHERE key = :key")
+    LiveData<RuleEntity> getByKey(String key);
 
     @Query("SELECT DISTINCT documentUrl FROM rules WHERE rulesetKey = :rulesetKey")
     LiveData<List<String>> getDistinctSourcesForRuleset(String rulesetKey);

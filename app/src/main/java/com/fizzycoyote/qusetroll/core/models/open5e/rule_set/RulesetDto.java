@@ -7,9 +7,19 @@ import com.google.gson.annotations.SerializedName;
 import java.util.List;
 
 public class RulesetDto {
-    @SerializedName("key") public String key;
-    @SerializedName("name") public String name;
-    @SerializedName("desc") public String desc;
-    @SerializedName("document") public DocumentDto document;
-    @SerializedName("rules") public List<RuleDto> rules;
+
+    @SerializedName("key")
+    public String key;
+
+    @SerializedName("name")
+    public String name;
+
+    @SerializedName("desc")
+    public String desc;
+
+    @SerializedName("document")
+    public DocumentDto document;
+
+    @SerializedName("rules")
+    public List<RuleDto> rules;
 }

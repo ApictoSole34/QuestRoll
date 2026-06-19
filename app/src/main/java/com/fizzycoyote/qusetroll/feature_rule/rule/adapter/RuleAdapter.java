@@ -20,13 +20,20 @@ public class RuleAdapter extends ListAdapter<RuleEntity, RuleAdapter.ViewHolder>
 
     public RuleAdapter(OnItemClickListener listener) {
         super(new DiffUtil.ItemCallback<RuleEntity>() {
-            @Override public boolean areItemsTheSame(@NonNull RuleEntity a, @NonNull RuleEntity b) { return a.url.equals(b.url); }
-            @Override public boolean areContentsTheSame(@NonNull RuleEntity a, @NonNull RuleEntity b) { return a.name.equals(b.name); }
+            @Override
+            public boolean areItemsTheSame(@NonNull RuleEntity a, @NonNull RuleEntity b) {
+                return a.key.equals(b.key);  // <-- zmiana: url -> key
+            }
+            @Override
+            public boolean areContentsTheSame(@NonNull RuleEntity a, @NonNull RuleEntity b) {
+                return a.key.equals(b.key) && a.name.equals(b.name);
+            }
         });
         this.listener = listener;
     }
 
-    @NonNull @Override
+    @NonNull
+    @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_rule, parent, false);
         return new ViewHolder(view);

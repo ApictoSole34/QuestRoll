@@ -10,13 +10,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.feature_rule.rule.adapter.RuleAdapter;
 import com.fizzycoyote.qusetroll.feature_rule.rule.view_model.RuleListViewModel;
 
 import io.noties.markwon.Markwon;
 
-public class RuleListActivity extends AppCompatActivity {
+public class RuleListActivity extends BaseActivity {
     private RuleListViewModel viewModel;
     private RuleAdapter adapter;
     private RecyclerView rv;
@@ -43,7 +44,7 @@ public class RuleListActivity extends AppCompatActivity {
 
         adapter = new RuleAdapter(rule -> {
             Intent i = new Intent(this, RuleDetailActivity.class);
-            i.putExtra("RULE_URL", rule.url);
+            i.putExtra("RULE_KEY", rule.key);  // <-- zmiana: url -> key
             startActivity(i);
         });
         rv.setAdapter(adapter);

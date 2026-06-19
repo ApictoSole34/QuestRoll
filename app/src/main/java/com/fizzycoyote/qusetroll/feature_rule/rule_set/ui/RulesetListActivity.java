@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.feature_rule.rule.ui.RuleListActivity;
 import com.fizzycoyote.qusetroll.feature_rule.rule_set.adapter.RulesetAdapter;
@@ -18,7 +19,7 @@ import com.fizzycoyote.qusetroll.feature_rule.rule_set.view_model.RulesetListVie
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
-public class RulesetListActivity extends AppCompatActivity {
+public class RulesetListActivity extends BaseActivity {
     private RulesetListViewModel viewModel;
     private RulesetAdapter adapter;
     private RecyclerView rv;

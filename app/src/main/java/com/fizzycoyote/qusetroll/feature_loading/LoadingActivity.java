@@ -16,6 +16,7 @@ import androidx.lifecycle.LiveData;
 
 import com.fizzycoyote.qusetroll.R;
 import com.fizzycoyote.qusetroll.core.api.Open5eApiClient;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.repository.open5e.Open5eRepository;
 import com.fizzycoyote.qusetroll.core.repository.open5e.Resource;
@@ -28,7 +29,7 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-public class LoadingActivity extends AppCompatActivity {
+public class LoadingActivity extends BaseActivity {
 
     private Open5eRepository repository;
 

@@ -1086,58 +1086,78 @@ public class Open5eRepository {
         }, executor);
     }
 
-    private CompletableFuture<Void> processRulesets(AtomicInteger completed, int total, MutableLiveData<Resource<Boolean>> result) {
+    private CompletableFuture<Void> processRulesets(
+            AtomicInteger completed,
+            int total,
+            MutableLiveData<Resource<Boolean>> result
+    ) {
         return CompletableFuture.runAsync(() -> {
             try {
                 result.postValue(Resource.loading("Rulesets"));
+
                 List<RulesetEntity> allRulesets = new ArrayList<>();
-                List<RuleEntity>    allRules    = new ArrayList<>();
-                int page       = 1;
+
+                int page = 1;
                 boolean hasMore = true;
-                int maxRetries  = 3;
-                int totalCount  = 0;
+                int maxRetries = 3;
+                int totalCount = 0;
 
                 while (hasMore) {
+
                     Response<RulesetResponse> response = null;
+
                     for (int retry = 0; retry < maxRetries; retry++) {
                         try {
                             response = api.getRulesetsPage(page).execute();
-                            if (response.isSuccessful()) break;
+
+                            if (response.isSuccessful()) {
+                                break;
+                            }
                         } catch (Exception e) {
-                            if (retry == maxRetries - 1) throw e;
+                            if (retry == maxRetries - 1) {
+                                throw e;
+                            }
                             Thread.sleep(2000);
                         }
                     }
-                    if (response == null || !response.isSuccessful() || response.body() == null) break;
+
+                    if (response == null ||
+                            !response.isSuccessful() ||
+                            response.body() == null) {
+                        break;
+                    }
+
                     RulesetResponse body = response.body();
 
-                    if (page == 1) totalCount = body.count;
+                    if (page == 1) {
+                        totalCount = body.count;
+                    }
 
                     for (RulesetDto dto : body.results) {
                         allRulesets.add(RulesetMapper.dtoToEntity(dto));
-                        if (dto.rules != null) {
-                            for (RuleDto ruleDto : dto.rules) {
-                                RuleEntity rule = RuleMapper.dtoToEntity(ruleDto);
-                                rule.rulesetKey = dto.key;
-                                allRules.add(rule);
-                            }
-                        }
                     }
+
                     hasMore = body.next != null;
                     page++;
 
-                    postPageProgress(result, completed, total, "Rulesets",
-                            allRulesets.size(), totalCount);
+                    postPageProgress(
+                            result,
+                            completed,
+                            total,
+                            "Rulesets",
+                            allRulesets.size(),
+                            totalCount
+                    );
                 }
+
+                rulesetDao.deleteAll();
+
                 if (!allRulesets.isEmpty()) {
-                    rulesetDao.deleteAll();
                     rulesetDao.insertAll(allRulesets);
                 }
-                if (!allRules.isEmpty()) {
-                    ruleDao.deleteAll();
-                    ruleDao.insertAll(allRules);
-                }
+
                 updateProgress(completed, total, result, "Rulesets");
+
             } catch (Exception e) {
                 handleError("Rulesets", e);
             }
