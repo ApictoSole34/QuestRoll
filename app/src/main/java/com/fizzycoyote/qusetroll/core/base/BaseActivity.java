@@ -15,7 +15,10 @@ public abstract class BaseActivity extends AppCompatActivity {
             R.drawable.threads_bg_2,
             R.drawable.threads_bg_3,
             R.drawable.threads_bg_4,
-            R.drawable.threads_bg_5
+            R.drawable.threads_bg_5,
+            R.drawable.threads_bg_6,
+            R.drawable.threads_bg_7,
+            R.drawable.threads_bg_8
     };
 
     @Override

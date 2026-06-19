@@ -12,6 +12,8 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
         <item name="colorOutline">@color/outline</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">@color/threads_header</item>
     </style>
 
     <style name="QuestRollButton" parent="@android:style/Widget.Button">
@@ -39,6 +41,7 @@
 
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">56dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
 
     </style>
 
