@@ -29,7 +29,6 @@ import com.fizzycoyote.qusetroll.core.models.open5e.character_class.hit_points.H
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.hit_points.HitPointsEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.saving_throw.SavingThrowDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.saving_throw.SavingThrowEntity;
-import com.fizzycoyote.qusetroll.core.models.open5e.character_class.table_data.TableData;
 import com.fizzycoyote.qusetroll.core.models.open5e.condition.ConditionDao;
 import com.fizzycoyote.qusetroll.core.models.open5e.condition.ConditionEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.condition.ConditionMapper;
@@ -87,7 +86,6 @@ import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherMapper;
 import com.fizzycoyote.qusetroll.core.models.open5e.publisher.PublisherResponse;
 import com.fizzycoyote.qusetroll.core.models.open5e.rule.RuleDao;
-import com.fizzycoyote.qusetroll.core.models.open5e.rule.RuleDto;
 import com.fizzycoyote.qusetroll.core.models.open5e.rule.RuleEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.rule.RuleMapper;
 import com.fizzycoyote.qusetroll.core.models.open5e.rule.RuleResponse;

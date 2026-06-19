@@ -11,11 +11,11 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_item.CustomItemEntity;
@@ -32,7 +32,7 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 
 
-public class CustomItemSetCreateActivity extends AppCompatActivity {
+public class CustomItemSetCreateActivity extends BaseActivity {
 
     public static final String EXTRA_EDIT_ID = "edit_item_set_id";
 

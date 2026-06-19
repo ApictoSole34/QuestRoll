@@ -5,12 +5,13 @@ import android.view.View;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.models.open5e.creature_type.CreatureTypeEntity;
 
 import io.noties.markwon.Markwon;
 
-public class CreatureTypeDetailActivity extends AppCompatActivity {
+public class CreatureTypeDetailActivity extends BaseActivity {
     private Markwon markwon;
 
     @Override

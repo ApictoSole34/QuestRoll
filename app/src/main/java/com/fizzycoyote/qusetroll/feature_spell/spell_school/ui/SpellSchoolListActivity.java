@@ -9,13 +9,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.feature_spell.spell_school.adapter.SpellSchoolAdapter;
 import com.fizzycoyote.qusetroll.feature_spell.spell_school.view_model.SpellSchoolListViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class SpellSchoolListActivity extends AppCompatActivity {
+public class SpellSchoolListActivity extends BaseActivity {
     private SpellSchoolListViewModel viewModel;
     private SpellSchoolAdapter adapter;
     private RecyclerView rv;
@@ -52,7 +53,7 @@ public class SpellSchoolListActivity extends AppCompatActivity {
                 startActivity(i);
             } else {
                 Intent i = new Intent(this, SpellSchoolDetailActivity.class);
-                i.putExtra("SCHOOL_SLUG", school.key);
+                i.putExtra("SCHOOL_KEY", school.key);
                 startActivity(i);
             }
         });
@@ -65,8 +66,16 @@ public class SpellSchoolListActivity extends AppCompatActivity {
     private void setupSearch() {
         SearchView searchView = findViewById(R.id.search_view);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override public boolean onQueryTextSubmit(String q) { viewModel.setQuery(q); return true; }
-            @Override public boolean onQueryTextChange(String q) { viewModel.setQuery(q); return true; }
+            @Override
+            public boolean onQueryTextSubmit(String q) {
+                viewModel.setQuery(q);
+                return true;
+            }
+            @Override
+            public boolean onQueryTextChange(String q) {
+                viewModel.setQuery(q);
+                return true;
+            }
         });
     }
 }

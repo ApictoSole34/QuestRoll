@@ -14,11 +14,11 @@ public class CombinedSpellSchool {
     public final long customId;
 
     public CombinedSpellSchool(SpellSchoolEntity api) {
-        this.id = api.slug;
-        this.key = api.slug;
+        this.id = api.key;
+        this.key = api.key;
         this.customId = -1;
         this.name = api.name;
-        this.description = api.description;
+        this.description = api.desc;
         this.isCustom = false;
     }
 

@@ -1,10 +1,12 @@
 package com.fizzycoyote.qusetroll.feature_creature.creature_type.ui;
 
 import android.os.Bundle;
+import android.widget.BaseAdapter;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_creature_type.CustomCreatureTypeEntity;
 import com.fizzycoyote.qusetroll.feature_creature.creature_type.view_model.CustomCreatureTypeCreateViewModel;
@@ -12,7 +14,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import java.util.concurrent.Executors;
 
-public class CustomCreatureTypeCreateActivity extends AppCompatActivity {
+public class CustomCreatureTypeCreateActivity extends BaseActivity {
     public static final String EXTRA_EDIT_ID = "edit_creature_type_id";
     private CustomCreatureTypeCreateViewModel viewModel;
     private TextInputEditText etName, etDesc;
