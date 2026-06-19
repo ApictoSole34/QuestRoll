@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="12dp"
-    android:background="?attr/selectableItemBackground">
+    android:background="@drawable/item_background">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,7 +19,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_custom_badge"
@@ -26,22 +27,22 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Custom"
-            android:textColor="#FFFFFF"
-            android:background="#4CAF50"
-            android:paddingStart="6dp"
-            android:paddingEnd="6dp"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
-            android:layout_marginEnd="6dp"
-            android:visibility="gone"/>
+            android:textColor="#D4AF37"
+            android:background="#20D4AF37"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:layout_marginEnd="8dp"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/tv_creature_cr"
             style="@style/QuestRollBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="?attr/colorPrimary"
-            android:textStyle="bold"/>
+            android:textColor="@color/threads_gold"
+            android:textStyle="bold" />
 
     </LinearLayout>
 
@@ -60,8 +61,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" "
-            android:textSize="13sp" />
+            android:text=" " />
 
         <TextView
             android:id="@+id/tv_creature_type"
@@ -73,8 +73,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text=" • "
-            android:textSize="13sp"
-            android:textColor="?attr/colorOnSurfaceVariant" />
+            android:textColor="#80FFFFFF" />
 
         <TextView
             android:id="@+id/tv_creature_alignment"

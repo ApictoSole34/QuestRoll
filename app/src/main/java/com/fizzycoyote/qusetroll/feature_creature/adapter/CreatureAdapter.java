@@ -1,6 +1,7 @@
 package com.fizzycoyote.qusetroll.feature_creature.adapter;
 
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -72,8 +73,11 @@ public class CreatureAdapter extends ListAdapter<CombinedCreature, CreatureAdapt
             tvAlignment.setText(creature.alignment != null ? creature.alignment : "");
             if (tvCustomBadge != null)
                 tvCustomBadge.setVisibility(creature.isCustom ? View.VISIBLE : View.GONE);
+
             itemView.setOnClickListener(v -> {
-                if (listener != null) listener.onCreatureClick(creature);
+                if (listener != null) {
+                    listener.onCreatureClick(creature);
+                }
             });
         }
     }

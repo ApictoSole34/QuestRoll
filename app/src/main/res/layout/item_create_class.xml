@@ -7,4 +7,4 @@
     android:padding="16dp"
     android:text="＋ Create New Class"
     android:gravity="center"
-    android:background="?attr/selectableItemBackground" />
+    android:background="@drawable/item_background"/>

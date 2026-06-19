@@ -34,7 +34,6 @@
 
     <color name="threads_header">#8A7A55</color>
 
-
     <!-- Legacy (wymagane przez Material Components) -->
     <color name="purple_500">@color/threads_gold</color>
     <color name="purple_700">@color/threads_gold_dark</color>

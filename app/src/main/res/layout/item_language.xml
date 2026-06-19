@@ -6,7 +6,8 @@
     android:layout_height="wrap_content"
     android:clickable="true"
     android:focusable="true"
-    android:background="@drawable/bg_language_item">
+    android:background="@drawable/item_background">
+
 
     <TextView
         android:id="@+id/tvName"
