@@ -8,6 +8,7 @@
 
     <TextView
         android:id="@+id/attr_label"
+        style="@style/QuestRollLabel"
         android:layout_width="0dp"
         android:layout_weight="2"
         android:layout_height="wrap_content"
@@ -15,12 +16,14 @@
 
     <Button
         android:id="@+id/btn_minus"
+        style="@style/QuestRollButton"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:text="-" />
 
     <TextView
         android:id="@+id/attr_value"
+        style="@style/QuestRollBody"
         android:layout_width="48dp"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -29,6 +32,7 @@
 
     <Button
         android:id="@+id/btn_plus"
+        style="@style/QuestRollButton"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:text="+" />

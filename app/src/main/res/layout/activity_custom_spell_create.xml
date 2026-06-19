@@ -4,12 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-<ImageView
-    android:id="@+id/backgroundImage"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:scaleType="centerCrop" />
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -24,11 +23,10 @@
             android:padding="16dp">
 
             <TextView
+                style="@style/QuestRollSectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Basic Info"
-                android:textColor="?attr/colorPrimary"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:layout_marginBottom="12dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -53,7 +51,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Spell Level"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_marginBottom="12dp"
                 app:boxBackgroundColor="@android:color/transparent"
                 app:hintTextColor="?attr/colorOnSurfaceVariant"
@@ -125,11 +123,10 @@
                 android:layout_marginBottom="16dp"/>
 
             <TextView
+                style="@style/QuestRollSectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Casting"
-                android:textColor="?attr/colorPrimary"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:layout_marginBottom="12dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -189,11 +186,10 @@
                 android:layout_marginBottom="16dp"/>
 
             <TextView
+                style="@style/QuestRollSectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Components"
-                android:textColor="?attr/colorPrimary"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:layout_marginBottom="8dp"/>
 
             <LinearLayout
@@ -204,27 +200,27 @@
 
                 <CheckBox
                     android:id="@+id/cbVerbal"
+                    style="@style/QuestRollBody"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Verbal (V)"
-                    android:textColor="?attr/colorOnSurface"/>
+                    android:text="Verbal (V)"/>
 
                 <CheckBox
                     android:id="@+id/cbSomatic"
+                    style="@style/QuestRollBody"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Somatic (S)"
-                    android:textColor="?attr/colorOnSurface"/>
+                    android:text="Somatic (S)"/>
 
                 <CheckBox
                     android:id="@+id/cbMaterial"
+                    style="@style/QuestRollBody"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Material (M)"
-                    android:textColor="?attr/colorOnSurface"/>
+                    android:text="Material (M)"/>
             </LinearLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -254,19 +250,19 @@
 
                 <CheckBox
                     android:id="@+id/cbRitual"
+                    style="@style/QuestRollBody"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Ritual"
-                    android:textColor="?attr/colorOnSurface"/>
+                    android:text="Ritual"/>
 
                 <CheckBox
                     android:id="@+id/cbConcentration"
+                    style="@style/QuestRollBody"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Concentration"
-                    android:textColor="?attr/colorOnSurface"/>
+                    android:text="Concentration"/>
             </LinearLayout>
 
             <com.google.android.material.divider.MaterialDivider
@@ -275,11 +271,10 @@
                 android:layout_marginBottom="16dp"/>
 
             <TextView
+                style="@style/QuestRollSectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Damage"
-                android:textColor="?attr/colorPrimary"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:layout_marginBottom="12dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -301,10 +296,10 @@
 
             <CheckBox
                 android:id="@+id/cbAttackRoll"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Requires Attack Roll"
-                android:textColor="?attr/colorOnSurface"
                 android:layout_marginBottom="8dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -326,11 +321,10 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
+                style="@style/QuestRollLabel"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Damage Types"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:textAppearance="?attr/textAppearanceTitleSmall"
                 android:layout_marginBottom="8dp"/>
 
             <com.google.android.material.chip.ChipGroup
@@ -345,11 +339,10 @@
                 android:layout_marginBottom="16dp"/>
 
             <TextView
+                style="@style/QuestRollSectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="At Higher Levels"
-                android:textColor="?attr/colorPrimary"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:layout_marginBottom="12dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -385,12 +378,11 @@
                 android:layout_marginBottom="8dp">
 
                 <TextView
+                    style="@style/QuestRollSectionHeader"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Scaling Options"
-                    android:textColor="?attr/colorPrimary"
-                    android:textAppearance="?attr/textAppearanceTitleMedium"/>
+                    android:text="Scaling Options"/>
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnAddCastingOption"

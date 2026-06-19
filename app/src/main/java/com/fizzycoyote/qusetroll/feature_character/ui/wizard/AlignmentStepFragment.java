@@ -11,6 +11,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -37,6 +38,9 @@ public class AlignmentStepFragment extends Fragment {
         viewModel = new ViewModelProvider(requireActivity()).get(WizardViewModel.class);
         alignmentSpinner = view.findViewById(R.id.alignment_spinner);
         descriptionText = view.findViewById(R.id.alignment_description);
+
+        descriptionText.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+        descriptionText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
 
         Button nextButton = view.findViewById(R.id.next_button);
         Button backButton = view.findViewById(R.id.back_button);
@@ -77,6 +81,8 @@ public class AlignmentStepFragment extends Fragment {
                         TextView view = (TextView) super.getView(position, convertView, parent);
                         AlignmentEntity item = getItem(position);
                         view.setText(item != null ? (item.shortName != null ? item.shortName : item.key) : "");
+                        view.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                        view.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                         return view;
                     }
 
@@ -85,6 +91,8 @@ public class AlignmentStepFragment extends Fragment {
                         TextView view = (TextView) super.getDropDownView(position, convertView, parent);
                         AlignmentEntity item = getItem(position);
                         view.setText(item != null ? (item.shortName != null ? item.shortName : item.key) : "");
+                        view.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                        view.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                         return view;
                     }
                 };

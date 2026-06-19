@@ -7,6 +7,7 @@
 
     <CheckBox
         android:id="@+id/cb_subspecies_only"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Subspecies only"
@@ -14,6 +15,7 @@
 
     <CheckBox
         android:id="@+id/cb_main_only"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Main species only"/>

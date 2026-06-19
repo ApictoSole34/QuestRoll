@@ -4,12 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-<ImageView
-    android:id="@+id/backgroundImage"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:scaleType="centerCrop" />
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -25,19 +24,16 @@
 
             <TextView
                 android:id="@+id/tv_species_name"
+                style="@style/QuestRollTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="26sp"
-                android:textStyle="bold"
                 android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/tv_subtitle"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorPrimary"
-                android:textSize="14sp"
                 android:textStyle="italic"
                 android:layout_marginBottom="12dp" />
 
@@ -48,11 +44,9 @@
 
             <TextView
                 android:id="@+id/tv_desc"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="15sp"
-                android:lineSpacingMultiplier="1.4"
                 android:layout_marginBottom="16dp" />
 
             <com.google.android.material.divider.MaterialDivider
@@ -60,7 +54,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp" />
 
-            <!-- Traits Section -->
             <LinearLayout
                 android:id="@+id/traits_section"
                 android:layout_width="match_parent"
@@ -69,12 +62,10 @@
                 android:layout_marginBottom="16dp">
 
                 <TextView
+                    style="@style/QuestRollSectionHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Traits"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
 
                 <LinearLayout
@@ -85,7 +76,6 @@
 
             </LinearLayout>
 
-            <!-- Subspecies Section -->
             <LinearLayout
                 android:id="@+id/subspecies_section"
                 android:layout_width="match_parent"
@@ -94,12 +84,10 @@
                 android:layout_marginBottom="16dp">
 
                 <TextView
+                    style="@style/QuestRollSectionHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Subspecies"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
 
                 <LinearLayout

@@ -4,12 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-<ImageView
-    android:id="@+id/backgroundImage"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:scaleType="centerCrop" />
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -23,7 +22,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Feature Name -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -42,7 +40,6 @@
                     android:maxLines="1"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Feature Type -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -61,7 +58,6 @@
                     android:inputType="none"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Description -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -82,7 +78,6 @@
                     android:gravity="top"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Gained At Levels -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -90,12 +85,11 @@
                 android:gravity="center_vertical"
                 android:layout_marginBottom="8dp">
                 <TextView
+                    style="@style/QuestRollSectionHeader"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Gained at Levels"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textAppearance="?attr/textAppearanceTitleSmall"/>
+                    android:text="Gained at Levels"/>
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnAddLevel"
                     android:layout_width="wrap_content"
@@ -112,7 +106,6 @@
                 android:nestedScrollingEnabled="false"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- Table Data -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -120,12 +113,11 @@
                 android:gravity="center_vertical"
                 android:layout_marginBottom="8dp">
                 <TextView
+                    style="@style/QuestRollSectionHeader"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Class Table Data"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textAppearance="?attr/textAppearanceTitleSmall"/>
+                    android:text="Class Table Data"/>
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnAddTableRow"
                     android:layout_width="wrap_content"
@@ -142,7 +134,6 @@
                 android:nestedScrollingEnabled="false"
                 android:layout_marginBottom="24dp"/>
 
-            <!-- Save Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSaveFeature"
                 style="@style/QuestRollButton"

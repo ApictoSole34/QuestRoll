@@ -13,11 +13,11 @@
         android:layout_marginBottom="8dp">
 
         <TextView
+            style="@style/QuestRollLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Rarity"
-            android:textStyle="bold" />
+            android:text="Rarity" />
 
         <ImageButton
             android:id="@+id/btn_manage_rarities_in_dialog"
@@ -26,6 +26,7 @@
             android:src="@android:drawable/ic_menu_edit"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="8dp"
+            android:tint="?attr/colorOnSurface"
             android:contentDescription="Manage Rarities" />
     </LinearLayout>
 
@@ -37,6 +38,7 @@
 
     <CheckBox
         android:id="@+id/cb_magic_only"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Magic Item Only"
@@ -44,6 +46,7 @@
 
     <CheckBox
         android:id="@+id/cb_attunement"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Requires Attunement"
@@ -57,11 +60,11 @@
         android:layout_marginBottom="8dp">
 
         <TextView
+            style="@style/QuestRollLabel"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Weapon Property"
-            android:textStyle="bold" />
+            android:text="Weapon Property" />
 
         <ImageButton
             android:id="@+id/btn_manage_weapon_properties_in_dialog"
@@ -70,6 +73,7 @@
             android:src="@android:drawable/ic_menu_edit"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="8dp"
+            android:tint="?attr/colorOnSurface"
             android:contentDescription="Manage Weapon Properties" />
     </LinearLayout>
 

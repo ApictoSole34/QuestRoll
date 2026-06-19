@@ -17,18 +17,16 @@
             android:padding="12dp"
             android:paddingBottom="80dp">
 
-            <!-- NO CHARACTER placeholder -->
             <TextView
                 android:id="@+id/tv_no_character"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="No character assigned to this campaign."
-                android:textSize="15sp"
                 android:gravity="center"
                 android:padding="32dp"
                 android:visibility="gone" />
 
-            <!-- GOLD CARD -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_gold"
                 android:layout_width="match_parent"
@@ -36,7 +34,8 @@
                 android:layout_marginBottom="12dp"
                 android:visibility="gone"
                 app:cardElevation="2dp"
-                app:cardCornerRadius="12dp">
+                app:cardCornerRadius="12dp"
+                app:cardBackgroundColor="@color/threads_surface">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -46,12 +45,12 @@
                     android:padding="14dp">
 
                     <TextView
+                        style="@style/QuestRollBody"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="💰 Gold"
-                        android:textStyle="bold"
-                        android:textSize="15sp" />
+                        android:textStyle="bold" />
 
                     <Button
                         android:id="@+id/btn_gold_minus"
@@ -60,17 +59,18 @@
                         android:layout_height="36dp"
                         android:text="−"
                         android:textSize="18sp"
+                        android:textColor="?attr/colorOnSurface"
                         android:minWidth="0dp"
                         android:insetLeft="0dp" android:insetTop="0dp"
                         android:insetRight="0dp" android:insetBottom="0dp" />
 
                     <TextView
                         android:id="@+id/tv_gold"
+                        style="@style/QuestRollStat"
                         android:layout_width="72dp"
                         android:layout_height="wrap_content"
                         android:text="0 gp"
                         android:textSize="20sp"
-                        android:textStyle="bold"
                         android:textColor="#F9A825"
                         android:gravity="center" />
 
@@ -81,6 +81,7 @@
                         android:layout_height="36dp"
                         android:text="+"
                         android:textSize="18sp"
+                        android:textColor="?attr/colorOnSurface"
                         android:minWidth="0dp"
                         android:insetLeft="0dp" android:insetTop="0dp"
                         android:insetRight="0dp" android:insetBottom="0dp" />
@@ -91,11 +92,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Set"
+                        android:textColor="?attr/colorPrimary"
                         android:layout_marginStart="4dp" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- EQUIPPED SLOTS CARD -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_slots"
                 android:layout_width="match_parent"
@@ -103,7 +104,8 @@
                 android:layout_marginBottom="12dp"
                 android:visibility="gone"
                 app:cardElevation="2dp"
-                app:cardCornerRadius="12dp">
+                app:cardCornerRadius="12dp"
+                app:cardBackgroundColor="@color/threads_surface">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -119,104 +121,102 @@
                         android:layout_marginBottom="8dp">
 
                         <TextView
+                            style="@style/QuestRollBody"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Equipped"
-                            android:textStyle="bold"
-                            android:textSize="15sp" />
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tv_ac_value"
+                            style="@style/QuestRollBody"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="AC: —"
-                            android:textSize="13sp"
                             android:textColor="?attr/colorPrimary"
                             android:textStyle="bold" />
                     </LinearLayout>
 
-                    <!-- Slot rows -->
                     <LinearLayout android:id="@+id/slot_main_hand" android:layout_width="match_parent" android:layout_height="44dp" android:orientation="horizontal" android:gravity="center_vertical" android:paddingStart="4dp" android:paddingEnd="4dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
-                        <TextView android:layout_width="88dp" android:layout_height="wrap_content" android:text="⚔ Main Hand" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary" />
-                        <TextView android:id="@+id/tv_slot_main_hand" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="—" android:textSize="13sp" android:paddingStart="8dp" />
-                        <Button android:id="@+id/btn_unequip_main_hand" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✕" android:visibility="gone" android:textSize="12sp" android:minWidth="0dp" android:paddingStart="8dp" android:paddingEnd="8dp" />
+                        <TextView style="@style/QuestRollCaption" android:layout_width="88dp" android:layout_height="wrap_content" android:text="⚔ Main Hand" />
+                        <TextView android:id="@+id/tv_slot_main_hand" style="@style/QuestRollBody" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="—" android:paddingStart="8dp" />
+                        <Button android:id="@+id/btn_unequip_main_hand" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✕" android:textColor="?attr/colorOnSurface" android:visibility="gone" android:textSize="12sp" android:minWidth="0dp" android:paddingStart="8dp" android:paddingEnd="8dp" />
                     </LinearLayout>
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?attr/colorOutline" />
 
                     <LinearLayout android:id="@+id/slot_off_hand" android:layout_width="match_parent" android:layout_height="44dp" android:orientation="horizontal" android:gravity="center_vertical" android:paddingStart="4dp" android:paddingEnd="4dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
-                        <TextView android:layout_width="88dp" android:layout_height="wrap_content" android:text="🛡 Off Hand" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary" />
-                        <TextView android:id="@+id/tv_slot_off_hand" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="—" android:textSize="13sp" android:paddingStart="8dp" />
-                        <Button android:id="@+id/btn_unequip_off_hand" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✕" android:visibility="gone" android:textSize="12sp" android:minWidth="0dp" android:paddingStart="8dp" android:paddingEnd="8dp" />
+                        <TextView style="@style/QuestRollCaption" android:layout_width="88dp" android:layout_height="wrap_content" android:text="🛡 Off Hand" />
+                        <TextView android:id="@+id/tv_slot_off_hand" style="@style/QuestRollBody" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="—" android:paddingStart="8dp" />
+                        <Button android:id="@+id/btn_unequip_off_hand" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✕" android:textColor="?attr/colorOnSurface" android:visibility="gone" android:textSize="12sp" android:minWidth="0dp" android:paddingStart="8dp" android:paddingEnd="8dp" />
                     </LinearLayout>
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?attr/colorOutline" />
 
                     <LinearLayout android:id="@+id/slot_body" android:layout_width="match_parent" android:layout_height="44dp" android:orientation="horizontal" android:gravity="center_vertical" android:paddingStart="4dp" android:paddingEnd="4dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
-                        <TextView android:layout_width="88dp" android:layout_height="wrap_content" android:text="🧥 Armor" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary" />
-                        <TextView android:id="@+id/tv_slot_body" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="—" android:textSize="13sp" android:paddingStart="8dp" />
-                        <Button android:id="@+id/btn_unequip_body" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✕" android:visibility="gone" android:textSize="12sp" android:minWidth="0dp" android:paddingStart="8dp" android:paddingEnd="8dp" />
+                        <TextView style="@style/QuestRollCaption" android:layout_width="88dp" android:layout_height="wrap_content" android:text="🧥 Armor" />
+                        <TextView android:id="@+id/tv_slot_body" style="@style/QuestRollBody" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="—" android:paddingStart="8dp" />
+                        <Button android:id="@+id/btn_unequip_body" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✕" android:textColor="?attr/colorOnSurface" android:visibility="gone" android:textSize="12sp" android:minWidth="0dp" android:paddingStart="8dp" android:paddingEnd="8dp" />
                     </LinearLayout>
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?attr/colorOutline" />
 
                     <LinearLayout android:id="@+id/slot_head" android:layout_width="match_parent" android:layout_height="44dp" android:orientation="horizontal" android:gravity="center_vertical" android:paddingStart="4dp" android:paddingEnd="4dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
-                        <TextView android:layout_width="88dp" android:layout_height="wrap_content" android:text="⛑ Head" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary" />
-                        <TextView android:id="@+id/tv_slot_head" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="—" android:textSize="13sp" android:paddingStart="8dp" />
-                        <Button android:id="@+id/btn_unequip_head" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✕" android:visibility="gone" android:textSize="12sp" android:minWidth="0dp" android:paddingStart="8dp" android:paddingEnd="8dp" />
+                        <TextView style="@style/QuestRollCaption" android:layout_width="88dp" android:layout_height="wrap_content" android:text="⛑ Head" />
+                        <TextView android:id="@+id/tv_slot_head" style="@style/QuestRollBody" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="—" android:paddingStart="8dp" />
+                        <Button android:id="@+id/btn_unequip_head" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✕" android:textColor="?attr/colorOnSurface" android:visibility="gone" android:textSize="12sp" android:minWidth="0dp" android:paddingStart="8dp" android:paddingEnd="8dp" />
                     </LinearLayout>
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?attr/colorOutline" />
 
                     <LinearLayout android:id="@+id/slot_neck" android:layout_width="match_parent" android:layout_height="44dp" android:orientation="horizontal" android:gravity="center_vertical" android:paddingStart="4dp" android:paddingEnd="4dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
-                        <TextView android:layout_width="88dp" android:layout_height="wrap_content" android:text="📿 Neck" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary" />
-                        <TextView android:id="@+id/tv_slot_neck" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="—" android:textSize="13sp" android:paddingStart="8dp" />
-                        <Button android:id="@+id/btn_unequip_neck" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✕" android:visibility="gone" android:textSize="12sp" android:minWidth="0dp" android:paddingStart="8dp" android:paddingEnd="8dp" />
+                        <TextView style="@style/QuestRollCaption" android:layout_width="88dp" android:layout_height="wrap_content" android:text="📿 Neck" />
+                        <TextView android:id="@+id/tv_slot_neck" style="@style/QuestRollBody" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="—" android:paddingStart="8dp" />
+                        <Button android:id="@+id/btn_unequip_neck" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✕" android:textColor="?attr/colorOnSurface" android:visibility="gone" android:textSize="12sp" android:minWidth="0dp" android:paddingStart="8dp" android:paddingEnd="8dp" />
                     </LinearLayout>
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?attr/colorOutline" />
 
                     <LinearLayout android:id="@+id/slot_cloak" android:layout_width="match_parent" android:layout_height="44dp" android:orientation="horizontal" android:gravity="center_vertical" android:paddingStart="4dp" android:paddingEnd="4dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
-                        <TextView android:layout_width="88dp" android:layout_height="wrap_content" android:text="🌙 Cloak" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary" />
-                        <TextView android:id="@+id/tv_slot_cloak" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="—" android:textSize="13sp" android:paddingStart="8dp" />
-                        <Button android:id="@+id/btn_unequip_cloak" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✕" android:visibility="gone" android:textSize="12sp" android:minWidth="0dp" android:paddingStart="8dp" android:paddingEnd="8dp" />
+                        <TextView style="@style/QuestRollCaption" android:layout_width="88dp" android:layout_height="wrap_content" android:text="🌙 Cloak" />
+                        <TextView android:id="@+id/tv_slot_cloak" style="@style/QuestRollBody" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="—" android:paddingStart="8dp" />
+                        <Button android:id="@+id/btn_unequip_cloak" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✕" android:textColor="?attr/colorOnSurface" android:visibility="gone" android:textSize="12sp" android:minWidth="0dp" android:paddingStart="8dp" android:paddingEnd="8dp" />
                     </LinearLayout>
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?attr/colorOutline" />
 
                     <LinearLayout android:id="@+id/slot_hands" android:layout_width="match_parent" android:layout_height="44dp" android:orientation="horizontal" android:gravity="center_vertical" android:paddingStart="4dp" android:paddingEnd="4dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
-                        <TextView android:layout_width="88dp" android:layout_height="wrap_content" android:text="🧤 Gloves" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary" />
-                        <TextView android:id="@+id/tv_slot_hands" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="—" android:textSize="13sp" android:paddingStart="8dp" />
-                        <Button android:id="@+id/btn_unequip_hands" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✕" android:visibility="gone" android:textSize="12sp" android:minWidth="0dp" android:paddingStart="8dp" android:paddingEnd="8dp" />
+                        <TextView style="@style/QuestRollCaption" android:layout_width="88dp" android:layout_height="wrap_content" android:text="🧤 Gloves" />
+                        <TextView android:id="@+id/tv_slot_hands" style="@style/QuestRollBody" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="—" android:paddingStart="8dp" />
+                        <Button android:id="@+id/btn_unequip_hands" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✕" android:textColor="?attr/colorOnSurface" android:visibility="gone" android:textSize="12sp" android:minWidth="0dp" android:paddingStart="8dp" android:paddingEnd="8dp" />
                     </LinearLayout>
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?attr/colorOutline" />
 
                     <LinearLayout android:id="@+id/slot_ring_left" android:layout_width="match_parent" android:layout_height="44dp" android:orientation="horizontal" android:gravity="center_vertical" android:paddingStart="4dp" android:paddingEnd="4dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
-                        <TextView android:layout_width="88dp" android:layout_height="wrap_content" android:text="💍 Ring L" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary" />
-                        <TextView android:id="@+id/tv_slot_ring_left" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="—" android:textSize="13sp" android:paddingStart="8dp" />
-                        <Button android:id="@+id/btn_unequip_ring_left" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✕" android:visibility="gone" android:textSize="12sp" android:minWidth="0dp" android:paddingStart="8dp" android:paddingEnd="8dp" />
+                        <TextView style="@style/QuestRollCaption" android:layout_width="88dp" android:layout_height="wrap_content" android:text="💍 Ring L" />
+                        <TextView android:id="@+id/tv_slot_ring_left" style="@style/QuestRollBody" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="—" android:paddingStart="8dp" />
+                        <Button android:id="@+id/btn_unequip_ring_left" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✕" android:textColor="?attr/colorOnSurface" android:visibility="gone" android:textSize="12sp" android:minWidth="0dp" android:paddingStart="8dp" android:paddingEnd="8dp" />
                     </LinearLayout>
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?attr/colorOutline" />
 
                     <LinearLayout android:id="@+id/slot_ring_right" android:layout_width="match_parent" android:layout_height="44dp" android:orientation="horizontal" android:gravity="center_vertical" android:paddingStart="4dp" android:paddingEnd="4dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
-                        <TextView android:layout_width="88dp" android:layout_height="wrap_content" android:text="💍 Ring R" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary" />
-                        <TextView android:id="@+id/tv_slot_ring_right" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="—" android:textSize="13sp" android:paddingStart="8dp" />
-                        <Button android:id="@+id/btn_unequip_ring_right" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✕" android:visibility="gone" android:textSize="12sp" android:minWidth="0dp" android:paddingStart="8dp" android:paddingEnd="8dp" />
+                        <TextView style="@style/QuestRollCaption" android:layout_width="88dp" android:layout_height="wrap_content" android:text="💍 Ring R" />
+                        <TextView android:id="@+id/tv_slot_ring_right" style="@style/QuestRollBody" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="—" android:paddingStart="8dp" />
+                        <Button android:id="@+id/btn_unequip_ring_right" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✕" android:textColor="?attr/colorOnSurface" android:visibility="gone" android:textSize="12sp" android:minWidth="0dp" android:paddingStart="8dp" android:paddingEnd="8dp" />
                     </LinearLayout>
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?attr/colorOutline" />
 
                     <LinearLayout android:id="@+id/slot_waist" android:layout_width="match_parent" android:layout_height="44dp" android:orientation="horizontal" android:gravity="center_vertical" android:paddingStart="4dp" android:paddingEnd="4dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
-                        <TextView android:layout_width="88dp" android:layout_height="wrap_content" android:text="👔 Waist" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary" />
-                        <TextView android:id="@+id/tv_slot_waist" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="—" android:textSize="13sp" android:paddingStart="8dp" />
-                        <Button android:id="@+id/btn_unequip_waist" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✕" android:visibility="gone" android:textSize="12sp" android:minWidth="0dp" android:paddingStart="8dp" android:paddingEnd="8dp" />
+                        <TextView style="@style/QuestRollCaption" android:layout_width="88dp" android:layout_height="wrap_content" android:text="👔 Waist" />
+                        <TextView android:id="@+id/tv_slot_waist" style="@style/QuestRollBody" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="—" android:paddingStart="8dp" />
+                        <Button android:id="@+id/btn_unequip_waist" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✕" android:textColor="?attr/colorOnSurface" android:visibility="gone" android:textSize="12sp" android:minWidth="0dp" android:paddingStart="8dp" android:paddingEnd="8dp" />
                     </LinearLayout>
-                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="#E0E0E0" />
+                    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="?attr/colorOutline" />
 
                     <LinearLayout android:id="@+id/slot_feet" android:layout_width="match_parent" android:layout_height="44dp" android:orientation="horizontal" android:gravity="center_vertical" android:paddingStart="4dp" android:paddingEnd="4dp" android:background="?attr/selectableItemBackground" android:clickable="true" android:focusable="true">
-                        <TextView android:layout_width="88dp" android:layout_height="wrap_content" android:text="👢 Boots" android:textSize="12sp" android:textColor="?android:attr/textColorSecondary" />
-                        <TextView android:id="@+id/tv_slot_feet" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="—" android:textSize="13sp" android:paddingStart="8dp" />
-                        <Button android:id="@+id/btn_unequip_feet" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✕" android:visibility="gone" android:textSize="12sp" android:minWidth="0dp" android:paddingStart="8dp" android:paddingEnd="8dp" />
+                        <TextView style="@style/QuestRollCaption" android:layout_width="88dp" android:layout_height="wrap_content" android:text="👢 Boots" />
+                        <TextView android:id="@+id/tv_slot_feet" style="@style/QuestRollBody" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="—" android:paddingStart="8dp" />
+                        <Button android:id="@+id/btn_unequip_feet" style="@style/Widget.MaterialComponents.Button.TextButton" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="✕" android:textColor="?attr/colorOnSurface" android:visibility="gone" android:textSize="12sp" android:minWidth="0dp" android:paddingStart="8dp" android:paddingEnd="8dp" />
                     </LinearLayout>
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
-            <!-- BACKPACK CARD -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_backpack"
                 android:layout_width="match_parent"
@@ -224,7 +224,8 @@
                 android:layout_marginBottom="8dp"
                 android:visibility="gone"
                 app:cardElevation="2dp"
-                app:cardCornerRadius="12dp">
+                app:cardCornerRadius="12dp"
+                app:cardBackgroundColor="@color/threads_surface">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -240,28 +241,26 @@
                         android:layout_marginBottom="8dp">
 
                         <TextView
+                            style="@style/QuestRollBody"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:text="Backpack"
-                            android:textStyle="bold"
-                            android:textSize="15sp" />
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/tv_total_weight"
+                            style="@style/QuestRollCaption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="0 lb"
-                            android:textSize="13sp"
-                            android:textColor="?android:attr/textColorSecondary" />
+                            android:text="0 lb" />
 
                         <TextView
                             android:id="@+id/tv_carry_capacity"
+                            style="@style/QuestRollCaption"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text=" / — lb"
-                            android:textSize="13sp"
-                            android:textColor="?android:attr/textColorSecondary" />
+                            android:text=" / — lb" />
                     </LinearLayout>
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -273,13 +272,13 @@
 
                     <TextView
                         android:id="@+id/tv_empty_inventory"
+                        style="@style/QuestRollBody"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Backpack is empty."
-                        android:textSize="14sp"
                         android:gravity="center"
                         android:padding="16dp"
-                        android:textColor="?android:attr/textColorSecondary"
+                        android:textColor="?attr/colorOnSurfaceVariant"
                         android:visibility="gone" />
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
@@ -287,9 +286,9 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- FAB: Open Shop -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_shop"
+        style="@style/Widget.QuestRoll.FAB"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"

@@ -6,11 +6,11 @@
     android:padding="16dp">
 
     <TextView
+        style="@style/QuestRollTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Choose game system"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:layout_marginBottom="8dp" />
 
     <RadioGroup
         android:id="@+id/game_system_radio"
@@ -20,15 +20,19 @@
 
         <RadioButton
             android:id="@+id/radio_5e_2014"
+            style="@style/QuestRollBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="D&amp;D 5e (2014 Rules)" />
+
     </RadioGroup>
 
     <Button
         android:id="@+id/next_button"
+        style="@style/QuestRollButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:text="Next" />
+
 </LinearLayout>

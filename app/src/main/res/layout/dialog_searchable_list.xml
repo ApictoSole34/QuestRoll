@@ -7,9 +7,12 @@
 
     <EditText
         android:id="@+id/search_input"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Search..."
+        android:textColor="?attr/colorOnSurface"
+        android:textColorHint="?attr/colorOnSurfaceVariant"
         android:inputType="text"
         android:padding="8dp" />
 

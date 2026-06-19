@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.LiveData;
 
 import com.fizzycoyote.qusetroll.R;
@@ -61,6 +62,15 @@ public class LoadingActivity extends BaseActivity {
         sectionText          = findViewById(R.id.sectionText);
         logText              = findViewById(R.id.logText);
 
+        progressText.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        progressText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+
+        sectionText.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        sectionText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+
+        logText.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        logText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+
         progressBarSection.setIndeterminate(false);
         progressBarSection.setMax(100);
         progressBarSection.setProgress(0);
@@ -103,6 +113,10 @@ public class LoadingActivity extends BaseActivity {
             cb.setText(section.displayName);
             cb.setChecked(true);
             cb.setPadding(0, dp(6), 0, dp(6));
+
+            cb.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+            cb.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+
             checkboxMap.put(section, cb);
             checkboxContainer.addView(cb);
         }

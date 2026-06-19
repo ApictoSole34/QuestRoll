@@ -6,11 +6,10 @@
 
     <TextView
         android:id="@+id/tv_step_title"
+        style="@style/QuestRollTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:layout_marginBottom="8dp" />
 
     <RadioGroup
         android:id="@+id/rg_asi_mode"
@@ -22,16 +21,19 @@
 
         <RadioButton
             android:id="@+id/rb_one_stat"
+            style="@style/QuestRollBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="+2 to one stat" />
 
         <RadioButton
             android:id="@+id/rb_two_stats"
+            style="@style/QuestRollBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="+1 to two stats"
             android:layout_marginStart="16dp" />
+
     </RadioGroup>
 
     <LinearLayout
@@ -42,6 +44,7 @@
 
     <Button
         android:id="@+id/btn_confirm_asi"
+        style="@style/QuestRollButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"

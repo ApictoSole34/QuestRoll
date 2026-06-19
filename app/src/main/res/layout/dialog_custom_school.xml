@@ -7,18 +7,24 @@
 
     <EditText
         android:id="@+id/etSchoolName"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="School Name"
+        android:textColor="?attr/colorOnSurface"
+        android:textColorHint="?attr/colorOnSurfaceVariant"
         android:inputType="textCapWords"
         android:maxLines="1"
         android:layout_marginBottom="12dp"/>
 
     <EditText
         android:id="@+id/etSchoolDesc"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Description (optional)"
+        android:textColor="?attr/colorOnSurface"
+        android:textColorHint="?attr/colorOnSurfaceVariant"
         android:inputType="textMultiLine"
         android:minLines="2"
         android:maxLines="4"

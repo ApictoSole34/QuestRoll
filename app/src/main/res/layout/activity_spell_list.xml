@@ -4,12 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-<ImageView
-    android:id="@+id/backgroundImage"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:scaleType="centerCrop" />
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,7 +16,6 @@
         android:orientation="vertical"
         android:background="@android:color/transparent">
 
-        <!-- Wyszukiwarka + przyciski -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -56,7 +54,6 @@
 
         </LinearLayout>
 
-        <!-- Źródła (chipy) -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -87,34 +84,30 @@
 
         </HorizontalScrollView>
 
-        <!-- Aktywne filtry -->
         <TextView
             android:id="@+id/tv_active_filters"
+            style="@style/QuestRollCaption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:paddingBottom="4dp"
-            android:textSize="12sp"
             android:textColor="?attr/colorPrimary"
             android:visibility="gone" />
 
-        <!-- Licznik zaklęć -->
         <TextView
             android:id="@+id/tv_spell_count"
+            style="@style/QuestRollCaption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            android:paddingBottom="4dp"
-            android:textSize="12sp"
-            android:textColor="?attr/colorOnSurfaceVariant" />
+            android:paddingBottom="4dp" />
 
         <com.google.android.material.divider.MaterialDivider
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_spells"
             android:layout_width="match_parent"
@@ -122,7 +115,6 @@
 
     </LinearLayout>
 
-    <!-- FAB -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabCreateSpell"
         style="@style/Widget.QuestRoll.FAB"

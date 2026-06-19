@@ -7,15 +7,22 @@
 
     <EditText
         android:id="@+id/feature_name"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Feature Name" />
+        android:hint="Feature Name"
+        android:textColor="?attr/colorOnSurface"
+        android:textColorHint="?attr/colorOnSurfaceVariant" />
 
     <EditText
         android:id="@+id/feature_desc"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Description"
+        android:textColor="?attr/colorOnSurface"
+        android:textColorHint="?attr/colorOnSurfaceVariant"
         android:inputType="textMultiLine"
         android:minLines="2"/>
+
 </LinearLayout>

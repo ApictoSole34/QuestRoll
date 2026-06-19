@@ -1,13 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content"
-    android:orientation="vertical" android:padding="16dp">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
 
-    <CheckBox android:id="@+id/cb_simple_only" android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:text="Simple weapons only"
+    <CheckBox
+        android:id="@+id/cb_simple_only"
+        style="@style/QuestRollBody"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Simple weapons only"
         android:layout_marginBottom="8dp"/>
 
-    <CheckBox android:id="@+id/cb_martial_only" android:layout_width="match_parent"
-        android:layout_height="wrap_content" android:text="Martial weapons only"/>
+    <CheckBox
+        android:id="@+id/cb_martial_only"
+        style="@style/QuestRollBody"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Martial weapons only"/>
 
 </LinearLayout>

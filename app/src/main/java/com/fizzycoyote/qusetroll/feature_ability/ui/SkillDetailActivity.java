@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.fizzycoyote.qusetroll.R;
 import com.fizzycoyote.qusetroll.core.base.BaseActivity;
@@ -14,6 +15,7 @@ import com.fizzycoyote.qusetroll.core.feature_document.fragment.DocumentDetailDi
 import com.fizzycoyote.qusetroll.core.local_database.Open5eDatabase;
 import com.fizzycoyote.qusetroll.core.models.open5e.ability.AbilityDto;
 import com.fizzycoyote.qusetroll.core.models.open5e.ability.skill.SkillEntity;
+import com.google.android.material.chip.Chip;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -21,6 +23,8 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import io.noties.markwon.Markwon;
+import io.noties.markwon.ext.tables.TablePlugin;
+import io.noties.markwon.html.HtmlPlugin;
 
 public class SkillDetailActivity extends BaseActivity {
 
@@ -31,7 +35,10 @@ public class SkillDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_skill_detail);
 
-        markwon = Markwon.create(this);
+        markwon = Markwon.builder(this)
+                .usePlugin(TablePlugin.create(this))
+                .usePlugin(HtmlPlugin.create())
+                .build();
 
         String key = getIntent().getStringExtra("SKILL_KEY");
         if (key == null) {
@@ -47,14 +54,21 @@ public class SkillDetailActivity extends BaseActivity {
     }
 
     private void populateUI(SkillEntity skill) {
-        ((TextView) findViewById(R.id.tv_skill_name)).setText(skill.name);
+        TextView tvName = findViewById(R.id.tv_skill_name);
+        tvName.setText(skill.name);
+        tvName.setTypeface(ResourcesCompat.getFont(this, R.font.cinzel_bold));
+        tvName.setTextColor(getColor(R.color.threads_text_primary));
+
+        Chip chipAbility = findViewById(R.id.chip_ability);
+        chipAbility.setTextColor(getColor(R.color.threads_text_primary));
+        chipAbility.setChipBackgroundColorResource(R.color.threads_surface);
 
         Open5eDatabase.getInstance(this).abilityDao()
                 .getByKey(skill.abilityKey)
                 .observe(this, ability -> {
                     if (ability != null) {
-                        ((com.google.android.material.chip.Chip) findViewById(R.id.chip_ability))
-                                .setText(ability.name);
+                        chipAbility.setText(ability.name);
+                        chipAbility.setTypeface(ResourcesCompat.getFont(this, R.font.inter_medium));
                     }
                 });
 
@@ -62,6 +76,8 @@ public class SkillDetailActivity extends BaseActivity {
         if (skill.documentKey != null && !skill.documentKey.isEmpty()) {
             String displayName = formatDocumentName(skill.documentKey);
             tvSource.setText("Source: " + displayName);
+            tvSource.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+            tvSource.setTextColor(getColor(R.color.threads_text_secondary));
             tvSource.setVisibility(View.VISIBLE);
             tvSource.setClickable(true);
             tvSource.setFocusable(true);
@@ -90,17 +106,20 @@ public class SkillDetailActivity extends BaseActivity {
         for (AbilityDto.AbilityDescriptionDto d : descs) {
             TextView label = new TextView(this);
             label.setText(d.gamesystem != null ? d.gamesystem.toUpperCase() : "");
-            label.setTypeface(null, Typeface.BOLD);
-            label.setTextSize(12);
+            label.setTypeface(ResourcesCompat.getFont(this, R.font.cinzel_semibold));
+            label.setTextSize(14);
+            label.setTextColor(getColor(R.color.threads_gold));
             container.addView(label);
 
             TextView body = new TextView(this);
             markwon.setMarkdown(body, d.desc != null ? d.desc : "");
-            body.setTextSize(14);
+            body.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+            body.setTextSize(15);
+            body.setTextColor(getColor(R.color.threads_text_primary));
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
-            lp.setMargins(0, 4, 0, 16);
+            lp.setMargins(0, dp(4), 0, dp(16));
             body.setLayoutParams(lp);
             container.addView(body);
         }
@@ -115,5 +134,9 @@ public class SkillDetailActivity extends BaseActivity {
             case "srd-2024": return "SRD 5.2";
             default: return key;
         }
+    }
+
+    private int dp(int v) {
+        return (int) (v * getResources().getDisplayMetrics().density);
     }
 }

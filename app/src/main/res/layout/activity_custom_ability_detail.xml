@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <ImageView
         android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
@@ -23,7 +22,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Przycisk Manage (trzy kropki) -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -44,19 +42,16 @@
 
             <TextView
                 android:id="@+id/tv_ability_name"
+                style="@style/QuestRollTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceHeadlineMedium"
-                android:textColor="?attr/colorOnSurface"
-                android:textStyle="bold"
                 android:layout_marginBottom="8dp" />
 
             <TextView
                 android:id="@+id/tv_ability_short_desc"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceBodyLarge"
-                android:textColor="?attr/colorPrimary"
                 android:layout_marginBottom="16dp" />
 
             <com.google.android.material.divider.MaterialDivider
@@ -65,36 +60,32 @@
                 android:layout_marginBottom="16dp" />
 
             <TextView
+                style="@style/QuestRollSectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Description"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textColor="?attr/colorPrimary"
                 android:layout_marginBottom="8dp" />
 
             <TextView
                 android:id="@+id/tv_ability_description"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="?attr/colorOnSurface"
-                android:lineSpacingMultiplier="1.4"
                 android:layout_marginBottom="24dp" />
 
             <TextView
+                style="@style/QuestRollSectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Custom Skills"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textColor="?attr/colorPrimary"
                 android:layout_marginBottom="12dp" />
 
             <TextView
                 android:id="@+id/tv_no_custom_skills"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="No custom skills yet"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
                 android:textColor="?attr/colorOnSurfaceVariant"
                 android:gravity="center"
                 android:visibility="gone"

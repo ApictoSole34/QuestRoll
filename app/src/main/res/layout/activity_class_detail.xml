@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -26,12 +25,10 @@
 
             <TextView
                 android:id="@+id/tv_class_name"
+                style="@style/QuestRollTitle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+                android:layout_height="wrap_content" />
 
-            <!-- Kontener na szczegóły (dla custom class) -->
             <LinearLayout
                 android:id="@+id/traits_container"
                 android:layout_width="match_parent"
@@ -40,7 +37,6 @@
                 android:layout_marginBottom="8dp"
                 android:orientation="vertical" />
 
-            <!-- Hit Points Section -->
             <LinearLayout
                 android:id="@+id/hit_points_section"
                 android:layout_width="match_parent"
@@ -48,28 +44,28 @@
                 android:orientation="vertical">
 
                 <TextView
+                    style="@style/QuestRollSectionHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="Hit Points"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:text="Hit Points" />
 
                 <TextView
                     android:id="@+id/tv_hit_points"
+                    style="@style/QuestRollBody"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp" />
 
                 <TextView
                     android:id="@+id/tv_hit_dice"
+                    style="@style/QuestRollBody"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp" />
 
             </LinearLayout>
 
-            <!-- Class Table Section -->
             <LinearLayout
                 android:id="@+id/class_table_section"
                 android:layout_width="match_parent"
@@ -78,12 +74,11 @@
                 android:visibility="gone">
 
                 <TextView
+                    style="@style/QuestRollSectionHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="Class Features by Level"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:text="Class Features by Level" />
 
                 <HorizontalScrollView
                     android:layout_width="match_parent"
@@ -107,19 +102,17 @@
 
             </LinearLayout>
 
-            <!-- Features Section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
+                    style="@style/QuestRollSectionHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="Class Features"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:text="Class Features" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recycler_features"
@@ -132,6 +125,7 @@
 
             <Button
                 android:id="@+id/btnManage"
+                style="@style/QuestRollButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Manage"

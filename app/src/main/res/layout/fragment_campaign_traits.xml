@@ -7,12 +7,13 @@
 
     <TextView
         android:id="@+id/tv_empty_traits"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="No traits or features yet."
-        android:textSize="14sp"
         android:gravity="center"
         android:padding="32dp"
+        android:textColor="?attr/colorOnSurfaceVariant"
         android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView

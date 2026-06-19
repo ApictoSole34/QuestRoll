@@ -4,9 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -53,11 +50,10 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
+                style="@style/QuestRollSectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Environment Type"
-                android:textColor="?attr/colorOnSurface"
-                android:textStyle="bold"
                 android:layout_marginBottom="8dp" />
 
             <RadioGroup
@@ -68,32 +64,32 @@
 
                 <RadioButton
                     android:id="@+id/rbLand"
+                    style="@style/QuestRollBody"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Land"
-                    android:textColor="?attr/colorOnSurface"
                     android:checked="true" />
 
                 <RadioButton
                     android:id="@+id/rbAquatic"
+                    style="@style/QuestRollBody"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Aquatic"
-                    android:textColor="?attr/colorOnSurface" />
+                    android:text="Aquatic" />
 
                 <RadioButton
                     android:id="@+id/rbPlanar"
+                    style="@style/QuestRollBody"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Planar"
-                    android:textColor="?attr/colorOnSurface" />
+                    android:text="Planar" />
 
                 <RadioButton
                     android:id="@+id/rbInterior"
+                    style="@style/QuestRollBody"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Interior"
-                    android:textColor="?attr/colorOnSurface" />
+                    android:text="Interior" />
             </RadioGroup>
 
             <com.google.android.material.button.MaterialButton

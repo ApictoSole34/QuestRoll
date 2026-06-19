@@ -4,12 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-<ImageView
-    android:id="@+id/backgroundImage"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:scaleType="centerCrop" />
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -25,19 +24,17 @@
 
             <TextView
                 android:id="@+id/tv_item_name"
+                style="@style/QuestRollTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="26sp"
-                android:textStyle="bold"
                 android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/tv_item_category"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="?attr/colorPrimary"
-                android:textSize="14sp"
                 android:textStyle="italic"
                 android:layout_marginBottom="12dp" />
 
@@ -48,50 +45,44 @@
 
             <TextView
                 android:id="@+id/tv_item_desc"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="15sp"
                 android:layout_marginBottom="12dp" />
 
             <TextView
                 android:id="@+id/tv_item_rarity"
+                style="@style/QuestRollCaption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="14sp"
                 android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/tv_magic"
+                style="@style/QuestRollCaption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="14sp"
                 android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/tv_weight"
+                style="@style/QuestRollCaption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="14sp"
                 android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/tv_cost"
+                style="@style/QuestRollCaption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="14sp"
                 android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/tv_attunement"
+                style="@style/QuestRollCaption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="14sp"
                 android:layout_marginBottom="12dp" />
 
             <com.google.android.material.divider.MaterialDivider
@@ -108,31 +99,29 @@
                 android:layout_marginBottom="12dp">
 
                 <TextView
+                    style="@style/QuestRollSectionHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Weapon Properties"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:text="Weapon Properties" />
 
                 <TextView
                     android:id="@+id/tv_weapon_damage"
+                    style="@style/QuestRollCaption"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:layout_marginTop="8dp" />
 
                 <TextView
                     android:id="@+id/tv_weapon_range"
+                    style="@style/QuestRollCaption"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurfaceVariant" />
+                    android:layout_height="wrap_content" />
 
                 <TextView
                     android:id="@+id/tv_weapon_type"
+                    style="@style/QuestRollCaption"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurfaceVariant" />
+                    android:layout_height="wrap_content" />
 
                 <LinearLayout
                     android:id="@+id/weapon_properties_container"
@@ -152,41 +141,38 @@
                 android:layout_marginBottom="12dp">
 
                 <TextView
+                    style="@style/QuestRollSectionHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Armor Properties"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:text="Armor Properties" />
 
                 <TextView
                     android:id="@+id/tv_armor_ac"
+                    style="@style/QuestRollCaption"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:layout_marginTop="8dp" />
 
                 <TextView
                     android:id="@+id/tv_armor_stealth"
+                    style="@style/QuestRollCaption"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/tv_armor_str"
+                    style="@style/QuestRollCaption"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:visibility="gone" />
             </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_notes"
+                style="@style/QuestRollCaption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="14sp"
                 android:visibility="gone"
                 android:layout_marginBottom="16dp" />
 

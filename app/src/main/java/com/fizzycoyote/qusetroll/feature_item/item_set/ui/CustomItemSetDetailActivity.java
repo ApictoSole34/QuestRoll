@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import com.fizzycoyote.qusetroll.R;
+import com.fizzycoyote.qusetroll.core.base.BaseActivity;
 import com.fizzycoyote.qusetroll.core.local_database.UserContentDatabase;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_item_set.CustomItemSetDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_item_set.CustomItemSetEntity;
@@ -17,7 +18,7 @@ import com.fizzycoyote.qusetroll.feature_item.ui.CustomItemDetailActivity;
 import com.fizzycoyote.qusetroll.feature_item.ui.ItemDetailActivity;
 import io.noties.markwon.Markwon;
 
-public class CustomItemSetDetailActivity extends AppCompatActivity {
+public class CustomItemSetDetailActivity extends BaseActivity {
     public static final String EXTRA_ID = "CUSTOM_ITEM_SET_ID";
     private long id;
     private CustomItemSetDao dao;

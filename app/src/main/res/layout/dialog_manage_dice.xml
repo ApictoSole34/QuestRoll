@@ -5,26 +5,21 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Tytuł dialogu -->
-
     <TextView
         android:id="@+id/dialogTitle"
+        style="@style/QuestRollTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Manage Dice"
-        android:textSize="20sp"
-        android:textStyle="bold"
         android:gravity="center"
         android:paddingBottom="10dp" />
 
-    <!-- Lista dostępnych kostek -->
     <LinearLayout
         android:id="@+id/diceList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!-- Powtarzalny element dla każdej kostki -->
         <!-- d20 -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -33,6 +28,7 @@
             android:padding="8dp">
 
             <TextView
+                style="@style/QuestRollBody"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -40,12 +36,14 @@
 
             <Button
                 android:id="@+id/btnMinusD20"
+                style="@style/QuestRollButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="-" />
 
             <TextView
                 android:id="@+id/counterD20"
+                style="@style/QuestRollBody"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
@@ -53,10 +51,12 @@
 
             <Button
                 android:id="@+id/btnPlusD20"
+                style="@style/QuestRollButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="+" />
         </LinearLayout>
+
         <!-- d12 -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -65,6 +65,7 @@
             android:padding="8dp">
 
             <TextView
+                style="@style/QuestRollBody"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -72,12 +73,14 @@
 
             <Button
                 android:id="@+id/btnMinusD12"
+                style="@style/QuestRollButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="-" />
 
             <TextView
                 android:id="@+id/counterD12"
+                style="@style/QuestRollBody"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
@@ -85,10 +88,12 @@
 
             <Button
                 android:id="@+id/btnPlusD12"
+                style="@style/QuestRollButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="+" />
         </LinearLayout>
+
         <!-- d10 -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -97,6 +102,7 @@
             android:padding="8dp">
 
             <TextView
+                style="@style/QuestRollBody"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -104,12 +110,14 @@
 
             <Button
                 android:id="@+id/btnMinusD10"
+                style="@style/QuestRollButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="-" />
 
             <TextView
                 android:id="@+id/counterD10"
+                style="@style/QuestRollBody"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
@@ -117,10 +125,12 @@
 
             <Button
                 android:id="@+id/btnPlusD10"
+                style="@style/QuestRollButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="+" />
         </LinearLayout>
+
         <!-- d8 -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -129,6 +139,7 @@
             android:padding="8dp">
 
             <TextView
+                style="@style/QuestRollBody"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -136,12 +147,14 @@
 
             <Button
                 android:id="@+id/btnMinusD8"
+                style="@style/QuestRollButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="-" />
 
             <TextView
                 android:id="@+id/counterD8"
+                style="@style/QuestRollBody"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
@@ -149,10 +162,12 @@
 
             <Button
                 android:id="@+id/btnPlusD8"
+                style="@style/QuestRollButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="+" />
         </LinearLayout>
+
         <!-- d6 -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -161,6 +176,7 @@
             android:padding="8dp">
 
             <TextView
+                style="@style/QuestRollBody"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -168,12 +184,14 @@
 
             <Button
                 android:id="@+id/btnMinusD6"
+                style="@style/QuestRollButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="-" />
 
             <TextView
                 android:id="@+id/counterD6"
+                style="@style/QuestRollBody"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
@@ -181,10 +199,12 @@
 
             <Button
                 android:id="@+id/btnPlusD6"
+                style="@style/QuestRollButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="+" />
         </LinearLayout>
+
         <!-- d4 -->
         <LinearLayout
             android:layout_width="match_parent"
@@ -193,6 +213,7 @@
             android:padding="8dp">
 
             <TextView
+                style="@style/QuestRollBody"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -200,12 +221,14 @@
 
             <Button
                 android:id="@+id/btnMinusD4"
+                style="@style/QuestRollButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="-" />
 
             <TextView
                 android:id="@+id/counterD4"
+                style="@style/QuestRollBody"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="10dp"
@@ -213,6 +236,7 @@
 
             <Button
                 android:id="@+id/btnPlusD4"
+                style="@style/QuestRollButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="+" />
@@ -225,6 +249,7 @@
 
             <Button
                 android:id="@+id/applyChangesButton"
+                style="@style/QuestRollButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"

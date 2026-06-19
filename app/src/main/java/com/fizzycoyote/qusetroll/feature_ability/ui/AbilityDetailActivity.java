@@ -1,13 +1,12 @@
 package com.fizzycoyote.qusetroll.feature_ability.ui;
 
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -28,6 +27,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import io.noties.markwon.Markwon;
+import io.noties.markwon.ext.tables.TablePlugin;
+import io.noties.markwon.html.HtmlPlugin;
 
 public class AbilityDetailActivity extends BaseActivity {
 
@@ -38,7 +39,10 @@ public class AbilityDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ability_detail);
 
-        markwon = Markwon.create(this);
+        markwon = Markwon.builder(this)
+                .usePlugin(TablePlugin.create(this))
+                .usePlugin(HtmlPlugin.create())
+                .build();
 
         String key = getIntent().getStringExtra("ABILITY_KEY");
 
@@ -47,8 +51,16 @@ public class AbilityDetailActivity extends BaseActivity {
 
         db.abilityDao().getByKey(key).observe(this, ability -> {
             if (ability == null) return;
-            ((TextView) findViewById(R.id.tv_ability_name)).setText(ability.name);
-            ((TextView) findViewById(R.id.tv_ability_short_desc)).setText(ability.shortDesc);
+
+            TextView tvName = findViewById(R.id.tv_ability_name);
+            tvName.setText(ability.name);
+            tvName.setTypeface(ResourcesCompat.getFont(this, R.font.cinzel_bold));
+            tvName.setTextColor(getColor(R.color.threads_text_primary));
+
+            TextView tvShort = findViewById(R.id.tv_ability_short_desc);
+            tvShort.setText(ability.shortDesc);
+            tvShort.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+            tvShort.setTextColor(getColor(R.color.threads_text_primary));
 
             if (ability.descriptionsJson != null) {
                 Type t = new TypeToken<List<AbilityDto.AbilityDescriptionDto>>(){}.getType();
@@ -60,6 +72,8 @@ public class AbilityDetailActivity extends BaseActivity {
             TextView tvSource = findViewById(R.id.tv_source);
             String sourceText = "Source: " + (ability.documentUrl != null ? ability.documentUrl : "Unknown");
             tvSource.setText(sourceText);
+            tvSource.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+            tvSource.setTextColor(getColor(R.color.threads_text_secondary));
             tvSource.setVisibility(View.VISIBLE);
             tvSource.setClickable(true);
             tvSource.setFocusable(true);
@@ -122,20 +136,24 @@ public class AbilityDetailActivity extends BaseActivity {
         LinearLayout container = findViewById(R.id.descriptions_container);
         container.removeAllViews();
         if (descs == null) return;
+
         for (AbilityDto.AbilityDescriptionDto d : descs) {
             TextView label = new TextView(this);
             label.setText(d.gamesystem != null ? d.gamesystem.toUpperCase() : "");
-            label.setTypeface(null, Typeface.BOLD);
-            label.setTextSize(12);
+            label.setTypeface(ResourcesCompat.getFont(this, R.font.cinzel_semibold));
+            label.setTextSize(14);
+            label.setTextColor(getColor(R.color.threads_gold));
             container.addView(label);
 
             TextView body = new TextView(this);
             markwon.setMarkdown(body, d.desc != null ? d.desc : "");
-            body.setTextSize(14);
+            body.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+            body.setTextSize(15);
+            body.setTextColor(getColor(R.color.threads_text_primary));
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
-            lp.setMargins(0, 4, 0, 16);
+            lp.setMargins(0, dp(4), 0, dp(16));
             body.setLayoutParams(lp);
             container.addView(body);
         }
@@ -146,5 +164,9 @@ public class AbilityDetailActivity extends BaseActivity {
         String u = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
         String[] parts = u.split("/");
         return parts.length > 0 ? parts[parts.length - 1] : null;
+    }
+
+    private int dp(int v) {
+        return (int) (v * getResources().getDisplayMetrics().density);
     }
 }

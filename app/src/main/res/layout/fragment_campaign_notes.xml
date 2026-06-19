@@ -12,7 +12,9 @@
 
     <Button
         android:id="@+id/btn_add_note"
+        style="@style/QuestRollButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Add Note" />
+
 </LinearLayout>

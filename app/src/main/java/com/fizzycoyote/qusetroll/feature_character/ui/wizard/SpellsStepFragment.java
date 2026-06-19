@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -95,7 +96,6 @@ public class SpellsStepFragment extends Fragment {
             List<SpellEntity> firstLevelSpells = new ArrayList<>();
 
             for (SpellEntity spell : allSpells) {
-                // Case-insensitive sprawdzenie nazwy klasy
                 if (spell.classes != null && spell.classes.stream().anyMatch(c -> c.equalsIgnoreCase(className))) {
                     if (spell.level == 0) {
                         cantrips.add(spell);
@@ -110,11 +110,12 @@ public class SpellsStepFragment extends Fragment {
                 cantripCheckboxes.clear();
                 spellCheckboxes.clear();
 
-                // Jeśli klasa nie ma żadnych zaklęć, pokaż info i pozwól przejść dalej
                 if (cantrips.isEmpty() && firstLevelSpells.isEmpty()) {
                     TextView info = new TextView(getContext());
                     info.setText("No spells available for this class (or data missing).");
-                    info.setPadding(0, 16, 0, 0);
+                    info.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                    info.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
+                    info.setPadding(0, dp(16), 0, 0);
                     container.addView(info);
                     return;
                 }
@@ -122,13 +123,16 @@ public class SpellsStepFragment extends Fragment {
                 if (maxCantrips > 0 && !cantrips.isEmpty()) {
                     TextView header = new TextView(getContext());
                     header.setText("Select cantrips (max " + maxCantrips + "):");
-                    header.setPadding(0, 16, 0, 8);
-                    header.setTypeface(null, android.graphics.Typeface.BOLD);
+                    header.setTypeface(ResourcesCompat.getFont(getContext(), R.font.cinzel_bold));
+                    header.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+                    header.setPadding(0, dp(16), 0, dp(8));
                     container.addView(header);
 
                     for (SpellEntity spell : cantrips) {
                         CheckBox cb = new CheckBox(getContext());
                         cb.setText(spell.name);
+                        cb.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                        cb.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                         cb.setTag(spell.key);
                         cb.setOnCheckedChangeListener((buttonView, isChecked) -> {
                             if (isChecked && getCheckedCount(cantripCheckboxes) > maxCantrips) {
@@ -144,13 +148,16 @@ public class SpellsStepFragment extends Fragment {
                 if (maxSpells > 0 && !firstLevelSpells.isEmpty()) {
                     TextView header = new TextView(getContext());
                     header.setText("Select 1st-level spells (max " + maxSpells + "):");
-                    header.setPadding(0, 24, 0, 8);
-                    header.setTypeface(null, android.graphics.Typeface.BOLD);
+                    header.setTypeface(ResourcesCompat.getFont(getContext(), R.font.cinzel_bold));
+                    header.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+                    header.setPadding(0, dp(24), 0, dp(8));
                     container.addView(header);
 
                     for (SpellEntity spell : firstLevelSpells) {
                         CheckBox cb = new CheckBox(getContext());
                         cb.setText(spell.name);
+                        cb.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                        cb.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                         cb.setTag(spell.key);
                         cb.setOnCheckedChangeListener((buttonView, isChecked) -> {
                             if (isChecked && getCheckedCount(spellCheckboxes) > maxSpells) {
@@ -164,11 +171,12 @@ public class SpellsStepFragment extends Fragment {
                 }
 
                 if (cantrips.isEmpty() && firstLevelSpells.isEmpty()) {
-                    // Już obsłużone wyżej
                 } else if (maxCantrips == 0 && maxSpells == 0) {
                     TextView info = new TextView(getContext());
                     info.setText("This class does not cast spells at 1st level.");
-                    info.setPadding(0, 16, 0, 0);
+                    info.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                    info.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
+                    info.setPadding(0, dp(16), 0, 0);
                     container.addView(info);
                 }
             });
@@ -179,5 +187,9 @@ public class SpellsStepFragment extends Fragment {
         int count = 0;
         for (CheckBox cb : boxes) if (cb.isChecked()) count++;
         return count;
+    }
+
+    private int dp(int v) {
+        return (int) (v * getResources().getDisplayMetrics().density);
     }
 }

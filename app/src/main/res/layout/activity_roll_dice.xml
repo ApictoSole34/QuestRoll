@@ -5,12 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-<ImageView
-    android:id="@+id/backgroundImage"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:scaleType="centerCrop" />
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -35,11 +34,10 @@
 
             <TextView
                 android:id="@+id/resultText"
+                style="@style/QuestRollBody"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Result will be displayed here"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="16sp" />
+                android:text="Result will be displayed here" />
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
@@ -48,6 +46,7 @@
             android:layout_height="0dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
+            android:background="@android:color/transparent"
             app:layout_constraintBottom_toTopOf="@+id/bottomButtonLayout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -65,7 +64,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
 
-            <!-- Show Result Switch -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -74,11 +72,10 @@
                 android:gravity="center">
 
                 <TextView
+                    style="@style/QuestRollLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Show Result"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="14sp"
                     android:layout_marginBottom="4dp" />
 
                 <Switch
@@ -86,10 +83,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:padding="16dp" />
+                    android:padding="16dp"
+                    android:textColor="?attr/colorOnSurface" />
             </LinearLayout>
 
-            <!-- Roll Button -->
             <Button
                 android:id="@+id/rollButton"
                 style="@style/QuestRollButton"
@@ -102,7 +99,6 @@
                 android:padding="12dp"
                 android:text="Roll" />
 
-            <!-- Manage Dice Button -->
             <Button
                 android:id="@+id/manageDiceButton"
                 style="@style/QuestRollButton"
@@ -113,7 +109,6 @@
                 android:padding="8dp"
                 android:text="Manage Dice" />
 
-            <!-- Shake to Roll Switch -->
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -122,11 +117,10 @@
                 android:gravity="center">
 
                 <TextView
+                    style="@style/QuestRollLabel"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Shake 2 Roll"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="14sp"
                     android:layout_marginBottom="4dp" />
 
                 <Switch
@@ -134,7 +128,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:padding="16dp" />
+                    android:padding="16dp"
+                    android:textColor="?attr/colorOnSurface" />
             </LinearLayout>
         </LinearLayout>
 

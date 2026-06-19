@@ -7,9 +7,12 @@
 
     <EditText
         android:id="@+id/search_edit_text"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Search for item or set..."
+        android:textColor="?attr/colorOnSurface"
+        android:textColorHint="?attr/colorOnSurfaceVariant"
         android:inputType="text"
         android:padding="12dp"
         android:layout_marginBottom="16dp" />
@@ -22,7 +25,9 @@
 
     <Button
         android:id="@+id/cancel_button"
+        style="@style/QuestRollButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Cancel" />
+
 </LinearLayout>

@@ -5,13 +5,16 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <!-- Search bar -->
     <EditText
         android:id="@+id/et_shop_search"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Search items…"
+        android:textColor="?attr/colorOnSurface"
+        android:textColorHint="?attr/colorOnSurfaceVariant"
         android:drawableStart="@android:drawable/ic_menu_search"
+        android:drawableTint="?attr/colorOnSurfaceVariant"
         android:drawablePadding="8dp"
         android:padding="12dp"
         android:background="?attr/editTextBackground"
@@ -19,18 +22,17 @@
         android:imeOptions="actionSearch"
         android:maxLines="1" />
 
-    <!-- Loading state -->
     <TextView
         android:id="@+id/tv_shop_loading"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Loading items…"
         android:gravity="center"
         android:padding="16dp"
-        android:textColor="?android:attr/textColorSecondary"
+        android:textColor="?attr/colorOnSurfaceVariant"
         android:visibility="visible" />
 
-    <!-- Results list — fixed height so dialog doesn't fill screen -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_shop_items"
         android:layout_width="match_parent"

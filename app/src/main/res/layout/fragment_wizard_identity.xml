@@ -7,9 +7,12 @@
 
     <EditText
         android:id="@+id/character_name_input"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Character name"
+        android:textColor="?attr/colorOnSurface"
+        android:textColorHint="?attr/colorOnSurfaceVariant"
         android:inputType="textPersonName" />
 
     <LinearLayout
@@ -17,17 +20,24 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:orientation="horizontal">
+
         <Button
             android:id="@+id/back_button"
+            style="@style/QuestRollButton"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Back" />
+            android:text="Back"
+            android:layout_marginEnd="4dp" />
+
         <Button
             android:id="@+id/next_button"
+            style="@style/QuestRollButton"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Next" />
+            android:text="Next"
+            android:layout_marginStart="4dp" />
+
     </LinearLayout>
 </LinearLayout>

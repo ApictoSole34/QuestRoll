@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -48,6 +50,9 @@ public class SummaryStepFragment extends Fragment {
         Button saveButton = view.findViewById(R.id.save_button);
         Button backButton = view.findViewById(R.id.back_button);
 
+        summaryText.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+        summaryText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+
         viewModel.errorLiveData.observe(getViewLifecycleOwner(), error -> {
             if (error != null && !error.isEmpty()) {
                 Toast.makeText(getContext(), error, Toast.LENGTH_LONG).show();
@@ -60,7 +65,6 @@ public class SummaryStepFragment extends Fragment {
         saveButton.setOnClickListener(v -> saveCharacter());
         backButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.back_action));
     }
-
     private void displaySummary() {
         StringBuilder sb = new StringBuilder();
 

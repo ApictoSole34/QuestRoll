@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -113,19 +114,24 @@ public class SkillsStepFragment extends Fragment {
 
                 TextView knownHeader = new TextView(getContext());
                 knownHeader.setText("Skills already known (from background):");
-                knownHeader.setPadding(0, 16, 0, 8);
-                knownHeader.setTypeface(null, android.graphics.Typeface.BOLD);
+                knownHeader.setTypeface(ResourcesCompat.getFont(getContext(), R.font.cinzel_bold));
+                knownHeader.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+                knownHeader.setPadding(0, dp(16), 0, dp(8));
                 container.addView(knownHeader);
 
                 if (knownNames.isEmpty()) {
                     TextView none = new TextView(getContext());
                     none.setText("None");
+                    none.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                    none.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
                     container.addView(none);
                 } else {
                     for (String skillName : knownNames) {
                         TextView tv = new TextView(getContext());
                         tv.setText("• " + skillName);
-                        tv.setPadding(32, 4, 0, 4);
+                        tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                        tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+                        tv.setPadding(dp(32), dp(4), 0, dp(4));
                         container.addView(tv);
                     }
                 }
@@ -133,8 +139,9 @@ public class SkillsStepFragment extends Fragment {
                 if (maxSelections > 0) {
                     TextView selectHeader = new TextView(getContext());
                     selectHeader.setText("Select skills from class (max " + maxSelections + "):");
-                    selectHeader.setPadding(0, 24, 0, 8);
-                    selectHeader.setTypeface(null, android.graphics.Typeface.BOLD);
+                    selectHeader.setTypeface(ResourcesCompat.getFont(getContext(), R.font.cinzel_bold));
+                    selectHeader.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+                    selectHeader.setPadding(0, dp(24), 0, dp(8));
                     container.addView(selectHeader);
 
                     for (Object obj : allSkills) {
@@ -143,6 +150,8 @@ public class SkillsStepFragment extends Fragment {
                         if (!allowedSkillNames.isEmpty() && !allowedSkillNames.contains(name)) continue;
                         CheckBox cb = new CheckBox(getContext());
                         cb.setText(name);
+                        cb.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                        cb.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                         cb.setTag(obj);
                         cb.setOnCheckedChangeListener((buttonView, isChecked) -> {
                             if (isChecked && getCheckedCount() > maxSelections) {
@@ -157,13 +166,17 @@ public class SkillsStepFragment extends Fragment {
                     if (checkBoxes.isEmpty()) {
                         TextView info = new TextView(getContext());
                         info.setText("No eligible skills to choose from class.");
-                        info.setPadding(0, 16, 0, 0);
+                        info.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                        info.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
+                        info.setPadding(0, dp(16), 0, 0);
                         container.addView(info);
                     }
                 } else {
                     TextView info = new TextView(getContext());
                     info.setText("No additional skills to choose.");
-                    info.setPadding(0, 16, 0, 0);
+                    info.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                    info.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
+                    info.setPadding(0, dp(16), 0, 0);
                     container.addView(info);
                 }
             });
@@ -174,5 +187,9 @@ public class SkillsStepFragment extends Fragment {
         int count = 0;
         for (CheckBox cb : checkBoxes) if (cb.isChecked()) count++;
         return count;
+    }
+
+    private int dp(int v) {
+        return (int) (v * getResources().getDisplayMetrics().density);
     }
 }

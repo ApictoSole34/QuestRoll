@@ -3,12 +3,13 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@android:color/white"
+    android:background="@color/threads_surface"
     android:padding="16dp"
     android:elevation="8dp">
 
     <Button
         android:id="@+id/buttonEdit"
+        style="@style/QuestRollButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Edit"
@@ -16,6 +17,7 @@
 
     <Button
         android:id="@+id/buttonDelete"
+        style="@style/QuestRollButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Delete"
@@ -24,6 +26,7 @@
 
     <Button
         android:id="@+id/buttonCancel"
+        style="@style/QuestRollButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Back"

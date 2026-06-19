@@ -4,12 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-<ImageView
-    android:id="@+id/backgroundImage"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:scaleType="centerCrop" />
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
 
     <ScrollView
         android:id="@+id/scrollView"
@@ -26,43 +25,38 @@
 
             <TextView
                 android:id="@+id/tv_detail_name"
+                style="@style/QuestRollTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="24sp"
-                android:textStyle="bold"
                 android:paddingBottom="8dp" />
 
             <TextView
                 android:id="@+id/tv_detail_desc"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="16sp"
                 android:paddingBottom="12dp" />
 
             <TextView
                 android:id="@+id/tv_detail_flags"
+                style="@style/QuestRollCaption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="14sp"
                 android:textStyle="italic"
                 android:paddingBottom="12dp" />
 
             <TextView
                 android:id="@+id/tv_detail_script"
+                style="@style/QuestRollCaption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="14sp"
                 android:paddingBottom="12dp" />
 
             <TextView
                 android:id="@+id/tv_detail_license"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
                 android:padding="12dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:clickable="true"

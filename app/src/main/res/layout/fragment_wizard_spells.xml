@@ -10,11 +10,11 @@
         android:orientation="vertical">
 
         <TextView
+            style="@style/QuestRollTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Spells"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:layout_marginBottom="8dp" />
 
         <LinearLayout
             android:id="@+id/spells_container"
@@ -28,18 +28,25 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="24dp">
+
             <Button
                 android:id="@+id/back_button"
+                style="@style/QuestRollButton"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Back" />
+                android:text="Back"
+                android:layout_marginEnd="4dp" />
+
             <Button
                 android:id="@+id/next_button"
+                style="@style/QuestRollButton"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Next" />
+                android:text="Next"
+                android:layout_marginStart="4dp" />
+
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

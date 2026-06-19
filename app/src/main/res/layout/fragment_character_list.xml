@@ -5,14 +5,13 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <!-- Button to create a new character -->
     <Button
         android:id="@+id/btn_new_character"
+        style="@style/QuestRollButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="New character" />
 
-    <!-- RecyclerView for the character list -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/character_recycler"
         android:layout_width="match_parent"

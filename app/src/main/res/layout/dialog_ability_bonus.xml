@@ -6,10 +6,12 @@
     android:padding="16dp">
 
     <TextView
+        style="@style/QuestRollLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Ability"
-        android:textStyle="bold" />
+        android:layout_marginBottom="4dp" />
+
     <Spinner
         android:id="@+id/spinner_ability"
         android:layout_width="match_parent"
@@ -17,16 +19,19 @@
         android:layout_marginBottom="16dp" />
 
     <TextView
+        style="@style/QuestRollLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Bonus (e.g., +1, +2)"
-        android:textStyle="bold" />
+        android:layout_marginBottom="4dp" />
+
     <EditText
         android:id="@+id/et_bonus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:inputType="numberSigned"
         android:minHeight="48dp"
-        android:hint="+1" />
+        android:hint="+1"
+        android:textColor="?attr/colorOnSurface" />
 
 </LinearLayout>

@@ -2,7 +2,11 @@
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="8dp"
+    app:cardBackgroundColor="@color/threads_surface"
+    app:cardElevation="2dp"
+    app:cardCornerRadius="8dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,20 +16,20 @@
 
         <TextView
             android:id="@+id/tv_note_title"
+            style="@style/QuestRollBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_note_date"
+            style="@style/QuestRollCaption"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="12sp"
-            android:textColor="@android:color/darker_gray" />
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/tv_note_preview"
+            style="@style/QuestRollBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLines="2"
@@ -33,10 +37,12 @@
 
         <Button
             android:id="@+id/btn_delete_note"
+            style="@style/QuestRollButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Delete"
             android:layout_gravity="end"
             android:background="?attr/selectableItemBackgroundBorderless" />
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

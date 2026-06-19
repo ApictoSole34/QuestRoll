@@ -14,6 +14,17 @@
         <item name="colorOutline">@color/outline</item>
         <item name="android:windowLightStatusBar">false</item>
         <item name="android:statusBarColor">@color/threads_header</item>
+        <item name="android:fontFamily">@font/inter_regular</item>
+    </style>
+
+    <style name="QuestRollHeaderText">
+        <item name="android:fontFamily">@font/cinzel_bold</item>
+        <item name="android:textColor">#8A7A55</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.2</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
 
     <style name="QuestRollButton" parent="@android:style/Widget.Button">
@@ -25,6 +36,7 @@
         <item name="android:paddingStart">24dp</item>
         <item name="android:paddingEnd">24dp</item>
     </style>
+
 
     <style name="QuestRollMenuItem">
 
@@ -38,7 +50,7 @@
 
         <item name="android:paddingStart">20dp</item>
         <item name="android:paddingEnd">20dp</item>
-
+        <item name="android:fontFamily">@font/cinzel_semibold</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">56dp</item>
         <item name="android:layout_marginBottom">4dp</item>
@@ -50,4 +62,70 @@
         <item name="tint">@color/threads_dark</item>
         <item name="elevation">4dp</item>
     </style>
+
+
+    <!-- ===================================================== -->
+    <!-- TITLES -->
+    <!-- ===================================================== -->
+
+    <style name="QuestRollTitle">
+        <item name="android:fontFamily">@font/cinzel_semibold</item>
+        <item name="android:textColor">@color/threads_text_primary</item>
+        <item name="android:textSize">28sp</item>
+    </style>
+
+    <style name="QuestRollSectionHeader">
+        <item name="android:fontFamily">@font/cinzel_semibold</item>
+        <item name="android:textColor">@color/threads_gold</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:letterSpacing">0.05</item>
+    </style>
+
+    <!-- ===================================================== -->
+    <!-- BODY -->
+    <!-- ===================================================== -->
+
+    <style name="QuestRollBody">
+        <item name="android:fontFamily">@font/inter_regular</item>
+        <item name="android:textColor">@color/threads_text_primary</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:lineSpacingMultiplier">1.4</item>
+    </style>
+
+    <style name="QuestRollCaption">
+        <item name="android:fontFamily">@font/inter_regular</item>
+        <item name="android:textColor">@color/threads_text_secondary</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <!-- ===================================================== -->
+    <!-- LABELS -->
+    <!-- ===================================================== -->
+
+    <style name="QuestRollLabel">
+        <item name="android:fontFamily">@font/inter_medium</item>
+        <item name="android:textColor">@color/threads_text_secondary</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="QuestRollValue">
+        <item name="android:fontFamily">@font/inter_regular</item>
+        <item name="android:textColor">@color/threads_text_primary</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <!-- ===================================================== -->
+    <!-- RPG STATS -->
+    <!-- ===================================================== -->
+
+    <style name="QuestRollStat">
+        <item name="android:fontFamily">@font/cinzel_bold</item>
+        <item name="android:textColor">@color/threads_gold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <!-- ===================================================== -->
+    <!-- Global -->
+    <!-- ===================================================== -->
+
 </resources>

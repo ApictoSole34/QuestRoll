@@ -6,6 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -28,6 +30,7 @@ public class IdentityStepFragment extends Fragment {
         viewModel = new ViewModelProvider(requireActivity()).get(WizardViewModel.class);
         nameInput = view.findViewById(R.id.character_name_input);
         nameInput.setText(viewModel.characterName);
+        nameInput.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
 
         Button nextButton = view.findViewById(R.id.next_button);
         Button backButton = view.findViewById(R.id.back_button);

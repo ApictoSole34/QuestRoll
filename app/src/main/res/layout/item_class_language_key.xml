@@ -7,10 +7,10 @@
 
     <TextView
         android:id="@+id/tv_language_key"
+        style="@style/QuestRollBody"
         android:layout_width="0dp"
         android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:textSize="14sp" />
+        android:layout_height="wrap_content" />
 
     <View
         android:id="@+id/btn_delete"

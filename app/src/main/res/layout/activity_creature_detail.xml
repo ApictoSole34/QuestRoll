@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <ImageView
         android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
@@ -26,21 +25,18 @@
             <!-- Header -->
             <TextView
                 android:id="@+id/tv_creature_name"
+                style="@style/QuestRollTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="26sp"
-                android:textStyle="bold"
                 android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/tv_size_type_alignment"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="14sp"
-                android:textStyle="italic"
-                android:layout_marginBottom="4dp" />
+                android:layout_marginBottom="4dp"
+                android:textStyle="italic" />
 
             <Button
                 android:id="@+id/btnManage"
@@ -52,10 +48,9 @@
 
             <TextView
                 android:id="@+id/tv_cr"
+                style="@style/QuestRollCaption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorPrimary"
-                android:textSize="14sp"
                 android:layout_marginBottom="12dp" />
 
             <com.google.android.material.divider.MaterialDivider
@@ -66,26 +61,23 @@
             <!-- Combat stats -->
             <TextView
                 android:id="@+id/tv_ac"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="14sp"
                 android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/tv_hp"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="14sp"
                 android:layout_marginBottom="4dp" />
 
             <TextView
                 android:id="@+id/tv_speed"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="14sp"
                 android:layout_marginBottom="12dp" />
 
             <com.google.android.material.divider.MaterialDivider
@@ -93,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp" />
 
-            <!-- Ability scores grid -->
+            <!-- Ability scores grid – same staty są w sub-TextView, więc wstawiam style -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -108,24 +100,21 @@
                     android:orientation="vertical"
                     android:gravity="center">
                     <TextView
+                        style="@style/QuestRollCaption"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="STR"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textStyle="bold"
-                        android:textSize="12sp" />
+                        android:textStyle="bold" />
                     <TextView
                         android:id="@+id/tv_str"
+                        style="@style/QuestRollBody"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="14sp" />
+                        android:layout_height="wrap_content" />
                     <TextView
                         android:id="@+id/tv_str_mod"
+                        style="@style/QuestRollCaption"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="13sp" />
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <!-- DEX -->
@@ -136,24 +125,21 @@
                     android:orientation="vertical"
                     android:gravity="center">
                     <TextView
+                        style="@style/QuestRollCaption"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="DEX"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textStyle="bold"
-                        android:textSize="12sp" />
+                        android:textStyle="bold" />
                     <TextView
                         android:id="@+id/tv_dex"
+                        style="@style/QuestRollBody"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="14sp" />
+                        android:layout_height="wrap_content" />
                     <TextView
                         android:id="@+id/tv_dex_mod"
+                        style="@style/QuestRollCaption"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="13sp" />
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <!-- CON -->
@@ -164,24 +150,21 @@
                     android:orientation="vertical"
                     android:gravity="center">
                     <TextView
+                        style="@style/QuestRollCaption"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="CON"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textStyle="bold"
-                        android:textSize="12sp" />
+                        android:textStyle="bold" />
                     <TextView
                         android:id="@+id/tv_con"
+                        style="@style/QuestRollBody"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="14sp" />
+                        android:layout_height="wrap_content" />
                     <TextView
                         android:id="@+id/tv_con_mod"
+                        style="@style/QuestRollCaption"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="13sp" />
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <!-- INT -->
@@ -192,24 +175,21 @@
                     android:orientation="vertical"
                     android:gravity="center">
                     <TextView
+                        style="@style/QuestRollCaption"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="INT"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textStyle="bold"
-                        android:textSize="12sp" />
+                        android:textStyle="bold" />
                     <TextView
                         android:id="@+id/tv_int"
+                        style="@style/QuestRollBody"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="14sp" />
+                        android:layout_height="wrap_content" />
                     <TextView
                         android:id="@+id/tv_int_mod"
+                        style="@style/QuestRollCaption"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="13sp" />
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <!-- WIS -->
@@ -220,24 +200,21 @@
                     android:orientation="vertical"
                     android:gravity="center">
                     <TextView
+                        style="@style/QuestRollCaption"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="WIS"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textStyle="bold"
-                        android:textSize="12sp" />
+                        android:textStyle="bold" />
                     <TextView
                         android:id="@+id/tv_wis"
+                        style="@style/QuestRollBody"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="14sp" />
+                        android:layout_height="wrap_content" />
                     <TextView
                         android:id="@+id/tv_wis_mod"
+                        style="@style/QuestRollCaption"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="13sp" />
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
                 <!-- CHA -->
@@ -248,24 +225,21 @@
                     android:orientation="vertical"
                     android:gravity="center">
                     <TextView
+                        style="@style/QuestRollCaption"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="CHA"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textStyle="bold"
-                        android:textSize="12sp" />
+                        android:textStyle="bold" />
                     <TextView
                         android:id="@+id/tv_cha"
+                        style="@style/QuestRollBody"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="?attr/colorOnSurface"
-                        android:textSize="14sp" />
+                        android:layout_height="wrap_content" />
                     <TextView
                         android:id="@+id/tv_cha_mod"
+                        style="@style/QuestRollCaption"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="?attr/colorOnSurfaceVariant"
-                        android:textSize="13sp" />
+                        android:layout_height="wrap_content" />
                 </LinearLayout>
 
             </LinearLayout>
@@ -278,59 +252,51 @@
             <!-- Saving throws, skills, senses etc. -->
             <TextView
                 android:id="@+id/tv_saving_throws"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="14sp"
                 android:layout_marginBottom="4dp" />
             <TextView
                 android:id="@+id/tv_skills"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="14sp"
                 android:layout_marginBottom="4dp" />
             <TextView
                 android:id="@+id/tv_damage_immunities"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="14sp"
                 android:layout_marginBottom="4dp" />
             <TextView
                 android:id="@+id/tv_damage_resistances"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="14sp"
                 android:layout_marginBottom="4dp" />
             <TextView
                 android:id="@+id/tv_damage_vulnerabilities"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="14sp"
                 android:layout_marginBottom="4dp" />
             <TextView
                 android:id="@+id/tv_condition_immunities"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="14sp"
                 android:layout_marginBottom="4dp" />
             <TextView
                 android:id="@+id/tv_senses"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="14sp"
                 android:layout_marginBottom="4dp" />
             <TextView
                 android:id="@+id/tv_languages"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="14sp"
                 android:layout_marginBottom="12dp" />
 
             <com.google.android.material.divider.MaterialDivider
@@ -368,12 +334,10 @@
                 android:layout_marginBottom="12dp">
 
                 <TextView
+                    style="@style/QuestRollSectionHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Actions"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
 
                 <LinearLayout
@@ -393,12 +357,10 @@
                 android:layout_marginBottom="12dp">
 
                 <TextView
+                    style="@style/QuestRollSectionHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Legendary Actions"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
 
                 <LinearLayout
@@ -412,10 +374,9 @@
             <!-- Source -->
             <TextView
                 android:id="@+id/tv_source"
+                style="@style/QuestRollCaption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="12sp"
                 android:layout_marginTop="8dp" />
 
         </LinearLayout>

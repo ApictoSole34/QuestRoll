@@ -15,7 +15,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Image previews -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -37,14 +36,17 @@
                     android:src="@android:drawable/ic_menu_gallery"
                     android:scaleType="centerCrop"
                     android:background="@android:drawable/edit_text" />
+
             </LinearLayout>
 
             <TextView
                 android:id="@+id/summary_text"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:textSize="14sp" />
+                android:padding="12dp"
+                android:background="@color/threads_surface" />
+
         </LinearLayout>
     </ScrollView>
 
@@ -53,17 +55,24 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_marginTop="16dp">
+
         <Button
             android:id="@+id/back_button"
+            style="@style/QuestRollButton"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Back" />
+            android:text="Back"
+            android:layout_marginEnd="4dp" />
+
         <Button
             android:id="@+id/save_button"
+            style="@style/QuestRollButton"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Save" />
+            android:text="Save"
+            android:layout_marginStart="4dp" />
+
     </LinearLayout>
 </LinearLayout>

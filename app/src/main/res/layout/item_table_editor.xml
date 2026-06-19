@@ -3,27 +3,37 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="4dp">
+    android:padding="4dp"
+    android:gravity="center_vertical">
 
     <EditText
         android:id="@+id/etLevel"
+        style="@style/QuestRollBody"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:hint="Poziom"
+        android:textColor="?attr/colorOnSurface"
+        android:textColorHint="?attr/colorOnSurfaceVariant"
         android:inputType="number"/>
 
     <EditText
         android:id="@+id/etValue"
+        style="@style/QuestRollBody"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:hint="Wartość"/>
+        android:hint="Wartość"
+        android:textColor="?attr/colorOnSurface"
+        android:textColorHint="?attr/colorOnSurfaceVariant"/>
 
     <ImageButton
         android:id="@+id/btnDelete"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:src="@android:drawable/ic_delete"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="8dp"
+        android:tint="?attr/colorOnSurface"
         android:contentDescription="Usuń"/>
 
 </LinearLayout>

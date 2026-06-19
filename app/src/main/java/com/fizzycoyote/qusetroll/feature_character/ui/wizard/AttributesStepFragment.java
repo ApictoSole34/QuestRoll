@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.*;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -73,6 +74,9 @@ public class AttributesStepFragment extends Fragment {
             else switchToStandardMethod();
         });
 
+        rollResultText.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+        rollResultText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+
         rollButton.setOnClickListener(v -> performRoll());
         applyRollButton.setOnClickListener(v -> applyRolledValues());
         resetButton.setOnClickListener(v -> resetStandardMethod());
@@ -88,13 +92,26 @@ public class AttributesStepFragment extends Fragment {
             if (castingAbility != null && !castingAbility.isEmpty()) {
                 int abilityScore = 0;
                 switch (castingAbility) {
-                    case "STR": abilityScore = viewModel.attributes.get(0); break;
-                    case "DEX": abilityScore = viewModel.attributes.get(1); break;
-                    case "CON": abilityScore = viewModel.attributes.get(2); break;
-                    case "INT": abilityScore = viewModel.attributes.get(3); break;
-                    case "WIS": abilityScore = viewModel.attributes.get(4); break;
-                    case "CHA": abilityScore = viewModel.attributes.get(5); break;
-                    default: abilityScore = 10;
+                    case "STR":
+                        abilityScore = viewModel.attributes.get(0);
+                        break;
+                    case "DEX":
+                        abilityScore = viewModel.attributes.get(1);
+                        break;
+                    case "CON":
+                        abilityScore = viewModel.attributes.get(2);
+                        break;
+                    case "INT":
+                        abilityScore = viewModel.attributes.get(3);
+                        break;
+                    case "WIS":
+                        abilityScore = viewModel.attributes.get(4);
+                        break;
+                    case "CHA":
+                        abilityScore = viewModel.attributes.get(5);
+                        break;
+                    default:
+                        abilityScore = 10;
                 }
                 int mod = (abilityScore - 10) / 2;
                 viewModel.spellcastingAbilityMod = Math.max(0, mod);
@@ -171,6 +188,8 @@ public class AttributesStepFragment extends Fragment {
             TextView label = item.findViewById(R.id.attr_label);
             Spinner spinner = item.findViewById(R.id.attr_spinner);
             label.setText(attrNames[index]);
+            label.setTypeface(ResourcesCompat.getFont(getContext(), R.font.cinzel_semibold));
+            label.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
 
             List<Object> displayList = new ArrayList<>();
             displayList.add("— Choose —");
@@ -182,20 +201,26 @@ public class AttributesStepFragment extends Fragment {
             }
 
             ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(getContext(), android.R.layout.simple_spinner_item, displayList) {
-                @NonNull @Override
+                @NonNull
+                @Override
                 public View getView(int position, View convertView, @NonNull ViewGroup parent) {
                     TextView view = (TextView) super.getView(position, convertView, parent);
                     Object item = getItem(position);
                     if (item instanceof Integer) view.setText(String.valueOf(item));
                     else view.setText((String) item);
+                    view.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                    view.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                     return view;
                 }
+
                 @Override
                 public View getDropDownView(int position, View convertView, @NonNull ViewGroup parent) {
                     TextView view = (TextView) super.getDropDownView(position, convertView, parent);
                     Object item = getItem(position);
                     if (item instanceof Integer) view.setText(String.valueOf(item));
                     else view.setText((String) item);
+                    view.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                    view.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                     return view;
                 }
             };
@@ -237,7 +262,10 @@ public class AttributesStepFragment extends Fragment {
                         refreshStandardUI();
                     }
                 }
-                @Override public void onNothingSelected(AdapterView<?> parent) {}
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
             });
             standardContainer.addView(item);
             standardSpinners.add(spinner);
@@ -278,12 +306,19 @@ public class AttributesStepFragment extends Fragment {
             Button btnPlus = item.findViewById(R.id.btn_plus);
             TextView costHint = new TextView(getContext());
             costHint.setTextSize(12);
-            costHint.setPadding(8,0,0,0);
+            costHint.setPadding((8), 0, 0, 0);
+            costHint.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+            costHint.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
             ((LinearLayout) item).addView(costHint);
 
-            label.setText(names[i]);
+            label.setText(names[index]);
+            label.setTypeface(ResourcesCompat.getFont(getContext(), R.font.cinzel_semibold));
+            label.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+
             int currentBase = viewModel.baseAttributes.get(index);
             valueView.setText(String.valueOf(currentBase));
+            valueView.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+            valueView.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
             updateCostHint(costHint, currentBase, currentBase);
 
             btnMinus.setOnClickListener(v -> {
@@ -389,11 +424,14 @@ public class AttributesStepFragment extends Fragment {
         LinearLayout preview = getView().findViewById(R.id.roll_preview_container);
         if (preview == null) return;
         preview.removeAllViews();
-        String[] names = {"STR","DEX","CON","INT","WIS","CHA"};
+        String[] names = {"STR", "DEX", "CON", "INT", "WIS", "CHA"};
         List<Integer> finalAttrs = viewModel.attributes;
         for (int i = 0; i < names.length; i++) {
             TextView tv = new TextView(getContext());
             tv.setText(names[i] + ": " + finalAttrs.get(i));
+            tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+            tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+            tv.setPadding(0, (4), 0, (4));
             preview.addView(tv);
         }
     }

@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -73,6 +74,9 @@ public class RaceStepFragment extends Fragment {
 
         Button nextButton = view.findViewById(R.id.next_button);
         Button backButton = view.findViewById(R.id.back_button);
+
+        descriptionText.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+        descriptionText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
 
         loadBaseRaces();
 
@@ -135,12 +139,16 @@ public class RaceStepFragment extends Fragment {
                         public View getView(int pos, View cv, @NonNull ViewGroup parent) {
                             TextView tv = (TextView) super.getView(pos, cv, parent);
                             tv.setText(getName(getItem(pos)));
+                            tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                            tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                             return tv;
                         }
                         @Override
                         public View getDropDownView(int pos, View cv, @NonNull ViewGroup parent) {
                             TextView tv = (TextView) super.getDropDownView(pos, cv, parent);
                             tv.setText(getName(getItem(pos)));
+                            tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                            tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                             return tv;
                         }
                     };
@@ -176,12 +184,16 @@ public class RaceStepFragment extends Fragment {
                             public View getView(int pos, View cv, @NonNull ViewGroup parent) {
                                 TextView tv = (TextView) super.getView(pos, cv, parent);
                                 tv.setText(getName(getItem(pos)));
+                                tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                                tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                                 return tv;
                             }
                             @Override
                             public View getDropDownView(int pos, View cv, @NonNull ViewGroup parent) {
                                 TextView tv = (TextView) super.getDropDownView(pos, cv, parent);
                                 tv.setText(getName(getItem(pos)));
+                                tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                                tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                                 return tv;
                             }
                         };

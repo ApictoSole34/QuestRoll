@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    android:background="@android:color/transparent">
 
     <ImageView
         android:id="@+id/imageViewCharacter"
@@ -21,10 +22,10 @@
         android:layout_marginTop="8dp">
 
         <TextView
+            style="@style/QuestRollBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Miniature: "
-            android:textStyle="bold"/>
+            android:text="Miniature: " />
 
         <ImageView
             android:id="@+id/imageViewMiniature"
@@ -37,76 +38,89 @@
 
     <EditText
         android:id="@+id/editTextName"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Name"/>
+        android:hint="Name"
+        android:inputType="textCapWords" />
 
     <EditText
         android:id="@+id/editTextRace"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Race"/>
+        android:hint="Race"
+        android:inputType="textCapWords" />
 
     <EditText
         android:id="@+id/editTextClass"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Class"/>
+        android:hint="Class"
+        android:inputType="textCapWords" />
 
     <EditText
         android:id="@+id/editTextLevel"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Level"
-        android:inputType="number"/>
+        android:inputType="number" />
 
     <EditText
         android:id="@+id/editTextStrength"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Strength"
-        android:inputType="number"/>
+        android:inputType="number" />
 
     <EditText
         android:id="@+id/editTextDexterity"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Dexterity"
-        android:inputType="number"/>
+        android:inputType="number" />
 
     <EditText
         android:id="@+id/editTextConstitution"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Constitution"
-        android:inputType="number"/>
+        android:inputType="number" />
 
     <EditText
         android:id="@+id/editTextIntelligence"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Intelligence"
-        android:inputType="number"/>
+        android:inputType="number" />
 
     <EditText
         android:id="@+id/editTextWisdom"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Wisdom"
-        android:inputType="number"/>
+        android:inputType="number" />
 
     <EditText
         android:id="@+id/editTextCharisma"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Charisma"
-        android:inputType="number"/>
+        android:inputType="number" />
 
     <Button
         android:id="@+id/buttonSave"
+        style="@style/QuestRollButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save Character"/>
-
+        android:text="Save Character" />
 
 </LinearLayout>

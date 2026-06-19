@@ -13,11 +13,11 @@
 
         <TextView
             android:id="@+id/tv_feature_name"
+            style="@style/QuestRollBody"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
+            android:textStyle="bold" />
 
         <ImageButton
             android:id="@+id/btn_delete_feature"
@@ -26,15 +26,17 @@
             android:src="@android:drawable/ic_menu_delete"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:visibility="gone"
-            android:padding="8dp"/>
+            android:padding="8dp"
+            android:tint="?attr/colorOnSurface" />
 
     </LinearLayout>
 
     <TextView
         android:id="@+id/tv_feature_desc"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"/>
+        android:layout_marginTop="4dp" />
 
     <TableLayout
         android:id="@+id/table_layout"

@@ -13,15 +13,13 @@
     android:clickable="true"
     android:focusable="true">
 
-    <!-- Equipped indicator strip -->
     <View
         android:id="@+id/view_equipped_indicator"
         android:layout_width="4dp"
         android:layout_height="36dp"
-        android:background="#BDBDBD"
+        android:background="?attr/colorPrimary"
         android:layout_marginEnd="10dp" />
 
-    <!-- Item info -->
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -30,10 +28,10 @@
 
         <TextView
             android:id="@+id/tv_item_name"
+            style="@style/QuestRollBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Item Name"
-            android:textSize="14sp"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -44,24 +42,23 @@
 
             <TextView
                 android:id="@+id/tv_item_category"
+                style="@style/QuestRollCaption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Item"
-                android:textSize="11sp"
-                android:textColor="?android:attr/textColorSecondary" />
+                android:text="Item" />
 
             <TextView
                 android:id="@+id/tv_item_slot"
+                style="@style/QuestRollCaption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=""
-                android:textSize="11sp"
                 android:textColor="?attr/colorPrimary"
                 android:layout_marginStart="6dp" />
+
         </LinearLayout>
     </LinearLayout>
 
-    <!-- Right side: qty + weight -->
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -71,19 +68,19 @@
 
         <TextView
             android:id="@+id/tv_item_quantity"
+            style="@style/QuestRollBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="x1"
-            android:textSize="13sp"
             android:textStyle="bold"
             android:textColor="?attr/colorPrimary" />
 
         <TextView
             android:id="@+id/tv_item_weight"
+            style="@style/QuestRollCaption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="0 lb"
-            android:textSize="11sp"
-            android:textColor="?android:attr/textColorSecondary" />
+            android:text="0 lb" />
+
     </LinearLayout>
 </LinearLayout>

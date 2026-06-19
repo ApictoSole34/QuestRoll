@@ -4,10 +4,12 @@
     android:layout_height="wrap_content"
     android:padding="12dp"
     android:background="?attr/selectableItemBackground">
+
     <TextView
         android:id="@+id/tv_name"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
         android:textStyle="bold" />
+
 </LinearLayout>

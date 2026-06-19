@@ -5,27 +5,51 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="Type" android:textStyle="bold" android:layout_marginBottom="4dp"/>
-    <Spinner android:id="@+id/spinner_type"
-        android:layout_width="match_parent" android:layout_height="wrap_content"
+    <TextView
+        style="@style/QuestRollLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Type"
+        android:layout_marginBottom="4dp"/>
+    <Spinner
+        android:id="@+id/spinner_type"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"/>
 
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="Alignment" android:textStyle="bold" android:layout_marginBottom="4dp"/>
-    <Spinner android:id="@+id/spinner_alignment"
-        android:layout_width="match_parent" android:layout_height="wrap_content"
+    <TextView
+        style="@style/QuestRollLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Alignment"
+        android:layout_marginBottom="4dp"/>
+    <Spinner
+        android:id="@+id/spinner_alignment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"/>
 
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="CR Min" android:textStyle="bold" android:layout_marginBottom="4dp"/>
-    <Spinner android:id="@+id/spinner_cr_min"
-        android:layout_width="match_parent" android:layout_height="wrap_content"
+    <TextView
+        style="@style/QuestRollLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="CR Min"
+        android:layout_marginBottom="4dp"/>
+    <Spinner
+        android:id="@+id/spinner_cr_min"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"/>
 
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="CR Max" android:textStyle="bold" android:layout_marginBottom="4dp"/>
-    <Spinner android:id="@+id/spinner_cr_max"
-        android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <TextView
+        style="@style/QuestRollLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="CR Max"
+        android:layout_marginBottom="4dp"/>
+    <Spinner
+        android:id="@+id/spinner_cr_max"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

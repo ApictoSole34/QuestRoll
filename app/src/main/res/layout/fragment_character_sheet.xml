@@ -11,7 +11,6 @@
         android:orientation="vertical"
         android:gravity="center_horizontal">
 
-        <!-- Full character image -->
         <ImageView
             android:id="@+id/character_full_image"
             android:layout_width="match_parent"
@@ -23,43 +22,41 @@
             android:layout_marginBottom="16dp"
             android:background="@android:drawable/edit_text" />
 
-        <!-- Character name -->
         <TextView
             android:id="@+id/character_name"
+            style="@style/QuestRollTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:layout_marginBottom="4dp" />
 
-        <!-- Species (race) -->
         <TextView
             android:id="@+id/character_species"
+            style="@style/QuestRollBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Race: -" />
 
-        <!-- Classes -->
         <TextView
             android:id="@+id/character_classes"
+            style="@style/QuestRollBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Classes: -" />
 
-        <!-- Alignment -->
         <TextView
             android:id="@+id/character_alignment"
+            style="@style/QuestRollBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Alignment: -" />
 
-        <!-- Background -->
         <TextView
             android:id="@+id/character_background"
+            style="@style/QuestRollBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Background: -" />
 
-        <!-- Combat stats row -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -68,6 +65,7 @@
 
             <TextView
                 android:id="@+id/hp_text"
+                style="@style/QuestRollBody"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -75,6 +73,7 @@
 
             <TextView
                 android:id="@+id/ac_text"
+                style="@style/QuestRollBody"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -82,6 +81,7 @@
 
             <TextView
                 android:id="@+id/initiative_text"
+                style="@style/QuestRollBody"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -89,91 +89,98 @@
 
             <TextView
                 android:id="@+id/proficiency_text"
+                style="@style/QuestRollBody"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="Prof. bonus: ?" />
+
         </LinearLayout>
 
-        <!-- Attributes -->
         <TextView
+            style="@style/QuestRollSectionHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Attributes"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp" />
+
         <LinearLayout
             android:id="@+id/attributes_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
 
-        <!-- Skills -->
         <TextView
+            style="@style/QuestRollSectionHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Skills"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp" />
+
         <LinearLayout
             android:id="@+id/skills_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
 
-        <!-- Languages -->
         <TextView
+            style="@style/QuestRollSectionHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Languages"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp" />
+
         <LinearLayout
             android:id="@+id/languages_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
 
-        <!-- Traits / Features -->
         <TextView
+            style="@style/QuestRollSectionHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Traits"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp" />
+
         <LinearLayout
             android:id="@+id/traits_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
 
-        <!-- Inventory -->
         <TextView
+            style="@style/QuestRollSectionHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Inventory"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp" />
+
         <LinearLayout
             android:id="@+id/inventory_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
 
-        <!-- Spells -->
         <TextView
+            style="@style/QuestRollSectionHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Spells"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="8dp" />
+
         <LinearLayout
             android:id="@+id/spells_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
 
-        <!-- Action buttons (Edit / Delete) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -183,6 +190,7 @@
 
             <Button
                 android:id="@+id/btn_edit"
+                style="@style/QuestRollButton"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
@@ -191,11 +199,13 @@
 
             <Button
                 android:id="@+id/btn_delete"
+                style="@style/QuestRollButton"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
                 android:text="Delete"
                 android:backgroundTint="@android:color/holo_red_dark" />
+
         </LinearLayout>
 
     </LinearLayout>

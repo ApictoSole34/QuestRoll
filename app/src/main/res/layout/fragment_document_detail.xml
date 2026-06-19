@@ -11,54 +11,54 @@
 
         <TextView
             android:id="@+id/tv_doc_name"
+            style="@style/QuestRollTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:text="Document Name"/>
+            android:layout_marginBottom="8dp" />
 
         <TextView
             android:id="@+id/tv_doc_author"
+            style="@style/QuestRollBody"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Author:"/>
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/tv_doc_license"
+            style="@style/QuestRollBody"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="License:"/>
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/tv_doc_gamesystem"
+            style="@style/QuestRollBody"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Game System:"/>
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/tv_doc_distance"
+            style="@style/QuestRollBody"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Distance Unit:"/>
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/tv_doc_published"
+            style="@style/QuestRollBody"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Published At:"/>
+            android:layout_height="wrap_content" />
 
         <TextView
             android:id="@+id/tv_doc_permalink"
+            style="@style/QuestRollBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:autoLink="web"
-            android:textColorLink="@color/colorPrimary"
-            android:text="Permalink:"/>
+            android:textColorLink="@color/colorPrimary" />
 
         <TextView
             android:id="@+id/tv_doc_desc"
+            style="@style/QuestRollBody"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Description:"/>
+            android:layout_height="wrap_content" />
+
     </LinearLayout>
 </ScrollView>

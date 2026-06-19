@@ -10,34 +10,37 @@
         android:orientation="vertical">
 
         <TextView
+            style="@style/QuestRollTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Starting equipment"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:layout_marginBottom="8dp" />
 
-        <!-- BACKGROUND SECTION -->
         <TextView
+            style="@style/QuestRollSectionHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="From background:"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp" />
 
         <TextView
             android:id="@+id/background_equipment_desc"
+            style="@style/QuestRollBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:background="@android:drawable/editbox_background"
+            android:padding="12dp"
+            android:background="@color/threads_surface"
             android:text=""
             android:layout_marginTop="8dp" />
 
         <TextView
+            style="@style/QuestRollLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Fixed items (from background):"
             android:layout_marginTop="8dp" />
+
         <LinearLayout
             android:id="@+id/background_fixed_items_container"
             android:layout_width="match_parent"
@@ -49,64 +52,80 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="8dp">
+
             <TextView
+                style="@style/QuestRollLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Gold: " />
+
             <EditText
                 android:id="@+id/background_gold_edit"
+                style="@style/QuestRollBody"
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
                 android:inputType="number"
                 android:text="0" />
+
             <TextView
+                style="@style/QuestRollLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=" gp" />
+
         </LinearLayout>
 
         <Button
             android:id="@+id/add_background_item_button"
+            style="@style/QuestRollButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Add item to background"
             android:layout_marginTop="8dp" />
 
         <TextView
+            style="@style/QuestRollLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Manually added items (long press to remove):"
             android:layout_marginTop="8dp" />
+
         <LinearLayout
             android:id="@+id/background_items_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />
 
-        <!-- CLASS SECTION -->
         <TextView
+            style="@style/QuestRollSectionHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="From class:"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp" />
 
         <RadioGroup
             android:id="@+id/class_choice_radio"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <RadioButton
                 android:id="@+id/radio_class_items"
+                style="@style/QuestRollBody"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Class starting package"
                 android:checked="true" />
+
             <RadioButton
                 android:id="@+id/radio_class_gold"
+                style="@style/QuestRollBody"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Class starting gold" />
+
         </RadioGroup>
 
         <LinearLayout
@@ -115,21 +134,26 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="visible">
+
             <TextView
                 android:id="@+id/class_equipment_desc"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:background="@android:drawable/editbox_background"
+                android:padding="12dp"
+                android:background="@color/threads_surface"
                 android:text=""
                 android:layout_marginTop="8dp" />
+
         </LinearLayout>
 
         <TextView
+            style="@style/QuestRollLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Fixed items (from class):"
             android:layout_marginTop="8dp" />
+
         <LinearLayout
             android:id="@+id/class_fixed_items_container"
             android:layout_width="match_parent"
@@ -142,37 +166,46 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="gone">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="8dp">
+
                 <TextView
                     android:id="@+id/class_gold_amount"
+                    style="@style/QuestRollBody"
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:text="Gold: 0 gp" />
+
                 <Button
                     android:id="@+id/reroll_gold_button"
+                    style="@style/QuestRollButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Reroll" />
+
             </LinearLayout>
         </LinearLayout>
 
         <Button
             android:id="@+id/add_class_item_button"
+            style="@style/QuestRollButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Add item to class"
             android:layout_marginTop="8dp" />
 
         <TextView
+            style="@style/QuestRollLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Manually added items (long press to remove):"
             android:layout_marginTop="8dp" />
+
         <LinearLayout
             android:id="@+id/class_items_container"
             android:layout_width="match_parent"
@@ -184,18 +217,25 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginTop="24dp">
+
             <Button
                 android:id="@+id/back_button"
+                style="@style/QuestRollButton"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Back" />
+                android:text="Back"
+                android:layout_marginEnd="4dp" />
+
             <Button
                 android:id="@+id/next_button"
+                style="@style/QuestRollButton"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Next" />
+                android:text="Next"
+                android:layout_marginStart="4dp" />
+
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

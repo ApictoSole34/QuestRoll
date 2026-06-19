@@ -21,6 +21,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -403,6 +404,8 @@ public class ClassCreateActivity extends BaseActivity {
                 else if (item instanceof ItemSetEntity) display = ((ItemSetEntity) item).name;
                 else display = ((CustomItemSetEntity) item).name;
                 tv.setText(display);
+                tv.setTypeface(ResourcesCompat.getFont(ClassCreateActivity.this, R.font.inter_regular));
+                tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                 return tv;
             }
         };
@@ -605,6 +608,8 @@ public class ClassCreateActivity extends BaseActivity {
                 else if (item instanceof LanguageEntity) display = ((LanguageEntity) item).name;
                 else if (item instanceof CustomLanguageEntity) display = ((CustomLanguageEntity) item).name;
                 tv.setText(display);
+                tv.setTypeface(ResourcesCompat.getFont(ClassCreateActivity.this, R.font.inter_regular));
+                tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                 return tv;
             }
         };

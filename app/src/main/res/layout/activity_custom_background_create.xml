@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <ImageView
         android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
@@ -23,7 +22,6 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Name -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -42,7 +40,6 @@
                     android:maxLines="1"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Description -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -63,7 +60,6 @@
                     android:gravity="top"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Game System -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -79,7 +75,6 @@
                     android:layout_height="wrap_content"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Starting Gold -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -98,13 +93,11 @@
                     android:text="0"/>
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Equipment Section -->
             <TextView
+                style="@style/QuestRollSectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Equipment"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textColor="?attr/colorPrimary"
                 android:layout_marginBottom="8dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -141,13 +134,11 @@
                 android:textColor="?attr/colorPrimary"
                 android:layout_marginBottom="24dp"/>
 
-            <!-- Languages Section -->
             <TextView
+                style="@style/QuestRollSectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Languages"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textColor="?attr/colorPrimary"
                 android:layout_marginBottom="8dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -202,13 +193,11 @@
                 android:textColor="?attr/colorPrimary"
                 android:layout_marginBottom="24dp"/>
 
-            <!-- Skill Proficiencies -->
             <TextView
+                style="@style/QuestRollSectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Skill Proficiencies"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textColor="?attr/colorPrimary"
                 android:layout_marginBottom="8dp"/>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvSkillProficiencies"
@@ -225,13 +214,11 @@
                 android:textColor="?attr/colorPrimary"
                 android:layout_marginBottom="24dp"/>
 
-            <!-- Tool Proficiencies -->
             <TextView
+                style="@style/QuestRollSectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Tool Proficiencies"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textColor="?attr/colorPrimary"
                 android:layout_marginBottom="8dp"/>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvToolProficiencies"
@@ -248,13 +235,11 @@
                 android:textColor="?attr/colorPrimary"
                 android:layout_marginBottom="24dp"/>
 
-            <!-- Features -->
             <TextView
+                style="@style/QuestRollSectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Features"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textColor="?attr/colorPrimary"
                 android:layout_marginBottom="8dp"/>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvFeatures"
@@ -271,7 +256,6 @@
                 android:textColor="?attr/colorPrimary"
                 android:layout_marginBottom="24dp"/>
 
-            <!-- Save Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSave"
                 style="@style/QuestRollButton"

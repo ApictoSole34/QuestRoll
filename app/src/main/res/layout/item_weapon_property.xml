@@ -14,24 +14,23 @@
 
         <TextView
             android:id="@+id/tv_name"
+            style="@style/QuestRollBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_type"
+            style="@style/QuestRollCaption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="12sp"
             android:textColor="?attr/colorPrimary" />
 
         <TextView
             android:id="@+id/tv_desc"
+            style="@style/QuestRollCaption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
-            android:textColor="@android:color/darker_gray"
             android:maxLines="2"
             android:ellipsize="end" />
 
@@ -39,10 +38,10 @@
 
     <TextView
         android:id="@+id/tv_custom_badge"
+        style="@style/QuestRollCaption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Custom"
-        android:textSize="11sp"
         android:textColor="#FFFFFF"
         android:background="#4CAF50"
         android:paddingStart="6dp"

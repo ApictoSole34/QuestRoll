@@ -4,12 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-<ImageView
-    android:id="@+id/backgroundImage"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:scaleType="centerCrop" />
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -25,11 +24,9 @@
 
             <TextView
                 android:id="@+id/tv_skill_name"
+                style="@style/QuestRollTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurface"
-                android:textAppearance="?attr/textAppearanceHeadlineMedium"
-                android:textStyle="bold"
                 android:layout_marginBottom="12dp" />
 
             <com.google.android.material.chip.Chip
@@ -45,10 +42,9 @@
 
             <TextView
                 android:id="@+id/tv_source"
+                style="@style/QuestRollCaption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="13sp"
                 android:layout_marginBottom="16dp" />
 
             <com.google.android.material.divider.MaterialDivider
@@ -57,11 +53,10 @@
                 android:layout_marginBottom="16dp" />
 
             <TextView
+                style="@style/QuestRollSectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Descriptions"
-                android:textColor="?attr/colorPrimary"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
                 android:layout_marginBottom="8dp" />
 
             <LinearLayout

@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -35,18 +34,16 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:queryHint="Search abilities..." />
-
             </LinearLayout>
 
             <TextView
                 android:id="@+id/tv_ability_count"
+                style="@style/QuestRollCaption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp"
-                android:paddingBottom="8dp"
-                android:textColor="@android:color/darker_gray"
-                android:textSize="12sp" />
+                android:paddingBottom="8dp" />
 
             <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
@@ -62,6 +59,7 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_create_ability"
+            style="@style/Widget.QuestRoll.FAB"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"

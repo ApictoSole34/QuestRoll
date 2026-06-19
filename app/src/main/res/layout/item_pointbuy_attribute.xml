@@ -7,6 +7,7 @@
 
     <TextView
         android:id="@+id/attr_label"
+        style="@style/QuestRollLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textStyle="bold" />
@@ -14,10 +15,12 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
 
         <TextView
             android:id="@+id/attr_value"
+            style="@style/QuestRollBody"
             android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:text="8"
@@ -32,6 +35,7 @@
 
         <TextView
             android:id="@+id/attr_cost"
+            style="@style/QuestRollCaption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Price: 0"

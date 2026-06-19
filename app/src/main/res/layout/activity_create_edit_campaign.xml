@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -26,7 +25,8 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Campaign Name">
+                android:hint="Campaign Name"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <EditText
                     android:id="@+id/et_name"
@@ -39,7 +39,8 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Description (optional)">
+                android:hint="Description (optional)"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <EditText
                     android:id="@+id/et_description"
@@ -53,7 +54,8 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Game System">
+                android:hint="Game System"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
                 <Spinner
                     android:id="@+id/spinner_game_system"
@@ -63,11 +65,11 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
+                style="@style/QuestRollSectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="Characters"
-                android:textStyle="bold" />
+                android:text="Characters" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_selected_characters"
@@ -87,18 +89,21 @@
 
             <TextView
                 android:id="@+id/tv_selected_character"
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="No character selected" />
 
             <Button
                 android:id="@+id/btn_select_character"
+                style="@style/QuestRollButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Select Character" />
 
             <Button
                 android:id="@+id/btn_save"
+                style="@style/QuestRollButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"

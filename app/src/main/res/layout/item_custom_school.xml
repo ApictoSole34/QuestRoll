@@ -14,17 +14,16 @@
 
         <TextView
             android:id="@+id/tv_school_name"
+            style="@style/QuestRollBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textStyle="bold"
-            android:textSize="15sp"/>
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_school_desc"
+            style="@style/QuestRollCaption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
-            android:textColor="@android:color/darker_gray"
             android:visibility="gone"/>
 
     </LinearLayout>
@@ -35,7 +34,8 @@
         android:layout_height="wrap_content"
         android:src="@android:drawable/ic_menu_edit"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="8dp"/>
+        android:padding="8dp"
+        android:tint="?attr/colorOnSurface" />
 
     <ImageButton
         android:id="@+id/btn_delete_school"
@@ -43,6 +43,7 @@
         android:layout_height="wrap_content"
         android:src="@android:drawable/ic_menu_delete"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:padding="8dp"/>
+        android:padding="8dp"
+        android:tint="?attr/colorOnSurface" />
 
 </LinearLayout>

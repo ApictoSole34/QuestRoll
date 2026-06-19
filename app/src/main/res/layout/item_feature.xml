@@ -3,19 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:gravity="center_vertical">
 
     <TextView
         android:id="@+id/tvFeatureName"
+        style="@style/QuestRollBody"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:textSize="16sp"/>
+        android:layout_weight="1" />
 
     <Button
         android:id="@+id/btnEditFeature"
+        style="@style/QuestRollButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Edytuj"/>
+        android:text="Edit" />
 
 </LinearLayout>

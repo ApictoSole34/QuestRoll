@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -101,15 +102,6 @@ public class LanguagesStepFragment extends Fragment {
                 } else {
                     knownNames.add(item);
                 }
-
-                if (viewModel.backgroundLanguagesDescription != null && !viewModel.backgroundLanguagesDescription.isEmpty()) {
-                    TextView descView = new TextView(getContext());
-                    descView.setText(viewModel.backgroundLanguagesDescription);
-                    descView.setPadding(0, 8, 0, 8);
-                    descView.setTextColor(0xFF666666);
-                    descView.setTextSize(14);
-                    container.addView(descView);
-                }
             }
 
             allLanguages.clear();
@@ -126,21 +118,35 @@ public class LanguagesStepFragment extends Fragment {
                 container.removeAllViews();
                 checkBoxes.clear();
 
+                if (viewModel.backgroundLanguagesDescription != null && !viewModel.backgroundLanguagesDescription.isEmpty()) {
+                    TextView descView = new TextView(getContext());
+                    descView.setText(viewModel.backgroundLanguagesDescription);
+                    descView.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                    descView.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
+                    descView.setPadding(0, dp(8), 0, dp(8));
+                    container.addView(descView);
+                }
+
                 TextView knownHeader = new TextView(getContext());
                 knownHeader.setText("Known languages (from race, background and class):");
-                knownHeader.setPadding(0, 16, 0, 8);
-                knownHeader.setTypeface(null, android.graphics.Typeface.BOLD);
+                knownHeader.setTypeface(ResourcesCompat.getFont(getContext(), R.font.cinzel_bold));
+                knownHeader.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+                knownHeader.setPadding(0, dp(16), 0, dp(8));
                 container.addView(knownHeader);
 
                 if (knownNames.isEmpty()) {
                     TextView none = new TextView(getContext());
                     none.setText("None");
+                    none.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                    none.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
                     container.addView(none);
                 } else {
                     for (String langName : knownNames) {
                         TextView tv = new TextView(getContext());
                         tv.setText("• " + langName);
-                        tv.setPadding(32, 4, 0, 4);
+                        tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                        tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+                        tv.setPadding(dp(32), dp(4), 0, dp(4));
                         container.addView(tv);
                     }
                 }
@@ -152,15 +158,17 @@ public class LanguagesStepFragment extends Fragment {
                         viewModel.bonusLanguagesFromInt,
                         viewModel.classLanguageChoices,
                         maxSelections));
-                sourceInfo.setPadding(0, 16, 0, 8);
-                sourceInfo.setTextColor(0xFF666666);
+                sourceInfo.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                sourceInfo.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
+                sourceInfo.setPadding(0, dp(16), 0, dp(8));
                 container.addView(sourceInfo);
 
                 if (maxSelections > 0) {
                     TextView selectHeader = new TextView(getContext());
                     selectHeader.setText("Select additional languages (max " + maxSelections + "):");
-                    selectHeader.setPadding(0, 24, 0, 8);
-                    selectHeader.setTypeface(null, android.graphics.Typeface.BOLD);
+                    selectHeader.setTypeface(ResourcesCompat.getFont(getContext(), R.font.cinzel_bold));
+                    selectHeader.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+                    selectHeader.setPadding(0, dp(24), 0, dp(8));
                     container.addView(selectHeader);
 
                     for (Object obj : allLanguages) {
@@ -168,6 +176,8 @@ public class LanguagesStepFragment extends Fragment {
                         if (knownNames.contains(name)) continue;
                         CheckBox cb = new CheckBox(getContext());
                         cb.setText(name);
+                        cb.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                        cb.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                         cb.setTag(obj);
                         cb.setOnCheckedChangeListener((buttonView, isChecked) -> {
                             if (isChecked && getCheckedCount() > maxSelections) {
@@ -181,7 +191,9 @@ public class LanguagesStepFragment extends Fragment {
                 } else {
                     TextView info = new TextView(getContext());
                     info.setText("No additional languages to choose.");
-                    info.setPadding(0, 16, 0, 0);
+                    info.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                    info.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
+                    info.setPadding(0, dp(16), 0, 0);
                     container.addView(info);
                 }
             });
@@ -192,5 +204,9 @@ public class LanguagesStepFragment extends Fragment {
         int count = 0;
         for (CheckBox cb : checkBoxes) if (cb.isChecked()) count++;
         return count;
+    }
+
+    private int dp(int v) {
+        return (int) (v * getResources().getDisplayMetrics().density);
     }
 }

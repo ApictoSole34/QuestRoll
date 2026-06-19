@@ -4,8 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,13 +16,11 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- BASIC INFO -->
             <TextView
+                style="@style/QuestRollSectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Basic Info"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textColor="?attr/colorPrimary"
                 android:layout_marginBottom="12dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -120,13 +116,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- COMBAT -->
             <TextView
+                style="@style/QuestRollSectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Combat"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textColor="?attr/colorPrimary"
                 android:layout_marginBottom="12dp"/>
 
             <LinearLayout
@@ -220,13 +214,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- SPEED -->
             <TextView
+                style="@style/QuestRollSectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Speed (ft.)"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textColor="?attr/colorPrimary"
                 android:layout_marginBottom="12dp"/>
 
             <LinearLayout
@@ -350,13 +342,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- ABILITY SCORES -->
             <TextView
+                style="@style/QuestRollSectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Ability Scores"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textColor="?attr/colorPrimary"
                 android:layout_marginBottom="12dp"/>
 
             <LinearLayout
@@ -484,13 +474,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- SENSES -->
             <TextView
+                style="@style/QuestRollSectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Senses (ft.)"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textColor="?attr/colorPrimary"
                 android:layout_marginBottom="12dp"/>
 
             <LinearLayout
@@ -580,13 +568,11 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- RESISTANCES -->
             <TextView
+                style="@style/QuestRollSectionHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Resistances &amp; Immunities"
-                android:textAppearance="?attr/textAppearanceTitleMedium"
-                android:textColor="?attr/colorPrimary"
                 android:layout_marginBottom="12dp"/>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -679,7 +665,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- TRAITS -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -687,12 +672,11 @@
                 android:gravity="center_vertical"
                 android:layout_marginBottom="8dp">
                 <TextView
+                    style="@style/QuestRollSectionHeader"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Traits"
-                    android:textAppearance="?attr/textAppearanceTitleMedium"
-                    android:textColor="?attr/colorPrimary"/>
+                    android:text="Traits"/>
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnAddTrait"
                     android:layout_width="wrap_content"
@@ -714,7 +698,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"/>
 
-            <!-- ACTIONS -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -722,12 +705,11 @@
                 android:gravity="center_vertical"
                 android:layout_marginBottom="8dp">
                 <TextView
+                    style="@style/QuestRollSectionHeader"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Actions"
-                    android:textAppearance="?attr/textAppearanceTitleMedium"
-                    android:textColor="?attr/colorPrimary"/>
+                    android:text="Actions"/>
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnAddAction"
                     android:layout_width="wrap_content"
@@ -744,7 +726,6 @@
                 android:nestedScrollingEnabled="false"
                 android:layout_marginBottom="24dp"/>
 
-            <!-- Save Button -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSave"
                 style="@style/QuestRollButton"

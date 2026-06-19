@@ -11,6 +11,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -49,6 +50,9 @@ public class BackgroundStepFragment extends Fragment {
         viewModel = new ViewModelProvider(requireActivity()).get(WizardViewModel.class);
         backgroundSpinner = view.findViewById(R.id.background_spinner);
         descriptionText = view.findViewById(R.id.background_description);
+
+        descriptionText.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+        descriptionText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
 
         Button nextButton = view.findViewById(R.id.next_button);
         Button backButton = view.findViewById(R.id.back_button);
@@ -110,6 +114,8 @@ public class BackgroundStepFragment extends Fragment {
                         } else if (item instanceof CustomBackgroundEntity) {
                             tv.setText(((CustomBackgroundEntity) item).name);
                         }
+                        tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                        tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                         return tv;
                     }
 
@@ -122,6 +128,8 @@ public class BackgroundStepFragment extends Fragment {
                         } else if (item instanceof CustomBackgroundEntity) {
                             tv.setText(((CustomBackgroundEntity) item).name);
                         }
+                        tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                        tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                         return tv;
                     }
                 };
@@ -172,7 +180,6 @@ public class BackgroundStepFragment extends Fragment {
         viewModel.startingGold = custom.startingGold;
         viewModel.backgroundGold = custom.startingGold;
 
-        // Fixed items
         if (custom.equipmentJson != null && !custom.equipmentJson.isEmpty()) {
             try {
                 Type itemType = new TypeToken<List<String>>() {}.getType();
@@ -186,7 +193,6 @@ public class BackgroundStepFragment extends Fragment {
             viewModel.backgroundFixedItems.clear();
         }
 
-        // Languages
         if (custom.languagesJson != null && !custom.languagesJson.isEmpty()) {
             try {
                 Type langType = new TypeToken<List<String>>(){}.getType();
@@ -201,7 +207,6 @@ public class BackgroundStepFragment extends Fragment {
         }
         viewModel.backgroundLanguageChoices = custom.languageChoices;
 
-        // Skills
         if (custom.skillProficienciesJson != null && !custom.skillProficienciesJson.isEmpty()) {
             try {
                 Type skillType = new TypeToken<List<String>>(){}.getType();
@@ -215,7 +220,6 @@ public class BackgroundStepFragment extends Fragment {
             viewModel.backgroundSkillProficiencies.clear();
         }
 
-        // Features
         viewModel.characterTraits.removeIf(t -> "BACKGROUND".equals(t.sourceType));
         if (custom.featuresJson != null && !custom.featuresJson.isEmpty()) {
             try {

@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -93,22 +94,15 @@ public class ClassStepFragment extends Fragment {
 
             String classKey = viewModel.classAssignments.get(0).classKey;
 
-            // FIX: używamy SubclassLevelConfig.needsSubclassAtLevel(classKey, 1)
-            // który poprawnie obsługuje klucze w formacie "srd-cleric", "a5e-cleric" itp.
             if (SubclassLevelConfig.needsSubclassAtLevel(classKey, 1)) {
-                // Klasy z subklasą na poziomie 1: Cleric, Sorcerer, Warlock
-                // → idź do SubclassChoiceStepFragment
                 Navigation.findNavController(v).navigate(R.id.next_action);
             } else {
-                // Pozostałe klasy → idź bezpośrednio do atrybutów
                 Navigation.findNavController(v).navigate(R.id.action_class_to_attributes);
             }
         });
 
         backButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.back_action));
     }
-
-    // ── Load classes ─────────────────────────────────────────────────────────
 
     private void loadClasses() {
         new Thread(() -> {
@@ -133,12 +127,16 @@ public class ClassStepFragment extends Fragment {
                     public View getView(int pos, View cv, @NonNull ViewGroup parent) {
                         TextView tv = (TextView) super.getView(pos, cv, parent);
                         tv.setText(getName(getItem(pos)));
+                        tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                        tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                         return tv;
                     }
                     @Override
                     public View getDropDownView(int pos, View cv, @NonNull ViewGroup parent) {
                         TextView tv = (TextView) super.getDropDownView(pos, cv, parent);
                         tv.setText(getName(getItem(pos)));
+                        tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                        tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                         return tv;
                     }
                 };
@@ -148,13 +146,10 @@ public class ClassStepFragment extends Fragment {
         }).start();
     }
 
-    // ── Class handlers ───────────────────────────────────────────────────────
-
     private void handleOpen5eClass(CharacterClassEntity selected) {
         viewModel.classFixedItems.clear();
         viewModel.classAssignments.clear();
         viewModel.classAssignments.add(new WizardViewModel.ClassAssignment(selected.key, selected.name, 1));
-        // Reset subclass when changing class
         viewModel.chosenSubclassKey = null;
 
         loadClassEquipment(selected.key);
@@ -261,8 +256,6 @@ public class ClassStepFragment extends Fragment {
                 selected.savingThrows != null ? selected.savingThrows : new ArrayList<>());
     }
 
-    // ── Background threads ───────────────────────────────────────────────────
-
     private void loadCustomClassFeatures(long classId) {
         new Thread(() -> {
             if (!isAdded()) return;
@@ -307,7 +300,6 @@ public class ClassStepFragment extends Fragment {
             if (!isAdded()) return;
             List<FeatureEntity> features = Open5eDatabase.getInstance(requireContext())
                     .featureDao().getFeaturesForClassSync(classKey);
-            // Reset traits for this class before adding new ones
             viewModel.characterTraits.removeIf(t -> "CLASS".equals(t.sourceType));
 
             List<CharacterTraitEntity> classTraits = new ArrayList<>();
@@ -349,12 +341,10 @@ public class ClassStepFragment extends Fragment {
             List<FeatureEntity> features = Open5eDatabase.getInstance(requireContext())
                     .featureDao().getFeaturesForClassSync(classKey);
 
-            // Domyślne wartości
             int cantrips = 0;
             int known = 0;
             boolean prepared = false;
 
-            // 1. Odczytaj Kantripy z tabeli "Cantrips Known"
             for (FeatureEntity f : features) {
                 if ("Cantrips Known".equals(f.name) && f.tableData != null) {
                     for (TableData td : f.tableData) {
@@ -369,7 +359,6 @@ public class ClassStepFragment extends Fragment {
                 }
             }
 
-            // 2. Odczytaj Znane zaklęcia 1 poziomu z tabeli "Spells Known"
             for (FeatureEntity f : features) {
                 if ("Spells Known".equals(f.name) && f.tableData != null) {
                     for (TableData td : f.tableData) {
@@ -384,7 +373,6 @@ public class ClassStepFragment extends Fragment {
                 }
             }
 
-            // 3. Jeśli nie udało się odczytać z tabel, spróbuj z opisu (fallback)
             if (known == 0 || cantrips == 0) {
                 FeatureEntity spellFeature = null;
                 for (FeatureEntity f : features) {
@@ -403,8 +391,6 @@ public class ClassStepFragment extends Fragment {
                     if (known == 0) {
                         if (desc.contains("prepare") || desc.contains("prepared")) {
                             prepared = true;
-                            // Dla prepared caster znane zaklęcia = mod + poziom (uproszczone)
-                            // Tu możesz dodać później dokładniejsze obliczenia
                         } else {
                             java.util.regex.Matcher m = java.util.regex.Pattern
                                     .compile("(\\d+) (?:spells?|spells? known)").matcher(desc);
@@ -503,8 +489,6 @@ public class ClassStepFragment extends Fragment {
                             ? equipmentFeature.desc : "";
         }).start();
     }
-
-    // ── Helpers ───────────────────────────────────────────────────────────────
 
     private String getName(Object obj) {
         if (obj instanceof CharacterClassEntity)    return ((CharacterClassEntity) obj).name;

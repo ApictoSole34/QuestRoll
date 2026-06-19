@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -46,75 +45,69 @@
 
             <Button
                 android:id="@+id/nav_sheet"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/QuestRollCaption"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:drawableTop="@android:drawable/ic_menu_edit"
                 android:gravity="center"
                 android:padding="8dp"
-                android:text="Character"
-                android:textSize="12sp" />
+                android:text="Character" />
 
             <Button
                 android:id="@+id/nav_spells"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/QuestRollCaption"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:drawableTop="@android:drawable/ic_menu_agenda"
                 android:gravity="center"
                 android:padding="8dp"
-                android:text="Spells"
-                android:textSize="12sp" />
+                android:text="Spells" />
 
             <Button
                 android:id="@+id/nav_equipment"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/QuestRollCaption"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:drawableTop="@android:drawable/ic_menu_manage"
                 android:gravity="center"
                 android:padding="8dp"
-                android:text="Equipment"
-                android:textSize="12sp" />
+                android:text="Equipment" />
 
             <Button
                 android:id="@+id/nav_traits"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/QuestRollCaption"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:drawableTop="@android:drawable/ic_menu_info_details"
                 android:gravity="center"
                 android:padding="8dp"
-                android:text="Traits"
-                android:textSize="12sp" />
+                android:text="Traits" />
 
             <Button
                 android:id="@+id/nav_notes"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/QuestRollCaption"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:drawableTop="@android:drawable/ic_menu_edit"
                 android:gravity="center"
                 android:padding="8dp"
-                android:text="Notes"
-                android:textSize="12sp" />
+                android:text="Notes" />
 
             <Button
                 android:id="@+id/nav_dice"
-                style="@style/Widget.Material3.Button.TextButton"
+                style="@style/QuestRollCaption"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:drawableTop="@android:drawable/ic_menu_my_calendar"
                 android:gravity="center"
                 android:padding="8dp"
-                android:text="Dice"
-                android:textSize="12sp" />
+                android:text="Dice" />
 
         </LinearLayout>
 

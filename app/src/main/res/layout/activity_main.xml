@@ -50,13 +50,8 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="ADVENTURE"
-                        android:textColor="#8A7A55"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:letterSpacing="0.2"/>
+                        style="@style/QuestRollHeaderText"
+                        android:text="ADVENTURE" />
 
                     <View
                         android:layout_width="48dp"
@@ -91,13 +86,8 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="RULES"
-                        android:textColor="#8A7A55"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:letterSpacing="0.2"/>
+                        style="@style/QuestRollHeaderText"
+                        android:text="RULES" />
 
                     <View
                         android:layout_width="48dp"
@@ -121,13 +111,8 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="COMPENDIUM"
-                        android:textColor="#8A7A55"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:letterSpacing="0.2"/>
+                        style="@style/QuestRollHeaderText"
+                        android:text="COMPENDIUM" />
 
                     <View
                         android:layout_width="48dp"
@@ -191,13 +176,8 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="CREATURES"
-                        android:textColor="#8A7A55"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:letterSpacing="0.2"/>
+                        style="@style/QuestRollHeaderText"
+                        android:text="CREATURES" />
 
                     <View
                         android:layout_width="48dp"
@@ -236,13 +216,8 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="DATA"
-                        android:textColor="#8A7A55"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:letterSpacing="0.2"/>
+                        style="@style/QuestRollHeaderText"
+                        android:text="DATA" />
 
                     <View
                         android:layout_width="48dp"

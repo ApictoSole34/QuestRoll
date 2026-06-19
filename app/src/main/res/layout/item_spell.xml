@@ -14,18 +14,18 @@
 
         <TextView
             android:id="@+id/tv_spell_name"
+            style="@style/QuestRollBody"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:textSize="16sp"
             android:textStyle="bold"/>
 
         <TextView
             android:id="@+id/tv_custom_badge"
+            style="@style/QuestRollCaption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Custom"
-            android:textSize="11sp"
             android:textColor="#FFFFFF"
             android:background="#4CAF50"
             android:paddingStart="6dp"
@@ -37,10 +37,10 @@
 
         <TextView
             android:id="@+id/tv_ritual"
+            style="@style/QuestRollCaption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="R"
-            android:textSize="11sp"
             android:textColor="#FFFFFF"
             android:background="#607D8B"
             android:paddingStart="6dp"
@@ -52,10 +52,10 @@
 
         <TextView
             android:id="@+id/tv_concentration"
+            style="@style/QuestRollCaption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="C"
-            android:textSize="11sp"
             android:textColor="#FFFFFF"
             android:background="#9C27B0"
             android:paddingStart="6dp"
@@ -75,38 +75,34 @@
 
         <TextView
             android:id="@+id/tv_spell_level"
+            style="@style/QuestRollCaption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
             android:textColor="?attr/colorPrimary"/>
 
         <TextView
+            style="@style/QuestRollCaption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" • "
-            android:textSize="13sp"
-            android:textColor="@android:color/darker_gray"/>
+            android:text=" • " />
 
         <TextView
             android:id="@+id/tv_spell_school"
+            style="@style/QuestRollCaption"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="13sp"
-            android:textColor="@android:color/darker_gray"/>
+            android:layout_height="wrap_content" />
 
         <TextView
+            style="@style/QuestRollCaption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" • "
-            android:textSize="13sp"
-            android:textColor="@android:color/darker_gray"/>
+            android:text=" • " />
 
         <TextView
             android:id="@+id/tv_casting_time"
+            style="@style/QuestRollCaption"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="13sp"
-            android:textColor="@android:color/darker_gray"/>
+            android:layout_height="wrap_content" />
 
     </LinearLayout>
 

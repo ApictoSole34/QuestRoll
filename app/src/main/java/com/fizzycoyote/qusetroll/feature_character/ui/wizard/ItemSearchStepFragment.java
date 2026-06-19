@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -58,6 +59,10 @@ public class ItemSearchStepFragment extends Fragment {
         searchEditText = view.findViewById(R.id.search_edit_text);
         recyclerView = view.findViewById(R.id.item_recycler);
         Button cancelButton = view.findViewById(R.id.cancel_button);
+
+        searchEditText.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+        searchEditText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        searchEditText.setHintTextColor(getResources().getColor(R.color.threads_text_secondary, null));
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new ItemSearchAdapter();
@@ -136,6 +141,12 @@ public class ItemSearchStepFragment extends Fragment {
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             Object obj = results.get(position);
+
+            holder.nameText.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+            holder.nameText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+            holder.descText.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+            holder.descText.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
+
             if (obj instanceof ItemEntity) {
                 ItemEntity item = (ItemEntity) obj;
                 holder.nameText.setText(item.name);

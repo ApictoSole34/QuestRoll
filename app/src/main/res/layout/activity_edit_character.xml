@@ -21,10 +21,10 @@
         android:layout_marginTop="8dp">
 
         <TextView
+            style="@style/QuestRollLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Miniature: "
-            android:textStyle="bold"/>
+            android:text="Miniature: " />
 
         <ImageView
             android:id="@+id/imageViewMiniature"
@@ -42,6 +42,7 @@
         android:layout_marginBottom="8dp">
 
         <TextView
+            style="@style/QuestRollLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Name:"
@@ -62,6 +63,7 @@
         android:layout_marginBottom="8dp">
 
         <TextView
+            style="@style/QuestRollLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Race:"
@@ -82,6 +84,7 @@
         android:layout_marginBottom="8dp">
 
         <TextView
+            style="@style/QuestRollLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Class:"
@@ -102,6 +105,7 @@
         android:layout_marginBottom="8dp">
 
         <TextView
+            style="@style/QuestRollLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Level:"
@@ -123,6 +127,7 @@
         android:layout_marginBottom="8dp">
 
         <TextView
+            style="@style/QuestRollLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Strength:"
@@ -144,6 +149,7 @@
         android:layout_marginBottom="8dp">
 
         <TextView
+            style="@style/QuestRollLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Dexterity:"
@@ -165,6 +171,7 @@
         android:layout_marginBottom="8dp">
 
         <TextView
+            style="@style/QuestRollLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Constitution:"
@@ -186,6 +193,7 @@
         android:layout_marginBottom="8dp">
 
         <TextView
+            style="@style/QuestRollLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Intelligence:"
@@ -207,6 +215,7 @@
         android:layout_marginBottom="8dp">
 
         <TextView
+            style="@style/QuestRollLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Wisdom:"
@@ -228,6 +237,7 @@
         android:layout_marginBottom="16dp">
 
         <TextView
+            style="@style/QuestRollLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Charisma:"
@@ -244,6 +254,7 @@
 
     <Button
         android:id="@+id/buttonSave"
+        style="@style/QuestRollButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Save Changes" />

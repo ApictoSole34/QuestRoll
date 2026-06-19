@@ -4,12 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-<ImageView
-    android:id="@+id/backgroundImage"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:scaleType="centerCrop" />
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
 
     <ScrollView
         android:layout_width="match_parent"
@@ -25,15 +24,13 @@
             android:gravity="center_horizontal">
 
             <TextView
+                style="@style/QuestRollTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="48dp"
                 android:layout_marginBottom="48dp"
                 android:gravity="center"
-                android:text="Items"
-                android:textColor="?attr/colorOnSurface"
-                android:textSize="32sp"
-                android:textStyle="bold" />
+                android:text="Items" />
 
             <Button
                 android:id="@+id/openWeaponListButton"

@@ -13,18 +13,19 @@
         android:layout_marginBottom="8dp">
 
         <TextView
+            style="@style/QuestRollSectionHeader"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Custom Creature Types"
-            android:textAppearance="?attr/textAppearanceTitleMedium"/>
+            android:text="Custom Creature Types" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnAddType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Add"
-            style="@style/Widget.MaterialComponents.Button.TextButton"/>
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:textColor="?attr/colorPrimary" />
 
     </LinearLayout>
 

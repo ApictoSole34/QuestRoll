@@ -7,17 +7,24 @@
 
     <EditText
         android:id="@+id/et_note_title"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Title"
+        android:textColor="?attr/colorOnSurface"
+        android:textColorHint="?attr/colorOnSurfaceVariant"
         android:inputType="textCapWords" />
 
     <EditText
         android:id="@+id/et_note_content"
+        style="@style/QuestRollBody"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Content"
+        android:textColor="?attr/colorOnSurface"
+        android:textColorHint="?attr/colorOnSurfaceVariant"
         android:inputType="textMultiLine"
         android:minLines="5"
         android:gravity="top" />
+
 </LinearLayout>

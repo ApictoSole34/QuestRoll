@@ -2,14 +2,11 @@ package com.fizzycoyote.qusetroll.feature_class.ui;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
@@ -18,10 +15,10 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.fizzycoyote.qusetroll.R;
 import com.fizzycoyote.qusetroll.core.base.BaseActivity;
@@ -53,12 +50,17 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.noties.markwon.Markwon;
+import io.noties.markwon.ext.tables.TablePlugin;
+import io.noties.markwon.html.HtmlPlugin;
+
 public class ClassDetailActivity extends BaseActivity {
 
     private TextView className, hitDiceTextView, tvHitPoints, tvSavingThrows;
     private RecyclerView featuresRecycler;
     private ClassDetailViewModel viewModel;
     private LinearLayout detailsContainer;
+    private Markwon markwon;
 
     private static final Map<String, String> COLUMN_TITLES = new HashMap<String, String>() {{
         put("PROFICIENCY_BONUS", "Prof Bonus");
@@ -93,6 +95,11 @@ public class ClassDetailActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_class_detail);
 
+        markwon = Markwon.builder(this)
+                .usePlugin(TablePlugin.create(this))
+                .usePlugin(HtmlPlugin.create())
+                .build();
+
         String classKey = getIntent().getStringExtra("CLASS_KEY");
         initViews();
         setupViewModel(classKey);
@@ -109,6 +116,13 @@ public class ClassDetailActivity extends BaseActivity {
         featuresRecycler = findViewById(R.id.recycler_features);
         tvHitPoints = findViewById(R.id.tv_hit_points);
         featuresRecycler.setLayoutManager(new LinearLayoutManager(this));
+
+        className.setTypeface(ResourcesCompat.getFont(this, R.font.cinzel_bold));
+        className.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        hitDiceTextView.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        hitDiceTextView.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        tvHitPoints.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        tvHitPoints.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
     }
 
     private void setupViewModel(String classKey) {
@@ -135,7 +149,7 @@ public class ClassDetailActivity extends BaseActivity {
         }
     }
 
-    //------class menu -----
+    // ------ class menu -----
     private void setupCustomClassMenu(String classKey) {
         Button btnManage = findViewById(R.id.btnManage);
         btnManage.setVisibility(View.VISIBLE);
@@ -300,11 +314,20 @@ public class ClassDetailActivity extends BaseActivity {
 
     private void addDetailRow(LinearLayout container, String label, String value) {
         if (value == null || value.isEmpty()) return;
-        TextView row = new TextView(this);
-        row.setText(label + ": " + value);
-        row.setPadding(0, dp(4), 0, dp(4));
-        row.setTextSize(14);
-        container.addView(row);
+
+        TextView labelView = new TextView(this);
+        labelView.setText(label + ":");
+        labelView.setTypeface(ResourcesCompat.getFont(this, R.font.cinzel_semibold));
+        labelView.setTextColor(getResources().getColor(R.color.threads_gold, null));
+        labelView.setPadding(0, dp(8), 0, dp(2));
+        container.addView(labelView);
+
+        TextView valueView = new TextView(this);
+        valueView.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        valueView.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        markwon.setMarkdown(valueView, value);
+        valueView.setPadding(0, 0, 0, dp(4));
+        container.addView(valueView);
     }
 
     private void processCustomClassTable(List<CustomFeatureEntity> features) {
@@ -456,7 +479,7 @@ public class ClassDetailActivity extends BaseActivity {
         textView.setLayoutParams(params);
         textView.setPadding(dpToPx(8), dpToPx(8), dpToPx(8), dpToPx(8));
         textView.setText(header);
-        textView.setTypeface(null, Typeface.BOLD);
+        textView.setTypeface(ResourcesCompat.getFont(this, R.font.cinzel_semibold));
         textView.setBackgroundColor(Color.parseColor(isFirstColumn ? "#808080" : "#9E9E9E"));
         textView.setTextColor(getResources().getColor(android.R.color.white));
         textView.setGravity(Gravity.CENTER);
@@ -483,9 +506,10 @@ public class ClassDetailActivity extends BaseActivity {
         textView.setEllipsize(TextUtils.TruncateAt.END);
 
         if (isFirstColumn) {
-            textView.setTypeface(null, Typeface.BOLD);
+            textView.setTypeface(ResourcesCompat.getFont(this, R.font.cinzel_semibold));
             textView.setBackgroundColor(Color.parseColor("#F0F0F0"));
         } else {
+            textView.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
             textView.setBackgroundResource(android.R.drawable.edit_text);
         }
 

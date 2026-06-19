@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -144,6 +145,9 @@ public class CharacterSheetFragment extends Fragment {
             int mod = (val - 10) / 2;
             TextView tv = new TextView(getContext());
             tv.setText(key + ": " + val + " (" + (mod >= 0 ? "+" + mod : String.valueOf(mod)) + ")");
+            tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+            tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+            tv.setPadding(0, dp(4), 0, dp(4));
             attributesContainer.addView(tv);
         }
     }
@@ -153,6 +157,9 @@ public class CharacterSheetFragment extends Fragment {
         for (CharacterSheetViewModel.SkillDisplay sd : skills) {
             TextView tv = new TextView(getContext());
             tv.setText(sd.name + ": " + (sd.bonus >= 0 ? "+" + sd.bonus : String.valueOf(sd.bonus)));
+            tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+            tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+            tv.setPadding(0, dp(2), 0, dp(2));
             skillsContainer.addView(tv);
         }
     }
@@ -172,13 +179,17 @@ public class CharacterSheetFragment extends Fragment {
         if (languages == null || languages.isEmpty()) {
             TextView empty = new TextView(getContext());
             empty.setText("None");
+            empty.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+            empty.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
             languagesContainer.addView(empty);
             return;
         }
         for (CharacterLanguageEntity lang : languages) {
             TextView tv = new TextView(getContext());
             tv.setText("• " + lang.languageKey);
-            tv.setPadding(32, 4, 0, 4);
+            tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+            tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+            tv.setPadding(dp(32), dp(4), 0, dp(4));
             languagesContainer.addView(tv);
         }
     }
@@ -188,13 +199,17 @@ public class CharacterSheetFragment extends Fragment {
         if (traits == null || traits.isEmpty()) {
             TextView empty = new TextView(getContext());
             empty.setText("None");
+            empty.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+            empty.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
             traitsContainer.addView(empty);
             return;
         }
         for (CharacterTraitEntity t : traits) {
             TextView tv = new TextView(getContext());
             tv.setText("• " + t.name);
-            tv.setPadding(32, 4, 0, 4);
+            tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+            tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+            tv.setPadding(dp(32), dp(4), 0, dp(4));
             traitsContainer.addView(tv);
         }
     }
@@ -204,6 +219,8 @@ public class CharacterSheetFragment extends Fragment {
         if (inventory == null || inventory.isEmpty()) {
             TextView empty = new TextView(getContext());
             empty.setText("None");
+            empty.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+            empty.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
             inventoryContainer.addView(empty);
             return;
         }
@@ -211,7 +228,9 @@ public class CharacterSheetFragment extends Fragment {
             TextView tv = new TextView(getContext());
             String name = (item.customName != null) ? item.customName : item.itemKey;
             tv.setText("• " + name + " (x" + item.quantity + ")");
-            tv.setPadding(32, 4, 0, 4);
+            tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+            tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+            tv.setPadding(dp(32), dp(4), 0, dp(4));
             inventoryContainer.addView(tv);
         }
     }
@@ -221,14 +240,22 @@ public class CharacterSheetFragment extends Fragment {
         if (spells == null || spells.isEmpty()) {
             TextView empty = new TextView(getContext());
             empty.setText("None");
+            empty.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+            empty.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
             spellsContainer.addView(empty);
             return;
         }
         for (CharacterSpellEntity spell : spells) {
             TextView tv = new TextView(getContext());
             tv.setText("• " + spell.spellKey);
-            tv.setPadding(32, 4, 0, 4);
+            tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+            tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+            tv.setPadding(dp(32), dp(4), 0, dp(4));
             spellsContainer.addView(tv);
         }
+    }
+
+    private int dp(int v) {
+        return (int) (v * getResources().getDisplayMetrics().density);
     }
 }

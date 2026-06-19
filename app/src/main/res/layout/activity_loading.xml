@@ -4,12 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-<ImageView
-    android:id="@+id/backgroundImage"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:scaleType="centerCrop" />
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
 
     <ScrollView
         android:id="@+id/layout_selection"
@@ -25,21 +24,18 @@
             android:padding="24dp">
 
             <TextView
+                style="@style/QuestRollTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="QusetRoll"
-                android:textColor="?attr/colorPrimary"
-                android:textSize="28sp"
-                android:textStyle="bold"
                 android:gravity="center"
                 android:layout_marginBottom="8dp" />
 
             <TextView
+                style="@style/QuestRollBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Select data to download"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="16sp"
                 android:gravity="center"
                 android:layout_marginBottom="24dp" />
 
@@ -133,12 +129,10 @@
         android:visibility="gone">
 
         <TextView
+            style="@style/QuestRollTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="QusetRoll"
-            android:textColor="?attr/colorPrimary"
-            android:textSize="28sp"
-            android:textStyle="bold"
             android:gravity="center"
             android:layout_marginBottom="32dp" />
 
@@ -153,11 +147,10 @@
 
         <TextView
             android:id="@+id/progressText"
+            style="@style/QuestRollBody"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="0%"
-            android:textColor="?attr/colorOnSurface"
-            android:textSize="16sp"
             android:textStyle="bold"
             android:layout_marginBottom="16dp" />
 
@@ -172,11 +165,11 @@
 
         <TextView
             android:id="@+id/sectionText"
+            style="@style/QuestRollCaption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Initializing..."
             android:textColor="?attr/colorPrimary"
-            android:textSize="14sp"
             android:gravity="center"
             android:layout_marginBottom="24dp" />
 
@@ -194,10 +187,9 @@
 
                 <TextView
                     android:id="@+id/logText"
+                    style="@style/QuestRollCaption"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="13sp"
                     android:fontFamily="monospace" />
 
             </ScrollView>

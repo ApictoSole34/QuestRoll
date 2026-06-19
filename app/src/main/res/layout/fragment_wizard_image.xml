@@ -11,19 +11,17 @@
         android:gravity="center">
 
         <TextView
+            style="@style/QuestRollTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Character images"
-            android:textSize="20sp"
-            android:textStyle="bold"
             android:layout_marginBottom="24dp" />
 
-        <!-- THUMBNAIL -->
         <TextView
+            style="@style/QuestRollSectionHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Thumbnail (circular)"
-            android:textStyle="bold"
             android:layout_marginBottom="8dp" />
 
         <de.hdodenhof.circleimageview.CircleImageView
@@ -34,17 +32,17 @@
 
         <Button
             android:id="@+id/select_thumbnail_button"
+            style="@style/QuestRollButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Choose thumbnail from gallery"
             android:layout_marginBottom="24dp" />
 
-        <!-- FULL IMAGE -->
         <TextView
+            style="@style/QuestRollSectionHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Full image"
-            android:textStyle="bold"
             android:layout_marginBottom="8dp" />
 
         <ImageView
@@ -57,43 +55,43 @@
 
         <Button
             android:id="@+id/select_full_image_button"
+            style="@style/QuestRollButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Choose full image from gallery"
             android:layout_marginBottom="24dp" />
 
-        <!-- NEW: SELECT FROM ASSET -->
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@android:color/darker_gray"
+            android:background="?attr/colorOutline"
             android:layout_marginBottom="16dp" />
 
         <TextView
+            style="@style/QuestRollCaption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="— or choose a preset character image —"
             android:textStyle="italic"
-            android:textColor="@android:color/darker_gray"
             android:layout_marginBottom="12dp" />
 
         <Button
             android:id="@+id/select_from_assets_button"
+            style="@style/QuestRollButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="🎨 Character gallery (default)"
             android:layout_marginBottom="24dp" />
 
-        <!-- SKIP -->
         <Button
             android:id="@+id/skip_button"
+            style="@style/QuestRollButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Skip / Restore defaults"
             android:backgroundTint="@android:color/darker_gray"
             android:layout_marginBottom="24dp" />
 
-        <!-- NAVIGATION -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -102,17 +100,22 @@
 
             <Button
                 android:id="@+id/back_button"
+                style="@style/QuestRollButton"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Back" />
+                android:text="Back"
+                android:layout_marginEnd="4dp" />
 
             <Button
                 android:id="@+id/next_button"
+                style="@style/QuestRollButton"
                 android:layout_width="0dp"
                 android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="Next" />
+                android:text="Next"
+                android:layout_marginStart="4dp" />
+
         </LinearLayout>
     </LinearLayout>
 </ScrollView>

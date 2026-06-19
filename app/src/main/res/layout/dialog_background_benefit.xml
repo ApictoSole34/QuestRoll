@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:padding="16dp">
 
@@ -10,19 +11,29 @@
         android:layout_height="wrap_content"
         android:hint="Benefit Name"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_marginBottom="12dp">
+        android:layout_marginBottom="12dp"
+        app:boxBackgroundColor="@android:color/transparent"
+        app:hintTextColor="?attr/colorOnSurfaceVariant"
+        app:boxStrokeColor="?attr/colorOutline">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etBenefitName"
+            style="@style/QuestRollBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="?attr/colorOnSurface"
             android:inputType="textCapWords"
             android:maxLines="1"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="Type" android:textStyle="bold" android:layout_marginBottom="4dp"/>
+    <TextView
+        style="@style/QuestRollLabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Type"
+        android:layout_marginBottom="4dp"/>
 
-    <Spinner android:id="@+id/spinnerBenefitType"
+    <Spinner
+        android:id="@+id/spinnerBenefitType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"/>
@@ -31,11 +42,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Description"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        app:boxBackgroundColor="@android:color/transparent"
+        app:hintTextColor="?attr/colorOnSurfaceVariant"
+        app:boxStrokeColor="?attr/colorOutline">
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/etBenefitDesc"
+            style="@style/QuestRollBody"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="?attr/colorOnSurface"
             android:inputType="textMultiLine"
             android:minLines="3"
             android:maxLines="8"

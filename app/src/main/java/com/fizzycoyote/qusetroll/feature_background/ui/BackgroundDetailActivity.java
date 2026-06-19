@@ -7,6 +7,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.fizzycoyote.qusetroll.R;
 import com.fizzycoyote.qusetroll.core.base.BaseActivity;
@@ -21,6 +22,8 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 import io.noties.markwon.Markwon;
+import io.noties.markwon.ext.tables.TablePlugin;
+import io.noties.markwon.html.HtmlPlugin;
 
 public class BackgroundDetailActivity extends BaseActivity {
 
@@ -30,7 +33,10 @@ public class BackgroundDetailActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_background_detail);
-        markwon = Markwon.create(this);
+        markwon = Markwon.builder(this)
+                .usePlugin(HtmlPlugin.create())
+                .usePlugin(TablePlugin.create(this))
+                .build();
 
         String key = getIntent().getStringExtra("BACKGROUND_KEY");
         Open5eDatabase.getInstance(this).backgroundDao()
@@ -92,20 +98,23 @@ public class BackgroundDetailActivity extends BaseActivity {
 
         TextView tvName = new TextView(this);
         tvName.setText(name);
-        tvName.setTypeface(null, Typeface.BOLD);
+        tvName.setTypeface(ResourcesCompat.getFont(this, R.font.cinzel_bold), Typeface.BOLD);
         tvName.setTextSize(15);
+        tvName.setTextColor(getColor(R.color.threads_text_primary));
         row.addView(tvName);
 
         if (desc != null && !desc.isEmpty()) {
             TextView tvDesc = new TextView(this);
             markwon.setMarkdown(tvDesc, desc);
+            tvDesc.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
             tvDesc.setTextSize(14);
+            tvDesc.setTextColor(getColor(R.color.threads_text_primary));
             tvDesc.setPadding(0, dp(4), 0, 0);
             row.addView(tvDesc);
         }
 
         View divider = new View(this);
-        divider.setBackgroundColor(0x1A000000);
+        divider.setBackgroundColor(0x1AFFFFFF);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT, 1);
         params.topMargin = dp(8);
@@ -115,5 +124,7 @@ public class BackgroundDetailActivity extends BaseActivity {
         container.addView(row);
     }
 
-    private int dp(int v) { return (int)(v * getResources().getDisplayMetrics().density); }
+    private int dp(int v) {
+        return (int) (v * getResources().getDisplayMetrics().density);
+    }
 }

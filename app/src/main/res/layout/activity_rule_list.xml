@@ -4,12 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-<ImageView
-    android:id="@+id/backgroundImage"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:scaleType="centerCrop" />
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -22,31 +21,26 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <!-- Karta z informacjami o rulesecie -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="16dp"
                 android:background="@android:color/transparent"
-                android:layout_margin="8dp"
-                app:cardCornerRadius="12dp">
+                android:layout_margin="8dp">
 
                 <TextView
                     android:id="@+id/tv_ruleset_name"
+                    style="@style/QuestRollTitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurface"
-                    android:textSize="22sp"
-                    android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
 
                 <TextView
                     android:id="@+id/tv_ruleset_desc"
+                    style="@style/QuestRollBody"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurfaceVariant"
-                    android:textSize="14sp" />
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
             <com.google.android.material.divider.MaterialDivider
@@ -65,11 +59,10 @@
 
             <TextView
                 android:id="@+id/tv_document"
+                style="@style/QuestRollCaption"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:textSize="12sp"
                 android:background="@android:color/transparent"
                 android:gravity="center" />
 

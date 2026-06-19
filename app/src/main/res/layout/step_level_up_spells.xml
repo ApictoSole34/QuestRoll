@@ -6,11 +6,10 @@
 
     <TextView
         android:id="@+id/tv_step_title"
+        style="@style/QuestRollTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
-        android:textSize="20sp"
-        android:textStyle="bold" />
+        android:layout_marginBottom="12dp" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_spells"
@@ -20,6 +19,7 @@
 
     <Button
         android:id="@+id/btn_confirm_spells"
+        style="@style/QuestRollButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"

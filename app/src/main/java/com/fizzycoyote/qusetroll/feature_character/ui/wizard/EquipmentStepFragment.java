@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
@@ -23,7 +24,7 @@ public class EquipmentStepFragment extends Fragment {
     private EditText backgroundGoldEdit;
     private Button addBackgroundItemButton;
     private LinearLayout backgroundItemsContainer;
-    private LinearLayout backgroundFixedItemsContainer; // NOWE
+    private LinearLayout backgroundFixedItemsContainer;
 
     // Class
     private TextView classDescText;
@@ -51,7 +52,7 @@ public class EquipmentStepFragment extends Fragment {
         backgroundGoldEdit = view.findViewById(R.id.background_gold_edit);
         addBackgroundItemButton = view.findViewById(R.id.add_background_item_button);
         backgroundItemsContainer = view.findViewById(R.id.background_items_container);
-        backgroundFixedItemsContainer = view.findViewById(R.id.background_fixed_items_container); // NOWE
+        backgroundFixedItemsContainer = view.findViewById(R.id.background_fixed_items_container);
 
         // Class
         classDescText = view.findViewById(R.id.class_equipment_desc);
@@ -66,6 +67,13 @@ public class EquipmentStepFragment extends Fragment {
 
         Button nextButton = view.findViewById(R.id.next_button);
         Button backButton = view.findViewById(R.id.back_button);
+
+        backgroundDescText.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+        backgroundDescText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        classDescText.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+        classDescText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        classGoldAmount.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+        classGoldAmount.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
 
         backgroundDescText.setText(viewModel.backgroundEquipmentDescription);
         backgroundGoldEdit.setText(String.valueOf(viewModel.backgroundGold));
@@ -150,12 +158,16 @@ public class EquipmentStepFragment extends Fragment {
         if (viewModel.classFixedItems.isEmpty()) {
             TextView empty = new TextView(getContext());
             empty.setText("No fixed items");
+            empty.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+            empty.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
             classFixedItemsContainer.addView(empty);
         } else {
             for (String itemName : viewModel.classFixedItems) {
                 TextView tv = new TextView(getContext());
                 tv.setText("• " + itemName);
-                tv.setPadding(16, 4, 0, 4);
+                tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+                tv.setPadding(dp(16), dp(4), 0, dp(4));
                 classFixedItemsContainer.addView(tv);
             }
         }
@@ -166,12 +178,16 @@ public class EquipmentStepFragment extends Fragment {
         if (viewModel.backgroundFixedItems.isEmpty()) {
             TextView empty = new TextView(getContext());
             empty.setText("No fixed items");
+            empty.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+            empty.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
             backgroundFixedItemsContainer.addView(empty);
         } else {
             for (String itemName : viewModel.backgroundFixedItems) {
                 TextView tv = new TextView(getContext());
                 tv.setText("• " + itemName);
-                tv.setPadding(16, 4, 0, 4);
+                tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+                tv.setPadding(dp(16), dp(4), 0, dp(4));
                 backgroundFixedItemsContainer.addView(tv);
             }
         }
@@ -182,12 +198,16 @@ public class EquipmentStepFragment extends Fragment {
         if (viewModel.backgroundCustomItems.isEmpty()) {
             TextView empty = new TextView(getContext());
             empty.setText("No items – add via search");
+            empty.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+            empty.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
             backgroundItemsContainer.addView(empty);
         } else {
             for (CharacterCreationDTO.InventoryItemDTO item : viewModel.backgroundCustomItems) {
                 TextView tv = new TextView(getContext());
                 tv.setText(item.customName + " (x" + item.quantity + ", weight: " + item.customWeight + ")");
-                tv.setPadding(16, 8, 16, 8);
+                tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+                tv.setPadding(dp(16), dp(8), dp(16), dp(8));
                 tv.setOnLongClickListener(v -> {
                     int index = viewModel.backgroundCustomItems.indexOf(item);
                     if (index != -1) {
@@ -207,12 +227,16 @@ public class EquipmentStepFragment extends Fragment {
         if (viewModel.classEquipment.isEmpty()) {
             TextView empty = new TextView(getContext());
             empty.setText("No items – add via search");
+            empty.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+            empty.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
             classItemsContainer.addView(empty);
         } else {
             for (CharacterCreationDTO.InventoryItemDTO item : viewModel.classEquipment) {
                 TextView tv = new TextView(getContext());
                 tv.setText(item.customName + " (x" + item.quantity + ", weight: " + item.customWeight + ")");
-                tv.setPadding(16, 8, 16, 8);
+                tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+                tv.setPadding(dp(16), dp(8), dp(16), dp(8));
                 tv.setOnLongClickListener(v -> {
                     int index = viewModel.classEquipment.indexOf(item);
                     if (index != -1) {
@@ -225,5 +249,9 @@ public class EquipmentStepFragment extends Fragment {
                 classItemsContainer.addView(tv);
             }
         }
+    }
+
+    private int dp(int v) {
+        return (int) (v * getResources().getDisplayMetrics().density);
     }
 }
