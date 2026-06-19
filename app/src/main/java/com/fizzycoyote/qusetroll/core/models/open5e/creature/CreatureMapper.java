@@ -27,14 +27,13 @@ public class CreatureMapper {
         e.blindsightRange = dto.blindsightRange;
         e.tremorsenseRange = dto.tremorsenseRange;
         e.truesightRange = dto.truesightRange;
-        e.challengeRatingText = dto.challengeRatingText;
 
-        try {
-            e.challengeRatingDecimal = dto.challengeRatingDecimal != null
-                    ? Float.parseFloat(dto.challengeRatingDecimal) : 0f;
-        } catch (NumberFormatException ex) {
+        if (dto.challengeRating != null) {
+            e.challengeRatingDecimal = dto.challengeRating;
+        } else {
             e.challengeRatingDecimal = 0f;
         }
+        e.challengeRatingText = formatChallengeRatingText(e.challengeRatingDecimal);
 
         if (dto.type != null) {
             e.typeName = dto.type.name;
@@ -103,5 +102,13 @@ public class CreatureMapper {
         }
 
         return e;
+    }
+
+    private static String formatChallengeRatingText(float cr) {
+        if (Math.abs(cr - 0.125f) < 0.001f) return "1/8";
+        if (Math.abs(cr - 0.25f) < 0.001f) return "1/4";
+        if (Math.abs(cr - 0.5f) < 0.001f) return "1/2";
+        if (cr == Math.floor(cr)) return String.valueOf((int) cr);
+        return String.valueOf(cr);
     }
 }

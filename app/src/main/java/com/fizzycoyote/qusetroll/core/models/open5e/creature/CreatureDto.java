@@ -13,8 +13,9 @@ public class CreatureDto implements Serializable {
     @SerializedName("document") public DocumentDto document;
     @SerializedName("type") public CreatureTypeRefDto type;
     @SerializedName("size") public CreatureSizeRefDto size;
-    @SerializedName("challenge_rating_decimal") public String challengeRatingDecimal;
-    @SerializedName("challenge_rating_text") public String challengeRatingText;
+    @SerializedName("challenge_rating") public Float challengeRating;
+    // old    @SerializedName("challenge_rating_decimal") public String challengeRatingDecimal;
+// old   @SerializedName("challenge_rating_text") public String challengeRatingText;
     @SerializedName("alignment") public String alignment;
     @SerializedName("category") public String category;
     @SerializedName("armor_class") public int armorClass;

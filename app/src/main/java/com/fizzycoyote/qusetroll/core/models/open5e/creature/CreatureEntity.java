@@ -25,11 +25,13 @@ public class CreatureEntity {
     @ColumnInfo(name = "size_name") public String sizeName;
     @ColumnInfo(name = "size_key") public String sizeKey;
 
-    @ColumnInfo(name = "challenge_rating_decimal") public float challengeRatingDecimal;
-    @ColumnInfo(name = "challenge_rating_text") public String challengeRatingText;
+
 
     public String alignment;
     public String category;
+
+    @ColumnInfo(name = "challenge_rating_decimal") public float challengeRatingDecimal;
+    @ColumnInfo(name = "challenge_rating_text") public String challengeRatingText;
 
     @ColumnInfo(name = "armor_class") public int armorClass;
     @ColumnInfo(name = "armor_detail") public String armorDetail;

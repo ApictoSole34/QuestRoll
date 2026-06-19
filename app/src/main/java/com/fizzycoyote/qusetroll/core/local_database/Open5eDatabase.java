@@ -109,7 +109,7 @@ import java.util.concurrent.Executors;
                 ItemCategoryEntity.class,
                 ItemSetEntity.class,
         },
-        version = 48,
+        version = 49,
         exportSchema = false
 )
 @TypeConverters({GainedAtListConverter.class, TableDataListConverter.class, Converters.class})
