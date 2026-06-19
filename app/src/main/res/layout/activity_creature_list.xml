@@ -10,117 +10,113 @@
         android:layout_height="match_parent"
         android:scaleType="centerCrop"/>
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:fillViewport="true">
+        android:orientation="vertical"
+        android:background="@android:color/transparent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="8dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
+            <SearchView
+                android:id="@+id/search_view"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:padding="8dp">
+                android:layout_weight="1"
+                android:queryHint="Search creatures..."
+                android:background="@android:color/transparent"
+                android:iconifiedByDefault="false" />
 
-                <SearchView
-                    android:id="@+id/search_view"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:queryHint="Search creatures..."
-                    android:background="@android:color/transparent"
-                    android:iconifiedByDefault="false" />
-
-                <ImageButton
-                    android:id="@+id/btnManageTypes"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@android:drawable/ic_menu_manage"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="8dp"
-                    android:contentDescription="Manage Types"
-                    android:tint="?attr/colorOnSurface" />
-
-                <ImageButton
-                    android:id="@+id/btnFilter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@android:drawable/ic_menu_sort_by_size"
-                    android:background="?attr/selectableItemBackgroundBorderless"
-                    android:padding="8dp"
-                    android:contentDescription="Filter"
-                    android:tint="?attr/colorOnSurface" />
-
-            </LinearLayout>
-
-            <HorizontalScrollView
-                android:layout_width="match_parent"
+            <ImageButton
+                android:id="@+id/btnManageTypes"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:scrollbars="none"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:paddingBottom="4dp">
+                android:src="@android:drawable/ic_menu_manage"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:contentDescription="Manage Types"
+                android:tint="?attr/colorOnSurface" />
 
-                <com.google.android.material.chip.ChipGroup
-                    android:id="@+id/chip_group_sources"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:singleSelection="true"
-                    app:selectionRequired="false">
-
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/chip_all"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="All"
-                        style="@style/Widget.MaterialComponents.Chip.Filter"
-                        android:textColor="?attr/colorOnSurface"
-                        app:chipBackgroundColor="?attr/colorSurfaceVariant"
-                        app:chipStrokeColor="?attr/colorOutline"
-                        android:checked="true" />
-
-                </com.google.android.material.chip.ChipGroup>
-
-            </HorizontalScrollView>
-
-            <TextView
-                android:id="@+id/tv_active_filters"
-                style="@style/QuestRollCaption"
-                android:layout_width="match_parent"
+            <ImageButton
+                android:id="@+id/btnFilter"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:paddingBottom="4dp"
-                android:visibility="gone" />
-
-            <TextView
-                android:id="@+id/tv_creature_count"
-                style="@style/QuestRollCaption"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:paddingBottom="4dp" />
-
-            <com.google.android.material.divider.MaterialDivider
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recycler_creatures"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false" />
+                android:src="@android:drawable/ic_menu_sort_by_size"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:contentDescription="Filter"
+                android:tint="?attr/colorOnSurface" />
 
         </LinearLayout>
-    </ScrollView>
 
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="4dp">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_sources"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:selectionRequired="false">
+
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="All"
+                    style="@style/Widget.MaterialComponents.Chip.Filter"
+                    android:textColor="?attr/colorOnSurface"
+                    app:chipBackgroundColor="?attr/colorSurfaceVariant"
+                    app:chipStrokeColor="?attr/colorOutline"
+                    android:checked="true" />
+
+            </com.google.android.material.chip.ChipGroup>
+
+        </HorizontalScrollView>
+
+        <TextView
+            android:id="@+id/tv_active_filters"
+            style="@style/QuestRollCaption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="4dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_creature_count"
+            style="@style/QuestRollCaption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="4dp" />
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recycler_creatures"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:nestedScrollingEnabled="true" />
+
+    </LinearLayout>
+
+    <!-- FAB -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabCreateCreature"
         style="@style/Widget.QuestRoll.FAB"
