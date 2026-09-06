@@ -8,10 +8,12 @@ public class CombinedClass {
     public final boolean isCustom;
     public final String parentKey;
     public final String parentName;
+    private final String gameSystem;
 
     public String getSubclassOf() { return parentKey; }
     public String getName() { return name; }
     public String getKey() { return id; }
+    public String getGameSystem() { return gameSystem; }
 
     @Override
     public String toString() {
@@ -22,12 +24,14 @@ public class CombinedClass {
                          String name,
                          boolean isCustom,
                          String parentKey,
-                         String parentName) {
+                         String parentName,
+                         String gameSystem) {
         this.id = id;
         this.name = name;
         this.isCustom = isCustom;
         this.parentKey = parentKey;
         this.parentName = parentName;
+        this.gameSystem = gameSystem;
     }
 
     @Override
@@ -40,11 +44,13 @@ public class CombinedClass {
                 Objects.equals(id, that.id) &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(parentKey, that.parentKey) &&
-                Objects.equals(parentName, that.parentName);
+                Objects.equals(parentName, that.parentName) &&
+                Objects.equals(gameSystem, that.gameSystem);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, isCustom, parentKey, parentName);
+        return Objects.hash(id, name, isCustom, parentKey, parentName, gameSystem);
     }
+
 }

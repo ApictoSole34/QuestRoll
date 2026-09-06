@@ -24,6 +24,9 @@ public interface CustomSpellDao {
     @Query("SELECT * FROM custom_spells ORDER BY level ASC, name ASC")
     LiveData<List<CustomSpellEntity>> getAll();
 
+    @Query("SELECT * FROM custom_spells")
+    List<CustomSpellEntity> getAllSync();
+
     @Query("SELECT * FROM custom_spells WHERE id = :id")
     LiveData<CustomSpellEntity> getById(long id);
 

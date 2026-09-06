@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/transparent">
+
+    <!-- Header z krokiem -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="?attr/colorSurface">
+
+        <TextView
+            android:id="@+id/tv_step_indicator"
+            style="@style/QuestRollBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Step 1 of 5"
+            android:textColor="@color/threads_gold"
+            android:gravity="center" />
+
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="8dp"
+            android:max="5"
+            android:progress="1"
+            android:progressTint="@color/threads_gold"
+            android:progressBackgroundTint="?attr/colorSurfaceVariant" />
+
+    </LinearLayout>
+
+    <!-- Container dla fragmentów -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:padding="16dp"
+        android:background="@android:color/transparent" />
+
+    <!-- Nawigacja na dole -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="?attr/colorSurface"
+        android:elevation="4dp">
+
+        <Button
+            android:id="@+id/btn_back"
+            style="@style/QuestRollButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Back"
+            android:visibility="gone"
+            android:layout_marginEnd="8dp" />
+
+        <Button
+            android:id="@+id/btn_next"
+            style="@style/QuestRollButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Next"
+            android:layout_marginStart="8dp" />
+
+        <Button
+            android:id="@+id/btn_save"
+            style="@style/QuestRollButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Save Class"
+            android:visibility="gone"
+            android:layout_marginStart="8dp" />
+
+    </LinearLayout>
+
+</LinearLayout>

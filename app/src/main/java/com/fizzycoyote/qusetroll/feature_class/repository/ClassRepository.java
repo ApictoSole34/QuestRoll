@@ -81,7 +81,8 @@ public class ClassRepository {
                             c.name,
                             false,
                             c.subclassOfKey,
-                            classMap.getOrDefault(c.subclassOfKey, null)
+                            classMap.getOrDefault(c.subclassOfKey, null),
+                            "5e-2014" // 👈 DODAJ GAME SYSTEM (lub pobierz z dokumentu)
                     ));
                 }
             }
@@ -89,14 +90,14 @@ public class ClassRepository {
             if (custom != null) {
                 for (CustomCharacterClassWithFeatures c : custom) {
                     String customKey = "custom_" + c.characterClassEntity.id;
-                    String parentKey = c.characterClassEntity.subclassOf; // np. "custom_7" lub "fighter"
-                    // Poprawka: nie modyfikujemy parentKey przy szukaniu – zostawiamy oryginał
+                    String parentKey = c.characterClassEntity.subclassOf;
                     combined.add(new CombinedClass(
                             customKey,
                             c.characterClassEntity.name,
                             true,
                             parentKey,
-                            classMap.getOrDefault(parentKey, null)
+                            classMap.getOrDefault(parentKey, null),
+                            c.characterClassEntity.gameSystem // 👈 UŻYJ GAME SYSTEMU Z ENCJI
                     ));
                 }
             }

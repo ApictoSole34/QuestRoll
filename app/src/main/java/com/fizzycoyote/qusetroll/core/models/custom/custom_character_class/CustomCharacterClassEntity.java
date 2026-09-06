@@ -64,4 +64,23 @@ public class CustomCharacterClassEntity {
 
     @ColumnInfo(name = "language_choices")
     public int languageChoices = 0;
+
+    /**
+     * Serializowana (Gson) lista ClassWizardViewModel.ClassProgressionRow.
+     * Bez tej kolumny dane wpisane w kroku "Progression" (sloty zaklęć,
+     * bonus biegłości per poziom) nie miały gdzie się zapisać i były
+     * tracone przy każdym kliknięciu "Save".
+     */
+    @ColumnInfo(name = "progression_json")
+    public String progressionJson = "[]";
+
+    /**
+     * Lista kluczy zaklęć przypisanych do tej klasy. Oficjalne SpellEntity.key
+     * wprost (np. "fireball"), custom zaklęcia jako "custom_" + CustomSpellEntity.id
+     * — dokładnie ta sama konwencja co przy parentClassKey/CombinedClass.
+     * Nie modyfikujemy SpellEntity.classes, bo to zsynchronizowana, tylko-do-odczytu
+     * zawartość z open5e — przypisanie żyje po stronie klasy custom, nie zaklęcia.
+     */
+    @ColumnInfo(name = "spell_keys_json")
+    public String spellKeysJson = "[]";
 }

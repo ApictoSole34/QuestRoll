@@ -23,6 +23,12 @@ public interface CustomFeatureDao {
     @Delete
     void delete(CustomFeatureEntity feature);
 
+    @Query("DELETE FROM custom_features WHERE class_id = :classId")
+    void deleteFeaturesForClass(long classId);
+
     @Query("SELECT * FROM custom_features WHERE class_id = :classId")
     LiveData<List<CustomFeatureEntity>> getFeaturesForClass(long classId);
+
+    @Query("SELECT * FROM custom_features WHERE class_id = :classId")
+    List<CustomFeatureEntity> getFeaturesForClassSync(long classId);
 }

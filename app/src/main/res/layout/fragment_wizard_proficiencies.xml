@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/QuestRollSectionHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Saving Throws"
+            android:layout_marginBottom="12dp" />
+
+        <LinearLayout
+            android:id="@+id/saving_throws_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            style="@style/QuestRollSectionHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Skills"
+            android:layout_marginBottom="12dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Number of Skill Choices"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_marginBottom="16dp"
+            app:boxBackgroundColor="@android:color/transparent"
+            app:hintTextColor="?attr/colorOnSurfaceVariant"
+            app:boxStrokeColor="?attr/colorOutline">
+
+            <EditText
+                android:id="@+id/et_skill_choices"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="?attr/colorOnSurface"
+                android:inputType="number"
+                android:text="2" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            style="@style/QuestRollLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Available Skill Options"
+            android:layout_marginBottom="8dp" />
+
+        <LinearLayout
+            android:id="@+id/skill_options_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+
+    </LinearLayout>
+</ScrollView>

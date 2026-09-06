@@ -19,6 +19,9 @@ public interface AbilityDao {
     @Query("SELECT * FROM abilities ORDER BY name ASC")
     LiveData<List<AbilityEntity>> getAll();
 
+    @Query("SELECT * FROM abilities ORDER BY name ASC")
+    List<AbilityEntity> getAllSync();
+
     @Query("SELECT * FROM abilities WHERE key = :key")
     LiveData<AbilityEntity> getByKey(String key);
 

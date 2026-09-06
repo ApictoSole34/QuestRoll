@@ -15,6 +15,9 @@ public interface GameSystemDao {
     @Query("SELECT * FROM game_systems")
     List<GameSystemEntity> getAllGameSystems();
 
+    @Query("SELECT * FROM game_systems ORDER BY name ASC")
+    List<GameSystemEntity> getAllSync();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAll(List<GameSystemEntity> gameSystems);
 }

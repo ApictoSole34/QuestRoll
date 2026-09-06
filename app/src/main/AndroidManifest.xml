@@ -51,6 +51,7 @@
         <activity
             android:name=".feature_character.ui.wizard.CharacterWizardActivity"
             android:parentActivityName=".main.ui.MainActivity" />
+        <activity android:name=".feature_class.ui.wizard.ClassWizardActivity"/>
         <activity android:name=".feature_campaign.ui.CampaignListActivity"/>
         <activity android:name=".feature_campaign.ui.CampaignDetailActivity"/>
         <activity android:name=".feature_campaign.ui.CreateEditCampaignActivity"/>

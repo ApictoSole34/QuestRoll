@@ -36,6 +36,7 @@ import com.fizzycoyote.qusetroll.core.models.open5e.character_class.gained_at.Ga
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.hit_points.HitPointsEntity;
 import com.fizzycoyote.qusetroll.core.models.open5e.character_class.table_data.TableData;
 import com.fizzycoyote.qusetroll.feature_class.class_adapter.FeatureAdapter;
+import com.fizzycoyote.qusetroll.feature_class.ui.wizard.ClassWizardActivity;
 import com.fizzycoyote.qusetroll.feature_class.view_model.ClassDetailViewModel;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -176,8 +177,8 @@ public class ClassDetailActivity extends BaseActivity {
 
     private void openEditClass(String classKey) {
         long classId = Long.parseLong(classKey.replace("custom_", ""));
-        Intent intent = new Intent(this, ClassCreateActivity.class);
-        intent.putExtra(ClassCreateActivity.EXTRA_EDIT_CLASS_ID, classId);
+        Intent intent = new Intent(this, ClassWizardActivity.class);
+        intent.putExtra("edit_class_id", classId);
         startActivity(intent);
     }
 

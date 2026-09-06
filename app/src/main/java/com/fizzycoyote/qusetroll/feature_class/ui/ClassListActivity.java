@@ -2,7 +2,11 @@ package com.fizzycoyote.qusetroll.feature_class.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -16,8 +20,10 @@ import com.fizzycoyote.qusetroll.core.models.open5e.character_class.CharacterCla
 import com.fizzycoyote.qusetroll.feature_class.class_adapter.ClassAdapter;
 import com.fizzycoyote.qusetroll.feature_class.model.CombinedClass;
 import com.fizzycoyote.qusetroll.feature_class.repository.ClassRepository;
+import com.fizzycoyote.qusetroll.feature_class.ui.wizard.ClassWizardActivity;
 import com.fizzycoyote.qusetroll.feature_class.view_model.ClassListViewModel;
 import com.fizzycoyote.qusetroll.feature_class.view_model.ClassListViewModelFactory;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.concurrent.Executors;
 
@@ -25,6 +31,7 @@ public class ClassListActivity extends BaseActivity {
     private RecyclerView recyclerView;
     private ClassAdapter adapter;
     private ClassListViewModel viewModel;
+    private AlertDialog createClassDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +42,13 @@ public class ClassListActivity extends BaseActivity {
         setupRecyclerView();
         setupViewModel();
         observeData();
-    }
 
+        // 🔥 FAB – otwiera dialog wyboru
+        FloatingActionButton fabCreate = findViewById(R.id.fab_create_class);
+        if (fabCreate != null) {
+            fabCreate.setOnClickListener(v -> showCreateClassDialog());
+        }
+    }
 
     private void setupRecyclerView() {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -50,21 +62,47 @@ public class ClassListActivity extends BaseActivity {
 
             @Override
             public void onCreateClick() {
-                Intent intent = new Intent(ClassListActivity.this, ClassCreateActivity.class);
-                startActivity(intent);
+                // 🔥 Zmienione – teraz pokazuje dialog zamiast otwierać Wizarda
+                showCreateClassDialog();
             }
         });
         recyclerView.setAdapter(adapter);
     }
 
-    private void openClassDetails(CombinedClass classEntity) {
-        Intent intent = new Intent(this, ClassDetailActivity.class);
-        intent.putExtra("CLASS_KEY", classEntity.id);
-        startActivity(intent);
+    private void showCreateClassDialog() {
+        if (createClassDialog != null && createClassDialog.isShowing()) {
+            return;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_create_class_choice, null);
+        builder.setView(dialogView);
+        builder.setCancelable(true);
+
+        createClassDialog = builder.create();
+        createClassDialog.show();
+
+        // Przyciski
+        Button btnNewClass = dialogView.findViewById(R.id.btn_new_class);
+        Button btnNewSubclass = dialogView.findViewById(R.id.btn_new_subclass);
+        Button btnCancel = dialogView.findViewById(R.id.btn_cancel);
+
+        btnNewClass.setOnClickListener(v -> {
+            createClassDialog.dismiss();
+            openWizard(false); // false = klasa bazowa
+        });
+
+        btnNewSubclass.setOnClickListener(v -> {
+            createClassDialog.dismiss();
+            openWizard(true); // true = subklasa
+        });
+
+        btnCancel.setOnClickListener(v -> createClassDialog.dismiss());
     }
 
-    private void createNewClass() {
-        Intent intent = new Intent(this, ClassCreateActivity.class);
+    private void openWizard(boolean isSubclass) {
+        Intent intent = new Intent(this, ClassWizardActivity.class);
+        intent.putExtra("is_subclass", isSubclass);
         startActivity(intent);
     }
 
@@ -81,7 +119,6 @@ public class ClassListActivity extends BaseActivity {
         ClassListViewModel.Factory factory = new ClassListViewModel.Factory(repository);
         viewModel = new ViewModelProvider(this, factory).get(ClassListViewModel.class);
     }
-
 
     private void observeData() {
         viewModel.getCombinedClasses().observe(this, classes -> {

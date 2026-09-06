@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/QuestRollSectionHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Class Progression"
+        android:layout_marginBottom="12dp" />
+
+    <TextView
+        style="@style/QuestRollCaption"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Add levels (1-20) and set proficiency bonus and spell slots"
+        android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/btn_add_level"
+        style="@style/QuestRollButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="+ Add Level"
+        android:layout_marginBottom="16dp" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_progression"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:nestedScrollingEnabled="false" />
+
+</LinearLayout>

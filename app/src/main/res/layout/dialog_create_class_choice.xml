@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        style="@style/QuestRollTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Create New Class"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        style="@style/QuestRollBody"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="What would you like to create?"
+        android:gravity="center"
+        android:layout_marginBottom="24dp" />
+
+    <Button
+        android:id="@+id/btn_new_class"
+        style="@style/QuestRollButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="New Class"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/btn_new_subclass"
+        style="@style/QuestRollButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="New Subclass"
+        android:layout_marginBottom="8dp" />
+
+    <Button
+        android:id="@+id/btn_cancel"
+        style="@style/QuestRollButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:backgroundTint="@color/threads_text_hint" />
+
+</LinearLayout>
