@@ -30,6 +30,14 @@ import retrofit2.Call;
 import retrofit2.http.Query;
 import retrofit2.http.GET;
 
+/**
+ * Retrofit service interface for the Open5e API.
+ * <p>
+ * Defines endpoints for fetching various D&D 5e game data including documents,
+ * classes, spells, creatures, and rules. Most methods support pagination
+ * via the {@code page} query parameter.
+ * </p>
+ */
 public interface Open5eApiService {
     @GET("documents/")
     Call<DocumentResponse> getDocuments();

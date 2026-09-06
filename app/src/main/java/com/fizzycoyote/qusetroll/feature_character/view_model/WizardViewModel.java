@@ -24,6 +24,14 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * ViewModel for the multi-step Character Creation Wizard.
+ * <p>
+ * This class serves as the central state container for the entire character creation
+ * process, including race, class, background, attributes, equipment, and spells.
+ * It also supports loading an existing character for modification.
+ * </p>
+ */
 public class WizardViewModel extends ViewModel {
 
     // Shared executor for background tasks
@@ -114,6 +122,11 @@ public class WizardViewModel extends ViewModel {
     // Classes (multiclass)
     public List<ClassAssignment> classAssignments = new ArrayList<>();
 
+    /**
+     * Aggregates equipment from background and class choices.
+     *
+     * @return Combined list of starting items.
+     */
     public List<CharacterCreationDTO.InventoryItemDTO> getTotalEquipment() {
         List<CharacterCreationDTO.InventoryItemDTO> total = new ArrayList<>();
         total.addAll(backgroundEquipment);
@@ -137,7 +150,13 @@ public class WizardViewModel extends ViewModel {
 
     /**
      * Loads an existing character for editing.
-     * FIX: Now correctly loads both open5e AND custom class assignments.
+     * <p>
+     * Fetches core data, attributes, and class assignments (supporting both Open5e
+     * and custom classes) from the respective databases.
+     * </p>
+     *
+     * @param characterId The ID of the character to edit.
+     * @param context     Application context for database access.
      */
     public void setEditMode(long characterId, Context context) {
         this.isEditMode = true;
@@ -213,6 +232,9 @@ public class WizardViewModel extends ViewModel {
     public boolean isEditMode() { return isEditMode; }
     public long getEditingCharacterId() { return editingCharacterId; }
 
+    /**
+     * Represents a class assignment (key, display name, and level) during character creation.
+     */
     public static class ClassAssignment {
         public String classKey;
         public String className;

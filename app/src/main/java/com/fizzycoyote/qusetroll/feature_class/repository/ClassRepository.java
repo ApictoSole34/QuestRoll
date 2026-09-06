@@ -16,6 +16,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+/**
+ * Repository for managing character classes, combining data from the official Open5e compendium
+ * and user-created custom classes.
+ */
 public class ClassRepository {
     private final CharacterClassDao open5eDao;
     private final CustomCharacterClassDao customDao;
@@ -37,6 +41,15 @@ public class ClassRepository {
         return executor;
     }
 
+    /**
+     * Retrieves a merged list of all classes (official and custom).
+     * <p>
+     * Uses a {@link MediatorLiveData} to observe changes in both the official compendium
+     * and custom character classes, updating the combined list whenever either source changes.
+     * </p>
+     *
+     * @return LiveData containing the combined list of {@link CombinedClass}.
+     */
     public LiveData<List<CombinedClass>> getCombinedClasses() {
         MediatorLiveData<List<CombinedClass>> mediator = new MediatorLiveData<>();
 
@@ -52,6 +65,10 @@ public class ClassRepository {
         return mediator;
     }
 
+    /**
+     * Logic for merging official and custom class data into a unified list.
+     * Maps subclass relationships and identifies official vs custom content.
+     */
     private void combineData(
             List<CharacterClassEntity> open5e,
             List<CustomCharacterClassWithFeatures> custom,
@@ -82,7 +99,7 @@ public class ClassRepository {
                             false,
                             c.subclassOfKey,
                             classMap.getOrDefault(c.subclassOfKey, null),
-                            "5e-2014" // 👈 DODAJ GAME SYSTEM (lub pobierz z dokumentu)
+                            "5e-2014"
                     ));
                 }
             }
@@ -97,7 +114,7 @@ public class ClassRepository {
                             true,
                             parentKey,
                             classMap.getOrDefault(parentKey, null),
-                            c.characterClassEntity.gameSystem // 👈 UŻYJ GAME SYSTEMU Z ENCJI
+                            c.characterClassEntity.gameSystem
                     ));
                 }
             }

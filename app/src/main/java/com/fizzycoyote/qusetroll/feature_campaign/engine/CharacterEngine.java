@@ -11,6 +11,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * A utility engine for performing character-related calculations within the campaign feature.
+ * <p>
+ * This version of the engine provides stateless calculation methods for skills, saving throws,
+ * hit points, and other derived statistics using D&D 5e rules.
+ * </p>
+ */
 public class CharacterEngine {
 
     private static final Map<String, String> SKILL_ABILITY_MAP = new HashMap<>();
@@ -39,6 +46,14 @@ public class CharacterEngine {
         SKILL_ABILITY_MAP.put("custom_skill", "INT");
     }
 
+    /**
+     * Calculates the total bonus for all standard skills.
+     *
+     * @param attributes            The character's attribute scores.
+     * @param skillProficiencyKeys  Keys of skills the character is proficient in.
+     * @param totalLevel            The character's total level.
+     * @return A map of skill keys to their total calculated bonuses.
+     */
     public Map<String, Integer> getSkillBonuses(CharacterAttributesEntity attributes,
                                                 List<String> skillProficiencyKeys,
                                                 int totalLevel) {
@@ -60,6 +75,14 @@ public class CharacterEngine {
         return bonuses;
     }
 
+    /**
+     * Calculates saving throw bonuses for all six abilities.
+     *
+     * @param attributes   The character's attribute scores.
+     * @param savingThrows List of saving throw proficiency records.
+     * @param totalLevel   The character's total level.
+     * @return A map of ability keys (e.g., "STR") to their saving throw bonuses.
+     */
     public Map<String, Integer> getSavingThrowBonuses(CharacterAttributesEntity attributes,
                                                       List<CharacterSavingThrowEntity> savingThrows,
                                                       int totalLevel) {
@@ -78,10 +101,23 @@ public class CharacterEngine {
         return bonuses;
     }
 
+    /**
+     * Calculates the proficiency bonus for a given level.
+     *
+     * @param totalLevel The total character level.
+     * @return The calculated proficiency bonus.
+     */
     public static int getProficiencyBonus(int totalLevel) {
         return 1 + (int) Math.ceil(totalLevel / 4.0);
     }
 
+    /**
+     * Calculates the ability modifier from an ability score.
+     *
+     * @param attributes The character's attribute scores.
+     * @param abilityKey The ability key (e.g., "STR").
+     * @return The calculated modifier (e.g., 14 -> +2).
+     */
     public int getAbilityModifier(CharacterAttributesEntity attributes, String abilityKey) {
         if (attributes == null) return 0;
         int score = 0;
@@ -97,6 +133,12 @@ public class CharacterEngine {
         return (score - 10) / 2;
     }
 
+    /**
+     * Sums the levels from a list of class assignments.
+     *
+     * @param classAssignments The character's class assignments.
+     * @return The total level.
+     */
     public int getTotalLevel(List<CharacterClassAssignmentEntity> classAssignments) {
         if (classAssignments == null) return 0;
         int sum = 0;
@@ -106,15 +148,37 @@ public class CharacterEngine {
         return sum;
     }
 
+    /**
+     * Calculates maximum HP based on level and Constitution modifier.
+     * <p>
+     * Note: This is a simplified calculation (Level * 8 + Level * ConMod).
+     * </p>
+     *
+     * @param attributes The character's attribute scores.
+     * @param totalLevel The character's total level.
+     * @return The maximum hit points.
+     */
     public int calculateMaxHp(CharacterAttributesEntity attributes, int totalLevel) {
         int conMod = getAbilityModifier(attributes, "CON");
         return (totalLevel * 8) + (totalLevel * conMod);
     }
 
+    /**
+     * Gets the initiative bonus.
+     *
+     * @param attributes The character's attribute scores.
+     * @return The Dexterity modifier.
+     */
     public int getInitiative(CharacterAttributesEntity attributes) {
         return getAbilityModifier(attributes, "DEX");
     }
 
+    /**
+     * Calculates base AC.
+     *
+     * @param attributes The character's attribute scores.
+     * @return 10 + Dexterity modifier.
+     */
     public int getArmorClass(CharacterAttributesEntity attributes) {
         return 10 + getAbilityModifier(attributes, "DEX");
     }

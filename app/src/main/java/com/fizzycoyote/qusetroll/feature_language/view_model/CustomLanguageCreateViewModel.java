@@ -13,6 +13,14 @@ import com.fizzycoyote.qusetroll.feature_language.model.item.ScriptItem;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * ViewModel for the Custom Language Creation screen.
+ * <p>
+ * This class manages the state for creating or editing a homebrew language,
+ * including providing a list of existing languages to be used as scripts and
+ * handling the persistence of the new language.
+ * </p>
+ */
 public class CustomLanguageCreateViewModel extends ViewModel {
     private final LanguageRepository repository;
     private final MutableLiveData<List<ScriptItem>> scriptOptions = new MutableLiveData<>();
@@ -23,6 +31,11 @@ public class CustomLanguageCreateViewModel extends ViewModel {
         this.repository = repository;
     }
 
+    /**
+     * Loads all available languages (official and custom) to be used as script options.
+     *
+     * @param excludeId The ID of the language being edited, to avoid self-reference in scripts.
+     */
     public void loadScriptOptions(long excludeId) {
         repository.getExecutor().execute(() -> {
             List<ScriptItem> items = new ArrayList<>();
@@ -46,6 +59,11 @@ public class CustomLanguageCreateViewModel extends ViewModel {
         });
     }
 
+    /**
+     * Loads an existing custom language for editing.
+     *
+     * @param id The unique ID of the custom language.
+     */
     public void loadExistingLanguage(long id) {
         repository.getExecutor().execute(() -> {
             CustomLanguageEntity entity = repository.getCustomDao().findById(id);
@@ -53,6 +71,16 @@ public class CustomLanguageCreateViewModel extends ViewModel {
         });
     }
 
+    /**
+     * Saves the custom language to the database.
+     *
+     * @param name       The name of the language.
+     * @param desc       Description of the language.
+     * @param exotic     Whether it's an exotic language.
+     * @param secret     Whether it's a secret language.
+     * @param scriptId   The ID or key of the script used by this language.
+     * @param existingId The ID of the language if editing, otherwise -1.
+     */
     public void saveLanguage(String name, String desc, boolean exotic, boolean secret,
                              String scriptId, long existingId) {
         repository.getExecutor().execute(() -> {

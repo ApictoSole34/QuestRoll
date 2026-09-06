@@ -11,6 +11,14 @@ import com.fizzycoyote.qusetroll.core.models.open5e.Converters;
 
 import java.util.List;
 
+/**
+ * Entity representing a D&D 5e spell as stored in the local cache.
+ * <p>
+ * This class stores comprehensive spell details including casting time, duration,
+ * range, components (V, S, M), and school. It is used for both displaying spell
+ * lists and looking up spell mechanics during gameplay.
+ * </p>
+ */
 @Entity(tableName = "spells", indices = {
         @Index("name"),
         @Index("level"),
@@ -18,6 +26,9 @@ import java.util.List;
 })
 public class SpellEntity {
 
+    /**
+     * Unique identifier for the spell (e.g., "fireball").
+     */
     @PrimaryKey
     @NonNull
     public String key;
@@ -35,6 +46,9 @@ public class SpellEntity {
     @ColumnInfo(name = "school_key")
     public String schoolKey;
 
+    /**
+     * List of class keys that have access to this spell.
+     */
     @TypeConverters(Converters.class)
     public List<String> classes;
 

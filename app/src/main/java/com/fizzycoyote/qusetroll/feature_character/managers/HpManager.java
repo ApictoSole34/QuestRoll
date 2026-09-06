@@ -9,6 +9,14 @@ import com.fizzycoyote.qusetroll.core.models.open5e.character_class.CharacterCla
 
 import java.util.List;
 
+/**
+ * Manager responsible for handling character health-related operations.
+ * <p>
+ * This includes calculating maximum HP based on class levels and modifiers,
+ * applying damage (accounting for temporary HP), healing, and managing
+ * temporary hit points.
+ * </p>
+ */
 public class HpManager {
     private final PlayerCharacterDatabase pcDb;
     private final Open5eDatabase open5eDb;
@@ -18,6 +26,13 @@ public class HpManager {
         this.open5eDb = open5eDb;
     }
 
+    /**
+     * Calculates the maximum Hit Points for a character based on their class assignments
+     * and Constitution modifier.
+     *
+     * @param characterId The unique ID of the character.
+     * @return The calculated maximum Hit Points.
+     */
     public int calculateMaxHp(long characterId) {
         CharacterEntity character = pcDb.characterDao().getCharacterSync(characterId);
         if (character == null) return 0;
@@ -54,6 +69,16 @@ public class HpManager {
         }
     }
 
+    /**
+     * Deducts damage from a character's current health.
+     * <p>
+     * Temporary Hit Points are consumed first. Remaining damage reduces
+     * the current HP, but not below zero.
+     * </p>
+     *
+     * @param characterId The unique ID of the character.
+     * @param damage      The amount of damage to apply.
+     */
     public void takeDamage(long characterId, int damage) {
         CharacterEntity c = pcDb.characterDao().getCharacterSync(characterId);
         if (c == null) return;
@@ -67,6 +92,15 @@ public class HpManager {
         pcDb.characterDao().update(c);
     }
 
+    /**
+     * Increases a character's current health.
+     * <p>
+     * Current HP is increased by the specified amount, up to the maximum HP limit.
+     * </p>
+     *
+     * @param characterId The unique ID of the character.
+     * @param amount      The amount of healing to apply.
+     */
     public void heal(long characterId, int amount) {
         CharacterEntity c = pcDb.characterDao().getCharacterSync(characterId);
         if (c == null) return;
@@ -75,6 +109,15 @@ public class HpManager {
         pcDb.characterDao().update(c);
     }
 
+    /**
+     * Adds temporary hit points to a character.
+     * <p>
+     * According to 5e rules, temporary HP does not stack; the highest value persists.
+     * </p>
+     *
+     * @param characterId The unique ID of the character.
+     * @param tempAmount  The amount of temporary HP to set.
+     */
     public void addTempHp(long characterId, int tempAmount) {
         CharacterEntity c = pcDb.characterDao().getCharacterSync(characterId);
         if (c == null) return;

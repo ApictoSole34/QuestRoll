@@ -32,6 +32,14 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * ViewModel for the Item List screen, providing a searchable and filterable catalog of
+ * items (equipment, magic items, weapons, etc.) from both official and custom sources.
+ * <p>
+ * It coordinates data from multiple DAOs to provide combined lists of categories,
+ * rarities, and weapon properties used to filter the main item list.
+ * </p>
+ */
 public class ItemListViewModel extends ViewModel {
 
     private final ItemDao itemDao;
@@ -157,6 +165,10 @@ public class ItemListViewModel extends ViewModel {
         combinedWeaponPropertyNamesForFilter = propMediator;
     }
 
+    /**
+     * Merges and filters official and custom items into a single sorted list.
+     * Magic items, rarity, and weapon properties are taken into account during filtering.
+     */
     private void combine(List<ItemEntity> api, List<CustomItemEntity> custom,
                          MediatorLiveData<List<CombinedItem>> result) {
         List<CombinedItem> combined = new ArrayList<>();
@@ -223,6 +235,9 @@ public class ItemListViewModel extends ViewModel {
     }
 
 
+    /**
+     * Loads available data sources from the database and includes "custom".
+     */
     public void loadSourcesAndCategories() {
         new Thread(() -> {
             List<String> dbSources = new ArrayList<>(itemDao.getDistinctSources());
@@ -263,6 +278,9 @@ public class ItemListViewModel extends ViewModel {
     public LiveData<List<String>> getCombinedRarityNamesForFilter() { return combinedRarityNamesForFilter; }
     public LiveData<List<String>> getCombinedWeaponPropertyNamesForFilter() { return combinedWeaponPropertyNamesForFilter; }
 
+    /**
+     * Factory for creating {@link ItemListViewModel} with its required DAOs.
+     */
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
         private final ItemDao itemDao;
         private final CustomItemDao customItemDao;

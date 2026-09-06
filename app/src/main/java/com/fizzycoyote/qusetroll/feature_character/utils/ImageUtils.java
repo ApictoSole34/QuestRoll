@@ -18,11 +18,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
+/**
+ * Utility class for handling character images and thumbnails.
+ * <p>
+ * Provides methods for saving images from external URIs into the application's
+ * private storage and creating circular thumbnails for display in lists.
+ * </p>
+ */
 public class ImageUtils {
 
     /**
      * Saves an image from a Uri to the app's private directory.
-     * @return absolute file path, or null on error
+     *
+     * @param context   Application context.
+     * @param sourceUri The URI of the source image.
+     * @param prefix    A prefix for the generated file name.
+     * @return The absolute file path of the saved image, or null on error.
      */
     public static String saveImageToAppDirectory(Context context, Uri sourceUri, String prefix) {
         try {
@@ -49,8 +60,10 @@ public class ImageUtils {
 
     /**
      * Creates a circular thumbnail (200x200) from the given image.
-     * @param imagePath path to the full image
-     * @return thumbnail file path, or null on error
+     *
+     * @param context   Application context.
+     * @param imagePath Path to the full image.
+     * @return The absolute file path of the thumbnail, or null on error.
      */
     public static String createCircularThumbnail(Context context, String imagePath) {
         try {

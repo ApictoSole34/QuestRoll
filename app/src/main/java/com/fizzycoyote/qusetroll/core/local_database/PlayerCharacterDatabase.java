@@ -6,6 +6,14 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import com.fizzycoyote.qusetroll.core.models.character.*;
 
+/**
+ * Room database for storing player character data.
+ * <p>
+ * This database manages all user-created content including characters, their attributes,
+ * equipment, traits, spells, and proficiencies. It is separate from the game data
+ * cache in {@link Open5eDatabase}.
+ * </p>
+ */
 @Database(
         entities = {
                 CharacterEntity.class,
@@ -36,6 +44,12 @@ public abstract class PlayerCharacterDatabase extends RoomDatabase {
 
     private static volatile PlayerCharacterDatabase INSTANCE;
 
+    /**
+     * Gets the singleton instance of the PlayerCharacterDatabase.
+     *
+     * @param context The application context.
+     * @return The singleton instance.
+     */
     public static PlayerCharacterDatabase getInstance(Context context) {
         if (INSTANCE == null) {
             synchronized (PlayerCharacterDatabase.class) {

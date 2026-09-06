@@ -53,6 +53,14 @@ import com.fizzycoyote.qusetroll.core.models.custom.custom_spell.CustomSpellScho
 import com.fizzycoyote.qusetroll.core.models.custom.custom_weapon_property.CustomWeaponPropertyDao;
 import com.fizzycoyote.qusetroll.core.models.custom.custom_weapon_property.CustomWeaponPropertyEntity;
 
+/**
+ * Room database for storing user-created custom game content.
+ * <p>
+ * This database allows users to extend the base game with their own homebrew
+ * classes, spells, items, monsters, and more. It is separate from the official
+ * {@link Open5eDatabase} and the character data in {@link PlayerCharacterDatabase}.
+ * </p>
+ */
 @Database(
         entities = {CustomLanguageEntity.class,
         CustomCharacterClassEntity.class,
@@ -107,6 +115,12 @@ public abstract class UserContentDatabase extends RoomDatabase {
     public abstract CustomItemCategoryDao customItemCategoryDao();
     public abstract CustomItemSetDao customItemSetDao();
 
+    /**
+     * Gets the singleton instance of the UserContentDatabase.
+     *
+     * @param context The application context.
+     * @return The singleton instance.
+     */
     public static UserContentDatabase getInstance(Context context) {
         if (INSTANCE == null) {
             synchronized (UserContentDatabase.class) {

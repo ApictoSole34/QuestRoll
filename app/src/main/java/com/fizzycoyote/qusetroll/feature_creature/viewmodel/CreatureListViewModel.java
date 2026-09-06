@@ -23,6 +23,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * ViewModel for the Creature List screen, providing a searchable and filterable list of
+ * creatures (monsters) from both the official compendium and custom user content.
+ * <p>
+ * It aggregates creature types from both sources to populate filter options and
+ * performs real-time merging and filtering of creature data.
+ * </p>
+ */
 public class CreatureListViewModel extends ViewModel {
 
     private final CreatureDao creatureDao;
@@ -68,6 +76,9 @@ public class CreatureListViewModel extends ViewModel {
         allTypeNames = typeMediator;
     }
 
+    /**
+     * Merges official and custom creature type names into a single unique list for filtering.
+     */
     private void mergeTypeNames(List<CreatureTypeEntity> apiTypes,
                                 List<CustomCreatureTypeEntity> customTypes,
                                 MediatorLiveData<List<String>> out) {
@@ -86,6 +97,9 @@ public class CreatureListViewModel extends ViewModel {
         out.setValue(names);
     }
 
+    /**
+     * Combines official and custom creatures, applying filters and sorting by Challenge Rating (CR).
+     */
     private void combine(List<CreatureEntity> open5e,
                          List<CustomCreatureEntity> custom,
                          MediatorLiveData<List<CombinedCreature>> result) {
@@ -120,6 +134,9 @@ public class CreatureListViewModel extends ViewModel {
         result.setValue(combined);
     }
 
+    /**
+     * Loads distinct data sources from the creature compendium and includes "custom".
+     */
     public void loadSources() {
         new Thread(() -> {
             List<String> dbSources = new ArrayList<>(creatureDao.getDistinctSources());
@@ -155,6 +172,9 @@ public class CreatureListViewModel extends ViewModel {
         return c != null ? c : new CreatureFilter();
     }
 
+    /**
+     * Factory for creating {@link CreatureListViewModel} with its required DAOs.
+     */
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
         private final CreatureDao creatureDao;
         private final CustomCreatureDao customCreatureDao;

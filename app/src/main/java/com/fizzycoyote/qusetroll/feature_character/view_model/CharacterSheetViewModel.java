@@ -25,6 +25,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * ViewModel for the Character Sheet, responsible for loading and preparing all data
+ * required to display a character's details.
+ * <p>
+ * It coordinates data fetching from both the {@link PlayerCharacterDatabase} (user-specific data)
+ * and the {@link Open5eDatabase} (game rules data), and uses the {@link CharacterEngine}
+ * to calculate derived statistics.
+ * </p>
+ */
 public class CharacterSheetViewModel extends ViewModel {
 
     private final MutableLiveData<CharacterEntity> character = new MutableLiveData<>();
@@ -52,6 +61,9 @@ public class CharacterSheetViewModel extends ViewModel {
     private CharacterEngine engine;
     private long characterId;
 
+    /**
+     * Simple data class to hold skill display information.
+     */
     public static class SkillDisplay {
         public final String name;
         public final int bonus;
@@ -61,6 +73,13 @@ public class CharacterSheetViewModel extends ViewModel {
         }
     }
 
+    /**
+     * Initializes the ViewModel with a character ID and context.
+     * Starts the data loading process.
+     *
+     * @param id      The ID of the character to load.
+     * @param context Application context for database access.
+     */
     public void init(long id, Context context) {
         this.characterId = id;
         pcDb = PlayerCharacterDatabase.getInstance(context);
@@ -69,6 +88,10 @@ public class CharacterSheetViewModel extends ViewModel {
         loadData();
     }
 
+    /**
+     * Loads all character-related data on a background thread.
+     * Fetches core stats, attributes, skills, equipment, traits, and spells.
+     */
     private void loadData() {
         new Thread(() -> {
             CharacterEntity c = pcDb.characterDao().getCharacterSync(characterId);

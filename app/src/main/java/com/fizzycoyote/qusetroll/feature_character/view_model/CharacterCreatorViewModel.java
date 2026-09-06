@@ -27,6 +27,15 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * ViewModel for the Character Creation flow.
+ * <p>
+ * This class manages the state of a new character being built, including their name,
+ * alignment, background, species, class assignments, and ability scores.
+ * It provides methods for generating attributes using different methods (Standard Array,
+ * Point Buy, Roll) and handles the final persistence of the character to the database.
+ * </p>
+ */
 public class CharacterCreatorViewModel extends AndroidViewModel {
 
     private final Open5eDatabase open5eDb;
@@ -56,6 +65,10 @@ public class CharacterCreatorViewModel extends AndroidViewModel {
         loadReferenceData();
     }
 
+    /**
+     * Loads the reference data (alignments, backgrounds, species, classes) from the
+     * {@link Open5eDatabase} to populate the selection UI.
+     */
     private void loadReferenceData() {
         executor.execute(() -> {
             try {
@@ -94,6 +107,12 @@ public class CharacterCreatorViewModel extends AndroidViewModel {
     public void setSelectedBackground(BackgroundEntity b) { selectedBackground.setValue(b); }
     public void setSelectedSpecies(SpeciesEntity s) { selectedSpecies.setValue(s); }
 
+    /**
+     * Adds a class level to the character being created.
+     *
+     * @param clazz The class to add.
+     * @param level The number of levels in that class.
+     */
     public void addClass(CharacterClassEntity clazz, int level) {
         List<ClassAssignment> current = classAssignments.getValue();
         if (current == null) current = new ArrayList<>();
@@ -101,6 +120,11 @@ public class CharacterCreatorViewModel extends AndroidViewModel {
         classAssignments.setValue(current);
     }
 
+    /**
+     * Removes a class assignment by its index in the list.
+     *
+     * @param index The index of the assignment to remove.
+     */
     public void removeClass(int index) {
         List<ClassAssignment> current = classAssignments.getValue();
         if (current != null && index >= 0 && index < current.size()) {
@@ -109,6 +133,11 @@ public class CharacterCreatorViewModel extends AndroidViewModel {
         }
     }
 
+    /**
+     * Generates a new set of ability scores based on the chosen generation method.
+     *
+     * @param method The method to use ("ROLL", "POINT_BUY", or "STANDARD").
+     */
     public void generateAttributes(String method) {
         attributeMethod.setValue(method);
         List<Integer> newStats;
@@ -126,6 +155,13 @@ public class CharacterCreatorViewModel extends AndroidViewModel {
         attributes.setValue(newStats);
     }
 
+    /**
+     * Adjusts a specific attribute score when using the Point Buy method.
+     * Ensures the total cost does not exceed the allowed pool and scores stay within 8-15 range.
+     *
+     * @param index The index of the attribute to adjust (0-5).
+     * @param delta The amount to add to the score.
+     */
     public void adjustAttributeForPointBuy(int index, int delta) {
         if (!"POINT_BUY".equals(attributeMethod.getValue())) return;
         List<Integer> current = new ArrayList<>(attributes.getValue());
@@ -141,6 +177,10 @@ public class CharacterCreatorViewModel extends AndroidViewModel {
         attributes.setValue(current);
     }
 
+    /**
+     * Finalizes character creation and persists the character and its related entities
+     * (attributes, class assignments) to the local database.
+     */
     public void saveCharacter() {
         if (Boolean.TRUE.equals(isSaving.getValue())) return;
         isSaving.setValue(true);
@@ -202,6 +242,9 @@ public class CharacterCreatorViewModel extends AndroidViewModel {
         executor.shutdownNow();
     }
 
+    /**
+     * Data class to represent a temporary class assignment during character creation.
+     */
     public static class ClassAssignment {
         public String classKey;
         public String className;

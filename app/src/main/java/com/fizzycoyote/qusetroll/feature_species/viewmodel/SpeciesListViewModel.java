@@ -18,6 +18,14 @@ import com.fizzycoyote.qusetroll.feature_species.model.SpeciesFilter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * ViewModel for the Species List screen, providing a searchable and filterable list of
+ * species (races) and subspecies from both the official compendium and custom user content.
+ * <p>
+ * It handles logic for distinguishing between main species and subspecies, and supports
+ * filtering by search query and data source.
+ * </p>
+ */
 public class SpeciesListViewModel extends ViewModel {
 
     private final SpeciesDao speciesDao;
@@ -50,6 +58,10 @@ public class SpeciesListViewModel extends ViewModel {
         combinedSpecies = mediator;
     }
 
+    /**
+     * Merges official and custom species into a single sorted list, applying the current
+     * filter criteria for subspecies vs main species.
+     */
     private void combine(List<SpeciesEntity> open5e,
                          List<CustomSpeciesEntity> custom,
                          MediatorLiveData<List<CombinedSpecies>> result) {
@@ -76,6 +88,9 @@ public class SpeciesListViewModel extends ViewModel {
         result.setValue(combined);
     }
 
+    /**
+     * Loads available data sources for species from the database and includes "custom".
+     */
     public void loadSources() {
         new Thread(() -> {
             List<String> dbSources = new ArrayList<>(speciesDao.getDistinctSources());
@@ -137,6 +152,12 @@ public class SpeciesListViewModel extends ViewModel {
     }
     public void clearFilters() { filter.setValue(new SpeciesFilter()); }
 
+    /**
+     * Applies specific filters for subspecies vs base species.
+     *
+     * @param subspeciesOnly Show only subspecies.
+     * @param mainOnly       Show only base species.
+     */
     public void applySubspeciesFilter(boolean subspeciesOnly, boolean mainOnly) {
         SpeciesFilter old = filter.getValue();
         SpeciesFilter f = new SpeciesFilter();
@@ -151,6 +172,9 @@ public class SpeciesListViewModel extends ViewModel {
         return f != null ? f : new SpeciesFilter();
     }
 
+    /**
+     * Factory for creating {@link SpeciesListViewModel} with its required DAOs.
+     */
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
         private final SpeciesDao speciesDao;
         private final CustomSpeciesDao customSpeciesDao;

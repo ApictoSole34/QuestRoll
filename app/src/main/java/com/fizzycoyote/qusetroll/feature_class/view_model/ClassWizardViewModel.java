@@ -24,6 +24,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * ViewModel for the Class Creation/Edition Wizard.
+ * <p>
+ * This class maintains the state of a custom D&D 5e class as it's being designed or edited.
+ * It handles multi-step wizard data including basic stats, proficiencies, progression tables,
+ * features, and spell lists. It also manages the persistence of custom classes to the
+ * {@link UserContentDatabase}.
+ * </p>
+ */
 public class ClassWizardViewModel extends AndroidViewModel {
 
     public ClassWizardViewModel(@NonNull Application application) {
@@ -55,8 +64,10 @@ public class ClassWizardViewModel extends AndroidViewModel {
     public List<CustomFeatureEntity> features = new ArrayList<>();
 
     // --- SPELLS ---
-    // Klucze zaklęć przypisanych do klasy: oficjalny SpellEntity.key wprost,
-    // custom jako "custom_" + CustomSpellEntity.id.
+    /**
+     * Keys of spells assigned to the class. Official spells use their direct key,
+     * while custom spells are prefixed with "custom_".
+     */
     public List<String> spellKeys = new ArrayList<>();
 
     // --- EQUIPMENT ---
@@ -73,10 +84,8 @@ public class ClassWizardViewModel extends AndroidViewModel {
     private boolean isEditMode = false;
 
     /**
-     * Activity obserwuje to i dopiero PO ustawieniu true buduje kroki wizarda.
-     * Wcześniej setupSteps()/showStep(0) odpalały się natychmiast w onCreate(),
-     * czyli zanim wątek ładujący dane z bazy zdążył cokolwiek wczytać — fragmenty
-     * pokazywały puste pola nawet w trybie edycji.
+     * LiveData that notifies the UI when character data for editing has been fully loaded
+     * from the database.
      */
     public final MutableLiveData<Boolean> editDataReady = new MutableLiveData<>(false);
 
@@ -85,15 +94,19 @@ public class ClassWizardViewModel extends AndroidViewModel {
     }
 
     /**
-     * Wywoływane z ClassWizardActivity na podstawie extra "is_subclass" z Intentu
-     * (np. gdy user wszedł przez "New Subclass" z listy klas). Musi zostać wywołane
-     * PRZED zbudowaniem kroków wizarda, inaczej ClassWizardSubclassInfoFragment
-     * odczyta checkbox jako odznaczony przy onViewCreated().
+     * Configures whether the wizard is creating a base class or a subclass.
+     *
+     * @param isSubclass True for subclass creation.
      */
     public void setSubclassMode(boolean isSubclass) {
         this.isSubclass = isSubclass;
     }
 
+    /**
+     * Loads an existing custom class from the database to populate the wizard for editing.
+     *
+     * @param classId The ID of the custom class to load.
+     */
     public void loadClassForEdit(long classId) {
         this.editingClassId = classId;
         this.isEditMode = true;
@@ -101,7 +114,6 @@ public class ClassWizardViewModel extends AndroidViewModel {
         new Thread(() -> {
             UserContentDatabase db = UserContentDatabase.getInstance(getApplication());
 
-            // ✅ Używamy getClassWithFeaturesSync – zwraca encję + cechy w jednym zapytaniu
             CustomCharacterClassWithFeatures data = db.customCharacterClassDao()
                     .getClassWithFeaturesSync(classId);
 
@@ -128,7 +140,6 @@ public class ClassWizardViewModel extends AndroidViewModel {
 
                 isSubclass = entity.subclassOf != null && !entity.subclassOf.isEmpty();
                 parentClassKey = entity.subclassOf;
-                // parentClassName będzie dociągnięte w ClassWizardSubclassInfoFragment
 
                 equipmentDescription = entity.equipmentDescription != null
                         ? entity.equipmentDescription : "";
@@ -162,6 +173,12 @@ public class ClassWizardViewModel extends AndroidViewModel {
         return result != null ? result : new ArrayList<>();
     }
 
+    /**
+     * Saves the custom class to the database. If in edit mode, it updates the existing entry
+     * and replaces its features.
+     *
+     * @param callback Result callback indicating success or failure.
+     */
     public void saveClass(Callback callback) {
         new Thread(() -> {
             try {
@@ -175,13 +192,11 @@ public class ClassWizardViewModel extends AndroidViewModel {
                     db.customCharacterClassDao().updateClass(entity);
                     classId = editingClassId;
 
-                    // Usuń stare cechy i dodaj nowe
                     db.customFeatureDao().deleteFeaturesForClass(classId);
                 } else {
                     classId = db.customCharacterClassDao().insertClass(entity);
                 }
 
-                // Zapisz cechy
                 for (CustomFeatureEntity feature : features) {
                     feature.classId = classId;
                 }
@@ -231,10 +246,16 @@ public class ClassWizardViewModel extends AndroidViewModel {
         return entity;
     }
 
+    /**
+     * Result callback for persistence operations.
+     */
     public interface Callback {
         void onResult(boolean success);
     }
 
+    /**
+     * Represents a single row in the class progression table (level-by-level stats).
+     */
     public static class ClassProgressionRow {
         public int level;
         public int proficiencyBonus = 2;
@@ -253,6 +274,12 @@ public class ClassWizardViewModel extends AndroidViewModel {
             this.level = level;
         }
 
+        /**
+         * Returns the number of spell slots available for a specific spell level.
+         *
+         * @param slotLevel The spell level (1-9).
+         * @return Number of slots.
+         */
         public int getSlotForLevel(int slotLevel) {
             switch (slotLevel) {
                 case 1: return slots1st;
@@ -268,6 +295,12 @@ public class ClassWizardViewModel extends AndroidViewModel {
             }
         }
 
+        /**
+         * Sets the number of spell slots available for a specific spell level.
+         *
+         * @param slotLevel The spell level (1-9).
+         * @param value     Number of slots.
+         */
         public void setSlotForLevel(int slotLevel, int value) {
             switch (slotLevel) {
                 case 1: slots1st = value; break;

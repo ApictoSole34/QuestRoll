@@ -1,8 +1,11 @@
 package com.fizzycoyote.qusetroll.feature_character.utils;
 
 /**
- * Defines starting gold generation rules for each class.
- * For D&D 5e: Xd4 × 10 gp.
+ * Defines starting gold generation rules for each official D&D 5e class.
+ * <p>
+ * According to standard rules, starting gold is usually determined by a dice roll
+ * (typically Xd4) multiplied by 10 gp.
+ * </p>
  */
 public enum ClassStartingGold {
     FIGHTER("Fighter", 5, 4, 10),
@@ -31,7 +34,10 @@ public enum ClassStartingGold {
     }
 
     /**
-     * Finds the enum entry by class name (case-insensitive).
+     * Finds the enum entry corresponding to a class name.
+     *
+     * @param className The name of the class (e.g., "Wizard").
+     * @return The matching {@link ClassStartingGold} entry, or {@code FIGHTER} as a fallback.
      */
     public static ClassStartingGold fromClassName(String className) {
         for (ClassStartingGold value : values()) {
@@ -43,7 +49,9 @@ public enum ClassStartingGold {
     }
 
     /**
-     * Rolls the dice and returns the starting gold amount.
+     * Simulates the dice roll to determine starting gold.
+     *
+     * @return The calculated gold amount in gp.
      */
     public int rollGold() {
         int total = 0;
@@ -54,7 +62,9 @@ public enum ClassStartingGold {
     }
 
     /**
-     * Returns a description of the roll, e.g. "5d4 × 10".
+     * Returns a human-readable description of the gold roll formula.
+     *
+     * @return A string like "5d4 × 10".
      */
     public String getDescription() {
         return diceCount + "d" + diceSides + " × " + multiplier;

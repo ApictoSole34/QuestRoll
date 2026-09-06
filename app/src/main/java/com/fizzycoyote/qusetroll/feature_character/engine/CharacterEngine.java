@@ -19,6 +19,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The core game logic engine for character-related calculations.
+ * <p>
+ * This class implements D&D 5e rules to calculate derived statistics such as
+ * proficiency bonus, armor class, maximum hit points, and skill bonuses based on
+ * character attributes, levels, and equipment.
+ * </p>
+ */
 public class CharacterEngine {
 
     private final Open5eDatabase open5eDb;
@@ -29,11 +37,22 @@ public class CharacterEngine {
         this.pcDb = PlayerCharacterDatabase.getInstance(context);
     }
 
-    // Proficiency bonus as per D&D 5e (level 1-4: +2, 5-8: +3, etc.)
+    /**
+     * Calculates the proficiency bonus based on the character's total level.
+     *
+     * @param totalLevel The sum of levels across all character classes.
+     * @return The proficiency bonus (e.g., +2 for levels 1-4).
+     */
     public int getProficiencyBonus(int totalLevel) {
         return 2 + (totalLevel - 1) / 4;
     }
 
+    /**
+     * Retrieves the total level for a character by summing all class assignments.
+     *
+     * @param characterId The unique ID of the character.
+     * @return The total level.
+     */
     public int getTotalLevel(long characterId) {
         List<CharacterClassAssignmentEntity> assignments = pcDb.classAssignmentDao().getByCharacterId(characterId);
         int total = 0;
@@ -41,11 +60,26 @@ public class CharacterEngine {
         return total;
     }
 
+    /**
+     * Gets the initiative bonus, which defaults to the Dexterity modifier.
+     *
+     * @param characterId The unique ID of the character.
+     * @return The initiative modifier.
+     */
     public int getInitiative(long characterId) {
         CharacterAttributesEntity attrs = pcDb.characterAttributesDao().getByCharacterId(characterId);
         return (attrs != null) ? attrs.dexterityMod : 0;
     }
 
+    /**
+     * Calculates the character's Armor Class (AC).
+     * <p>
+     * Base AC is 10 + Dexterity modifier. Currently adds a flat bonus if armor is equipped.
+     * </p>
+     *
+     * @param characterId The unique ID of the character.
+     * @return The total Armor Class.
+     */
     public int getArmorClass(long characterId) {
         CharacterAttributesEntity attrs = pcDb.characterAttributesDao().getByCharacterId(characterId);
         int dexMod = (attrs != null) ? attrs.dexterityMod : 0;
@@ -59,6 +93,16 @@ public class CharacterEngine {
         return baseAc;
     }
 
+    /**
+     * Calculates the maximum Hit Points (HP) for a character.
+     * <p>
+     * HP is calculated class by class, level by level, applying the Constitution modifier
+     * at each level according to the specific class rules (1st level vs higher levels).
+     * </p>
+     *
+     * @param characterId The unique ID of the character.
+     * @return The maximum Hit Points.
+     */
     public int calculateMaxHp(long characterId) {
         CharacterEntity character = pcDb.characterDao().getCharacterSync(characterId);
         if (character == null) return 0;
@@ -95,6 +139,13 @@ public class CharacterEngine {
         }
     }
 
+    /**
+     * Retrieves all ability keys (e.g., "STR", "DEX") in which the character is proficient
+     * for saving throws, based on their classes.
+     *
+     * @param characterId The unique ID of the character.
+     * @return A list of proficient ability keys.
+     */
     public List<String> getSavingThrowProficiencies(long characterId) {
         List<CharacterClassAssignmentEntity> assignments = pcDb.classAssignmentDao().getByCharacterId(characterId);
         List<String> proficientSaves = new ArrayList<>();
@@ -109,6 +160,12 @@ public class CharacterEngine {
         return proficientSaves;
     }
 
+    /**
+     * Calculates the total bonus for each skill (Ability Modifier + Proficiency Bonus if applicable).
+     *
+     * @param characterId The unique ID of the character.
+     * @return A map where the key is the skill key and the value is the total bonus.
+     */
     public Map<String, Integer> getSkillBonuses(long characterId) {
         Map<String, Integer> bonuses = new HashMap<>();
         CharacterAttributesEntity attrs = pcDb.characterAttributesDao().getByCharacterId(characterId);
@@ -161,6 +218,14 @@ public class CharacterEngine {
         return skills;
     }
 
+    /**
+     * Filters class features based on the character's current level in a specific class.
+     *
+     * @param characterId  The unique ID of the character.
+     * @param classKey     The key of the class to check.
+     * @param currentLevel The current level in that class.
+     * @return A list of {@link FeatureEntity} that the character has unlocked.
+     */
     public List<FeatureEntity> getAvailableClassFeatures(long characterId, String classKey, int currentLevel) {
         List<FeatureEntity> allFeatures = open5eDb.featureDao().getFeaturesForClassSync(classKey);
         List<FeatureEntity> available = new ArrayList<>();
@@ -177,6 +242,12 @@ public class CharacterEngine {
         return available;
     }
 
+    /**
+     * Retrieves all traits (racial, class, background, etc.) associated with the character.
+     *
+     * @param characterId The unique ID of the character.
+     * @return A list of {@link CharacterTraitEntity}.
+     */
     public List<CharacterTraitEntity> getAllTraits(long characterId) {
         return pcDb.traitDao().getByCharacterId(characterId);
     }

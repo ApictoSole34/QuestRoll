@@ -31,6 +31,14 @@ import java.util.List;
 import java.util.Map;
 
 
+/**
+ * Activity providing a dice rolling simulation.
+ * <p>
+ * Supports rolling multiple polyhedral dice simultaneously, either via a manual
+ * "Roll" button or a "Shake to Roll" gesture using the device's accelerometer.
+ * Users can manage the number and types of dice to roll through a dedicated dialog.
+ * </p>
+ */
 public class RollDiceActivity extends BaseActivity implements DialogManageDice.DiceManageListener, SensorEventListener {
 
     @SuppressLint("UseSwitchCompatOrMaterialCode")
@@ -142,6 +150,13 @@ public class RollDiceActivity extends BaseActivity implements DialogManageDice.D
         resetShakeState();
     }
 
+    /**
+     * Handles accelerometer events to detect a shake gesture.
+     * <p>
+     * Implements a threshold-based detection with a required count of "shakes" within
+     * a time window to prevent accidental triggers.
+     * </p>
+     */
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (!isShakeToRollEnabled) return;
@@ -159,7 +174,7 @@ public class RollDiceActivity extends BaseActivity implements DialogManageDice.D
         if (now - lastRollTime < POST_ROLL_COOLDOWN_MS) return;
 
         if (acceleration > SHAKE_THRESHOLD) {
-            // Reset okna jeśli minęło za dużo czasu od pierwszego uderzenia
+            // Reset window if too much time passed since the first hit
             if (shakeCount == 0 || now - firstShakeTime > SHAKE_WINDOW_MS) {
                 shakeCount = 1;
                 firstShakeTime = now;
@@ -191,6 +206,12 @@ public class RollDiceActivity extends BaseActivity implements DialogManageDice.D
         settleHandler.removeCallbacks(settleRunnable);
     }
 
+    /**
+     * Callback triggered when the dice configuration is updated from the management dialog.
+     * Rebuilds the dice list based on selected counts for each die type.
+     *
+     * @param updatedDiceCounts Map where key is die type (e.g. "d20") and value is quantity.
+     */
     @Override
     public void onDiceCountUpdated(Map<String, Integer> updatedDiceCounts) {
         diceCounts = updatedDiceCounts;
@@ -216,13 +237,20 @@ public class RollDiceActivity extends BaseActivity implements DialogManageDice.D
         }
     }
 
+    /**
+     * Orchestrates the rolling of all dice in the adapter.
+     * <p>
+     * Iterates through all dice, triggers their roll logic, aggregates the results
+     * into a single summary string, and notifies the UI for animation and updates.
+     * </p>
+     */
     @SuppressLint("NotifyDataSetChanged")
     private void rollDice() {
-        // Resetujemy stan shake przed rzutem, żeby nie było podwójnego wyzwolenia
+        // Reset shake state before roll to avoid double trigger
         resetShakeState();
         lastRollTime = System.currentTimeMillis();
 
-        StringBuilder result = new StringBuilder("Wynik rzutu: ");
+        StringBuilder result = new StringBuilder("Roll result: ");
         for (int i = 0; i < diceAdapter.getItemCount(); i++) {
             Dice dice = diceAdapter.getItem(i);
             dice.setAnimationPlayed(false);

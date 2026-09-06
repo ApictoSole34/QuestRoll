@@ -22,6 +22,14 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * ViewModel for creating and editing custom character classes.
+ * <p>
+ * This class manages the state for the custom class creation form, including its features,
+ * saving throws, skill options, and starting equipment. It supports loading existing custom
+ * classes for modification.
+ * </p>
+ */
 public class ClassCreateViewModel extends ViewModel {
 
     public static final long NO_ID = -1L;
@@ -75,6 +83,9 @@ public class ClassCreateViewModel extends ViewModel {
         startingItems.setValue(list);
     }
 
+    /**
+     * Loads an existing custom class and populates the ViewModel state for editing.
+     */
     private void loadExistingClass() {
         editLiveData = repository.getCustomDao().getClassWithFeatures(editClassId);
         editObserver = data -> {
@@ -132,6 +143,11 @@ public class ClassCreateViewModel extends ViewModel {
         }
     }
 
+    /**
+     * Retrieves all potential parent classes for subclass creation.
+     *
+     * @return LiveData list of base {@link CombinedClass} objects.
+     */
     public LiveData<List<CombinedClass>> getBaseClasses() {
         return Transformations.map(repository.getCombinedClasses(), combined ->
                 combined.stream()
@@ -200,6 +216,12 @@ public class ClassCreateViewModel extends ViewModel {
         languageKeys.setValue(list);
     }
 
+    /**
+     * Persists the custom class to the database.
+     *
+     * @param entity          The class entity containing basic info.
+     * @param languageChoices Number of additional languages the user can choose.
+     */
     public void saveClass(CustomCharacterClassEntity entity, int languageChoices) {
         repository.getExecutor().execute(() -> {
             try {
@@ -238,6 +260,10 @@ public class ClassCreateViewModel extends ViewModel {
         saveResult.postValue(true);
     }
 
+    /**
+     * Inserts the list of features associated with the class, ensuring they are correctly
+     * linked via {@code classId}.
+     */
     private void insertFeatures(long classId) {
         List<CustomFeatureEntity> toInsert =
                 features.getValue() != null ? features.getValue() : new ArrayList<>();

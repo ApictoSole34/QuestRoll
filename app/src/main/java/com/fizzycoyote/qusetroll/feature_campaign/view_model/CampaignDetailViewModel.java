@@ -33,6 +33,14 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * ViewModel for the Campaign Detail screen, managing character integration, notes,
+ * equipment, and progression within a specific campaign context.
+ * <p>
+ * It provides functionality for leveling up, managing inventory, calculating effective AC
+ * based on equipped items, and handling campaign-specific notes.
+ * </p>
+ */
 public class CampaignDetailViewModel extends AndroidViewModel {
 
     private final Open5eDatabase open5eDb;
@@ -90,8 +98,12 @@ public class CampaignDetailViewModel extends AndroidViewModel {
         );
     }
 
-    //------------ Dex + AC- -------
-
+    /**
+     * Updates the effective Armor Class by checking the character's Dexterity modifier
+     * and any equipped armor in the 'body' slot.
+     *
+     * @param cwr The character data with all relations.
+     */
     private void updateEffectiveAc(CharacterWithRelations cwr) {
         if (cwr == null || cwr.attributes == null) {
             effectiveAc.setValue(null);
@@ -126,7 +138,7 @@ public class CampaignDetailViewModel extends AndroidViewModel {
                         if (addDex) {
                             computedAc = acBase + Math.min(attrs.dexterityMod, maxDex);
                         } else {
-                            computedAc = acBase; // np. Plate armor
+                            computedAc = acBase; // e.g. Plate armor
                         }
                     }
                 }
@@ -137,7 +149,13 @@ public class CampaignDetailViewModel extends AndroidViewModel {
         }
     }
 
-    //----------------------------------------------- LEVEL UP ----------------------------------------------------
+    /**
+     * Increases the level of a character in a specific class and calculates HP gains.
+     *
+     * @param characterId The ID of the character.
+     * @param classKey    The key of the class to level up.
+     * @param isNewClass  True if this is the first level in this class (multiclassing).
+     */
     public void levelUp(long characterId, String classKey, boolean isNewClass) {
         executor.execute(() -> {
             CharacterEntity character = playerDb.characterDao().getCharacterSync(characterId);
@@ -211,6 +229,13 @@ public class CampaignDetailViewModel extends AndroidViewModel {
         }
     }
 
+    /**
+     * Retrieves features gained by a specific class at a specific level.
+     *
+     * @param classKey The class identifier.
+     * @param level    The level reached.
+     * @return List of features gained.
+     */
     public List<FeatureEntity> getFeaturesForClassAndLevelSync(String classKey, int level) {
         List<FeatureEntity> all = open5eDb.featureDao().getFeaturesForClassSync(classKey);
         List<FeatureEntity> result = new ArrayList<>();
@@ -228,6 +253,9 @@ public class CampaignDetailViewModel extends AndroidViewModel {
         return result;
     }
 
+    /**
+     * Performs a level up and notifies a callback with the newly gained features.
+     */
     public void levelUpWithFeatures(long characterId, String classKey, boolean isNewClass, LevelUpCallback callback) {
         executor.execute(() -> {
             CharacterEntity character = playerDb.characterDao().getCharacterSync(characterId);
@@ -294,6 +322,13 @@ public class CampaignDetailViewModel extends AndroidViewModel {
         });
     }
 
+    /**
+     * Permanently increases a character's attribute score (e.g., during Ability Score Improvement).
+     *
+     * @param characterId The character ID.
+     * @param attribute   The attribute name (e.g., "strength").
+     * @param increase    The amount to increase.
+     */
     public void increaseAttribute(long characterId, String attribute, int increase) {
         executor.execute(() -> {
             CharacterAttributesEntity attrs = playerDb.characterAttributesDao().getByCharacterId(characterId);
@@ -320,12 +355,13 @@ public class CampaignDetailViewModel extends AndroidViewModel {
         });
     }
 
+    /**
+     * Callback interface for level-up operations.
+     */
     public interface LevelUpCallback {
         void onComplete(int newLevel, List<FeatureEntity> newFeatures);
     }
 
-
-    //-------------------------------------------------------------------------------------------------------------
 
     private int extractAcFromItem(ItemEntity item) {
         if (item == null || item.armorJson == null || item.armorJson.isEmpty()) return 0;
@@ -363,6 +399,9 @@ public class CampaignDetailViewModel extends AndroidViewModel {
         return shopItemsLive;
     }
 
+    /**
+     * Loads available items for the current game system into the shop view.
+     */
     public void loadShopItemsIfNeeded() {
         if (cachedShopItems != null) {
             shopItemsLive.setValue(cachedShopItems);
@@ -377,6 +416,9 @@ public class CampaignDetailViewModel extends AndroidViewModel {
         });
     }
 
+    /**
+     * Updates the character's exhaustion level.
+     */
     public void setExhaustion(int level) {
         CharacterEntity c = character.getValue();
         if (c == null) return;
@@ -386,6 +428,9 @@ public class CampaignDetailViewModel extends AndroidViewModel {
         });
     }
 
+    /**
+     * Toggles the character's inspiration status.
+     */
     public void setInspiration(boolean has) {
         CharacterEntity c = character.getValue();
         if (c == null) return;
@@ -416,6 +461,9 @@ public class CampaignDetailViewModel extends AndroidViewModel {
         executor.execute(() -> playerDb.inventoryItemDao().insert(item));
     }
 
+    /**
+     * Adjusts the character's gold by a positive or negative amount.
+     */
     public void adjustGold(float delta) {
         CharacterWithRelations cwr = characterWithRelations.getValue();
         if (cwr == null || cwr.character == null) return;
@@ -426,6 +474,9 @@ public class CampaignDetailViewModel extends AndroidViewModel {
         });
     }
 
+    /**
+     * Sets the character's gold to a specific amount.
+     */
     public void setGold(float amount) {
         CharacterWithRelations cwr = characterWithRelations.getValue();
         if (cwr == null || cwr.character == null) return;
@@ -436,6 +487,12 @@ public class CampaignDetailViewModel extends AndroidViewModel {
         });
     }
 
+    /**
+     * Equips an item from the inventory into a specific slot.
+     *
+     * @param itemId The inventory item ID.
+     * @param slot   The target slot (e.g., "body", "hand").
+     */
     public void equipItem(long itemId, String slot) {
         executor.execute(() -> {
             InventoryItemEntity item = playerDb.inventoryItemDao().getById(itemId);
@@ -447,6 +504,9 @@ public class CampaignDetailViewModel extends AndroidViewModel {
         });
     }
 
+    /**
+     * Unequips an item, clearing its slot.
+     */
     public void unequipItem(long itemId) {
         executor.execute(() -> {
             InventoryItemEntity item = playerDb.inventoryItemDao().getById(itemId);
@@ -500,6 +560,9 @@ public class CampaignDetailViewModel extends AndroidViewModel {
 
     // ---------- Campaign Character ----------
 
+    /**
+     * Assigns a player character to this campaign.
+     */
     public void assignCharacter(long characterId) {
         long campId = getCampaignId();
 
@@ -509,6 +572,9 @@ public class CampaignDetailViewModel extends AndroidViewModel {
         );
     }
 
+    /**
+     * Unassigns the character from this campaign.
+     */
     public void removeCharacter() {
         long campId = getCampaignId();
 
@@ -520,6 +586,9 @@ public class CampaignDetailViewModel extends AndroidViewModel {
 
     // ---------- Notes ----------
 
+    /**
+     * Adds a new note to the campaign.
+     */
     public void addNote(String title, String content) {
         CampaignNoteEntity note = new CampaignNoteEntity();
 
@@ -546,6 +615,9 @@ public class CampaignDetailViewModel extends AndroidViewModel {
 
     // ---------- Inventory ----------
 
+    /**
+     * Toggles whether an item is equipped in the inventory.
+     */
     public void toggleItemEquipped(long itemId, boolean equipped) {
         executor.execute(() -> {
 
@@ -565,12 +637,15 @@ public class CampaignDetailViewModel extends AndroidViewModel {
         );
     }
 
-    //-------- Cheack if char can have spells -------------------------
+    //-------- Check if char can have spells -------------------------
 
     public LiveData<Boolean> getCanCastSpells() {
         return canCastSpellsLive;
     }
 
+    /**
+     * Checks if any of the character's classes grant spellcasting abilities.
+     */
     private void updateCanCastSpellsAsync(CharacterWithRelations cwr) {
         if (cwr == null || cwr.classAssignments == null) {
             canCastSpellsLive.postValue(false);

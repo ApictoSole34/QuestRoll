@@ -8,6 +8,10 @@ import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.annotation.NonNull;
+import androidx.room.Database;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
@@ -77,6 +81,13 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * The main Room database for storing D&D 5e game content fetched from the Open5e API.
+ * <p>
+ * This database acts as a local cache for all SRD and Open5e game data, providing
+ * offline access to classes, spells, items, monsters, and rules.
+ * </p>
+ */
 @Database(
         entities = {
                 LicenseEntity.class,
@@ -146,6 +157,12 @@ public abstract class Open5eDatabase extends RoomDatabase {
     public abstract ItemCategoryDao itemCategoryDao();
     public abstract ItemSetDao itemSetDao();
 
+    /**
+     * Gets the singleton instance of the Open5eDatabase.
+     *
+     * @param context The application context.
+     * @return The singleton instance.
+     */
     public static Open5eDatabase getInstance(Context context) {
         if (INSTANCE == null) {
             synchronized (Open5eDatabase.class) {
@@ -179,6 +196,11 @@ public abstract class Open5eDatabase extends RoomDatabase {
     private static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(4);
 
+    /**
+     * Returns an executor for running database queries in the background.
+     *
+     * @return An {@link Executor} with a fixed thread pool.
+     */
     public Executor getQueryExecutor() {
         return databaseWriteExecutor;
     }

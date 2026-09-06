@@ -23,6 +23,14 @@ import com.fizzycoyote.qusetroll.feature_spell.model.SpellFilter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * ViewModel for the Spell List screen, providing filtered and combined access to
+ * both official Open5e spells and user-created custom spells.
+ * <p>
+ * It maintains a {@link SpellFilter} and uses it to drive the data flow from multiple
+ * DAOs. It also aggregates spell schools and sources for filtering purposes.
+ * </p>
+ */
 public class SpellListViewModel extends ViewModel {
 
     private final SpellDao spellDao;
@@ -88,6 +96,10 @@ public class SpellListViewModel extends ViewModel {
         allSchoolNames = schoolNameMediator;
     }
 
+    /**
+     * Combines official and custom spells into a single list, applying current filters.
+     * Official spells are filtered by the DAO, while custom spells are filtered in memory.
+     */
     private void combine(List<SpellEntity> open5e,
                          List<CustomSpellEntity> custom,
                          MediatorLiveData<List<CombinedSpell>> result) {
@@ -163,10 +175,16 @@ public class SpellListViewModel extends ViewModel {
 
     public void clearFilters() { filter.setValue(new SpellFilter()); }
 
+    /**
+     * Loads the list of official spell schools from the database.
+     */
     public void loadSchools() {
         new Thread(() -> schools.postValue(spellSchoolDao.getAllSchools())).start();
     }
 
+    /**
+     * Loads the list of available spell sources, including the virtual "custom" source.
+     */
     public void loadSources() {
         new Thread(() -> {
             List<String> dbSources = new ArrayList<>(spellDao.getDistinctSources());
@@ -180,6 +198,9 @@ public class SpellListViewModel extends ViewModel {
         return c != null ? c : new SpellFilter();
     }
 
+    /**
+     * Factory for creating {@link SpellListViewModel} with its required DAOs.
+     */
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
         private final SpellDao spellDao;
         private final SpellSchoolDao spellSchoolDao;

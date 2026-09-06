@@ -127,6 +127,14 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+/**
+ * Core repository responsible for synchronizing D&D 5e game data from the Open5e API
+ * to the local Room database.
+ *
+ * <p>This class manages the complex process of fetching data across multiple categories
+ * (classes, spells, items, etc.), handling pagination, and persisting the results
+ * using individual DAOs.</p>
+ */
 public class Open5eRepository {
     private final Open5eApiService api;
     private final PublisherDao publisherDao;
@@ -224,6 +232,11 @@ public class Open5eRepository {
         this.executor = executor;
     }
 
+    /**
+     * Triggers a full synchronization of all data sections from the API.
+     *
+     * @return LiveData containing the progress and final result of the operation.
+     */
     public LiveData<Resource<Boolean>> refreshAllData() {
         MutableLiveData<Resource<Boolean>> result = new MutableLiveData<>();
         result.postValue(Resource.loading(null, 0));
@@ -276,6 +289,12 @@ public class Open5eRepository {
         return result;
     }
 
+    /**
+     * Triggers synchronization for specific data sections.
+     *
+     * @param sections The set of {@link DataSection} to refresh.
+     * @return LiveData containing the progress and final result.
+     */
     public LiveData<Resource<Boolean>> refreshSelectedData(Set<DataSection> sections) {
         MutableLiveData<Resource<Boolean>> result = new MutableLiveData<>();
         result.postValue(Resource.loading(null, 0));

@@ -18,6 +18,14 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * ViewModel for the Character List screen.
+ * <p>
+ * This class fetches all user-created characters from the database and maps them
+ * into {@link CharacterDisplay} objects, which contain summarized information
+ * (name, race, primary class, total level) suitable for display in a list.
+ * </p>
+ */
 public class CharacterListViewModel extends AndroidViewModel {
 
     private final PlayerCharacterDatabase pcDb;
@@ -32,6 +40,10 @@ public class CharacterListViewModel extends AndroidViewModel {
         loadCharacters();
     }
 
+    /**
+     * Observes the list of characters from the database and processes them on a background
+     * thread to include information from the Open5e compendium (like species and class names).
+     */
     private void loadCharacters() {
         pcDb.characterDao().getAllCharacters().observeForever(characters -> {
             executor.execute(() -> {
@@ -70,6 +82,11 @@ public class CharacterListViewModel extends AndroidViewModel {
         });
     }
 
+    /**
+     * Returns the LiveData containing the processed list of characters for display.
+     *
+     * @return LiveData list of {@link CharacterDisplay}.
+     */
     public LiveData<List<CharacterDisplay>> getDisplays() {
         return displays;
     }

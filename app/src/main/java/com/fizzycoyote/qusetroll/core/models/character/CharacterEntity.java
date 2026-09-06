@@ -7,6 +7,14 @@ import androidx.room.PrimaryKey;
 
 import java.util.Date;
 
+/**
+ * Entity representing a player character in the application.
+ * <p>
+ * This class stores core character data including name, levels, experience,
+ * race (species), background, and current vitals like HP and gold.
+ * It is persisted in the {@link com.fizzycoyote.qusetroll.core.local_database.PlayerCharacterDatabase}.
+ * </p>
+ */
 @Entity(tableName = "characters")
 public class CharacterEntity {
     @PrimaryKey(autoGenerate = true)

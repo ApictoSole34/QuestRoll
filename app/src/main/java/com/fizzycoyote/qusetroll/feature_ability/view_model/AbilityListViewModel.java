@@ -21,6 +21,10 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
+/**
+ * ViewModel for the Ability List screen, providing a merged view of standard D&D 5e
+ * abilities and user-defined custom abilities.
+ */
 public class AbilityListViewModel extends ViewModel {
 
     private final AbilityDao abilityDao;
@@ -31,6 +35,10 @@ public class AbilityListViewModel extends ViewModel {
 
     private final MutableLiveData<String> query = new MutableLiveData<>("");
 
+    /**
+     * LiveData containing the combined list of official and custom abilities,
+     * filtered by the search query.
+     */
     public final LiveData<List<CombinedAbility>> abilities;
 
     public AbilityListViewModel(AbilityDao abilityDao,
@@ -72,12 +80,25 @@ public class AbilityListViewModel extends ViewModel {
         }};
     }
 
+    /**
+     * Sets the search query to filter the abilities list.
+     *
+     * @param q The search string.
+     */
     public void setQuery(String q) { query.setValue(q == null ? "" : q); }
 
+    /**
+     * Deletes a custom ability from the database.
+     *
+     * @param entity The custom ability entity to delete.
+     */
     public void deleteCustomAbility(CustomAbilityEntity entity) {
         executor.execute(() -> customAbilityDao.delete(entity));
     }
 
+    /**
+     * Factory for creating {@link AbilityListViewModel}.
+     */
     public static class Factory implements ViewModelProvider.Factory {
         private final AbilityDao a; private final CustomAbilityDao ca;
         private final SkillDao s;   private final CustomSkillDao cs;

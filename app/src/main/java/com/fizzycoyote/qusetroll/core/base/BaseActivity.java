@@ -8,6 +8,14 @@ import com.fizzycoyote.qusetroll.R;
 
 import java.util.Random;
 
+/**
+ * Base activity for the application that provides common UI functionality.
+ * <p>
+ * This class automatically handles setting up a random themed background for any
+ * activity that inherits from it, provided the layout contains an ImageView with
+ * the ID {@code backgroundImage}.
+ * </p>
+ */
 public abstract class BaseActivity extends AppCompatActivity {
 
     private static final int[] BACKGROUNDS = {
@@ -21,6 +29,12 @@ public abstract class BaseActivity extends AppCompatActivity {
             R.drawable.threads_bg_8
     };
 
+    /**
+     * Overrides {@code setContentView} to automatically trigger background setup
+     * after the layout has been inflated.
+     *
+     * @param layoutResID Resource ID to be inflated.
+     */
     @Override
     public void setContentView(int layoutResID) {
 
@@ -29,6 +43,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         setupBackground();
     }
 
+    /**
+     * Randomly selects one of the pre-defined background images and applies it to
+     * the {@code backgroundImage} ImageView. It also applies random offsets and scaling
+     * to ensure visual variety.
+     */
     private void setupBackground() {
 
         ImageView backgroundImage =

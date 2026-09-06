@@ -8,10 +8,24 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Utility class for parsing character benefits from JSON data provided by the Open5e API.
+ * <p>
+ * This class extracts structured information such as skill proficiencies, languages,
+ * tool proficiencies, and starting equipment from descriptive text and JSON structures
+ * associated with backgrounds and classes.
+ * </p>
+ */
 public class BenefitParser {
 
     private static final Gson gson = new Gson();
 
+    /**
+     * Parses a JSON string of benefits and categorizes them into a {@link ParsedBenefits} object.
+     *
+     * @param benefitsJson The raw JSON string containing benefit definitions.
+     * @return A {@link ParsedBenefits} object containing the extracted data.
+     */
     public static ParsedBenefits parseBenefits(String benefitsJson) {
         ParsedBenefits result = new ParsedBenefits();
         if (benefitsJson == null || benefitsJson.isEmpty()) return result;
@@ -82,6 +96,15 @@ public class BenefitParser {
         }
     }
 
+    /**
+     * Parses a class's starting equipment description into a list of DTOs.
+     * <p>
+     * Cleans up the text by removing introductory boilerplate and parsing comma-separated items.
+     * </p>
+     *
+     * @param equipmentDesc The raw description of starting equipment.
+     * @return A list of {@link com.fizzycoyote.qusetroll.core.models.character.CharacterCreationDTO.InventoryItemDTO}.
+     */
     public static List<CharacterCreationDTO.InventoryItemDTO> parseClassEquipment(String equipmentDesc) {
         List<CharacterCreationDTO.InventoryItemDTO> items = new ArrayList<>();
         if (equipmentDesc == null || equipmentDesc.isEmpty()) return items;
@@ -108,6 +131,9 @@ public class BenefitParser {
         return items;
     }
 
+    /**
+     * Data class holding structured benefit data extracted from background or class descriptions.
+     */
     public static class ParsedBenefits {
         public String equipmentDescription = "";
         public int gold = 0;

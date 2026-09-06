@@ -9,8 +9,22 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Utility class for parsing ability score bonuses from racial traits or background benefits.
+ * <p>
+ * This class uses regex to scan descriptive text for common 5e phrasing such as
+ * "Constitution score increases by 1" or "+2 to Strength" to automatically calculate
+ * racial or benefit-based modifiers.
+ * </p>
+ */
 public class BonusParser {
 
+    /**
+     * Parses a JSON string of traits and extracts any ability score increases.
+     *
+     * @param traitsJson JSON array of trait objects containing "name" and "desc".
+     * @return An array of 6 integers representing bonuses for [STR, DEX, CON, INT, WIS, CHA].
+     */
     public static int[] parseAbilityBonusesFromTraits(String traitsJson) {
         int[] bonuses = new int[6]; // STR,DEX,CON,INT,WIS,CHA
         if (traitsJson == null || traitsJson.isEmpty()) return bonuses;
@@ -34,6 +48,12 @@ public class BonusParser {
         return bonuses;
     }
 
+    /**
+     * Parses a JSON string of benefits and extracts any ability score increases.
+     *
+     * @param benefitsJson JSON array of benefit objects.
+     * @return An array of 6 integers representing bonuses for [STR, DEX, CON, INT, WIS, CHA].
+     */
     public static int[] parseAbilityBonusesFromBenefits(String benefitsJson) {
         int[] bonuses = new int[6];
         if (benefitsJson == null || benefitsJson.isEmpty()) return bonuses;
@@ -57,6 +77,9 @@ public class BonusParser {
         return bonuses;
     }
 
+    /**
+     * Scans the provided text for ability score increase patterns and updates the bonuses array.
+     */
     private static void extractBonusesFromText(String text, int[] bonuses) {
         String[] abilities = {"Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"};
         String[] keys = {"STR", "DEX", "CON", "INT", "WIS", "CHA"};

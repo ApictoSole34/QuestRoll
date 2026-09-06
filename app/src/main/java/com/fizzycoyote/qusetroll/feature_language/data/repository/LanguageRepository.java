@@ -20,7 +20,12 @@ import java.util.List;
 import java.util.concurrent.Executor;
 
 /**
- *Central data access point for languages, combining Open5e API data and user-created content.
+ * Repository for language data, providing a unified interface for both official
+ * Open5e languages and user-created custom languages.
+ * <p>
+ * It handles script resolution, document lookup for licensing information, and
+ * CRUD operations for custom languages.
+ * </p>
  */
 public class LanguageRepository {
 
@@ -38,6 +43,15 @@ public class LanguageRepository {
         this.executor = executor;
     }
 
+    /**
+     * Retrieves a merged language object from either source.
+     * Open5e data is prioritized if a key is provided.
+     *
+     * @param open5eKey Unique key for an official language.
+     * @param customId  Unique ID for a custom language.
+     * @param onSuccess Callback for the resulting {@link CombinedLanguage}.
+     * @param onError   Callback for error handling.
+     */
     public void getCombinedLanguage(String open5eKey, Long customId,
                                     Consumer<CombinedLanguage> onSuccess,
                                     Consumer<Exception> onError) {
@@ -57,6 +71,9 @@ public class LanguageRepository {
         });
     }
 
+    /**
+     * Deletes a custom language by its ID.
+     */
     public void deleteLanguage(long id, Runnable onSuccess, Consumer<Exception> onError) {
         executor.execute(() -> {
             try {
@@ -72,6 +89,9 @@ public class LanguageRepository {
         new Handler(Looper.getMainLooper()).post(action);
     }
 
+    /**
+     * Looks up a source document by its URL.
+     */
     public void getDocumentByUrl(String url,
                                  Consumer<DocumentEntity> onSuccess,
                                  Consumer<Exception> onError) {
@@ -85,6 +105,9 @@ public class LanguageRepository {
         });
     }
 
+    /**
+     * Looks up a source document by its unique key.
+     */
     public void getDocumentByKey(String key,
                                  Consumer<DocumentEntity> onSuccess,
                                  Consumer<Exception> onError) {
@@ -104,6 +127,10 @@ public class LanguageRepository {
         });
     }
 
+    /**
+     * Retrieves the language used for a script (e.g. searching "elvish" when looking
+     * for the script for another language).
+     */
     public void getScriptLanguage(String key,
                                   Consumer<CombinedLanguage> onSuccess,
                                   Consumer<Exception> onError) {
@@ -159,9 +186,13 @@ private CombinedLanguage mapOpen5eEntity(LanguageEntity entity) {
     }
 
     /**
-     *Resolves script name from either Open5e or custom sources
-     *Example: "elvish" → Open5e name, "42" → custom language name
-     *Returns "Unknown" if not found
+     * Resolves the name of a script from its URL or unique key.
+     * <p>
+     * Searches both official and custom language lists to find the display name.
+     * </p>
+     *
+     * @param scriptUrlOrKey The identifier for the script language.
+     * @return The display name of the script language, or "Unknown".
      */
     public String resolveScriptName(String scriptUrlOrKey) {
         if (scriptUrlOrKey == null) return null;

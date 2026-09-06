@@ -3,8 +3,22 @@ package com.fizzycoyote.qusetroll.core.models.character;
 import java.util.ArrayList;
 import java.util.Date;
 
+/**
+ * Utility class for mapping between Data Transfer Objects (DTOs) and Room Entities.
+ * <p>
+ * This mapper is primarily used during the character creation process to convert
+ * {@link CharacterCreationDTO} into the various persisted entities required by
+ * {@link com.fizzycoyote.qusetroll.core.local_database.PlayerCharacterDatabase}.
+ * </p>
+ */
 public class CharacterMapper {
 
+    /**
+     * Converts a character creation DTO to a base character entity.
+     *
+     * @param dto The data transfer object from the creation flow.
+     * @return A new {@link CharacterEntity}.
+     */
     public static CharacterEntity toEntity(CharacterCreationDTO dto) {
         CharacterEntity entity = new CharacterEntity();
         entity.name = dto.name;
@@ -19,6 +33,13 @@ public class CharacterMapper {
         return entity;
     }
 
+    /**
+     * Extracts and calculates ability modifiers to create a {@link CharacterAttributesEntity}.
+     *
+     * @param characterId The ID of the already inserted character.
+     * @param dto         The creation DTO containing raw attribute scores.
+     * @return A new {@link CharacterAttributesEntity} with calculated modifiers.
+     */
     public static CharacterAttributesEntity toAttributesEntity(long characterId, CharacterCreationDTO dto) {
         CharacterAttributesEntity attrs = new CharacterAttributesEntity();
         attrs.characterId = characterId;
@@ -42,6 +63,13 @@ public class CharacterMapper {
         return (score - 10) / 2;
     }
 
+    /**
+     * Converts DTO class assignments into a list of entities.
+     *
+     * @param characterId The ID of the associated character.
+     * @param dto         The creation DTO.
+     * @return A list of {@link CharacterClassAssignmentEntity}.
+     */
     public static ArrayList<CharacterClassAssignmentEntity> toClassAssignments(long characterId, CharacterCreationDTO dto) {
         ArrayList<CharacterClassAssignmentEntity> list = new ArrayList<>();
         for (CharacterCreationDTO.ClassAssignmentDTO ca : dto.classAssignments) {
@@ -54,6 +82,13 @@ public class CharacterMapper {
         return list;
     }
 
+    /**
+     * Converts DTO inventory items into a list of entities.
+     *
+     * @param characterId The ID of the associated character.
+     * @param dto         The creation DTO.
+     * @return A list of {@link InventoryItemEntity}.
+     */
     public static ArrayList<InventoryItemEntity> toInventoryItems(long characterId, CharacterCreationDTO dto) {
         ArrayList<InventoryItemEntity> list = new ArrayList<>();
         if (dto.startingItems == null) return list;
@@ -73,6 +108,13 @@ public class CharacterMapper {
         return list;
     }
 
+    /**
+     * Converts DTO traits into a list of entities.
+     *
+     * @param characterId The ID of the associated character.
+     * @param dto         The creation DTO.
+     * @return A list of {@link CharacterTraitEntity}.
+     */
     public static ArrayList<CharacterTraitEntity> toTraits(long characterId, CharacterCreationDTO dto) {
         ArrayList<CharacterTraitEntity> list = new ArrayList<>();
         if (dto.startingTraits == null) return list;
@@ -91,6 +133,13 @@ public class CharacterMapper {
         return list;
     }
 
+    /**
+     * Converts a list of spell keys into preparation records.
+     *
+     * @param characterId The ID of the associated character.
+     * @param dto         The creation DTO.
+     * @return A list of {@link CharacterSpellEntity}.
+     */
     public static ArrayList<CharacterSpellEntity> toSpells(long characterId, CharacterCreationDTO dto) {
         ArrayList<CharacterSpellEntity> list = new ArrayList<>();
         if (dto.startingSpellKeys == null) return list;

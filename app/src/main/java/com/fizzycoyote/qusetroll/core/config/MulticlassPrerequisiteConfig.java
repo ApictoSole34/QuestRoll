@@ -5,6 +5,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Configuration class defining the ability score prerequisites for multiclassing (D&D 5e).
+ * <p>
+ * This class implements the validation logic to ensure a character meets the required
+ * attribute minimums (typically 13) for both their current classes and the new class
+ * they wish to enter.
+ * </p>
+ */
 public final class MulticlassPrerequisiteConfig {
 
     private static final Map<String, Map<String, Integer>> PREREQS = new LinkedHashMap<>();
@@ -26,6 +34,18 @@ public final class MulticlassPrerequisiteConfig {
 
     private MulticlassPrerequisiteConfig() {}
 
+    /**
+     * Checks if a character meets the prerequisites to multiclass into a new class.
+     * <p>
+     * Per 5e rules, the character must meet the prerequisites for their *current* classes
+     * AND the *new* class to be eligible for multiclassing.
+     * </p>
+     *
+     * @param currentClassKeys List of keys for classes the character already has.
+     * @param newClassKey      The key of the class they wish to add.
+     * @param attributes       Map of the character's current ability scores.
+     * @return True if all prerequisites are satisfied.
+     */
     public static boolean meetsMulticlassPrerequisites(List<String> currentClassKeys,
                                                        String newClassKey,
                                                        Map<String, Integer> attributes) {
@@ -44,6 +64,10 @@ public final class MulticlassPrerequisiteConfig {
         return true;
     }
 
+    /**
+     * Validates prerequisites for a single class against character attributes.
+     * Special logic is applied for Fighters, who can satisfy either STR or DEX requirements.
+     */
     private static boolean meetsPrerequisitesForSingleClass(String classKey, Map<String, Integer> attributes) {
         if (classKey == null) return true;
         if (classKey.startsWith("custom_")) return true; // custom klasy – brak wymagań lub można dodać osobno
@@ -79,6 +103,13 @@ public final class MulticlassPrerequisiteConfig {
         return true;
     }
 
+    /**
+     * Generates a descriptive error message if prerequisites are not met.
+     *
+     * @param classKey   The class key to check.
+     * @param attributes Character's ability scores.
+     * @return A string describing missing requirements, or empty if met.
+     */
     public static String getPrerequisiteMessage(String classKey, Map<String, Integer> attributes) {
         if (classKey == null) return "";
         if (classKey.startsWith("custom_")) return "";

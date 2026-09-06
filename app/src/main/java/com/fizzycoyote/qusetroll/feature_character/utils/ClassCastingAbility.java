@@ -1,5 +1,12 @@
 package com.fizzycoyote.qusetroll.feature_character.utils;
 
+/**
+ * Enumeration defining the primary spellcasting ability for each official D&D 5e class.
+ * <p>
+ * This is used to determine which attribute modifier (INT, WIS, or CHA) should be
+ * used for spell save DCs and spell attack rolls.
+ * </p>
+ */
 public enum ClassCastingAbility {
     BARBARIAN("Barbarian", null),
     BARD("Bard", "CHA"),
@@ -22,6 +29,12 @@ public enum ClassCastingAbility {
         this.castingAbility = castingAbility;
     }
 
+    /**
+     * Retrieves the spellcasting ability key for a given class name.
+     *
+     * @param className The name of the class.
+     * @return The ability key (e.g., "WIS"), or "INT" as a fallback for unknown classes.
+     */
     public static String getCastingAbilityForClass(String className) {
         for (ClassCastingAbility cca : values()) {
             if (cca.className.equalsIgnoreCase(className)) {

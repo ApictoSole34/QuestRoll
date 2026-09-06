@@ -23,6 +23,15 @@ import com.fizzycoyote.qusetroll.core.models.open5e.character_class.saving_throw
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * ViewModel for the Class Detail screen, responsible for loading class information
+ * from either the official Open5e compendium or user-created custom content.
+ * <p>
+ * For official classes, it merges data from several DAOs (classes, features, hit points,
+ * saving throws) using {@link MediatorLiveData}. For custom classes, it leverages
+ * the consolidated {@link CustomCharacterClassWithFeatures} model.
+ * </p>
+ */
 public class ClassDetailViewModel extends ViewModel {
     private final LiveData<CharacterClassEntity> open5eClass;
     private final LiveData<List<FeatureEntity>> open5eFeatures;
@@ -82,6 +91,10 @@ public class ClassDetailViewModel extends ViewModel {
         }
     }
 
+    /**
+     * Merges individual data points into a single {@link CharacterClassWithDetails} object.
+     * Handles subclass-specific logic where hit points and saving throws might be omitted.
+     */
     private void combineData(MediatorLiveData<CharacterClassWithDetails> mediator,
                              CharacterClassEntity characterClass,
                              List<FeatureEntity> features,
@@ -115,6 +128,9 @@ public class ClassDetailViewModel extends ViewModel {
     public LiveData<CustomCharacterClassWithFeatures> getCustomClass() { return customClass; }
     public boolean isCustom() { return isCustom; }
 
+    /**
+     * Factory for creating {@link ClassDetailViewModel} with its required DAOs and class identifier.
+     */
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
         private final CharacterClassDao open5eDao;
         private final FeatureDao featureDao;

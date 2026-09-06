@@ -29,6 +29,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executor;
 
+/**
+ * ViewModel for creating and editing custom homebrew spells.
+ * <p>
+ * This class handles the state for the spell creation form, including casting options,
+ * damage types, and saving throw abilities. It supports both creating new spells
+ * and modifying existing ones.
+ * </p>
+ */
 public class CustomSpellCreateViewModel extends ViewModel {
 
     public static final long NO_ID = -1L;
@@ -123,6 +131,9 @@ public class CustomSpellCreateViewModel extends ViewModel {
 
     public boolean isEditMode() { return editSpellId != NO_ID; }
 
+    /**
+     * Loads the existing spell from the database if in edit mode.
+     */
     private void loadExistingSpell() {
         spellDao.getById(editSpellId).observeForever(spell -> {
             if (spell != null && editData.getValue() == null) {
@@ -153,12 +164,18 @@ public class CustomSpellCreateViewModel extends ViewModel {
     public LiveData<List<String>> getCombinedDamageTypeNames() { return combinedDamageTypeNames; }
     public LiveData<List<String>> getCombinedSavingThrowNames() { return combinedSavingThrowNames; }
 
+    /**
+     * Adds a casting option (e.g. for higher levels) to the spell.
+     */
     public void addCastingOption(CustomCastingOption option) {
         List<CustomCastingOption> current = new ArrayList<>(castingOptions.getValue());
         current.add(option);
         castingOptions.setValue(current);
     }
 
+    /**
+     * Removes a casting option by index.
+     */
     public void removeCastingOption(int index) {
         List<CustomCastingOption> current = new ArrayList<>(castingOptions.getValue());
         if (index >= 0 && index < current.size()) {
@@ -167,6 +184,11 @@ public class CustomSpellCreateViewModel extends ViewModel {
         }
     }
 
+    /**
+     * Saves the custom spell to the user content database.
+     *
+     * @param entity The {@link CustomSpellEntity} to save.
+     */
     public void saveSpell(CustomSpellEntity entity) {
         executor.execute(() -> {
             try {
@@ -191,6 +213,9 @@ public class CustomSpellCreateViewModel extends ViewModel {
         });
     }
 
+    /**
+     * Saves a new custom spell school.
+     */
     public void saveCustomSchool(String name, String description) {
         executor.execute(() -> {
             if (schoolDao.countByName(name) > 0) return;
@@ -201,10 +226,16 @@ public class CustomSpellCreateViewModel extends ViewModel {
         });
     }
 
+    /**
+     * Deletes a custom spell school by ID.
+     */
     public void deleteCustomSchool(long id) {
         executor.execute(() -> schoolDao.delete(id));
     }
 
+    /**
+     * Factory for creating {@link CustomSpellCreateViewModel}.
+     */
     public static class Factory extends ViewModelProvider.NewInstanceFactory {
         private final CustomSpellDao spellDao;
         private final CustomSpellSchoolDao schoolDao;

@@ -33,6 +33,14 @@ import com.fizzycoyote.qusetroll.feature_service.ui.ServiceListActivity;
 import com.fizzycoyote.qusetroll.feature_species.ui.SpeciesListActivity;
 import com.fizzycoyote.qusetroll.feature_spell.ui.SpellListActivity;
 
+/**
+ * The main entry point of the application after data has been loaded.
+ * <p>
+ * This activity serves as a navigation hub, providing access to all major features
+ * of the app, including character management, campaign tracking, dice rolling,
+ * and the D&D 5e game data compendium.
+ * </p>
+ */
 public class MainActivity extends BaseActivity {
 
     @Override

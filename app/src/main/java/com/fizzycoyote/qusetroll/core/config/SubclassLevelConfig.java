@@ -3,6 +3,13 @@ package com.fizzycoyote.qusetroll.core.config;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Configuration class that defines at which level each character class chooses its subclass
+ * according to D&D 5e rules.
+ * <p>
+ * For example, Clerics choose at level 1, Wizards at level 2, and Fighters at level 3.
+ * </p>
+ */
 public final class SubclassLevelConfig {
 
     private static final Map<String, Integer> CLASS_SUBCLASS_LEVEL = new LinkedHashMap<>();
@@ -26,6 +33,12 @@ public final class SubclassLevelConfig {
 
     private SubclassLevelConfig() {}
 
+    /**
+     * Determines the subclass selection level for a given class.
+     *
+     * @param classKey The unique key of the class.
+     * @return The level at which a subclass is selected (defaults to 3).
+     */
     public static int getSubclassLevel(String classKey) {
         if (classKey == null || classKey.isEmpty()) return 3;
 
@@ -46,6 +59,13 @@ public final class SubclassLevelConfig {
         return 3;
     }
 
+    /**
+     * Checks if a class requires a subclass selection at the specified level.
+     *
+     * @param classKey   The class identifier.
+     * @param classLevel The current level in that class.
+     * @return True if a subclass should be chosen at this level.
+     */
     public static boolean needsSubclassAtLevel(String classKey, int classLevel) {
         return getSubclassLevel(classKey) == classLevel;
     }

@@ -30,6 +30,15 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+/**
+ * The initial activity responsible for ensuring the local database is populated
+ * with game data from the Open5e API.
+ * <p>
+ * If data is missing, it allows the user to select specific sections (classes, spells, etc.)
+ * to fetch. It displays progress logs and bars during the synchronization process.
+ * Once data is available, it navigates to the {@link MainActivity}.
+ * </p>
+ */
 public class LoadingActivity extends BaseActivity {
 
     private Open5eRepository repository;
@@ -156,6 +165,10 @@ public class LoadingActivity extends BaseActivity {
         return selected;
     }
 
+    /**
+     * Checks if the local database already contains essential game data.
+     * If yes, proceeds to MainActivity; otherwise, shows the selection UI for fetching.
+     */
     private void checkDataAndProceed() {
         Open5eDatabase.getInstance(this).getQueryExecutor().execute(() -> {
             int classCount = Open5eDatabase.getInstance(this).characterClassDao().getCount();
@@ -219,6 +232,13 @@ public class LoadingActivity extends BaseActivity {
         });
     }
 
+    /**
+     * Updates the progress bars and logs based on the current synchronization state.
+     *
+     * @param progress        Overall progress percentage (0-100).
+     * @param sectionName     Name of the section currently being fetched.
+     * @param sectionProgress Progress within the current section.
+     */
     private void updateUI(int progress, String sectionName, int sectionProgress) {
         runOnUiThread(() -> {
             if (progress >= 0) {

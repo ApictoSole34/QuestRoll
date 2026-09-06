@@ -13,6 +13,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * ViewModel for the Language List screen, providing a merged view of languages
+ * from both the official Open5e compendium and user-created custom content.
+ * <p>
+ * It handles script resolution for both data sources to ensure consistent display
+ * in the UI.
+ * </p>
+ */
 public class LanguageListViewModel extends ViewModel {
     private final LanguageRepository repository;
     private final MediatorLiveData<List<CombinedLanguage>> combinedLanguages = new MediatorLiveData<>();
@@ -44,6 +52,9 @@ public class LanguageListViewModel extends ViewModel {
         });
     }
 
+    /**
+     * Merges official and custom languages into a single list and resolves their script names.
+     */
     private void combineData() {
         repository.getExecutor().execute(() -> {
             List<CombinedLanguage> combined = new ArrayList<>();
@@ -62,6 +73,10 @@ public class LanguageListViewModel extends ViewModel {
         });
     }
 
+    /**
+     * Resolves the display name of a script from its ID or URL by checking
+     * both official and custom sources.
+     */
     private String resolveScriptName(String scriptId) {
         if (scriptId == null || scriptId.isEmpty()) {
             return null;

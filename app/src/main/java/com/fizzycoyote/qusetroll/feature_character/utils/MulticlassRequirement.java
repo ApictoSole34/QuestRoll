@@ -3,8 +3,12 @@ package com.fizzycoyote.qusetroll.feature_character.utils;
 import java.util.Map;
 
 /**
- * Attribute requirements for multiclassing (D&D 5e 2014/2024).
- * The starting class (first) does not need to satisfy these requirements.
+ * Defines the attribute requirements for multiclassing into different classes (D&D 5e).
+ * <p>
+ * In 5e, to multiclass into a new class, a character must meet certain ability score
+ * minimums (typically 13). This enum encapsulates those requirements and provides
+ * logic to check them against a character's current attributes.
+ * </p>
  */
 public enum MulticlassRequirement {
     BARBARIAN("Barbarian", "STR", 13, null, 0, RequirementType.PRIMARY_ONLY),
@@ -26,10 +30,16 @@ public enum MulticlassRequirement {
     private final int secondaryMin;
     private final RequirementType type;
 
+    /**
+     * Enumeration of the logical check required for multiclassing.
+     */
     public enum RequirementType {
-        PRIMARY_ONLY,   // only primaryAttr >= primaryMin
-        BOTH,           // primaryAttr >= primaryMin AND secondaryAttr >= secondaryMin
-        EITHER          // primaryAttr >= primaryMin OR secondaryAttr >= secondaryMin
+        /** Only the primary attribute must meet the minimum. */
+        PRIMARY_ONLY,
+        /** Both primary and secondary attributes must meet the minimum. */
+        BOTH,
+        /** Either the primary or secondary attribute must meet the minimum. */
+        EITHER
     }
 
     MulticlassRequirement(String className, String primaryAttr, int primaryMin,
@@ -43,9 +53,10 @@ public enum MulticlassRequirement {
     }
 
     /**
-     * Checks whether the character meets the multiclass requirements for the class.
-     * @param attributes map of ability scores (keys: STR, DEX, CON, INT, WIS, CHA)
-     * @return true if requirements are met, false otherwise
+     * Checks whether the character meets the multiclass requirements for this class.
+     *
+     * @param attributes Map of ability scores (keys: STR, DEX, CON, INT, WIS, CHA).
+     * @return true if requirements are met, false otherwise.
      */
     public boolean isSatisfied(Map<String, Integer> attributes) {
         int primaryValue = attributes.getOrDefault(primaryAttr, 0);
@@ -62,6 +73,9 @@ public enum MulticlassRequirement {
 
     /**
      * Finds the enum entry for the given class name (case-insensitive).
+     *
+     * @param className The name of the class to look up.
+     * @return The matching {@link MulticlassRequirement}, or null if not found.
      */
     public static MulticlassRequirement fromClassName(String className) {
         for (MulticlassRequirement req : values()) {

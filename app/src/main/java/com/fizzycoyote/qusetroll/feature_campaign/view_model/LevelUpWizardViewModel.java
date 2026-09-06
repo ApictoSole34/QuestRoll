@@ -23,6 +23,14 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * ViewModel for the Level Up Wizard, managing the multi-step process of increasing a character's level.
+ * <p>
+ * This class handles D&D 5e progression rules, including HP increases (rolling vs. average),
+ * Ability Score Improvements (ASI), subclass selection at specific levels, and spell acquisition.
+ * It also manages the final persistence of all changes to the character sheet.
+ * </p>
+ */
 public class LevelUpWizardViewModel extends AndroidViewModel {
 
     // ─── D&D 5e constants ────────────────────────────────────────────────────
@@ -51,6 +59,10 @@ public class LevelUpWizardViewModel extends AndroidViewModel {
 
     // ─── Wizard state (read by Fragment) ─────────────────────────────────────
 
+    /**
+     * Notifies the UI when the wizard state has been fully initialized based on the character's
+     * current status.
+     */
     public final MutableLiveData<Boolean> initDone = new MutableLiveData<>(false);
 
     public int     hitDiceSides  = 8;
@@ -95,6 +107,14 @@ public class LevelUpWizardViewModel extends AndroidViewModel {
 
     // ─── Init ─────────────────────────────────────────────────────────────────
 
+    /**
+     * Initializes the wizard with the character's current state and determines which
+     * level-up options (ASI, subclass, spells) are required for the target level.
+     *
+     * @param characterId The ID of the character leveling up.
+     * @param classKey    The key of the class being leveled.
+     * @param isNewClass  True if this is the first level in this class.
+     */
     public void init(long characterId, String classKey, boolean isNewClass) {
         this.characterId = characterId;
         this.classKey    = classKey;
@@ -234,12 +254,22 @@ public class LevelUpWizardViewModel extends AndroidViewModel {
 
     // ─── HP ─────────────────────────────────────────────────────────────────
 
+    /**
+     * Randomly rolls for HP gain for the new level using the class's hit die.
+     *
+     * @return The total HP gain (roll + Constitution modifier, minimum 1).
+     */
     public int rollHp() {
         lastRollValue = rng.nextInt(hitDiceSides) + 1;
         chosenHpGain  = Math.max(1, lastRollValue + conMod);
         return chosenHpGain;
     }
 
+    /**
+     * Uses the fixed average value for HP gain instead of rolling.
+     *
+     * @return The total HP gain (average + Constitution modifier, minimum 1).
+     */
     public int averageHp() {
         int avg      = (int) Math.ceil(hitDiceSides / 2.0);
         lastRollValue = avg;
@@ -256,6 +286,12 @@ public class LevelUpWizardViewModel extends AndroidViewModel {
 
     // ─── Confirm ────────────────────────────────────────────────────────────
 
+    /**
+     * Finalizes the level-up process by applying all chosen changes (HP, ASI, subclass,
+     * spells, features) to the character databases.
+     *
+     * @param onSuccess Callback to run on the main thread upon successful completion.
+     */
     public void confirmLevelUp(Runnable onSuccess) {
         if (chosenHpGain == 0) averageHp();
         isLoading.postValue(true);
@@ -410,6 +446,13 @@ public class LevelUpWizardViewModel extends AndroidViewModel {
         return (int) Math.floor((score - 10) / 2.0);
     }
 
+    /**
+     * Determines if a specific class level grants an Ability Score Improvement.
+     *
+     * @param classKey   The class identifier.
+     * @param classLevel The target class level.
+     * @return True if the level grants an ASI.
+     */
     public static boolean isAsiLevel(String classKey, int classLevel) {
         int[] levels;
         String lower = classKey != null ? classKey.toLowerCase() : "";
@@ -432,17 +475,26 @@ public class LevelUpWizardViewModel extends AndroidViewModel {
         }
     }
 
+    /**
+     * Returns the total XP required to reach a specific level.
+     */
     public static int xpForLevel(int level) {
         if (level < 1) return 0;
         if (level > 20) return XP_THRESHOLDS[19];
         return XP_THRESHOLDS[level - 1];
     }
 
+    /**
+     * Checks if a character has enough XP to level up.
+     */
     public static boolean canLevelUp(int currentXp, int currentTotalLevel) {
         if (currentTotalLevel >= 20) return false;
         return currentXp >= XP_THRESHOLDS[currentTotalLevel];
     }
 
+    /**
+     * Calculates the percentage progress toward the next level.
+     */
     public static int xpProgressPercent(int xp, int currentTotalLevel) {
         if (currentTotalLevel <= 0) return 0;
         if (currentTotalLevel >= 20) return 100;

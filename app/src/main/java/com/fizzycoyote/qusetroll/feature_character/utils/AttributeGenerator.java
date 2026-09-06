@@ -5,8 +5,17 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Utility class for generating character ability scores (Strength, Dexterity, etc.)
+ * using various D&D 5e standard methods.
+ */
 public class AttributeGenerator {
 
+    /**
+     * Provides the Standard Array of ability scores: 15, 14, 13, 12, 10, 8.
+     *
+     * @return A list of integers representing the standard array, sorted descending.
+     */
     public static List<Integer> getStandardArray() {
         List<Integer> stats = new ArrayList<>();
         stats.add(15);
@@ -20,7 +29,9 @@ public class AttributeGenerator {
     }
 
     /**
-     * Roll 4d6, drop the lowest, repeat 6 times.
+     * Generates six ability scores by rolling 4d6 and dropping the lowest die for each score.
+     *
+     * @return A list of six integers, sorted descending.
      */
     public static List<Integer> roll4d6DropLowest() {
         List<Integer> results = new ArrayList<>();
@@ -40,7 +51,9 @@ public class AttributeGenerator {
     }
 
     /**
-     * Point buy: all attributes start at 8, user spends 27 points.
+     * Provides the starting array for the Point Buy method (all 8s).
+     *
+     * @return A list of six integers, all initialized to 8.
      */
     public static List<Integer> getPointBuyArray() {
         List<Integer> base = new ArrayList<>();
@@ -49,7 +62,13 @@ public class AttributeGenerator {
     }
 
     /**
-     * Calculate the cost to raise an attribute from 8 to the given value.
+     * Calculates the point cost to raise an attribute score from 8 to the specified value.
+     * <p>
+     * Costs follow standard 5e rules: 8-13 is 1 point per increase, 14 and 15 cost 2 points each.
+     * </p>
+     *
+     * @param value The desired score (8-15).
+     * @return The total point cost.
      */
     public static int getPointCost(int value) {
         if (value < 8) return 0;
