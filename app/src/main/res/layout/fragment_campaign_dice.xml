@@ -1,14 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
-    <TextView
-        style="@style/QuestRollBody"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Dice roller will be here" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent">
 
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/resultWindow"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/threads_surface"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:visibility="gone"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintWidth_percent="0.9"
+            app:layout_constraintHeight_percent="0.25"
+            android:layout_marginTop="16dp">
+
+            <TextView
+                android:id="@+id/resultText"
+                style="@style/QuestRollBody"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Result will be displayed here" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/diceRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@android:color/transparent"
+            app:layout_constraintBottom_toTopOf="@+id/bottomButtonLayout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/resultWindow" />
+
+        <LinearLayout
+            android:id="@+id/bottomButtonLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    style="@style/QuestRollLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Res"
+                    android:textSize="10sp" />
+
+                <Switch
+                    android:id="@+id/showResultSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleX="0.8"
+                    android:scaleY="0.8" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/rollButton"
+                style="@style/QuestRollButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:text="Roll" />
+
+            <Button
+                android:id="@+id/manageDiceButton"
+                style="@style/QuestRollButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:text="Dice" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center">
+
+                <TextView
+                    style="@style/QuestRollLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Shake"
+                    android:textSize="10sp" />
+
+                <Switch
+                    android:id="@+id/shakeToRollSwitch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:scaleX="0.8"
+                    android:scaleY="0.8" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>

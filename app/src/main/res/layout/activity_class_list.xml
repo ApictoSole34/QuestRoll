@@ -1,43 +1,109 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:theme="@style/ThemeOverlay.AppCompat">
 
-    <ImageView
-        android:id="@+id/backgroundImage"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"/>
+        android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@android:color/transparent">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
+        <ImageView
+            android:id="@+id/backgroundImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            android:clipToPadding="false"
-            android:padding="8dp"
-            tools:listitem="@layout/item_class_list" />
+            android:scaleType="centerCrop" />
 
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@android:color/transparent">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_create_class"
-        style="@style/Widget.QuestRoll.FAB"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:src="@android:drawable/ic_input_add"
-        android:contentDescription="Create Class"
-        app:fabSize="normal" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                android:gravity="center_vertical">
 
-</FrameLayout>
+                <SearchView
+                    android:id="@+id/search_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:iconifiedByDefault="false"
+                    android:queryHint="Search classes..."
+                    android:background="@drawable/bg_search_view"
+                    android:layout_marginEnd="8dp" />
+
+                <ImageButton
+                    android:id="@+id/btn_filter"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@android:drawable/ic_menu_sort_by_size"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    app:tint="@color/threads_gold" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_active_filters"
+                style="@style/QuestRollLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="8dp"
+                android:visibility="gone"
+                tools:text="Filters: Level 3, Evocation"
+                tools:visibility="visible" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:clipToPadding="false"
+                android:padding="8dp"
+                tools:listitem="@layout/item_class_list" />
+
+        </LinearLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_create_class"
+            style="@style/Widget.QuestRoll.FAB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:src="@android:drawable/ic_input_add"
+            android:contentDescription="Create Class"
+            app:fabSize="normal" />
+
+    </FrameLayout>
+
+    <!-- Quick Campaign Drawer (Left) -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/campaign_drawer"
+        android:name="com.murkfeatherstudio.questroll.feature_campaign.ui.fragment.QuickCampaignFragment"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:clickable="true"
+        android:focusable="true"
+        tools:layout="@layout/fragment_quick_campaign_list" />
+
+    <!-- Calculator Drawer (Right) -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/calculator_drawer"
+        android:name="com.murkfeatherstudio.questroll.feature_tools.calculator.DndCalculatorFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:clickable="true"
+        android:focusable="true" />
+
+</androidx.drawerlayout.widget.DrawerLayout>

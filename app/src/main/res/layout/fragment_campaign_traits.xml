@@ -5,22 +5,74 @@
     android:orientation="vertical"
     android:padding="12dp">
 
-    <TextView
-        android:id="@+id/tv_empty_traits"
-        style="@style/QuestRollBody"
+    <LinearLayout
+        android:id="@+id/toggle_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="No traits or features yet."
-        android:gravity="center"
-        android:padding="32dp"
-        android:textColor="?attr/colorOnSurfaceVariant"
-        android:visibility="gone" />
+        android:orientation="horizontal"
+        android:layout_marginBottom="12dp">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_traits"
+        <Button
+            android:id="@+id/btn_toggle_traits"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Traits"
+            android:layout_marginEnd="4dp" />
+
+        <Button
+            android:id="@+id/btn_toggle_spells"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Spells"
+            android:layout_marginStart="4dp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingBottom="8dp" />
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/tv_empty_traits"
+            style="@style/QuestRollBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No traits or features yet."
+            android:gravity="center"
+            android:padding="32dp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:visibility="gone" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_traits"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="8dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_spells"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="8dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_empty_spells"
+            style="@style/QuestRollBody"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No spells known"
+            android:gravity="center"
+            android:padding="32dp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:visibility="gone" />
+
+    </FrameLayout>
 
 </LinearLayout>

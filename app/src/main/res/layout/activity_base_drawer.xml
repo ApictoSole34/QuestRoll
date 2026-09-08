@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- Activity Content Container -->
+    <FrameLayout
+        android:id="@+id/activity_content_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <!-- Left Drawer: Dynamic Container (Campaign List or Compendium) -->
+    <FrameLayout
+        android:id="@+id/left_drawer_container"
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="?attr/colorSurface"
+        android:clickable="true"
+        android:focusable="true" />
+
+    <!-- Right Drawer: D&D Calculator -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/calculator_drawer_container"
+        android:name="com.murkfeatherstudio.questroll.feature_tools.calculator.DndCalculatorFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:clickable="true"
+        android:focusable="true"
+        tools:layout="@layout/fragment_dnd_calculator" />
+
+</androidx.drawerlayout.widget.DrawerLayout>

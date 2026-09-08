@@ -24,7 +24,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="2"
-        android:hint="Szczegóły"
+        android:hint="Details"
         android:textColor="?attr/colorOnSurface"
         android:textColorHint="?attr/colorOnSurfaceVariant"
         android:layout_marginStart="8dp"/>
@@ -38,6 +38,6 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="8dp"
         android:tint="?attr/colorOnSurface"
-        android:contentDescription="Usuń"/>
+        android:contentDescription="Delete"/>
 
 </LinearLayout>

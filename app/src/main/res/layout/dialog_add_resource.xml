@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        style="@style/QuestRollHeaderText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="NEW RESOURCE"
+        android:textSize="18sp"
+        android:layout_marginBottom="16dp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Resource Name (e.g. Rage, Ki)"
+        android:layout_marginBottom="12dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_res_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textCapWords" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Maximum Value">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/et_res_max"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:text="1" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+</LinearLayout>

@@ -35,118 +35,136 @@
         </provider>
 
         <activity
-            android:name=".main.ui.MainActivity"
+            android:name=".main.ui.SplashActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.QuestRoll"/>
-        <activity
-            android:name=".feature_loading.LoadingActivity"
-            android:exported="true"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.QuestRoll">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".main.ui.MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.QuestRoll"/>
+
+        <activity
+            android:name=".feature_loading.LoadingActivity"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.QuestRoll" />
+
+        <activity
+            android:name=".main.ui.AboutActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.QuestRoll" />
+
         <activity
             android:name=".feature_character.ui.wizard.CharacterWizardActivity"
+            android:screenOrientation="portrait"
             android:parentActivityName=".main.ui.MainActivity" />
-        <activity android:name=".feature_class.ui.wizard.ClassWizardActivity"/>
-        <activity android:name=".feature_campaign.ui.CampaignListActivity"/>
-        <activity android:name=".feature_campaign.ui.CampaignDetailActivity"/>
-        <activity android:name=".feature_campaign.ui.CreateEditCampaignActivity"/>
-        <activity android:name=".feature_character.ui.list.CharacterListActivity"/>
-        <activity android:name=".feature_item.item_set.ui.CustomItemSetCreateActivity"/>
-        <activity android:name=".feature_item.item_set.ui.CustomItemSetDetailActivity"/>
-        <activity android:name=".feature_item.item_set.ui.ItemSetDetailActivity"/>
-        <activity android:name=".feature_item.item_set.ui.ItemSetListActivity"/>
-        <activity android:name=".feature_spell.spell_school.ui.SpellSchoolListActivity"/>
-        <activity android:name=".feature_spell.spell_school.ui.SpellSchoolDetailActivity"/>
-        <activity android:name=".feature_spell.spell_school.ui.CustomSpellSchoolCreateActivity"/>
-        <activity android:name=".feature_spell.spell_school.ui.CustomSpellSchoolDetailActivity"/>
-        <activity android:name=".feature_item.item_category.ui.ItemCategoryListActivity"/>
-        <activity android:name=".feature_item.item_category.ui.ItemCategoryDetailActivity"/>
-        <activity android:name=".feature_item.item_category.ui.CustomItemCategoryCreateActivity"/>
-        <activity android:name=".feature_item.item_category.ui.CustomItemCategoryDetailActivity"/>
-        <activity android:name=".feature_creature.creature_type.ui.CreatureTypeDetailActivity"/>
-        <activity android:name=".feature_creature.creature_type.ui.CreatureTypeListActivity"/>
-        <activity android:name=".feature_creature.creature_type.ui.CustomCreatureTypeCreateActivity"/>
-        <activity android:name=".feature_creature.creature_type.ui.CustomCreatureTypeDetailActivity"/>
-        <activity android:name=".feature_condition.ui.ConditionListActivity"/>
-        <activity android:name=".feature_condition.ui.ConditionDetailActivity"/>
-        <activity android:name=".feature_condition.ui.CustomConditionCreateActivity"/>
-        <activity android:name=".feature_condition.ui.CustomConditionDetailActivity"/>
-        <activity android:name=".feature_rule.rule_set.ui.RulesetListActivity"/>
-        <activity android:name=".feature_rule.rule.ui.RuleDetailActivity"/>
-        <activity android:name=".feature_rule.rule.ui.RuleListActivity"/>
-        <activity android:name=".feature_environment.ui.EnvironmentListActivity"/>
-        <activity android:name=".feature_environment.ui.EnvironmentDetailActivity"/>
-        <activity android:name=".feature_environment.ui.CustomEnvironmentCreateActivity"/>
-        <activity android:name=".feature_environment.ui.CustomEnvironmentDetailActivity"/>
-        <activity android:name=".feature_service.ui.ServiceListActivity"/>
-        <activity android:name=".feature_service.ui.ServiceDetailActivity"/>
-        <activity android:name=".feature_service.ui.CustomServiceCreateActivity"/>
-        <activity android:name=".feature_service.ui.CustomServiceDetailActivity"/>
-        <activity android:name=".feature_item.weapon_property.ui.WeaponPropertyListActivity"/>
-        <activity android:name=".feature_item.weapon_property.ui.WeaponPropertyDetailActivity"/>
-        <activity android:name=".feature_item.weapon_property.ui.CustomWeaponPropertyCreateActivity"/>
-        <activity android:name=".feature_item.weapon_property.ui.CustomWeaponPropertyDetailActivity"/>
-        <activity android:name=".feature_item.item_rarity.ui.ItemRarityListActivity"/>
-        <activity android:name=".feature_item.item_rarity.ui.ItemRarityDetailActivity"/>
-        <activity android:name=".feature_item.item_rarity.ui.CustomItemRarityCreateActivity"/>
-        <activity android:name=".feature_item.item_rarity.ui.CustomItemRarityDetailActivity"/>
-        <activity android:name=".feature_alignment.ui.AlignmentListActivity"/>
-        <activity android:name=".feature_alignment.ui.AlignmentDetailActivity"/>
-        <activity android:name=".feature_alignment.ui.CustomAlignmentCreateActivity"/>
-        <activity android:name=".feature_alignment.ui.CustomAlignmentDetailActivity"/>
-        <activity android:name=".feature_ability.ui.AbilityListActivity"/>
-        <activity android:name=".feature_ability.ui.AbilityDetailActivity"/>
-        <activity android:name=".feature_ability.ui.CustomAbilityCreateActivity"/>
-        <activity android:name=".feature_ability.ui.CustomAbilityDetailActivity"/>
-        <activity android:name=".feature_ability.ui.CustomSkillCreateActivity"/>
-        <activity android:name=".feature_ability.ui.CustomSkillDetailActivity"/>
-        <activity android:name=".feature_ability.ui.SkillDetailActivity"/>
-        <activity android:name=".feature_damage_types.ui.DamageTypeListActivity"/>
-        <activity android:name=".feature_damage_types.ui.DamageTypeDetailActivity"/>
-        <activity android:name=".feature_damage_types.ui.CustomDamageTypeCreateActivity"/>
-        <activity android:name=".feature_damage_types.ui.CustomDamageTypeDetailActivity"/>
-        <activity android:name=".feature_item.ui.CustomItemCreateActivity"/>
-        <activity android:name=".feature_item.ui.CustomItemDetailActivity"/>
-        <activity android:name=".feature_item.ui.ItemDetailActivity"/>
-        <activity android:name=".feature_item.ui.ItemListActivity"/>
-        <activity android:name=".feature_background.ui.BackgroundListActivity"/>
-        <activity android:name=".feature_background.ui.BackgroundDetailActivity"/>
-        <activity android:name=".feature_background.ui.CustomBackgroundCreateActivity"/>
-        <activity android:name=".feature_background.ui.CustomBackgroundDetailActivity"/>
-        <activity android:name=".feature_species.ui.SpeciesListActivity"/>
-        <activity android:name=".feature_species.ui.SpeciesDetailActivity"/>
-        <activity android:name=".feature_species.ui.CustomSpeciesCreateActivity"/>
-        <activity android:name=".feature_species.ui.CustomSpeciesDetailActivity"/>
-        <activity android:name=".feature_creature.ui.CustomCreatureCreateActivity"/>
-        <activity android:name=".feature_creature.ui.CustomCreatureDetailActivity"/>
-        <activity android:name=".feature_creature.ui.CreatureDetailActivity" />
-        <activity android:name=".feature_creature.ui.CreatureListActivity" />
-        <activity android:name=".feature_spell.ui.SpellListActivity" />
-        <activity android:name=".feature_spell.ui.SpellDetailActivity" />
-        <activity android:name=".feature_spell.ui.CustomSpellCreateActivity"/>
-        <activity android:name=".feature_spell.ui.CustomSpellDetailActivity"/>
-        <activity android:name=".feature_dice.ui.RollDiceActivity" />
-        <activity android:name=".feature_language.ui.language_list.LanguageListActivity"/>
-        <activity android:name=".feature_language.ui.language_details.LanguageDetailActivity"/>
-        <activity android:name=".feature_class.ui.ClassListActivity"/>
-        <activity android:name=".feature_class.ui.ClassDetailActivity"/>
-        <activity android:name=".feature_class.ui.ClassCreateActivity"/>
-        <activity android:name=".feature_class.ui.FeatureEditorActivity"/>
+
+        <activity android:name=".feature_tools.pdf.ui.PdfViewerActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_tools.pdf.ui.PdfListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_class.ui.wizard.ClassWizardActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_campaign.ui.CampaignListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_campaign.ui.CampaignDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_campaign.ui.CreateEditCampaignActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_character.ui.list.CharacterListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_item.item_set.ui.CustomItemSetCreateActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_item.item_set.ui.CustomItemSetDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_item.item_set.ui.ItemSetDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_item.item_set.ui.ItemSetListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_spell.spell_school.ui.SpellSchoolListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_spell.spell_school.ui.SpellSchoolDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_spell.spell_school.ui.CustomSpellSchoolCreateActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_spell.spell_school.ui.CustomSpellSchoolDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_item.item_category.ui.ItemCategoryListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_item.item_category.ui.ItemCategoryDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_item.item_category.ui.CustomItemCategoryCreateActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_item.item_category.ui.CustomItemCategoryDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_creature.creature_type.ui.CreatureTypeDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_creature.creature_type.ui.CreatureTypeListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_creature.creature_type.ui.CustomCreatureTypeCreateActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_creature.creature_type.ui.CustomCreatureTypeDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_condition.ui.ConditionListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_condition.ui.ConditionDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_condition.ui.CustomConditionCreateActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_condition.ui.CustomConditionDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_rule.rule_set.ui.RulesetListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_rule.rule.ui.RuleDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_rule.rule.ui.RuleListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_environment.ui.EnvironmentListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_environment.ui.EnvironmentDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_environment.ui.CustomEnvironmentCreateActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_environment.ui.CustomEnvironmentDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_service.ui.ServiceListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_service.ui.ServiceDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_service.ui.CustomServiceCreateActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_service.ui.CustomServiceDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_item.weapon_property.ui.WeaponPropertyListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_item.weapon_property.ui.WeaponPropertyDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_item.weapon_property.ui.CustomWeaponPropertyCreateActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_item.weapon_property.ui.CustomWeaponPropertyDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_item.item_rarity.ui.ItemRarityListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_item.item_rarity.ui.ItemRarityDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_item.item_rarity.ui.CustomItemRarityCreateActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_item.item_rarity.ui.CustomItemRarityDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_alignment.ui.AlignmentListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_alignment.ui.AlignmentDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_alignment.ui.CustomAlignmentCreateActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_alignment.ui.CustomAlignmentDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_ability.ui.AbilityListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_ability.ui.AbilityDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_ability.ui.CustomAbilityCreateActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_ability.ui.CustomAbilityDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_ability.ui.CustomSkillCreateActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_ability.ui.CustomSkillDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_ability.ui.SkillDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_damage_types.ui.DamageTypeListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_damage_types.ui.DamageTypeDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_damage_types.ui.CustomDamageTypeCreateActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_damage_types.ui.CustomDamageTypeDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_item.ui.CustomItemCreateActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_item.ui.CustomItemDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_item.ui.ItemDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_item.ui.ItemListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_background.ui.BackgroundListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_background.ui.BackgroundDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_background.ui.CustomBackgroundCreateActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_background.ui.CustomBackgroundDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_species.ui.SpeciesListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_species.ui.SpeciesDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_species.ui.CustomSpeciesCreateActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_species.ui.CustomSpeciesDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_creature.ui.CustomCreatureCreateActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_creature.ui.CustomCreatureDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_creature.ui.CreatureDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_creature.ui.CreatureListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_spell.ui.SpellListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_spell.ui.SpellDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_spell.ui.CustomSpellCreateActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_spell.ui.CustomSpellDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_dice.ui.RollDiceActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_language.ui.language_list.LanguageListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_language.ui.language_details.LanguageDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_class.ui.ClassListActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".feature_class.ui.ClassDetailActivity" android:screenOrientation="portrait"/>
         <activity android:name=".feature_language.ui.language_create.CustomLanguageCreateActivity"
             android:windowSoftInputMode="adjustResize"
             android:exported="true"
+            android:screenOrientation="portrait"
             android:parentActivityName=".feature_language.ui.language_details.LanguageDetailActivity"/>
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
             android:value=".feature_language.ui.language_details.LanguageDetailActivity" />
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
-            android:screenOrientation="fullSensor"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
     </application>
 

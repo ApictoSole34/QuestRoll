@@ -1,0 +1,36 @@
+package com.murkfeatherstudio.questroll.core.models.custom.custom_creature_type;
+
+import androidx.lifecycle.LiveData;
+import androidx.room.Dao;
+import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
+import androidx.room.Query;
+import androidx.room.Update;
+import java.util.List;
+
+@Dao
+public interface CustomCreatureTypeDao {
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    long insert(CustomCreatureTypeEntity type);
+
+    @Update
+    void update(CustomCreatureTypeEntity type);
+
+    @Query("DELETE FROM custom_creature_types WHERE id = :id")
+    void delete(long id);
+
+    @Query("SELECT * FROM custom_creature_types")
+    List<CustomCreatureTypeEntity> getAllSync();
+
+    @Query("SELECT * FROM custom_creature_types ORDER BY name ASC")
+    LiveData<List<CustomCreatureTypeEntity>> getAll();
+
+    @Query("SELECT * FROM custom_creature_types WHERE id = :id")
+    LiveData<CustomCreatureTypeEntity> getById(long id);
+
+    @Query("SELECT * FROM custom_creature_types WHERE id = :id")
+    CustomCreatureTypeEntity getByIdSync(long id);
+
+    @Query("SELECT COUNT(*) FROM custom_creature_types WHERE name = :name")
+    int countByName(String name);
+}

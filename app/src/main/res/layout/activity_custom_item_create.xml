@@ -23,37 +23,31 @@
             android:padding="16dp">
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/QuestRollInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Name"
-                android:layout_marginBottom="12dp"
-                app:boxBackgroundColor="@android:color/transparent"
-                app:hintTextColor="?attr/colorOnSurfaceVariant"
-                app:boxStrokeColor="?attr/colorOutline">
+                android:layout_marginBottom="12dp">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurface"
+                    android:textColor="@color/threads_text_primary"
                     android:inputType="textCapWords"
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/QuestRollInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Description"
-                android:layout_marginBottom="12dp"
-                app:boxBackgroundColor="@android:color/transparent"
-                app:hintTextColor="?attr/colorOnSurfaceVariant"
-                app:boxStrokeColor="?attr/colorOutline">
+                android:layout_marginBottom="12dp">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etDesc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurface"
+                    android:textColor="@color/threads_text_primary"
                     android:inputType="textMultiLine"
                     android:minLines="2"
                     android:maxLines="4"
@@ -67,37 +61,33 @@
                 android:layout_marginBottom="12dp">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    style="@style/QuestRollInputLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="Category"
                     android:layout_marginEnd="8dp"
-                    app:boxBackgroundColor="@android:color/transparent"
-                    app:hintTextColor="?attr/colorOnSurfaceVariant"
-                    app:boxStrokeColor="?attr/colorOutline">
+                    app:endIconMode="dropdown_menu">
                     <AutoCompleteTextView
                         android:id="@+id/actvCategory"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/colorOnSurface"
+                        android:textColor="@color/threads_text_primary"
                         android:inputType="none" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    style="@style/QuestRollInputLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="Rarity"
-                    app:boxBackgroundColor="@android:color/transparent"
-                    app:hintTextColor="?attr/colorOnSurfaceVariant"
-                    app:boxStrokeColor="?attr/colorOutline">
+                    app:endIconMode="dropdown_menu">
                     <AutoCompleteTextView
                         android:id="@+id/actvRarity"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/colorOnSurface"
+                        android:textColor="@color/threads_text_primary"
                         android:inputType="none" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
@@ -126,21 +116,18 @@
             </LinearLayout>
 
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                style="@style/QuestRollInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Attunement Details"
                 android:layout_marginBottom="12dp"
                 app:counterEnabled="true"
-                app:counterMaxLength="200"
-                app:boxBackgroundColor="@android:color/transparent"
-                app:hintTextColor="?attr/colorOnSurfaceVariant"
-                app:boxStrokeColor="?attr/colorOutline">
+                app:counterMaxLength="200">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etAttunementDetail"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurface"
+                    android:textColor="@color/threads_text_primary"
                     android:inputType="text"
                     android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
@@ -152,38 +139,32 @@
                 android:layout_marginBottom="12dp">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/QuestRollInputLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:hint="Weight (lb)"
-                    android:layout_marginEnd="8dp"
-                    app:boxBackgroundColor="@android:color/transparent"
-                    app:hintTextColor="?attr/colorOnSurfaceVariant"
-                    app:boxStrokeColor="?attr/colorOutline">
+                    android:layout_marginEnd="8dp">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etWeight"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/colorOnSurface"
+                        android:textColor="@color/threads_text_primary"
                         android:inputType="numberDecimal"
                         android:maxLines="1" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/QuestRollInputLayout"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:hint="Cost (gp)"
-                    app:boxBackgroundColor="@android:color/transparent"
-                    app:hintTextColor="?attr/colorOnSurfaceVariant"
-                    app:boxStrokeColor="?attr/colorOutline">
+                    android:hint="Cost (gp)">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etCost"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/colorOnSurface"
+                        android:textColor="@color/threads_text_primary"
                         android:inputType="numberDecimal"
                         android:maxLines="1" />
                 </com.google.android.material.textfield.TextInputLayout>
@@ -200,7 +181,8 @@
                 <com.google.android.material.divider.MaterialDivider
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="12dp" />
+                    android:layout_marginVertical="12dp"
+                    app:dividerColor="@color/threads_border"/>
 
                 <TextView
                     style="@style/QuestRollSectionHeader"
@@ -210,36 +192,31 @@
                     android:layout_marginBottom="8dp" />
 
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/QuestRollInputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Damage Dice (e.g. 1d8)"
-                    android:layout_marginBottom="12dp"
-                    app:boxBackgroundColor="@android:color/transparent"
-                    app:hintTextColor="?attr/colorOnSurfaceVariant"
-                    app:boxStrokeColor="?attr/colorOutline">
+                    android:layout_marginBottom="12dp">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etDamageDice"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/colorOnSurface"
+                        android:textColor="@color/threads_text_primary"
                         android:maxLines="1" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    style="@style/QuestRollInputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="Damage Type"
                     android:layout_marginBottom="12dp"
-                    app:boxBackgroundColor="@android:color/transparent"
-                    app:hintTextColor="?attr/colorOnSurfaceVariant"
-                    app:boxStrokeColor="?attr/colorOutline">
+                    app:endIconMode="dropdown_menu">
                     <AutoCompleteTextView
                         android:id="@+id/actvDamageType"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/colorOnSurface"
+                        android:textColor="@color/threads_text_primary"
                         android:inputType="none" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -250,38 +227,32 @@
                     android:layout_marginBottom="12dp">
 
                     <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/QuestRollInputLayout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:hint="Range (ft.)"
-                        android:layout_marginEnd="8dp"
-                        app:boxBackgroundColor="@android:color/transparent"
-                        app:hintTextColor="?attr/colorOnSurfaceVariant"
-                        app:boxStrokeColor="?attr/colorOutline">
+                        android:layout_marginEnd="8dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etRange"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="?attr/colorOnSurface"
+                            android:textColor="@color/threads_text_primary"
                             android:inputType="numberDecimal"
                             android:maxLines="1" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/QuestRollInputLayout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:hint="Long Range (ft.)"
-                        app:boxBackgroundColor="@android:color/transparent"
-                        app:hintTextColor="?attr/colorOnSurfaceVariant"
-                        app:boxStrokeColor="?attr/colorOutline">
+                        android:hint="Long Range (ft.)">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etLongRange"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="?attr/colorOnSurface"
+                            android:textColor="@color/threads_text_primary"
                             android:inputType="numberDecimal"
                             android:maxLines="1" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -314,7 +285,7 @@
                     style="@style/QuestRollSectionHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Weapon Properties"
+                    android:text="Weapon Properties List"
                     android:layout_marginBottom="8dp" />
 
                 <LinearLayout
@@ -336,7 +307,7 @@
                         android:layout_height="wrap_content"
                         android:text="Add"
                         style="@style/Widget.MaterialComponents.Button.TextButton"
-                        android:textColor="?attr/colorPrimary" />
+                        android:textColor="@color/threads_gold" />
                 </LinearLayout>
 
                 <com.google.android.material.chip.ChipGroup
@@ -357,7 +328,8 @@
                 <com.google.android.material.divider.MaterialDivider
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginVertical="12dp" />
+                    android:layout_marginVertical="12dp"
+                    app:dividerColor="@color/threads_border"/>
 
                 <TextView
                     style="@style/QuestRollSectionHeader"
@@ -373,38 +345,32 @@
                     android:layout_marginBottom="12dp">
 
                     <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/QuestRollInputLayout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:hint="AC Base"
-                        android:layout_marginEnd="8dp"
-                        app:boxBackgroundColor="@android:color/transparent"
-                        app:hintTextColor="?attr/colorOnSurfaceVariant"
-                        app:boxStrokeColor="?attr/colorOutline">
+                        android:layout_marginEnd="8dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etAcBase"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="?attr/colorOnSurface"
+                            android:textColor="@color/threads_text_primary"
                             android:inputType="number"
                             android:maxLines="1" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        style="@style/QuestRollInputLayout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:hint="AC Display (e.g. 14 + Dex)"
-                        app:boxBackgroundColor="@android:color/transparent"
-                        app:hintTextColor="?attr/colorOnSurfaceVariant"
-                        app:boxStrokeColor="?attr/colorOutline">
+                        android:hint="AC Display (e.g. 14 + Dex)">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etAcDisplay"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="?attr/colorOnSurface"
+                            android:textColor="@color/threads_text_primary"
                             android:inputType="text"
                             android:maxLines="1" />
                     </com.google.android.material.textfield.TextInputLayout>
@@ -419,18 +385,15 @@
                     android:layout_marginBottom="12dp" />
 
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/QuestRollInputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Strength Required (optional)"
-                    app:boxBackgroundColor="@android:color/transparent"
-                    app:hintTextColor="?attr/colorOnSurfaceVariant"
-                    app:boxStrokeColor="?attr/colorOutline">
+                    android:hint="Strength Required (optional)">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etStrengthRequired"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textColor="?attr/colorOnSurface"
+                        android:textColor="@color/threads_text_primary"
                         android:inputType="number"
                         android:maxLines="1" />
                 </com.google.android.material.textfield.TextInputLayout>

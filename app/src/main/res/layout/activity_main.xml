@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:theme="@style/ThemeOverlay.AppCompat"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:theme="@style/ThemeOverlay.AppCompat">
 
+    <!-- Background Image -->
     <ImageView
         android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
@@ -43,231 +46,55 @@
                 android:layout_marginTop="-8dp">
 
                 <!-- ADVENTURE -->
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    style="@style/QuestRollHeaderText"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
-                    android:orientation="vertical">
+                    android:text="ADVENTURE" />
 
-                    <TextView
-                        style="@style/QuestRollHeaderText"
-                        android:text="ADVENTURE" />
-
-                    <View
-                        android:layout_width="48dp"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="6dp"
-                        android:background="#55D4AF37"/>
-
-                </LinearLayout>
-
-                <TextView
-                    style="@style/QuestRollMenuItem"
-                    android:onClick="openCampaignListActivity"
-                    android:text="Campaigns"/>
-
-                <TextView
-                    style="@style/QuestRollMenuItem"
-                    android:onClick="openCharacterListActivity"
-                    android:text="Characters"/>
-
-                <TextView
-                    android:id="@+id/openRollDiceButton"
-                    style="@style/QuestRollMenuItem"
-                    android:onClick="openRollDiceActivity"
-                    android:text="Roll Dice"/>
-
-                <!-- RULES -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginBottom="12dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/QuestRollHeaderText"
-                        android:text="RULES" />
-
-                    <View
-                        android:layout_width="48dp"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="6dp"
-                        android:background="#55D4AF37"/>
-
-                </LinearLayout>
-
-                <TextView
-                    style="@style/QuestRollMenuItem"
-                    android:onClick="openRulesetListActivity"
-                    android:text="Rules"/>
-
-                <!-- COMPENDIUM -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginBottom="12dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/QuestRollHeaderText"
-                        android:text="COMPENDIUM" />
-
-                    <View
-                        android:layout_width="48dp"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="6dp"
-                        android:background="#55D4AF37"/>
-
-                </LinearLayout>
-
-                <TextView
-                    style="@style/QuestRollMenuItem"
-                    android:onClick="openClassListActivity"
-                    android:text="Classes"/>
-
-                <TextView
-                    style="@style/QuestRollMenuItem"
-                    android:onClick="openSpeciesListActivity"
-                    android:text="Species"/>
-
-                <TextView
-                    style="@style/QuestRollMenuItem"
-                    android:onClick="openSpellListActivity"
-                    android:text="Spells"/>
-
-                <TextView
-                    style="@style/QuestRollMenuItem"
-                    android:onClick="openAbilityListActivity"
-                    android:text="Abilitys"/>
-
-                <TextView
-                    style="@style/QuestRollMenuItem"
-                    android:onClick="openBackgroundListActivity"
-                    android:text="Backgrounds"/>
-
-                <TextView
-                    style="@style/QuestRollMenuItem"
-                    android:onClick="openAlignmentListActivity"
-                    android:text="Alignments"/>
-
-                <TextView
-                    style="@style/QuestRollMenuItem"
-                    android:onClick="openItemListActivity"
-                    android:text="Items"/>
-
-                <TextView
-                    style="@style/QuestRollMenuItem"
-                    android:onClick="openItemSetListActivity"
-                    android:text="Item Sets"/>
-
-                <TextView
-                    style="@style/QuestRollMenuItem"
-                    android:onClick="openLanguageListActivity"
-                    android:text="Languages"/>
-
-                <!-- CREATURES -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginBottom="12dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/QuestRollHeaderText"
-                        android:text="CREATURES" />
-
-                    <View
-                        android:layout_width="48dp"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="6dp"
-                        android:background="#55D4AF37"/>
-
-                </LinearLayout>
-
-                <TextView
-                    style="@style/QuestRollMenuItem"
-                    android:onClick="openCreatureListActivity"
-                    android:text="Creatures"/>
-
-                <TextView
-                    style="@style/QuestRollMenuItem"
-                    android:onClick="openCreatureTypeListActivity"
-                    android:text="Creature Types"/>
-
-                <TextView
-                    style="@style/QuestRollMenuItem"
-                    android:onClick="openConditionListActivity"
-                    android:text="Conditions"/>
-
-                <TextView
-                    style="@style/QuestRollMenuItem"
-                    android:onClick="openDamageTypeListActivity"
-                    android:text="Damage Types"/>
-
-                <!-- GAME DATA -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="32dp"
-                    android:layout_marginBottom="12dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        style="@style/QuestRollHeaderText"
-                        android:text="DATA" />
-
-                    <View
-                        android:layout_width="48dp"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="6dp"
-                        android:background="#55D4AF37"/>
-
-                </LinearLayout>
-
-                <TextView
-                    style="@style/QuestRollMenuItem"
-                    android:onClick="openServiceListActivity"
-                    android:text="Services"/>
-
-                <TextView
-                    style="@style/QuestRollMenuItem"
-                    android:onClick="openEnvironmentListActivity"
-                    android:text="Environments"/>
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openCampaignListActivity" android:text="Campaigns"/>
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openCharacterListActivity" android:text="Characters"/>
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openRollDiceActivity" android:text="Roll Dice"/>
 
                 <!-- TOOLS -->
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <TextView
+                    style="@style/QuestRollHeaderText"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="32dp"
-                    android:layout_marginBottom="12dp"
-                    android:orientation="vertical">
+                    android:text="TOOLS" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="TOOLS"
-                        android:textColor="#8A7A55"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:letterSpacing="0.2"/>
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openPdfListActivity" android:text="PDF Manuals"/>
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openAboutActivity" android:text="How it Works"/>
 
-                    <View
-                        android:layout_width="48dp"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="6dp"
-                        android:background="#55D4AF37"/>
-
-                </LinearLayout>
-
+                <!-- COMPENDIUM -->
                 <TextView
-                    android:id="@+id/btnManageData"
-                    style="@style/QuestRollMenuItem"
-                    android:onClick="openManageData"
-                    android:text="Manage API Data"/>
+                    style="@style/QuestRollHeaderText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:text="COMPENDIUM" />
 
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openClassListActivity" android:text="Classes"/>
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openSpellListActivity" android:text="Spells"/>
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openCreatureListActivity" android:text="Creatures"/>
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openCreatureTypeListActivity" android:text="Creature Types"/>
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openSpeciesListActivity" android:text="Species"/>
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openBackgroundListActivity" android:text="Backgrounds"/>
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openLanguageListActivity" android:text="Languages"/>
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openAbilityListActivity" android:text="Abilities"/>
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openAlignmentListActivity" android:text="Alignments"/>
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openConditionListActivity" android:text="Conditions"/>
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openEnvironmentListActivity" android:text="Environments"/>
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openRulesetListActivity" android:text="Rulesets"/>
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openServiceListActivity" android:text="Services"/>
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openItemListActivity" android:text="Items"/>
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openItemSetListActivity" android:text="Item Sets"/>
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openItemRarityListActivity" android:text="Item Rarities"/>
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openWeaponPropertyListActivity" android:text="Weapon Properties"/>
+                <TextView style="@style/QuestRollMenuItem" android:onClick="openDamageTypeListActivity" android:text="Damage Types"/>
+
+                <TextView android:id="@+id/btnManageData" style="@style/QuestRollMenuItem" android:layout_marginTop="32dp" android:text="Manage API Data"/>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

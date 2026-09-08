@@ -1,29 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:theme="@style/ThemeOverlay.AppCompat">
 
-    <ImageView
-        android:id="@+id/backgroundImage"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop" />
+        android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@android:color/transparent"
-        android:padding="8dp">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_languages"
+        <ImageView
+            android:id="@+id/backgroundImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            tools:listitem="@layout/item_language" />
+            android:scaleType="centerCrop" />
 
-    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@android:color/transparent">
 
-</FrameLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                android:gravity="center_vertical">
+
+                <SearchView
+                    android:id="@+id/search_view"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:iconifiedByDefault="false"
+                    android:queryHint="Search languages..."
+                    android:background="@drawable/bg_search_view"
+                    android:layout_marginEnd="8dp" />
+
+                <ImageButton
+                    android:id="@+id/btn_filter"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@android:drawable/ic_menu_sort_by_size"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    app:tint="@color/threads_gold" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tv_active_filters"
+                style="@style/QuestRollLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="8dp"
+                android:visibility="gone"
+                tools:text="Filters: Custom"
+                tools:visibility="visible" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_languages"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:padding="8dp"
+                tools:listitem="@layout/item_language" />
+
+        </LinearLayout>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_create_language"
+            style="@style/Widget.QuestRoll.FAB"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:src="@android:drawable/ic_input_add"
+            android:contentDescription="Create Language"
+            app:fabSize="normal" />
+
+    </FrameLayout>
+
+    <!-- Calculator Drawer -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/calculator_drawer"
+        android:name="com.murkfeatherstudio.questroll.feature_tools.calculator.DndCalculatorFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:clickable="true"
+        android:focusable="true" />
+
+</androidx.drawerlayout.widget.DrawerLayout>

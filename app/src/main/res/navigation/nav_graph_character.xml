@@ -6,8 +6,8 @@
 
     <fragment
         android:id="@+id/characterListFragment"
-        android:name="com.fizzycoyote.qusetroll.feature_character.ui.list.CharacterListFragment"
-        android:label="Lista postaci">
+        android:name="com.murkfeatherstudio.questroll.feature_character.ui.list.CharacterListFragment"
+        android:label="Character List">
         <action
             android:id="@+id/action_to_creator"
             app:destination="@id/characterCreatorFragment" />
@@ -18,9 +18,8 @@
 
     <fragment
         android:id="@+id/characterCreatorFragment"
-        android:name="com.fizzycoyote.qusetroll.feature_character.ui.creator.CharacterCreatorFragment"
-        android:label="Kreator postaci">
-        <!-- DODAJ TĘ AKCJĘ -->
+        android:name="com.murkfeatherstudio.questroll.feature_character.ui.creator.CharacterCreatorFragment"
+        android:label="Character Creator">
         <action
             android:id="@+id/action_creator_to_sheet"
             app:destination="@id/characterSheetFragment" />
@@ -28,8 +27,8 @@
 
     <fragment
         android:id="@+id/characterSheetFragment"
-        android:name="com.fizzycoyote.qusetroll.feature_character.ui.sheet.CharacterSheetFragment"
-        android:label="Karta postaci">
+        android:name="com.murkfeatherstudio.questroll.feature_character.ui.sheet.CharacterSheetFragment"
+        android:label="Character Sheet">
         <argument
             android:name="character_id"
             app:argType="long" />

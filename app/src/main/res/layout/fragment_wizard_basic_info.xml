@@ -7,7 +7,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="16dp">
 
         <TextView
             style="@style/QuestRollSectionHeader"
@@ -92,7 +93,105 @@
         <Spinner
             android:id="@+id/spinner_spellcasting_ability"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp" />
+
+        <!-- Multiclass Prerequisites -->
+        <TextView
+            style="@style/QuestRollSectionHeader"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Multiclass Prerequisites"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Minimum ability scores required to enter or leave this class (default 13 for standard classes)."
+            android:textSize="12sp"
+            android:textColor="?attr/colorOnSurfaceVariant"
+            android:layout_marginBottom="16dp" />
+
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="2"
+            android:alignmentMode="alignMargins"
+            android:layout_marginBottom="16dp">
+
+            <!-- STR -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="4dp">
+                <CheckBox android:id="@+id/cb_req_str" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="STR"/>
+                <EditText android:id="@+id/et_req_str_val" android:layout_width="50dp" android:layout_height="wrap_content" android:inputType="number" android:hint="13" android:enabled="false" android:text="13"/>
+            </LinearLayout>
+
+            <!-- DEX -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="4dp">
+                <CheckBox android:id="@+id/cb_req_dex" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="DEX"/>
+                <EditText android:id="@+id/et_req_dex_val" android:layout_width="50dp" android:layout_height="wrap_content" android:inputType="number" android:hint="13" android:enabled="false" android:text="13"/>
+            </LinearLayout>
+
+            <!-- CON -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="4dp">
+                <CheckBox android:id="@+id/cb_req_con" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CON"/>
+                <EditText android:id="@+id/et_req_con_val" android:layout_width="50dp" android:layout_height="wrap_content" android:inputType="number" android:hint="13" android:enabled="false" android:text="13"/>
+            </LinearLayout>
+
+            <!-- INT -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="4dp">
+                <CheckBox android:id="@+id/cb_req_int" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="INT"/>
+                <EditText android:id="@+id/et_req_int_val" android:layout_width="50dp" android:layout_height="wrap_content" android:inputType="number" android:hint="13" android:enabled="false" android:text="13"/>
+            </LinearLayout>
+
+            <!-- WIS -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="4dp">
+                <CheckBox android:id="@+id/cb_req_wis" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="WIS"/>
+                <EditText android:id="@+id/et_req_wis_val" android:layout_width="50dp" android:layout_height="wrap_content" android:inputType="number" android:hint="13" android:enabled="false" android:text="13"/>
+            </LinearLayout>
+
+            <!-- CHA -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:padding="4dp">
+                <CheckBox android:id="@+id/cb_req_cha" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="CHA"/>
+                <EditText android:id="@+id/et_req_cha_val" android:layout_width="50dp" android:layout_height="wrap_content" android:inputType="number" android:hint="13" android:enabled="false" android:text="13"/>
+            </LinearLayout>
+
+        </GridLayout>
 
     </LinearLayout>
 </ScrollView>

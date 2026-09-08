@@ -3,129 +3,120 @@
     <attr name="colorOutline" format="color" />
 
     <style name="Theme.QuestRoll" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/purple_500</item>
-        <item name="colorPrimaryVariant">@color/purple_700</item>
-        <item name="colorOnPrimary">@color/white</item>
-        <item name="colorSecondary">@color/teal_200</item>
-        <item name="colorSecondaryVariant">@color/teal_700</item>
-        <item name="colorOnSecondary">@color/black</item>
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-        <item name="colorOutline">@color/outline</item>
-        <item name="android:windowLightStatusBar">false</item>
-        <item name="android:statusBarColor">@color/threads_header</item>
-        <item name="android:fontFamily">@font/inter_regular</item>
+        <item name="colorPrimary">@color/threads_gold</item>
+        <item name="colorOnPrimary">@color/threads_dark</item>
+        <item name="colorSecondary">@color/threads_gold_light</item>
+        <item name="colorOutline">@color/threads_border</item>
+        <item name="android:statusBarColor">@color/threads_dark</item>
+        <item name="android:windowBackground">@color/threads_dark</item>
+
+        <!-- Global Input Style -->
+        <item name="textInputStyle">@style/QuestRollInputLayout</item>
+    </style>
+
+    <style name="QuestRollInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxBackgroundColor">@color/threads_elevated</item>
+        <item name="boxStrokeColor">@color/threads_gold</item>
+        <item name="hintTextColor">@color/threads_text_secondary</item>
+        <item name="android:textColorHint">@color/threads_text_secondary</item>
+        <item name="android:textColor">@color/threads_text_primary</item>
     </style>
 
     <style name="QuestRollHeaderText">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:fontFamily">@font/cinzel_bold</item>
-        <item name="android:textColor">#8A7A55</item>
+        <item name="android:textColor">@color/threads_gold</item>
         <item name="android:textSize">12sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:letterSpacing">0.2</item>
+    </style>
+
+    <style name="QuestRollSectionHeader">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/cinzel_bold</item>
+        <item name="android:textColor">@color/threads_header</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.1</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <style name="QuestRollCaption">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/inter_regular</item>
+        <item name="android:textColor">@color/threads_text_secondary</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="QuestRollLabel">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/inter_regular</item>
+        <item name="android:textColor">@color/threads_text_secondary</item>
+        <item name="android:textSize">13sp</item>
     </style>
 
     <style name="QuestRollButton" parent="@android:style/Widget.Button">
         <item name="android:textColor">#E8D7A8</item>
-        <item name="android:textSize">18sp</item>
+        <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:minHeight">56dp</item>
         <item name="android:background">@drawable/fantasy_button</item>
-        <item name="android:paddingStart">24dp</item>
-        <item name="android:paddingEnd">24dp</item>
+        <item name="android:paddingStart">4dp</item>
+        <item name="android:paddingEnd">4dp</item>
+        <item name="android:minWidth">0dp</item>
     </style>
 
+    <style name="QuestRollButtonSecondary" parent="Widget.MaterialComponents.Button.TextButton">
+        <item name="android:textColor">@color/threads_gold</item>
+        <item name="rippleColor">@color/threads_gold_subtle</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
 
     <style name="QuestRollMenuItem">
-
         <item name="android:background">@drawable/fantasy_button</item>
-
         <item name="android:textColor">#D8D3C5</item>
         <item name="android:textSize">17sp</item>
         <item name="android:textStyle">normal</item>
-
         <item name="android:gravity">center_vertical</item>
-
         <item name="android:paddingStart">20dp</item>
         <item name="android:paddingEnd">20dp</item>
         <item name="android:fontFamily">@font/cinzel_semibold</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">56dp</item>
         <item name="android:layout_marginBottom">4dp</item>
+    </style>
 
+    <style name="QuestRollTitle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/cinzel_semibold</item>
+        <item name="android:textColor">@color/threads_gold</item>
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <style name="QuestRollBody">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/inter_regular</item>
+        <item name="android:textColor">@color/threads_text_primary</item>
+        <item name="android:textSize">15sp</item>
+    </style>
+
+    <style name="QuestRollStat">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fontFamily">@font/cinzel_bold</item>
+        <item name="android:textColor">@color/threads_gold</item>
+        <item name="android:textSize">20sp</item>
     </style>
 
     <style name="Widget.QuestRoll.FAB" parent="Widget.MaterialComponents.FloatingActionButton">
         <item name="backgroundTint">@color/threads_gold</item>
         <item name="tint">@color/threads_dark</item>
-        <item name="elevation">4dp</item>
+        <item name="rippleColor">@color/threads_gold_light</item>
     </style>
-
-
-    <!-- ===================================================== -->
-    <!-- TITLES -->
-    <!-- ===================================================== -->
-
-    <style name="QuestRollTitle">
-        <item name="android:fontFamily">@font/cinzel_semibold</item>
-        <item name="android:textColor">@color/threads_text_primary</item>
-        <item name="android:textSize">28sp</item>
-    </style>
-
-    <style name="QuestRollSectionHeader">
-        <item name="android:fontFamily">@font/cinzel_semibold</item>
-        <item name="android:textColor">@color/threads_gold</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:letterSpacing">0.05</item>
-    </style>
-
-    <!-- ===================================================== -->
-    <!-- BODY -->
-    <!-- ===================================================== -->
-
-    <style name="QuestRollBody">
-        <item name="android:fontFamily">@font/inter_regular</item>
-        <item name="android:textColor">@color/threads_text_primary</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:lineSpacingMultiplier">1.4</item>
-    </style>
-
-    <style name="QuestRollCaption">
-        <item name="android:fontFamily">@font/inter_regular</item>
-        <item name="android:textColor">@color/threads_text_secondary</item>
-        <item name="android:textSize">13sp</item>
-    </style>
-
-    <!-- ===================================================== -->
-    <!-- LABELS -->
-    <!-- ===================================================== -->
-
-    <style name="QuestRollLabel">
-        <item name="android:fontFamily">@font/inter_medium</item>
-        <item name="android:textColor">@color/threads_text_secondary</item>
-        <item name="android:textSize">15sp</item>
-    </style>
-
-    <style name="QuestRollValue">
-        <item name="android:fontFamily">@font/inter_regular</item>
-        <item name="android:textColor">@color/threads_text_primary</item>
-        <item name="android:textSize">15sp</item>
-    </style>
-
-    <!-- ===================================================== -->
-    <!-- RPG STATS -->
-    <!-- ===================================================== -->
-
-    <style name="QuestRollStat">
-        <item name="android:fontFamily">@font/cinzel_bold</item>
-        <item name="android:textColor">@color/threads_gold</item>
-        <item name="android:textSize">18sp</item>
-    </style>
-
-    <!-- ===================================================== -->
-    <!-- Global -->
-    <!-- ===================================================== -->
-
 </resources>

@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/threads_dark">
 
     <ImageView
         android:id="@+id/backgroundImage"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="centerCrop"/>
+        android:scaleType="centerCrop" />
 
-    <androidx.core.widget.NestedScrollView
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/transparent"
@@ -22,239 +24,168 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <TextView
+                style="@style/QuestRollHeaderText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="CREATE BACKGROUND"
+                android:layout_marginBottom="16dp" />
+
+            <!-- Core Details -->
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Name"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_marginBottom="12dp"
-                app:boxBackgroundColor="@android:color/transparent"
-                app:hintTextColor="?attr/colorOnSurfaceVariant"
-                app:boxStrokeColor="?attr/colorOutline">
+                android:hint="Background Name"
+                style="@style/QuestRollInputLayout"
+                android:layout_marginBottom="12dp">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurface"
-                    android:inputType="textCapWords"
-                    android:maxLines="1"/>
+                    android:textColor="@color/threads_text_primary" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Description"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_marginBottom="16dp"
-                app:boxBackgroundColor="@android:color/transparent"
-                app:hintTextColor="?attr/colorOnSurfaceVariant"
-                app:boxStrokeColor="?attr/colorOutline">
+                style="@style/QuestRollInputLayout"
+                android:layout_marginBottom="12dp">
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etDesc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurface"
-                    android:inputType="textMultiLine"
-                    android:minLines="3"
-                    android:maxLines="8"
-                    android:gravity="top"/>
+                    android:textColor="@color/threads_text_primary"
+                    android:minLines="3" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView style="@style/QuestRollCaption" android:text="Game System" android:layout_marginTop="8dp"/>
+            <Spinner
+                android:id="@+id/spinnerGameSystem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:backgroundTint="@color/threads_gold" />
 
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Game System"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_marginBottom="16dp"
-                app:boxBackgroundColor="@android:color/transparent"
-                app:hintTextColor="?attr/colorOnSurfaceVariant"
-                app:boxStrokeColor="?attr/colorOutline">
-                <Spinner
-                    android:id="@+id/spinnerGameSystem"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Starting Gold (gp)"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_marginBottom="16dp"
-                app:boxBackgroundColor="@android:color/transparent"
-                app:hintTextColor="?attr/colorOnSurfaceVariant"
-                app:boxStrokeColor="?attr/colorOutline">
-                <EditText
+                android:hint="Starting Gold"
+                style="@style/QuestRollInputLayout"
+                android:layout_marginBottom="12dp">
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etStartingGold"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurface"
                     android:inputType="number"
-                    android:text="0"/>
+                    android:textColor="@color/threads_text_primary" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                style="@style/QuestRollSectionHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Equipment"
-                android:layout_marginBottom="8dp"/>
-
+            <!-- Equipment Section -->
+            <TextView style="@style/QuestRollSectionHeader" android:text="Equipment" android:layout_marginTop="16dp"/>
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Equipment Description (optional)"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_marginBottom="8dp"
-                app:boxBackgroundColor="@android:color/transparent"
-                app:hintTextColor="?attr/colorOnSurfaceVariant"
-                app:boxStrokeColor="?attr/colorOutline">
-                <EditText
+                android:hint="Equipment Description"
+                style="@style/QuestRollInputLayout"
+                android:layout_marginBottom="8dp">
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etEquipmentDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurface"
-                    android:inputType="textMultiLine"
-                    android:minLines="2"
-                    android:maxLines="4"/>
+                    android:textColor="@color/threads_text_primary" />
             </com.google.android.material.textfield.TextInputLayout>
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvEquipment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:layout_marginBottom="16dp"/>
-            <Button
+                android:nestedScrollingEnabled="false" />
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAddEquipment"
+                style="@style/QuestRollButtonSecondary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add Item"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:textColor="?attr/colorPrimary"
-                android:layout_marginBottom="24dp"/>
+                android:text="+ Add Equipment" />
 
-            <TextView
-                style="@style/QuestRollSectionHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Languages"
-                android:layout_marginBottom="8dp"/>
-
+            <!-- Languages Section -->
+            <TextView style="@style/QuestRollSectionHeader" android:text="Languages" android:layout_marginTop="16dp"/>
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Languages Description (optional)"
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                android:layout_marginBottom="8dp"
-                app:boxBackgroundColor="@android:color/transparent"
-                app:hintTextColor="?attr/colorOnSurfaceVariant"
-                app:boxStrokeColor="?attr/colorOutline">
-                <EditText
+                android:hint="Languages Description"
+                style="@style/QuestRollInputLayout"
+                android:layout_marginBottom="8dp">
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etLanguagesDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurface"
-                    android:inputType="textMultiLine"
-                    android:minLines="2"
-                    android:maxLines="4"/>
+                    android:textColor="@color/threads_text_primary" />
             </com.google.android.material.textfield.TextInputLayout>
-
             <com.google.android.material.textfield.TextInputLayout
-                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Number of chooseable languages"
-                android:layout_marginTop="12dp"
-                app:boxBackgroundColor="@android:color/transparent"
-                app:hintTextColor="?attr/colorOnSurfaceVariant"
-                app:boxStrokeColor="?attr/colorOutline">
-                <EditText
+                android:hint="Language Choices (Count)"
+                style="@style/QuestRollInputLayout"
+                android:layout_marginBottom="8dp">
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/etLanguageChoices"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="?attr/colorOnSurface"
                     android:inputType="number"
-                    android:text="0"/>
+                    android:textColor="@color/threads_text_primary" />
             </com.google.android.material.textfield.TextInputLayout>
-
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvLanguages"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:layout_marginBottom="16dp"/>
-            <Button
+                android:nestedScrollingEnabled="false" />
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAddLanguage"
+                style="@style/QuestRollButtonSecondary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add Language"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:textColor="?attr/colorPrimary"
-                android:layout_marginBottom="24dp"/>
+                android:text="+ Add Language" />
 
-            <TextView
-                style="@style/QuestRollSectionHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Skill Proficiencies"
-                android:layout_marginBottom="8dp"/>
+            <!-- Proficiencies -->
+            <TextView style="@style/QuestRollSectionHeader" android:text="Skill Proficiencies" android:layout_marginTop="16dp"/>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvSkillProficiencies"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:layout_marginBottom="16dp"/>
-            <Button
+                android:nestedScrollingEnabled="false" />
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAddSkill"
+                style="@style/QuestRollButtonSecondary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add Skill"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:textColor="?attr/colorPrimary"
-                android:layout_marginBottom="24dp"/>
+                android:text="+ Add Skill" />
 
-            <TextView
-                style="@style/QuestRollSectionHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Tool Proficiencies"
-                android:layout_marginBottom="8dp"/>
+            <TextView style="@style/QuestRollSectionHeader" android:text="Tool Proficiencies" android:layout_marginTop="16dp"/>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvToolProficiencies"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:layout_marginBottom="16dp"/>
-            <Button
+                android:nestedScrollingEnabled="false" />
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAddTool"
+                style="@style/QuestRollButtonSecondary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add Tool"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:textColor="?attr/colorPrimary"
-                android:layout_marginBottom="24dp"/>
+                android:text="+ Add Tool" />
 
-            <TextView
-                style="@style/QuestRollSectionHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Features"
-                android:layout_marginBottom="8dp"/>
+            <!-- Features -->
+            <TextView style="@style/QuestRollSectionHeader" android:text="Features" android:layout_marginTop="16dp"/>
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvFeatures"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false"
-                android:layout_marginBottom="16dp"/>
-            <Button
+                android:nestedScrollingEnabled="false" />
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnAddFeature"
+                style="@style/QuestRollButtonSecondary"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Add Feature"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:textColor="?attr/colorPrimary"
-                android:layout_marginBottom="24dp"/>
+                android:text="+ Add Feature" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSave"
@@ -262,10 +193,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Save Background"
-                android:padding="14dp"
-                android:layout_marginBottom="16dp"/>
+                android:layout_marginTop="32dp"
+                android:layout_marginBottom="32dp" />
 
         </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
+    </ScrollView>
 
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

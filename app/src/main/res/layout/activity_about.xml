@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/threads_dark">
+
+    <ImageView
+        android:id="@+id/backgroundImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop" />
+
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/btn_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@android:drawable/ic_menu_revert"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="@color/threads_gold" />
+
+        <TextView
+            style="@style/QuestRollHeaderText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="HOW IT WORKS"
+            android:textSize="20sp" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Feature 1 -->
+            <TextView
+                style="@style/QuestRollTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1. Synchronize Data"
+                android:textColor="@color/threads_gold"
+                android:textSize="18sp" />
+            <TextView
+                style="@style/QuestRollBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="24dp"
+                android:text="The first time you launch the app, you need to download D&amp;D 5e data from the Open5e API. You can select specific sections like Spells or Items. The app handles dependencies automatically." />
+
+            <!-- Feature 2 -->
+            <TextView
+                style="@style/QuestRollTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2. Character Creation"
+                android:textColor="@color/threads_gold"
+                android:textSize="18sp" />
+            <TextView
+                style="@style/QuestRollBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="24dp"
+                android:text="Use the Character Wizard to build your hero. It supports multiclassing, automatic HP calculation, and attribute generation (Standard Array, Point Buy, or Rolling 4d6)." />
+
+            <!-- Feature 3 -->
+            <TextView
+                style="@style/QuestRollTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="3. Global Tools"
+                android:textColor="@color/threads_gold"
+                android:textSize="18sp" />
+            <TextView
+                style="@style/QuestRollBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="24dp"
+                android:text="Swipe from the right edge of the screen at any time to access the D&amp;D Calculator. Use the 'H' button to see your calculation history." />
+
+            <!-- Feature 4 -->
+            <TextView
+                style="@style/QuestRollTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="4. Custom Content"
+                android:textColor="@color/threads_gold"
+                android:textSize="18sp" />
+            <TextView
+                style="@style/QuestRollBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="24dp"
+                android:text="QuestRoll is homebrew-friendly. You can create your own Spells, Classes, Languages, and even upload PDF manuals to keep your rules in one place." />
+
+            <!-- Feature 5 -->
+            <TextView
+                style="@style/QuestRollTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="5. PDF Export"
+                android:textColor="@color/threads_gold"
+                android:textSize="18sp" />
+            <TextView
+                style="@style/QuestRollBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="24dp"
+                android:text="Once your character is ready, you can export a printable PDF sheet directly from the Character Sheet view." />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

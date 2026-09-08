@@ -11,7 +11,7 @@
         style="@style/QuestRollBody"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
-        android:hint="Poziom"
+        android:hint="Level"
         android:textColor="?attr/colorOnSurface"
         android:textColorHint="?attr/colorOnSurfaceVariant"
         android:inputType="number"/>
@@ -22,7 +22,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:hint="Wartość"
+        android:hint="Value"
         android:textColor="?attr/colorOnSurface"
         android:textColorHint="?attr/colorOnSurfaceVariant"/>
 
@@ -34,6 +34,6 @@
         android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="8dp"
         android:tint="?attr/colorOnSurface"
-        android:contentDescription="Usuń"/>
+        android:contentDescription="Delete"/>
 
 </LinearLayout>

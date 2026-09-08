@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/characterCreatorFragment"
-        android:name="com.fizzycoyote.qusetroll.ui.creator.CharacterCreatorFragment"
+        android:name="com.murkfeatherstudio.questroll.ui.creator.CharacterCreatorFragment"
         android:label="Kreator postaci">
         <action
             android:id="@+id/action_creator_to_sheet"
@@ -15,7 +15,7 @@
 
     <fragment
         android:id="@+id/characterSheetFragment"
-        android:name="com.fizzycoyote.qusetroll.ui.sheet.CharacterSheetFragment"
+        android:name="com.murkfeatherstudio.questroll.ui.sheet.CharacterSheetFragment"
         android:label="Karta postaci">
         <argument
             android:name="character_id"

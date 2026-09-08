@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:baselineAligned="false"
+    android:background="@android:color/transparent">
+
+    <!-- Left Panel: History -->
+    <LinearLayout
+        android:id="@+id/history_panel"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@color/threads_elevated"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp">
+
+            <TextView
+                style="@style/QuestRollHeaderText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="HISTORY"
+                android:textColor="@color/threads_gold" />
+
+            <Button
+                android:id="@+id/btn_clear_history"
+                style="@style/QuestRollButton"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_alignParentEnd="true"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="Clear"
+                android:textSize="10sp"
+                android:textColor="@color/threads_hp_red" />
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/history_recycler"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
+
+    <!-- Right Panel: Calculator -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/calculator_panel"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@color/threads_surface"
+        android:clickable="true"
+        android:focusable="true">
+
+        <!-- Pushing calculator down with a Guideline (30% from top) -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.3" />
+
+        <TextView
+            android:id="@+id/calc_display"
+            style="@style/QuestRollHeaderText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:gravity="end"
+            android:text="0"
+            android:textSize="32sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/guideline_top" />
+
+        <GridLayout
+            android:id="@+id/calc_grid"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:columnCount="4"
+            android:rowCount="6"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/calc_display"
+            app:layout_constraintVertical_bias="1.0">
+
+            <Button style="@style/QuestRollButton" android:text="7" android:layout_columnWeight="1" android:minWidth="0dp" />
+            <Button style="@style/QuestRollButton" android:text="8" android:layout_columnWeight="1" android:minWidth="0dp" />
+            <Button style="@style/QuestRollButton" android:text="9" android:layout_columnWeight="1" android:minWidth="0dp" />
+            <Button style="@style/QuestRollButton" android:text="/" android:layout_columnWeight="1" android:minWidth="0dp" android:textColor="@color/threads_gold" />
+
+            <Button style="@style/QuestRollButton" android:text="4" android:layout_columnWeight="1" android:minWidth="0dp" />
+            <Button style="@style/QuestRollButton" android:text="5" android:layout_columnWeight="1" android:minWidth="0dp" />
+            <Button style="@style/QuestRollButton" android:text="6" android:layout_columnWeight="1" android:minWidth="0dp" />
+            <Button style="@style/QuestRollButton" android:text="*" android:layout_columnWeight="1" android:minWidth="0dp" android:textColor="@color/threads_gold" />
+
+            <Button style="@style/QuestRollButton" android:text="1" android:layout_columnWeight="1" android:minWidth="0dp" />
+            <Button style="@style/QuestRollButton" android:text="2" android:layout_columnWeight="1" android:minWidth="0dp" />
+            <Button style="@style/QuestRollButton" android:text="3" android:layout_columnWeight="1" android:minWidth="0dp" />
+            <Button style="@style/QuestRollButton" android:text="-" android:layout_columnWeight="1" android:minWidth="0dp" android:textColor="@color/threads_gold" />
+
+            <Button style="@style/QuestRollButton" android:text="C" android:layout_columnWeight="1" android:minWidth="0dp" android:textColor="@color/threads_hp_red" />
+            <Button style="@style/QuestRollButton" android:text="0" android:layout_columnWeight="1" android:minWidth="0dp" />
+            <Button style="@style/QuestRollButton" android:text="DEL" android:layout_columnWeight="1" android:minWidth="0dp" android:textColor="@color/threads_gold" />
+            <Button style="@style/QuestRollButton" android:text="+" android:layout_columnWeight="1" android:minWidth="0dp" android:textColor="@color/threads_gold" />
+
+            <Button style="@style/QuestRollButton" android:text="=" android:layout_columnSpan="4" android:layout_gravity="fill_horizontal" android:minWidth="0dp" android:textColor="@color/threads_gold" />
+
+            <Button
+                android:id="@+id/btn_history"
+                style="@style/QuestRollButton"
+                android:layout_width="wrap_content"
+                android:layout_columnSpan="4"
+                android:layout_gravity="fill_horizontal"
+                android:text="H"
+                android:minWidth="0dp"
+                android:textColor="@color/threads_gold" />
+        </GridLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

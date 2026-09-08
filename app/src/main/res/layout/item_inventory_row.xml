@@ -83,4 +83,14 @@
             android:text="0 lb" />
 
     </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/btn_item_details"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="4dp"
+        android:src="@android:drawable/ic_menu_info_details"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Details" />
+
 </LinearLayout>

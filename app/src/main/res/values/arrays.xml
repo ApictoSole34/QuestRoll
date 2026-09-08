@@ -9,10 +9,10 @@
     </string-array>
 
     <string-array name="caster_types">
-        <item>Brak</item>
-        <item>Pełny</item>
-        <item>Połowiczny</item>
-        <item>Trzeci</item>
+        <item>None</item>
+        <item>Full</item>
+        <item>Half</item>
+        <item>Third</item>
     </string-array>
 
     <string-array name="feature_types">

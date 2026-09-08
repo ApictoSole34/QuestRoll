@@ -1,212 +1,279 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="@color/threads_dark"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:padding="16dp">
 
-        <ImageView
-            android:id="@+id/character_full_image"
+        <!-- HEADER SECTION -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:maxHeight="300dp"
-            android:adjustViewBounds="true"
-            android:src="@android:drawable/ic_menu_gallery"
-            android:scaleType="fitCenter"
             android:layout_marginBottom="16dp"
-            android:background="@android:drawable/edit_text" />
+            app:cardBackgroundColor="@color/threads_surface"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
 
-        <TextView
-            android:id="@+id/character_name"
-            style="@style/QuestRollTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
 
-        <TextView
-            android:id="@+id/character_species"
-            style="@style/QuestRollBody"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Race: -" />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/character_full_image"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:src="@android:drawable/ic_menu_gallery"
+                    app:civ_border_color="@color/threads_gold"
+                    app:civ_border_width="2dp" />
 
-        <TextView
-            android:id="@+id/character_classes"
-            style="@style/QuestRollBody"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Classes: -" />
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/character_alignment"
-            style="@style/QuestRollBody"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Alignment: -" />
+                    <TextView
+                        android:id="@+id/character_name"
+                        style="@style/QuestRollTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Character Name"
+                        android:textSize="22sp" />
 
-        <TextView
-            android:id="@+id/character_background"
-            style="@style/QuestRollBody"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Background: -" />
+                    <TextView
+                        android:id="@+id/character_classes"
+                        style="@style/QuestRollBody"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Class Level"
+                        android:textColor="@color/threads_gold" />
 
+                    <TextView
+                        android:id="@+id/character_species"
+                        style="@style/QuestRollCaption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Race" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- VITALS SECTION (HP, AC, INIT) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="16dp">
+            android:layout_marginBottom="16dp"
+            android:orientation="horizontal">
 
-            <TextView
-                android:id="@+id/hp_text"
-                style="@style/QuestRollBody"
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="0dp"
-                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="HP: ?" />
+                android:layout_marginEnd="8dp"
+                android:layout_weight="2"
+                app:cardBackgroundColor="@color/threads_surface"
+                app:cardCornerRadius="12dp">
 
-            <TextView
-                android:id="@+id/ac_text"
-                style="@style/QuestRollBody"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <TextView
+                        style="@style/QuestRollSectionHeader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hit Points"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:id="@+id/hp_text"
+                        style="@style/QuestRollTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0 / 0"
+                        android:textSize="24sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <LinearLayout
                 android:layout_width="0dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="AC: ?" />
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/initiative_text"
-                style="@style/QuestRollBody"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="Initiative: ?" />
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="4dp"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="@color/threads_surface"
+                    app:cardCornerRadius="12dp">
 
-            <TextView
-                android:id="@+id/proficiency_text"
-                style="@style/QuestRollBody"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="Prof. bonus: ?" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical">
 
+                        <TextView
+                            android:id="@+id/ac_text"
+                            style="@style/QuestRollStat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="10" />
+
+                        <TextView
+                            style="@style/QuestRollCaption"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="AC" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_weight="1"
+                    app:cardBackgroundColor="@color/threads_surface"
+                    app:cardCornerRadius="12dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/initiative_text"
+                            style="@style/QuestRollStat"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="+0" />
+
+                        <TextView
+                            style="@style/QuestRollCaption"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Init" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
         </LinearLayout>
 
+        <!-- ATTRIBUTES SECTION -->
         <TextView
             style="@style/QuestRollSectionHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Attributes"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp"
+            android:text="Attributes" />
 
         <LinearLayout
             android:id="@+id/attributes_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:layout_marginBottom="16dp"
+            android:background="@color/threads_surface"
+            android:orientation="vertical"
+            android:padding="8dp" />
+
+        <!-- SAVING THROWS & SKILLS SECTION -->
+        <TextView
+            style="@style/QuestRollSectionHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Saving Throws" />
+
+        <LinearLayout
+            android:id="@+id/saving_throws_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:background="@color/threads_surface"
+            android:orientation="vertical"
+            android:padding="8dp" />
 
         <TextView
             style="@style/QuestRollSectionHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Skills"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp"
+            android:text="Skills" />
 
         <LinearLayout
             android:id="@+id/skills_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:layout_marginBottom="16dp"
+            android:background="@color/threads_surface"
+            android:orientation="vertical"
+            android:padding="8dp" />
 
+        <!-- TRAITS SECTION -->
         <TextView
             style="@style/QuestRollSectionHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Languages"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp" />
-
-        <LinearLayout
-            android:id="@+id/languages_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-
-        <TextView
-            style="@style/QuestRollSectionHeader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Traits"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp"
+            android:text="Traits" />
 
         <LinearLayout
             android:id="@+id/traits_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:layout_marginBottom="16dp"
+            android:background="@color/threads_surface"
+            android:orientation="vertical"
+            android:padding="8dp" />
 
+        <!-- INVENTORY SECTION -->
         <TextView
             style="@style/QuestRollSectionHeader"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Inventory"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp" />
+            android:layout_marginBottom="8dp"
+            android:text="Inventory" />
 
         <LinearLayout
             android:id="@+id/inventory_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:layout_marginBottom="24dp"
+            android:background="@color/threads_surface"
+            android:orientation="vertical"
+            android:padding="8dp" />
 
-        <TextView
-            style="@style/QuestRollSectionHeader"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Spells"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="8dp" />
-
-        <LinearLayout
-            android:id="@+id/spells_container"
+        <!-- ACTION BUTTONS -->
+        <Button
+            android:id="@+id/btn_export_pdf"
+            style="@style/QuestRollButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:layout_marginBottom="12dp"
+            android:text="Export to PDF" />
 
-        <LinearLayout
+        <Button
+            android:id="@+id/btn_delete"
+            style="@style/QuestRollButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="24dp"
-            android:gravity="center">
-
-            <Button
-                android:id="@+id/btn_edit"
-                style="@style/QuestRollButton"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="Edit"
-                android:layout_marginEnd="8dp" />
-
-            <Button
-                android:id="@+id/btn_delete"
-                style="@style/QuestRollButton"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="Delete"
-                android:backgroundTint="@android:color/holo_red_dark" />
-
-        </LinearLayout>
+            android:text="Delete Character"
+            app:backgroundTint="@color/threads_hp_red" />
 
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace 'com.fizzycoyote.qusetroll'
+    namespace 'com.murkfeatherstudio.questroll'
     compileSdk 36
 
     defaultConfig {
-        applicationId "com.fizzycoyote.qusetroll"
+        applicationId "com.murkfeatherstudio.questroll"
         minSdk 28
         targetSdk 35
         versionCode 1

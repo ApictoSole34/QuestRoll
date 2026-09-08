@@ -6,30 +6,30 @@
 
     <fragment
         android:id="@+id/gameSystemStepFragment"
-        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.GameSystemStepFragment"
-        android:label="System gry">
+        android:name="com.murkfeatherstudio.questroll.feature_character.ui.wizard.GameSystemStepFragment"
+        android:label="Game System">
         <action android:id="@+id/next_action" app:destination="@id/identityStepFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/identityStepFragment"
-        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.IdentityStepFragment"
-        android:label="Imię postaci">
+        android:name="com.murkfeatherstudio.questroll.feature_character.ui.wizard.IdentityStepFragment"
+        android:label="Identity">
         <action android:id="@+id/next_action" app:destination="@id/raceStepFragment" />
         <action android:id="@+id/back_action" app:destination="@id/gameSystemStepFragment" app:popUpTo="@id/gameSystemStepFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/raceStepFragment"
-        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.RaceStepFragment"
-        android:label="Rasa">
+        android:name="com.murkfeatherstudio.questroll.feature_character.ui.wizard.RaceStepFragment"
+        android:label="Race">
         <action android:id="@+id/next_action" app:destination="@id/backgroundStepFragment" />
         <action android:id="@+id/back_action" app:destination="@id/identityStepFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/backgroundStepFragment"
-        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.BackgroundStepFragment"
+        android:name="com.murkfeatherstudio.questroll.feature_character.ui.wizard.BackgroundStepFragment"
         android:label="Background">
         <action android:id="@+id/next_action" app:destination="@id/alignmentStepFragment" />
         <action android:id="@+id/back_action" app:destination="@id/raceStepFragment" />
@@ -37,7 +37,7 @@
 
     <fragment
         android:id="@+id/alignmentStepFragment"
-        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.AlignmentStepFragment"
+        android:name="com.murkfeatherstudio.questroll.feature_character.ui.wizard.AlignmentStepFragment"
         android:label="Alignment">
         <action android:id="@+id/next_action" app:destination="@id/classStepFragment" />
         <action android:id="@+id/back_action" app:destination="@id/backgroundStepFragment" />
@@ -45,7 +45,7 @@
 
     <fragment
         android:id="@+id/classStepFragment"
-        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.ClassStepFragment"
+        android:name="com.murkfeatherstudio.questroll.feature_character.ui.wizard.ClassStepFragment"
         android:label="Classes">
         <action
             android:id="@+id/next_action"
@@ -60,15 +60,15 @@
 
     <fragment
         android:id="@+id/subclassChoiceStepFragment"
-        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.SubclassChoiceStepFragment"
-        android:label="Classes">
+        android:name="com.murkfeatherstudio.questroll.feature_character.ui.wizard.SubclassChoiceStepFragment"
+        android:label="Subclasses">
         <action android:id="@+id/next_action" app:destination="@id/attributesStepFragment" />
         <action android:id="@+id/back_action" app:destination="@id/classStepFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/attributesStepFragment"
-        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.AttributesStepFragment"
+        android:name="com.murkfeatherstudio.questroll.feature_character.ui.wizard.AttributesStepFragment"
         android:label="Attributes">
         <action android:id="@+id/next_action" app:destination="@id/languagesStepFragment" />
         <action android:id="@+id/back_action" app:destination="@id/classStepFragment" />
@@ -76,7 +76,7 @@
 
     <fragment
         android:id="@+id/languagesStepFragment"
-        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.LanguagesStepFragment"
+        android:name="com.murkfeatherstudio.questroll.feature_character.ui.wizard.LanguagesStepFragment"
         android:label="Languages">
         <action android:id="@+id/next_action" app:destination="@id/skillsStepFragment" />
         <action android:id="@+id/back_action" app:destination="@id/attributesStepFragment" />
@@ -84,23 +84,23 @@
 
     <fragment
         android:id="@+id/skillsStepFragment"
-        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.SkillsStepFragment"
-        android:label="Umiejętności">
+        android:name="com.murkfeatherstudio.questroll.feature_character.ui.wizard.SkillsStepFragment"
+        android:label="Skills">
         <action android:id="@+id/next_action" app:destination="@id/spellsStepFragment" />
         <action android:id="@+id/back_action" app:destination="@id/languagesStepFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/spellsStepFragment"
-        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.SpellsStepFragment"
-        android:label="Zaklęcia">
+        android:name="com.murkfeatherstudio.questroll.feature_character.ui.wizard.SpellsStepFragment"
+        android:label="Spells">
         <action android:id="@+id/next_action" app:destination="@id/imageStepFragment" />
         <action android:id="@+id/back_action" app:destination="@id/skillsStepFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/imageStepFragment"
-        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.ImageStepFragment"
+        android:name="com.murkfeatherstudio.questroll.feature_character.ui.wizard.ImageStepFragment"
         android:label="Photos">
         <action android:id="@+id/next_action" app:destination="@id/equipmentStepFragment" />
         <action android:id="@+id/back_action" app:destination="@id/spellsStepFragment" />
@@ -108,8 +108,8 @@
 
     <fragment
         android:id="@+id/equipmentStepFragment"
-        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.EquipmentStepFragment"
-        android:label="EQ">
+        android:name="com.murkfeatherstudio.questroll.feature_character.ui.wizard.EquipmentStepFragment"
+        android:label="Equipment">
         <action android:id="@+id/action_equipment_to_item_search" app:destination="@id/itemSearchStepFragment" />
         <action android:id="@+id/action_equipment_to_summary" app:destination="@id/summaryStepFragment" />
         <action android:id="@+id/back_action" app:destination="@id/imageStepFragment" />
@@ -117,15 +117,15 @@
 
     <fragment
         android:id="@+id/itemSearchStepFragment"
-        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.ItemSearchStepFragment"
-        android:label="Przedmioty">
+        android:name="com.murkfeatherstudio.questroll.feature_character.ui.wizard.ItemSearchStepFragment"
+        android:label="Items">
         <action android:id="@+id/back_action" app:destination="@id/equipmentStepFragment" />
     </fragment>
 
     <fragment
         android:id="@+id/summaryStepFragment"
-        android:name="com.fizzycoyote.qusetroll.feature_character.ui.wizard.SummaryStepFragment"
-        android:label="Podsumowanie">
+        android:name="com.murkfeatherstudio.questroll.feature_character.ui.wizard.SummaryStepFragment"
+        android:label="Summary">
         <action android:id="@+id/back_action" app:destination="@id/equipmentStepFragment" />
     </fragment>
 </navigation>
