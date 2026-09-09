@@ -3,8 +3,6 @@ package com.murkfeatherstudio.questroll.feature_class.class_adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -15,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_character_class.custom_feature.CustomFeatureEntity;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_character_class.custom_table_data.CustomTableData;
+import com.murkfeatherstudio.questroll.databinding.ItemClassFeatureBinding;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,9 +61,9 @@ public class FeatureAdapter extends RecyclerView.Adapter<FeatureAdapter.ViewHold
                     .usePlugin(HtmlPlugin.create())
                     .build();
         }
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_class_feature, parent, false);
-        return new ViewHolder(view);
+        ItemClassFeatureBinding binding = ItemClassFeatureBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -89,47 +88,48 @@ public class FeatureAdapter extends RecyclerView.Adapter<FeatureAdapter.ViewHold
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView featureName, featureDesc;
-        ImageButton btnDelete;
-        TableLayout featureTable;
+        private final ItemClassFeatureBinding binding;
 
-        ViewHolder(View itemView) {
-            super(itemView);
-            featureName = itemView.findViewById(R.id.tv_feature_name);
-            featureDesc = itemView.findViewById(R.id.tv_feature_desc);
-            btnDelete = itemView.findViewById(R.id.btn_delete_feature);
-            featureTable = itemView.findViewById(R.id.table_layout);
+        ViewHolder(ItemClassFeatureBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         void bind(CustomFeatureEntity feature, int position,
                   OnFeatureClickListener listener, Markwon markwon, boolean deleteEnabled) {
 
-            featureName.setText(feature.name != null ? feature.name : "Unnamed feature");
-            featureName.setTypeface(ResourcesCompat.getFont(itemView.getContext(), R.font.cinzel_bold));
-            featureName.setTextColor(itemView.getContext().getResources().getColor(R.color.threads_text_primary, null));
+            binding.tvFeatureName.setText(feature.name != null ? feature.name : "Unnamed feature");
+            binding.tvFeatureName.setTypeface(ResourcesCompat.getFont(itemView.getContext(), R.font.cinzel_bold));
+            binding.tvFeatureName.setTextColor(itemView.getContext().getResources().getColor(R.color.threads_text_primary, null));
 
             if (feature.description != null && !feature.description.isEmpty()) {
-                featureDesc.setVisibility(View.VISIBLE);
+                binding.tvFeatureDesc.setVisibility(View.VISIBLE);
                 String fixedDescription = fixMarkdownHeader(feature.description);
-                markwon.setMarkdown(featureDesc, fixedDescription);
-                featureDesc.setTypeface(ResourcesCompat.getFont(itemView.getContext(), R.font.inter_regular));
-                featureDesc.setTextColor(itemView.getContext().getResources().getColor(R.color.threads_text_primary, null));
+                markwon.setMarkdown(binding.tvFeatureDesc, fixedDescription);
+                binding.tvFeatureDesc.setTypeface(ResourcesCompat.getFont(itemView.getContext(), R.font.inter_regular));
+                binding.tvFeatureDesc.setTextColor(itemView.getContext().getResources().getColor(R.color.threads_text_primary, null));
             } else {
-                featureDesc.setVisibility(View.GONE);
+                binding.tvFeatureDesc.setVisibility(View.GONE);
             }
 
-            if (btnDelete != null) {
-                btnDelete.setVisibility(deleteEnabled ? View.VISIBLE : View.GONE);
+            if (binding.btnDeleteFeature != null) {
+                binding.btnDeleteFeature.setVisibility(deleteEnabled ? View.VISIBLE : View.GONE);
                 if (deleteEnabled) {
-                    btnDelete.setOnClickListener(v -> {
+                    binding.btnDeleteFeature.setOnClickListener(v -> {
                         if (listener != null) listener.onDelete(position);
                     });
                 }
             }
 
-            featureTable.removeAllViews();
+            /**
+             * JAVADOC: table_layout is a dynamic TableLayout managed via addView(). 
+             * Rows and cells are created programmatically because class feature tables 
+             * vary in size and content. View Binding is not applicable to these 
+             * runtime-generated children.
+             */
+            binding.tableLayout.removeAllViews();
             if (feature.customTableData != null && !feature.customTableData.isEmpty()) {
-                featureTable.setVisibility(View.VISIBLE);
+                binding.tableLayout.setVisibility(View.VISIBLE);
 
                 TableRow header = new TableRow(itemView.getContext());
                 TextView lvlHeader = new TextView(itemView.getContext());
@@ -148,7 +148,7 @@ public class FeatureAdapter extends RecyclerView.Adapter<FeatureAdapter.ViewHold
 
                 header.addView(lvlHeader);
                 header.addView(valHeader);
-                featureTable.addView(header);
+                binding.tableLayout.addView(header);
 
                 for (CustomTableData tableData : feature.customTableData) {
                     TableRow row = new TableRow(itemView.getContext());
@@ -168,10 +168,10 @@ public class FeatureAdapter extends RecyclerView.Adapter<FeatureAdapter.ViewHold
 
                     row.addView(lvl);
                     row.addView(val);
-                    featureTable.addView(row);
+                    binding.tableLayout.addView(row);
                 }
             } else {
-                featureTable.setVisibility(View.GONE);
+                binding.tableLayout.setVisibility(View.GONE);
             }
 
             itemView.setOnClickListener(v -> {

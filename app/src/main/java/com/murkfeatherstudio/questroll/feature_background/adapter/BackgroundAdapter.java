@@ -3,14 +3,13 @@ package com.murkfeatherstudio.questroll.feature_background.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.ItemBackgroundBinding;
 import com.murkfeatherstudio.questroll.feature_background.model.CombinedBackground;
 
 public class BackgroundAdapter extends ListAdapter<CombinedBackground, BackgroundAdapter.ViewHolder> {
@@ -39,8 +38,9 @@ public class BackgroundAdapter extends ListAdapter<CombinedBackground, Backgroun
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_background, parent, false));
+        ItemBackgroundBinding binding = ItemBackgroundBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -49,24 +49,22 @@ public class BackgroundAdapter extends ListAdapter<CombinedBackground, Backgroun
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvSource, tvCustomBadge;
+        private final ItemBackgroundBinding binding;
 
-        ViewHolder(View v) {
-            super(v);
-            tvName = v.findViewById(R.id.tv_background_name);
-            tvSource = v.findViewById(R.id.tv_background_source);
-            tvCustomBadge = v.findViewById(R.id.tv_custom_badge);
+        ViewHolder(ItemBackgroundBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         void bind(CombinedBackground b, OnBackgroundClickListener listener) {
-            tvName.setText(b.name);
+            binding.tvBackgroundName.setText(b.name);
             if (b.documentName != null && !b.documentName.isEmpty() && !b.isCustom) {
-                tvSource.setText(b.documentName);
-                tvSource.setVisibility(View.VISIBLE);
+                binding.tvBackgroundSource.setText(b.documentName);
+                binding.tvBackgroundSource.setVisibility(View.VISIBLE);
             } else {
-                tvSource.setVisibility(View.GONE);
+                binding.tvBackgroundSource.setVisibility(View.GONE);
             }
-            tvCustomBadge.setVisibility(b.isCustom ? View.VISIBLE : View.GONE);
+            binding.tvCustomBadge.setVisibility(b.isCustom ? View.VISIBLE : View.GONE);
             itemView.setOnClickListener(v -> { if (listener != null) listener.onBackgroundClick(b); });
         }
     }

@@ -6,8 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.GridLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
+import com.murkfeatherstudio.questroll.databinding.FragmentDndCalculatorBinding;
 
 import java.util.List;
 
@@ -30,14 +29,20 @@ import java.util.List;
 public class DndCalculatorFragment extends Fragment {
 
     private DndCalculatorViewModel viewModel;
-    private TextView display;
-    private LinearLayout historyPanel;
     private HistoryAdapter historyAdapter;
+    private FragmentDndCalculatorBinding binding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_dnd_calculator, container, false);
+        binding = FragmentDndCalculatorBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
@@ -46,28 +51,21 @@ public class DndCalculatorFragment extends Fragment {
 
         viewModel = new ViewModelProvider(this).get(DndCalculatorViewModel.class);
 
-        display = view.findViewById(R.id.calc_display);
-        historyPanel = view.findViewById(R.id.history_panel);
-        RecyclerView historyRecycler = view.findViewById(R.id.history_recycler);
-        Button clearHistoryButton = view.findViewById(R.id.btn_clear_history);
-
         // Styling the display
-        display.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_medium));
+        binding.calcDisplay.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_medium));
 
-        historyRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.historyRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         historyAdapter = new HistoryAdapter();
-        historyRecycler.setAdapter(historyAdapter);
+        binding.historyRecycler.setAdapter(historyAdapter);
 
-        if (clearHistoryButton != null) {
-            clearHistoryButton.setOnClickListener(v -> viewModel.clearHistory());
-        }
+        binding.btnClearHistory.setOnClickListener(v -> viewModel.clearHistory());
 
-        setupButtons(view);
+        setupButtons();
 
-        viewModel.getDisplay().observe(getViewLifecycleOwner(), s -> display.setText(s));
+        viewModel.getDisplay().observe(getViewLifecycleOwner(), s -> binding.calcDisplay.setText(s));
         viewModel.getHistory().observe(getViewLifecycleOwner(), list -> historyAdapter.setItems(list));
         viewModel.getIsHistoryOpen().observe(getViewLifecycleOwner(), isOpen -> {
-            historyPanel.setVisibility(isOpen ? View.VISIBLE : View.GONE);
+            binding.historyPanel.setVisibility(isOpen ? View.VISIBLE : View.GONE);
             
             // Adjust drawer width in the current Activity when history is toggled
             if (getActivity() instanceof BaseActivity) {
@@ -76,25 +74,29 @@ public class DndCalculatorFragment extends Fragment {
         });
     }
 
-    private void setupButtons(View view) {
-        GridLayout grid = view.findViewById(R.id.calc_grid);
-        if (grid == null) return;
-        
-        for (int i = 0; i < grid.getChildCount(); i++) {
-            View child = grid.getChildAt(i);
+    /**
+     * Initializes click listeners for all calculator buttons.
+     * 
+     * <p>Note: Buttons in the GridLayout are accessed by iterating through child views. 
+     * Since View Binding does not generate a collection for all children, this approach 
+     * is the most efficient way to assign listeners to a large grid of similar buttons 
+     * without code duplication.</p>
+     */
+    private void setupButtons() {
+        if (binding == null) return;
+        for (int i = 0; i < binding.calcGrid.getChildCount(); i++) {
+            View child = binding.calcGrid.getChildAt(i);
             if (child instanceof Button) {
                 Button btn = (Button) child;
-                // Exclude the history toggle button if it's already handled elsewhere or uses static ID
-                if (btn.getId() != R.id.btn_history) {
+                int id = btn.getId();
+                // Exclude the history toggle button
+                if (id != R.id.btn_history) {
                     btn.setOnClickListener(v -> viewModel.onButtonClick(btn.getText().toString()));
                 }
             }
         }
         
-        Button btnHistory = view.findViewById(R.id.btn_history);
-        if (btnHistory != null) {
-            btnHistory.setOnClickListener(v -> viewModel.toggleHistory());
-        }
+        binding.btnHistory.setOnClickListener(v -> viewModel.toggleHistory());
     }
 
     private static class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {

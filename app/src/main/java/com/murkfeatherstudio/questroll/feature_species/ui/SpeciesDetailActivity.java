@@ -2,7 +2,6 @@ package com.murkfeatherstudio.questroll.feature_species.ui;
 
 import android.content.Intent;
 import android.graphics.Paint;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -12,13 +11,13 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
 import androidx.lifecycle.Observer;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_species.CustomSpeciesEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.species.SpeciesDto;
 import com.murkfeatherstudio.questroll.core.models.open5e.species.SpeciesEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivitySpeciesDetailBinding;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -31,11 +30,13 @@ import io.noties.markwon.Markwon;
 public class SpeciesDetailActivity extends BaseActivity {
 
     private Markwon markwon;
+    private ActivitySpeciesDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_species_detail);
+        binding = ActivitySpeciesDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         markwon = Markwon.create(this);
 
         String key = getIntent().getStringExtra("SPECIES_KEY");
@@ -44,45 +45,49 @@ public class SpeciesDetailActivity extends BaseActivity {
     }
 
     private void populateUI(SpeciesEntity s) {
-        ((TextView) findViewById(R.id.tv_species_name)).setText(s.name);
+        binding.tvSpeciesName.setText(s.name);
 
-        TextView tvSubtitle = findViewById(R.id.tv_subtitle);
         if (s.isSubspecies && s.subspeciesOf != null && !s.subspeciesOf.isEmpty()) {
-            tvSubtitle.setText("Subspecies of " + s.subspeciesOf);
-            tvSubtitle.setVisibility(View.VISIBLE);
-            tvSubtitle.setPaintFlags(tvSubtitle.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-            tvSubtitle.setOnClickListener(v -> {
+            binding.tvSubtitle.setText("Subspecies of " + s.subspeciesOf);
+            binding.tvSubtitle.setVisibility(View.VISIBLE);
+            binding.tvSubtitle.setPaintFlags(binding.tvSubtitle.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+            binding.tvSubtitle.setOnClickListener(v -> {
                 Intent i = new Intent(this, SpeciesDetailActivity.class);
                 i.putExtra("SPECIES_KEY", s.subspeciesOf);
                 startActivity(i);
             });
         } else if (s.documentName != null) {
-            tvSubtitle.setText(s.documentName);
-            tvSubtitle.setVisibility(View.VISIBLE);
-            tvSubtitle.setOnClickListener(null);
-            tvSubtitle.setPaintFlags(tvSubtitle.getPaintFlags() & ~Paint.UNDERLINE_TEXT_FLAG);
+            binding.tvSubtitle.setText(s.documentName);
+            binding.tvSubtitle.setVisibility(View.VISIBLE);
+            binding.tvSubtitle.setOnClickListener(null);
+            binding.tvSubtitle.setPaintFlags(binding.tvSubtitle.getPaintFlags() & ~Paint.UNDERLINE_TEXT_FLAG);
         } else {
-            tvSubtitle.setVisibility(View.GONE);
+            binding.tvSubtitle.setVisibility(View.GONE);
         }
 
-        TextView tvDesc = findViewById(R.id.tv_desc);
         if (s.desc != null && !s.desc.isEmpty()) {
-            markwon.setMarkdown(tvDesc, s.desc);
-            tvDesc.setVisibility(View.VISIBLE);
+            markwon.setMarkdown(binding.tvDesc, s.desc);
+            binding.tvDesc.setVisibility(View.VISIBLE);
         } else {
-            tvDesc.setVisibility(View.GONE);
+            binding.tvDesc.setVisibility(View.GONE);
         }
 
         buildTraits(s.traitsJson);
         buildSubspecies(s.key);
+
+        binding.btnManage.setVisibility(View.GONE);
     }
 
+    /**
+     * NOTE: traits_container is managed dynamically (addView()).
+     * Views for individual traits are created at runtime based on JSON data.
+     * ViewBinding is not applicable to these dynamically generated children.
+     */
     private void buildTraits(String traitsJson) {
-        LinearLayout container = findViewById(R.id.traits_container);
-        container.removeAllViews();
+        binding.traitsContainer.removeAllViews();
 
         if (traitsJson == null || traitsJson.isEmpty()) {
-            findViewById(R.id.traits_section).setVisibility(View.GONE);
+            binding.traitsSection.setVisibility(View.GONE);
             return;
         }
 
@@ -91,23 +96,25 @@ public class SpeciesDetailActivity extends BaseActivity {
             Type type = new TypeToken<List<SpeciesDto.SpeciesTraitDto>>(){}.getType();
             List<SpeciesDto.SpeciesTraitDto> traits = gson.fromJson(traitsJson, type);
             if (traits == null || traits.isEmpty()) {
-                findViewById(R.id.traits_section).setVisibility(View.GONE);
+                binding.traitsSection.setVisibility(View.GONE);
                 return;
             }
 
-            findViewById(R.id.traits_section).setVisibility(View.VISIBLE);
+            binding.traitsSection.setVisibility(View.VISIBLE);
             for (SpeciesDto.SpeciesTraitDto trait : traits) {
-                addTraitView(container, trait.name, trait.desc);
+                addTraitView(binding.traitsContainer, trait.name, trait.desc);
             }
         } catch (Exception e) {
-            findViewById(R.id.traits_section).setVisibility(View.GONE);
+            binding.traitsSection.setVisibility(View.GONE);
         }
     }
 
+    /**
+     * NOTE: subspecies_container is managed dynamically (addView()).
+     * Views for subspecies are created at runtime based on MediatorLiveData query results.
+     * ViewBinding is not applicable to these dynamically generated children.
+     */
     private void buildSubspecies(String parentKey) {
-        LinearLayout section = findViewById(R.id.subspecies_section);
-        LinearLayout container = findViewById(R.id.subspecies_container);
-
         Open5eDatabase open5eDb = Open5eDatabase.getInstance(this);
         UserContentDatabase customDb = UserContentDatabase.getInstance(this);
 
@@ -134,16 +141,17 @@ public class SpeciesDetailActivity extends BaseActivity {
         mediator.addSource(customSubs, s -> combine.onChanged(null));
 
         mediator.observe(this, all -> {
-            container.removeAllViews();
+            binding.subspeciesContainer.removeAllViews();
             if (all == null || all.isEmpty()) {
-                section.setVisibility(View.GONE);
+                binding.subspeciesSection.setVisibility(View.GONE);
                 return;
             }
-            section.setVisibility(View.VISIBLE);
+            binding.subspeciesSection.setVisibility(View.VISIBLE);
             for (Object item : all) {
                 TextView tv = new TextView(this);
                 tv.setPadding(0, dp(6), 0, dp(6));
                 tv.setTextSize(15);
+                tv.setTextColor(getResources().getColor(com.murkfeatherstudio.questroll.R.color.threads_text_primary, null));
 
                 if (item instanceof SpeciesEntity) {
                     SpeciesEntity sub = (SpeciesEntity) item;
@@ -162,7 +170,7 @@ public class SpeciesDetailActivity extends BaseActivity {
                         startActivity(i);
                     });
                 }
-                container.addView(tv);
+                binding.subspeciesContainer.addView(tv);
             }
         });
     }
@@ -174,14 +182,16 @@ public class SpeciesDetailActivity extends BaseActivity {
 
         TextView tvName = new TextView(this);
         tvName.setText(name);
-        tvName.setTypeface(null, Typeface.BOLD);
+        tvName.setTypeface(null, android.graphics.Typeface.BOLD);
         tvName.setTextSize(15);
+        tvName.setTextColor(getResources().getColor(com.murkfeatherstudio.questroll.R.color.threads_gold, null));
         row.addView(tvName);
 
         if (desc != null && !desc.isEmpty()) {
             TextView tvDesc = new TextView(this);
             markwon.setMarkdown(tvDesc, desc);
             tvDesc.setTextSize(14);
+            tvDesc.setTextColor(getResources().getColor(com.murkfeatherstudio.questroll.R.color.threads_text_primary, null));
             row.addView(tvDesc);
         }
         container.addView(row);

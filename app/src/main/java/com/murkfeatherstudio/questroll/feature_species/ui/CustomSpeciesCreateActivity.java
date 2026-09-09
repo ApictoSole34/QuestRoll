@@ -3,22 +3,14 @@ package com.murkfeatherstudio.questroll.feature_species.ui;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.AppExecutors;
@@ -31,11 +23,14 @@ import com.murkfeatherstudio.questroll.core.models.custom.custom_species.CustomS
 import com.murkfeatherstudio.questroll.core.models.open5e.game_system.GameSystemEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.language.LanguageEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.species.SpeciesEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityCustomSpeciesCreateBinding;
+import com.murkfeatherstudio.questroll.databinding.DialogAbilityBonusBinding;
+import com.murkfeatherstudio.questroll.databinding.DialogCreatureActionBinding;
+import com.murkfeatherstudio.questroll.databinding.DialogSearchableListBinding;
 import com.murkfeatherstudio.questroll.feature_species.adapter.AbilityBonusAdapter;
 import com.murkfeatherstudio.questroll.feature_species.adapter.LanguageKeyAdapter;
 import com.murkfeatherstudio.questroll.feature_species.adapter.OtherTraitAdapter;
 import com.murkfeatherstudio.questroll.feature_species.viewmodel.CustomSpeciesCreateViewModel;
-import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,14 +41,7 @@ public class CustomSpeciesCreateActivity extends BaseActivity {
     public static final String EXTRA_EDIT_ID = "edit_species_id";
 
     private CustomSpeciesCreateViewModel viewModel;
-    private TextInputEditText etName, etDesc;
-    private CheckBox cbIsSubspecies;
-    private LinearLayout layoutParent;
-    private AutoCompleteTextView actvParent;
-    private Spinner spinnerGameSystem;
-    private EditText etSpeed, etSize, etLanguageChoices;
-    private RecyclerView rvAbilityBonuses, rvLanguages, rvOtherTraits;
-    private Button btnAddAbilityBonus, btnAddLanguage, btnAddTrait, btnSave;
+    private ActivityCustomSpeciesCreateBinding binding;
 
     private AbilityBonusAdapter abilityBonusAdapter;
     private LanguageKeyAdapter languageKeyAdapter;
@@ -66,7 +54,8 @@ public class CustomSpeciesCreateActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_custom_species_create);
+        binding = ActivityCustomSpeciesCreateBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         UserContentDatabase customDb = UserContentDatabase.getInstance(this);
         Open5eDatabase open5eDb = Open5eDatabase.getInstance(this);
@@ -85,44 +74,27 @@ public class CustomSpeciesCreateActivity extends BaseActivity {
         loadGameSystems();
         loadParentOptions(customDb, open5eDb);
 
-        cbIsSubspecies.setOnCheckedChangeListener((v, checked) ->
-                layoutParent.setVisibility(checked ? View.VISIBLE : View.GONE));
+        binding.cbIsSubspecies.setOnCheckedChangeListener((v, checked) ->
+                binding.layoutParent.setVisibility(checked ? View.VISIBLE : View.GONE));
 
-        btnAddAbilityBonus.setOnClickListener(v -> showAddAbilityBonusDialog());
-        btnAddLanguage.setOnClickListener(v -> showAddLanguageDialog());
-        btnAddTrait.setOnClickListener(v -> showAddTraitDialog());
-        btnSave.setOnClickListener(v -> save());
+        binding.btnAddAbilityBonus.setOnClickListener(v -> showAddAbilityBonusDialog());
+        binding.btnAddLanguage.setOnClickListener(v -> showAddLanguageDialog());
+        binding.btnAddTrait.setOnClickListener(v -> showAddTraitDialog());
+        binding.btnSave.setOnClickListener(v -> save());
     }
 
     private void initViews() {
-        etName = findViewById(R.id.etName);
-        etDesc = findViewById(R.id.etDesc);
-        cbIsSubspecies = findViewById(R.id.cbIsSubspecies);
-        layoutParent = findViewById(R.id.layoutParent);
-        actvParent = findViewById(R.id.actvParent);
-        spinnerGameSystem = findViewById(R.id.spinnerGameSystem);
-        etSpeed = findViewById(R.id.etSpeed);
-        etSize = findViewById(R.id.etSize);
-        etLanguageChoices = findViewById(R.id.etLanguageChoices);
-        rvAbilityBonuses = findViewById(R.id.rvAbilityBonuses);
-        rvLanguages = findViewById(R.id.rvLanguages);
-        rvOtherTraits = findViewById(R.id.rvOtherTraits);
-        btnAddAbilityBonus = findViewById(R.id.btnAddAbilityBonus);
-        btnAddLanguage = findViewById(R.id.btnAddLanguage);
-        btnAddTrait = findViewById(R.id.btnAddTrait);
-        btnSave = findViewById(R.id.btnSave);
-
-        rvAbilityBonuses.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvAbilityBonuses.setLayoutManager(new LinearLayoutManager(this));
         abilityBonusAdapter = new AbilityBonusAdapter(position -> viewModel.removeAbilityBonus(position));
-        rvAbilityBonuses.setAdapter(abilityBonusAdapter);
+        binding.rvAbilityBonuses.setAdapter(abilityBonusAdapter);
 
-        rvLanguages.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvLanguages.setLayoutManager(new LinearLayoutManager(this));
         languageKeyAdapter = new LanguageKeyAdapter(position -> viewModel.removeLanguageKey(position));
-        rvLanguages.setAdapter(languageKeyAdapter);
+        binding.rvLanguages.setAdapter(languageKeyAdapter);
 
-        rvOtherTraits.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvOtherTraits.setLayoutManager(new LinearLayoutManager(this));
         otherTraitAdapter = new OtherTraitAdapter(position -> viewModel.removeOtherTrait(position));
-        rvOtherTraits.setAdapter(otherTraitAdapter);
+        binding.rvOtherTraits.setAdapter(otherTraitAdapter);
     }
 
     private void loadGameSystems() {
@@ -143,7 +115,7 @@ public class CustomSpeciesCreateActivity extends BaseActivity {
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                         android.R.layout.simple_spinner_item, names);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                spinnerGameSystem.setAdapter(adapter);
+                binding.spinnerGameSystem.setAdapter(adapter);
             });
         });
     }
@@ -177,7 +149,7 @@ public class CustomSpeciesCreateActivity extends BaseActivity {
                                     parentNames.add(cs.name + " (Custom)");
                                 }
                             }
-                            actvParent.setAdapter(new ArrayAdapter<>(this,
+                            binding.actvParent.setAdapter(new ArrayAdapter<>(this,
                                     android.R.layout.simple_list_item_1, parentNames));
                         });
                     });
@@ -187,19 +159,19 @@ public class CustomSpeciesCreateActivity extends BaseActivity {
     private void setupObservers() {
         viewModel.getEditData().observe(this, s -> {
             if (s == null) return;
-            etName.setText(s.name);
-            etDesc.setText(s.desc);
-            cbIsSubspecies.setChecked(s.isSubspecies);
-            layoutParent.setVisibility(s.isSubspecies ? View.VISIBLE : View.GONE);
+            binding.etName.setText(s.name);
+            binding.etDesc.setText(s.desc);
+            binding.cbIsSubspecies.setChecked(s.isSubspecies);
+            binding.layoutParent.setVisibility(s.isSubspecies ? View.VISIBLE : View.GONE);
             if (s.isSubspecies && s.subspeciesOfName != null) {
-                actvParent.setText(s.subspeciesOfName, false);
+                binding.actvParent.setText(s.subspeciesOfName, false);
             }
-            etSpeed.setText(s.speed);
-            etSize.setText(s.size);
-            etLanguageChoices.setText(String.valueOf(s.languageChoices));
+            binding.etSpeed.setText(s.speed);
+            binding.etSize.setText(s.size);
+            binding.etLanguageChoices.setText(String.valueOf(s.languageChoices));
             for (int i = 0; i < gameSystems.size(); i++) {
                 if (gameSystems.get(i).key.equals(s.gameSystem)) {
-                    spinnerGameSystem.setSelection(i);
+                    binding.spinnerGameSystem.setSelection(i);
                     break;
                 }
             }
@@ -223,20 +195,17 @@ public class CustomSpeciesCreateActivity extends BaseActivity {
     private void showAddAbilityBonusDialog() {
         String[] abilities = {"STR", "DEX", "CON", "INT", "WIS", "CHA"};
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = LayoutInflater.from(this).inflate(R.layout.dialog_ability_bonus, null);
-        Spinner spinnerAbility = view.findViewById(R.id.spinner_ability);
-        EditText etBonus = view.findViewById(R.id.et_bonus);
-
+        DialogAbilityBonusBinding dialogBinding = DialogAbilityBonusBinding.inflate(getLayoutInflater());
         ArrayAdapter<String> abilityAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, abilities);
         abilityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerAbility.setAdapter(abilityAdapter);
+        dialogBinding.spinnerAbility.setAdapter(abilityAdapter);
 
-        builder.setTitle("Add Ability Bonus")
-                .setView(view)
+        new AlertDialog.Builder(this)
+                .setTitle("Add Ability Bonus")
+                .setView(dialogBinding.getRoot())
                 .setPositiveButton("Add", (d, w) -> {
-                    String ability = (String) spinnerAbility.getSelectedItem();
-                    String bonusText = etBonus.getText().toString().trim();
+                    String ability = (String) dialogBinding.spinnerAbility.getSelectedItem();
+                    String bonusText = dialogBinding.etBonus.getText().toString().trim();
                     if (bonusText.isEmpty()) {
                         Toast.makeText(this, "Enter bonus value", Toast.LENGTH_SHORT).show();
                         return;
@@ -286,29 +255,25 @@ public class CustomSpeciesCreateActivity extends BaseActivity {
     }
 
     private void showAddTraitDialog() {
-        View dv = LayoutInflater.from(this).inflate(R.layout.dialog_creature_action, null);
-        EditText etName = dv.findViewById(R.id.etActionName);
-        EditText etDesc = dv.findViewById(R.id.etActionDesc);
-        dv.findViewById(R.id.spinnerActionType).setVisibility(View.GONE);
+        DialogCreatureActionBinding dialogBinding = DialogCreatureActionBinding.inflate(getLayoutInflater());
+        dialogBinding.spinnerActionType.setVisibility(View.GONE);
+        
         new AlertDialog.Builder(this)
                 .setTitle("Add Trait")
-                .setView(dv)
+                .setView(dialogBinding.getRoot())
                 .setPositiveButton("Add", (d, w) -> {
-                    String name = etName.getText().toString().trim();
+                    String name = dialogBinding.etActionName.getText() != null ? dialogBinding.etActionName.getText().toString().trim() : "";
                     if (name.isEmpty()) return;
                     CustomCreatureAction t = new CustomCreatureAction();
                     t.name = name;
-                    t.desc = etDesc.getText().toString().trim();
+                    t.desc = dialogBinding.etActionDesc.getText() != null ? dialogBinding.etActionDesc.getText().toString().trim() : "";
                     viewModel.addOtherTrait(t);
                 })
                 .setNegativeButton("Cancel", null).show();
     }
 
     private <T> void showSearchableListDialog(String title, List<T> items, java.util.function.Consumer<T> onSelect) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_searchable_list, null);
-        EditText searchInput = dialogView.findViewById(R.id.search_input);
-        android.widget.ListView listView = dialogView.findViewById(R.id.list_view);
+        DialogSearchableListBinding dialogBinding = DialogSearchableListBinding.inflate(getLayoutInflater());
 
         List<T> filteredItems = new ArrayList<>(items);
         ArrayAdapter<T> adapter = new ArrayAdapter<T>(this, android.R.layout.simple_list_item_1, filteredItems) {
@@ -324,9 +289,9 @@ public class CustomSpeciesCreateActivity extends BaseActivity {
                 return tv;
             }
         };
-        listView.setAdapter(adapter);
+        dialogBinding.listView.setAdapter(adapter);
 
-        searchInput.addTextChangedListener(new TextWatcher() {
+        dialogBinding.searchInput.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
             @Override public void afterTextChanged(Editable s) {
@@ -341,40 +306,47 @@ public class CustomSpeciesCreateActivity extends BaseActivity {
                 adapter.notifyDataSetChanged();
             }
         });
-        listView.setOnItemClickListener((parent, view, position, id) -> {
+        
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setView(dialogBinding.getRoot())
+                .setNegativeButton("Cancel", null)
+                .show();
+
+        dialogBinding.listView.setOnItemClickListener((parent, view, position, id) -> {
             T selected = filteredItems.get(position);
             onSelect.accept(selected);
-            builder.create().dismiss();
+            dialog.dismiss();
         });
-        builder.setView(dialogView).setNegativeButton("Cancel", null).show();
     }
 
     private String getCurrentGameSystemKey() {
-        int pos = spinnerGameSystem.getSelectedItemPosition();
+        int pos = binding.spinnerGameSystem.getSelectedItemPosition();
         return (pos >= 0 && pos < gameSystems.size()) ? gameSystems.get(pos).key : "5e-2014";
     }
 
     private void save() {
-        String name = etName.getText().toString().trim();
+        String name = binding.etName.getText() != null ? binding.etName.getText().toString().trim() : "";
         if (name.isEmpty()) {
-            etName.setError("Required");
+            binding.etName.setError("Required");
             return;
         }
         CustomSpeciesEntity e = new CustomSpeciesEntity();
         e.name = name;
-        e.desc = etDesc.getText().toString().trim();
-        e.isSubspecies = cbIsSubspecies.isChecked();
+        e.desc = binding.etDesc.getText() != null ? binding.etDesc.getText().toString().trim() : "";
+        e.isSubspecies = binding.cbIsSubspecies.isChecked();
         if (e.isSubspecies) {
-            String parentName = actvParent.getText().toString().trim();
+            String parentName = binding.actvParent.getText().toString().trim();
             int idx = parentNames.indexOf(parentName);
             if (idx >= 0) {
                 e.subspeciesOfKey = parentKeys.get(idx);
                 e.subspeciesOfName = parentName.replace(" (SRD)", "").replace(" (Custom)", "").trim();
             }
         }
-        e.speed = etSpeed.getText().toString().trim();
-        e.size = etSize.getText().toString().trim();
-        e.languageChoices = Integer.parseInt(etLanguageChoices.getText().toString());
+        e.speed = binding.etSpeed.getText() != null ? binding.etSpeed.getText().toString().trim() : "";
+        e.size = binding.etSize.getText() != null ? binding.etSize.getText().toString().trim() : "";
+        String choicesStr = binding.etLanguageChoices.getText() != null ? binding.etLanguageChoices.getText().toString() : "0";
+        e.languageChoices = Integer.parseInt(choicesStr.isEmpty() ? "0" : choicesStr);
         e.gameSystem = getCurrentGameSystemKey();
         viewModel.save(e);
     }

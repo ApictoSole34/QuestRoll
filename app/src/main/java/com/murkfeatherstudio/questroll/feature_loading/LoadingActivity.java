@@ -1,25 +1,21 @@
 package com.murkfeatherstudio.questroll.feature_loading;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.ScrollView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.res.ResourcesCompat;
-import androidx.lifecycle.LiveData;
+import androidx.core.widget.NestedScrollView;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.murkfeatherstudio.questroll.R;
-import com.murkfeatherstudio.questroll.core.api.Open5eApiClient;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
-import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
-import com.murkfeatherstudio.questroll.core.repository.open5e.Open5eRepository;
-import com.murkfeatherstudio.questroll.core.repository.open5e.Resource;
+import com.murkfeatherstudio.questroll.databinding.ActivityLoadingBinding;
 import com.murkfeatherstudio.questroll.main.ui.MainActivity;
 
 import java.util.ArrayList;
@@ -28,96 +24,99 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+
 
 /**
  * The initial activity responsible for ensuring the local database is populated
  * with game data from the Open5e API.
  * <p>
- * If data is missing, it allows the user to select specific sections (classes, spells, etc.)
- * to fetch. It displays progress logs and bars during the synchronization process.
- * Once data is available, it navigates to the {@link MainActivity}.
+ * All fetching state lives in {@link LoadingViewModel}, so it survives configuration
+ * changes (e.g. rotation) instead of restarting the download.
  * </p>
  */
 public class LoadingActivity extends BaseActivity {
 
-    private Open5eRepository repository;
-
-    private ScrollView selectionLayout;
-    private LinearLayout fetchingLayout;
-
-    private ProgressBar progressBar;
-    private ProgressBar progressBarSection;
-
-    private TextView progressText;
-    private TextView sectionText;
-    private TextView logText;
+    private ActivityLoadingBinding binding;
+    private LoadingViewModel viewModel;
 
     private final Map<DataSection, CheckBox> checkboxMap = new LinkedHashMap<>();
     private boolean isInternalChange = false;
     private String lastLoggedSection = "";
-    private int currentOverallProgress = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_loading);
 
-        selectionLayout      = findViewById(R.id.layout_selection);
-        fetchingLayout       = findViewById(R.id.layout_fetching);
-        progressBar          = findViewById(R.id.progressBar);
-        progressBarSection   = findViewById(R.id.progressBarIndeterminate);
-        progressText         = findViewById(R.id.progressText);
-        sectionText          = findViewById(R.id.sectionText);
-        logText              = findViewById(R.id.logText);
+        // Keep the screen on during the initial loading process
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-        progressText.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
-        progressText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        binding = ActivityLoadingBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        sectionText.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
-        sectionText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        viewModel = new ViewModelProvider(this).get(LoadingViewModel.class);
 
-        logText.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
-        logText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        binding.progressText.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.progressText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
 
-        progressBarSection.setIndeterminate(false);
-        progressBarSection.setMax(100);
-        progressBarSection.setProgress(0);
+        binding.sectionText.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.sectionText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
 
-        buildRepository();
+        binding.logText.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.logText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+
+        binding.progressBarIndeterminate.setIndeterminate(false);
+        binding.progressBarIndeterminate.setMax(100);
+        binding.progressBarIndeterminate.setProgress(0);
+
         setupCheckboxes();
         setupButtons();
+        observeViewModel();
 
         boolean forceRefresh = getIntent().getBooleanExtra("force_refresh", false);
         if (forceRefresh) {
             showSelectionLayout();
+        } else if (viewModel.isFetchStarted()) {
+            // A fetch was already running before rotation - just re-show the UI for it.
+            showFetchingLayout();
         } else {
-            checkDataAndProceed();
+            viewModel.checkExistingData();
         }
     }
 
-    private void buildRepository() {
-        Open5eDatabase db = Open5eDatabase.getInstance(getApplicationContext());
-        Executor executor = Executors.newSingleThreadExecutor();
-        repository = new Open5eRepository(
-                Open5eApiClient.getApiService(),
-                db.publisherDao(), db.gameSystemDao(), db.licenseDao(),
-                db.documentDao(), db.languageDao(), db.abilityDao(),
-                db.skillDao(), db.characterClassDao(), db.featureDao(),
-                db.hitPointsDao(), db.savingThrowDao(), db.spellDao(),
-                db.spellSchoolDao(), db.creatureDao(), db.speciesDao(),
-                db.backgroundDao(), db.itemDao(), db.damageTypeDao(),
-                db.alignmentDao(), db.itemRarityDao(), db.weaponPropertyDao(),
-                db.serviceDao(), db.environmentDao(), db.ruleDao(), db.rulesetDao(),
-                db.conditionDao(), db.creatureTypeDao(), db.itemCategoryDao(),
-                db.itemSetDao(),
-                executor
-        );
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        binding = null;
+    }
+
+    private void observeViewModel() {
+        viewModel.getHasExistingData().observe(this, hasData -> {
+            if (hasData == null) return;
+            if (hasData) {
+                startMainActivity();
+            } else {
+                showSelectionLayout();
+            }
+        });
+
+        viewModel.getFetchState().observe(this, resource -> {
+            if (resource == null) return;
+            switch (resource.status) {
+                case LOADING:
+                    updateUI(resource.progress, resource.sectionName, resource.sectionProgress);
+                    break;
+                case SUCCESS:
+                    startMainActivity();
+                    break;
+                case ERROR:
+                    showError(resource.message);
+                    break;
+            }
+        });
     }
 
     private void setupCheckboxes() {
-        LinearLayout checkboxContainer = findViewById(R.id.checkbox_container);
+        LinearLayout checkboxContainer = binding.checkboxContainer;
         for (DataSection section : DataSection.values()) {
             CheckBox cb = new CheckBox(this);
             cb.setText(section.displayName);
@@ -137,33 +136,33 @@ public class LoadingActivity extends BaseActivity {
     }
 
     private void setupButtons() {
-        findViewById(R.id.btnFetchAll).setOnClickListener(v -> {
+        binding.btnFetchAll.setOnClickListener(v -> {
             isInternalChange = true;
             for (CheckBox cb : checkboxMap.values()) cb.setChecked(true);
             isInternalChange = false;
             showFetchingLayout();
-            startFetchingAll();
+            viewModel.startFetchingAll();
         });
 
-        findViewById(R.id.btnFetchSelected).setOnClickListener(v -> {
+        binding.btnFetchSelected.setOnClickListener(v -> {
             Set<DataSection> selected = getSelectedSections();
             if (selected.isEmpty()) {
                 Toast.makeText(this, "Select at least one section", Toast.LENGTH_SHORT).show();
                 return;
             }
             showFetchingLayout();
-            startFetchingSelected(selected);
+            viewModel.startFetchingSelected(selected);
         });
 
-        findViewById(R.id.btnSkip).setOnClickListener(v -> startMainActivity());
+        binding.btnSkip.setOnClickListener(v -> startMainActivity());
 
-        findViewById(R.id.btnSelectAll).setOnClickListener(v -> {
+        binding.btnSelectAll.setOnClickListener(v -> {
             isInternalChange = true;
             checkboxMap.values().forEach(cb -> cb.setChecked(true));
             isInternalChange = false;
         });
 
-        findViewById(R.id.btnSelectNone).setOnClickListener(v -> {
+        binding.btnSelectNone.setOnClickListener(v -> {
             isInternalChange = true;
             checkboxMap.values().forEach(cb -> cb.setChecked(false));
             isInternalChange = false;
@@ -205,7 +204,6 @@ public class LoadingActivity extends BaseActivity {
 
     private List<DataSection> getDependencies(DataSection section) {
         List<DataSection> deps = new ArrayList<>();
-        // Most content depends on basic infrastructure
         if (section != DataSection.PUBLISHERS && section != DataSection.LICENSES &&
                 section != DataSection.GAME_SYSTEMS && section != DataSection.DOCUMENTS) {
             deps.add(DataSection.DOCUMENTS);
@@ -250,113 +248,60 @@ public class LoadingActivity extends BaseActivity {
         return selected;
     }
 
-    /**
-     * Checks if the local database already contains essential game data.
-     * If yes, proceeds to MainActivity; otherwise, shows the selection UI for fetching.
-     */
-    private void checkDataAndProceed() {
-        Open5eDatabase.getInstance(this).getQueryExecutor().execute(() -> {
-            int classCount = Open5eDatabase.getInstance(this).characterClassDao().getCount();
-            int spellCount = Open5eDatabase.getInstance(this).spellDao().getCount();
-            runOnUiThread(() -> {
-                if (classCount > 0 && spellCount > 0) {
-                    startMainActivity();
-                } else {
-                    showSelectionLayout();
-                }
-            });
-        });
-    }
-
     private void showSelectionLayout() {
-        selectionLayout.setVisibility(View.VISIBLE);
-        fetchingLayout.setVisibility(View.GONE);
+        binding.layoutSelection.setVisibility(View.VISIBLE);
+        binding.layoutFetching.setVisibility(View.GONE);
     }
 
     private void showFetchingLayout() {
-        selectionLayout.setVisibility(View.GONE);
-        fetchingLayout.setVisibility(View.VISIBLE);
-        logText.setText("");
+        binding.layoutSelection.setVisibility(View.GONE);
+        binding.layoutFetching.setVisibility(View.VISIBLE);
+        binding.logText.setText("");
         lastLoggedSection = "";
-        currentOverallProgress = 0;
 
-        progressBar.setProgress(0);
-        progressText.setText("0%");
-        sectionText.setText("Initializing...");
+        binding.progressBar.setProgress(0);
+        binding.progressText.setText("0%");
+        binding.sectionText.setText("Initializing...");
 
-        progressBar.setVisibility(View.VISIBLE);
+        binding.progressBar.setVisibility(View.VISIBLE);
 
-        progressBarSection.setProgress(0);
-        progressBarSection.setVisibility(View.VISIBLE);
+        binding.progressBarIndeterminate.setProgress(0);
+        binding.progressBarIndeterminate.setVisibility(View.VISIBLE);
     }
 
-    private void startFetchingAll() {
-        observeFetching(repository.refreshAllData());
-    }
-
-    private void startFetchingSelected(Set<DataSection> sections) {
-        observeFetching(repository.refreshSelectedData(sections));
-    }
-
-    private void observeFetching(LiveData<Resource<Boolean>> liveData) {
-        liveData.observe(this, resource -> {
-            if (resource == null) return;
-            switch (resource.status) {
-                case LOADING:
-                    updateUI(resource.progress, resource.sectionName, resource.sectionProgress);
-                    break;
-                case SUCCESS:
-                    startMainActivity();
-                    break;
-                case ERROR:
-                    showError(resource.message);
-                    break;
-            }
-        });
-    }
-
-    /**
-     * Updates the progress bars and logs based on the current synchronization state.
-     *
-     * @param progress        Overall progress percentage (0-100).
-     * @param sectionName     Name of the section currently being fetched.
-     * @param sectionProgress Progress within the current section.
-     */
     private void updateUI(int progress, String sectionName, int sectionProgress) {
-        runOnUiThread(() -> {
-            if (progress >= 0) {
-                currentOverallProgress = progress;
-                progressBar.setProgress(progress);
-                progressText.setText(progress + "%");
+        if (progress >= 0) {
+            binding.progressBar.setProgress(progress);
+            binding.progressText.setText(progress + "%");
+        }
+
+        if (sectionName != null && !sectionName.isEmpty()) {
+            String sectionLabel = "Downloading: " + sectionName;
+            if (sectionProgress >= 0) {
+                sectionLabel += "  (" + sectionProgress + "%)";
             }
+            binding.sectionText.setText(sectionLabel);
 
-            if (sectionName != null && !sectionName.isEmpty()) {
-                String sectionLabel = "Downloading: " + sectionName;
-                if (sectionProgress >= 0) {
-                    sectionLabel += "  (" + sectionProgress + "%)";
-                }
-                sectionText.setText(sectionLabel);
+            binding.progressBarIndeterminate.setProgress(Math.max(sectionProgress, 0));
 
-                if (sectionProgress >= 0) {
-                    progressBarSection.setProgress(sectionProgress);
-                } else {
-                    progressBarSection.setProgress(0);
-                }
+            if (!sectionName.equals(lastLoggedSection)) {
+                String current = binding.logText.getText().toString();
+                String newLog  = current.isEmpty()
+                        ? "▶ " + sectionName
+                        : current + "\n▶ " + sectionName;
+                binding.logText.setText(newLog);
+                lastLoggedSection = sectionName;
 
-                if (!sectionName.equals(lastLoggedSection)) {
-                    String current = logText.getText().toString();
-                    String newLog  = current.isEmpty()
-                            ? "▶ " + sectionName
-                            : current + "\n▶ " + sectionName;
-                    logText.setText(newLog);
-                    lastLoggedSection = sectionName;
-                    final View scrollView = (View) logText.getParent().getParent();
-                    if (scrollView instanceof androidx.core.widget.NestedScrollView) {
-                        ((androidx.core.widget.NestedScrollView) scrollView).fullScroll(View.FOCUS_DOWN);
-                    }
+                // Note: the parent ScrollView has no id in the layout, so it isn't part of
+                // the binding - we still have to walk up to reach it for the auto-scroll.
+                View parent = (View) binding.logText.getParent().getParent();
+                if (parent instanceof NestedScrollView) {
+                    ((NestedScrollView) parent).fullScroll(View.FOCUS_DOWN);
+                } else if (parent instanceof android.widget.ScrollView) {
+                    ((android.widget.ScrollView) parent).fullScroll(View.FOCUS_DOWN);
                 }
             }
-        });
+        }
     }
 
     private void startMainActivity() {
@@ -370,7 +315,7 @@ public class LoadingActivity extends BaseActivity {
                 .setMessage(message)
                 .setPositiveButton("Retry", (d, w) -> {
                     showFetchingLayout();
-                    startFetchingAll();
+                    viewModel.retryFetchAll();
                 })
                 .setNegativeButton("Exit", (d, w) -> finish())
                 .show();

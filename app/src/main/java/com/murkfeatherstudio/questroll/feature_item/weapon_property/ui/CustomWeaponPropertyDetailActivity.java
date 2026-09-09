@@ -3,28 +3,28 @@ package com.murkfeatherstudio.questroll.feature_item.weapon_property.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_weapon_property.CustomWeaponPropertyDao;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_weapon_property.CustomWeaponPropertyEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityWeaponPropertyDetailBinding;
 
 public class CustomWeaponPropertyDetailActivity extends BaseActivity {
 
     public static final String EXTRA_ID = "CUSTOM_WEAPON_PROPERTY_ID";
     private long id;
     private CustomWeaponPropertyDao dao;
+    private ActivityWeaponPropertyDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_weapon_property_detail);
+        binding = ActivityWeaponPropertyDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         id = getIntent().getLongExtra(EXTRA_ID, -1);
         if (id == -1) {
@@ -39,13 +39,12 @@ public class CustomWeaponPropertyDetailActivity extends BaseActivity {
     }
 
     private void populateUI(CustomWeaponPropertyEntity p) {
-        ((TextView) findViewById(R.id.tv_name)).setText(p.name);
-        ((TextView) findViewById(R.id.tv_type)).setText(p.type != null ? p.type : "Property");
-        ((TextView) findViewById(R.id.tv_desc)).setText(p.desc != null ? p.desc : "");
+        binding.tvName.setText(p.name);
+        binding.tvType.setText(p.type != null ? p.type : "Property");
+        binding.tvDesc.setText(p.desc != null ? p.desc : "");
 
-        Button btnManage = findViewById(R.id.btnManage);
-        btnManage.setVisibility(View.VISIBLE);
-        btnManage.setOnClickListener(v -> showManageMenu(v, id));
+        binding.btnManage.setVisibility(View.VISIBLE);
+        binding.btnManage.setOnClickListener(v -> showManageMenu(v, id));
     }
 
     private void showManageMenu(View anchor, long id) {

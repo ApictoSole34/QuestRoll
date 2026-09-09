@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -14,8 +13,9 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.models.campaign.CampaignEntity;
+import com.murkfeatherstudio.questroll.databinding.FragmentQuickCampaignListBinding;
+import com.murkfeatherstudio.questroll.databinding.ItemQuickCampaignBinding;
 import com.murkfeatherstudio.questroll.feature_campaign.ui.CampaignDetailActivity;
 import com.murkfeatherstudio.questroll.feature_campaign.view_model.QuickCampaignViewModel;
 
@@ -30,11 +30,19 @@ public class QuickCampaignFragment extends Fragment {
 
     private QuickCampaignViewModel viewModel;
     private CampaignAdapter adapter;
+    private FragmentQuickCampaignListBinding binding;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_quick_campaign_list, container, false);
+        binding = FragmentQuickCampaignListBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
@@ -42,10 +50,9 @@ public class QuickCampaignFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(this).get(QuickCampaignViewModel.class);
 
-        RecyclerView recyclerView = view.findViewById(R.id.rv_quick_campaigns);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.rvQuickCampaigns.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new CampaignAdapter();
-        recyclerView.setAdapter(adapter);
+        binding.rvQuickCampaigns.setAdapter(adapter);
 
         viewModel.getAllCampaigns().observe(getViewLifecycleOwner(), campaigns -> {
             adapter.setCampaigns(campaigns);
@@ -63,15 +70,15 @@ public class QuickCampaignFragment extends Fragment {
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_quick_campaign, parent, false);
-            return new ViewHolder(v);
+            ItemQuickCampaignBinding itemBinding = ItemQuickCampaignBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+            return new ViewHolder(itemBinding);
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             CampaignEntity campaign = campaigns.get(position);
-            holder.nameText.setText(campaign.name);
-            holder.systemText.setText(campaign.gameSystem);
+            holder.binding.tvName.setText(campaign.name);
+            holder.binding.tvSystem.setText(campaign.gameSystem);
             
             holder.itemView.setOnClickListener(v -> {
                 Intent intent = new Intent(getActivity(), CampaignDetailActivity.class);
@@ -86,12 +93,10 @@ public class QuickCampaignFragment extends Fragment {
         }
 
         class ViewHolder extends RecyclerView.ViewHolder {
-            TextView nameText;
-            TextView systemText;
-            ViewHolder(View itemView) {
-                super(itemView);
-                nameText = itemView.findViewById(R.id.tv_name);
-                systemText = itemView.findViewById(R.id.tv_system);
+            final ItemQuickCampaignBinding binding;
+            ViewHolder(ItemQuickCampaignBinding binding) {
+                super(binding.getRoot());
+                this.binding = binding;
             }
         }
     }

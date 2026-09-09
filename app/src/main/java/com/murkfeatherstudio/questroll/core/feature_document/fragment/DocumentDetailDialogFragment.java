@@ -5,55 +5,48 @@ import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.models.open5e.document.DocumentEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.game_system.GameSystemEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.license.LicenseEntity;
+import com.murkfeatherstudio.questroll.databinding.FragmentDocumentDetailBinding;
 
 import java.util.concurrent.Executors;
 
 public class DocumentDetailDialogFragment extends DialogFragment {
     private static final String ARG_KEY = "key";
+    private FragmentDocumentDetailBinding binding;
 
     public static DocumentDetailDialogFragment newInstance(String key) {
         DocumentDetailDialogFragment fragment = new DocumentDetailDialogFragment();
         Bundle args = new Bundle();
-
         args.putString(ARG_KEY, key);
         fragment.setArguments(args);
-
         return fragment;
     }
 
     @NonNull @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         String key = requireArguments().getString(ARG_KEY);
-        View view = LayoutInflater.from(getContext())
-                .inflate(R.layout.fragment_document_detail, null);
-
-        TextView tvName       = view.findViewById(R.id.tv_doc_name);
-        TextView tvAuthor     = view.findViewById(R.id.tv_doc_author);
-        TextView tvLicense    = view.findViewById(R.id.tv_doc_license);
-        TextView tvGameSystem = view.findViewById(R.id.tv_doc_gamesystem);
-        TextView tvDistance   = view.findViewById(R.id.tv_doc_distance);
-        TextView tvPublished  = view.findViewById(R.id.tv_doc_published);
-        TextView tvPermalink  = view.findViewById(R.id.tv_doc_permalink);
-        TextView tvDesc       = view.findViewById(R.id.tv_doc_desc);
+        binding = FragmentDocumentDetailBinding.inflate(LayoutInflater.from(getContext()));
 
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
-                .setView(view)
+                .setView(binding.getRoot())
                 .setPositiveButton("Close", null)
                 .create();
 
+        /**
+         * JAVADOC: We use runOnUiThread to update the binding fields after fetching 
+         * data from the database in a background thread. View Binding provides 
+         * type-safe access to all document fields (author, license, system, etc.) 
+         * defined in fragment_document_detail.xml.
+         */
         Executors.newSingleThreadExecutor().execute(() -> {
             Open5eDatabase db = Open5eDatabase.getInstance(requireContext());
             DocumentEntity doc = db.documentDao().getByKey(key);
@@ -85,34 +78,38 @@ public class DocumentDetailDialogFragment extends DialogFragment {
                     ? gs.name
                     : (gsKey != null ? gsKey : "—");
 
-            requireActivity().runOnUiThread(() -> {
-                tvName      .setText(name);
-                tvAuthor    .setText("Author: "      + author);
-                tvLicense   .setText(licenseName);
-                tvGameSystem.setText("Game System"   +gsName);
-                tvDistance  .setText("Distance: "    + distance);
-                tvPublished .setText("Published: "   + publishedAt);
-                tvPermalink .setText(permalink);
-                tvDesc      .setText(description);
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(() -> {
+                    if (binding == null) return;
+                    binding.tvDocName.setText(name);
+                    binding.tvDocAuthor.setText("Author: " + author);
+                    binding.tvDocLicense.setText(licenseName);
+                    binding.tvDocGamesystem.setText("Game System: " + gsName);
+                    binding.tvDocDistance.setText("Distance: " + distance);
+                    binding.tvDocPublished.setText("Published: " + publishedAt);
+                    binding.tvDocPermalink.setText(permalink);
+                    binding.tvDocDesc.setText(description);
 
-                tvPermalink.setAutoLinkMask(Linkify.WEB_URLS);
-                tvPermalink.setMovementMethod(LinkMovementMethod.getInstance());
-            });
+                    binding.tvDocPermalink.setAutoLinkMask(Linkify.WEB_URLS);
+                    binding.tvDocPermalink.setMovementMethod(LinkMovementMethod.getInstance());
+                });
+            }
         });
 
         return dialog;
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
     private @Nullable String extractKeyFromUrl(@Nullable String url) {
         if (url == null) return null;
-
         String u = url.endsWith("/") ? url.substring(0, url.length() - 1) : url;
         String[] parts = u.split("/");
-
-        if (parts.length > 0) {
-            return parts[parts.length - 1];
-        }
-
+        if (parts.length > 0) return parts[parts.length - 1];
         return null;
     }
 }

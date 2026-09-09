@@ -3,16 +3,14 @@ package com.murkfeatherstudio.questroll.feature_spell.spell_school.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_spell.CustomSpellSchoolDao;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_spell.CustomSpellSchoolEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivitySpellSchoolDetailBinding;
 
 import io.noties.markwon.Markwon;
 
@@ -22,11 +20,13 @@ public class CustomSpellSchoolDetailActivity extends BaseActivity {
     private Markwon markwon;
     private long id;
     private CustomSpellSchoolDao dao;
+    private ActivitySpellSchoolDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_spell_school_detail);
+        binding = ActivitySpellSchoolDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         markwon = Markwon.create(this);
 
         id = getIntent().getLongExtra(EXTRA_ID, -1);
@@ -41,14 +41,12 @@ public class CustomSpellSchoolDetailActivity extends BaseActivity {
     }
 
     private void populateUI(CustomSpellSchoolEntity s) {
-        ((TextView) findViewById(R.id.tv_name)).setText(s.name);
-        TextView tvDesc = findViewById(R.id.tv_desc);
-        markwon.setMarkdown(tvDesc, s.description != null ? s.description : "");
+        binding.tvName.setText(s.name);
+        markwon.setMarkdown(binding.tvDesc, s.description != null ? s.description : "");
 
-        findViewById(R.id.tv_source).setVisibility(View.GONE);
-        Button btnManage = findViewById(R.id.btnManage);
-        btnManage.setVisibility(View.VISIBLE);
-        btnManage.setOnClickListener(v -> showManageMenu(v, id));
+        binding.tvSource.setVisibility(View.GONE);
+        binding.btnManage.setVisibility(View.VISIBLE);
+        binding.btnManage.setOnClickListener(v -> showManageMenu(v, id));
     }
 
     private void showManageMenu(View anchor, long id) {

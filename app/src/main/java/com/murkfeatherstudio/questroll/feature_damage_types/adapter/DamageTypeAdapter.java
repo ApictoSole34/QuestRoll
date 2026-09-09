@@ -3,14 +3,13 @@ package com.murkfeatherstudio.questroll.feature_damage_types.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.ItemDamageTypeBinding;
 import com.murkfeatherstudio.questroll.feature_damage_types.model.CombinedDamageType;
 
 public class DamageTypeAdapter extends ListAdapter<CombinedDamageType, DamageTypeAdapter.ViewHolder> {
@@ -39,9 +38,9 @@ public class DamageTypeAdapter extends ListAdapter<CombinedDamageType, DamageTyp
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_damage_type, parent, false);
-        return new ViewHolder(view);
+        ItemDamageTypeBinding binding = ItemDamageTypeBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -50,21 +49,18 @@ public class DamageTypeAdapter extends ListAdapter<CombinedDamageType, DamageTyp
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvSource, tvDescription, tvCustomBadge;
+        private final ItemDamageTypeBinding binding;
 
-        ViewHolder(View v) {
-            super(v);
-            tvName = v.findViewById(R.id.tv_name);
-            tvSource = v.findViewById(R.id.tv_source);
-            tvDescription = v.findViewById(R.id.tv_description);
-            tvCustomBadge = v.findViewById(R.id.tv_custom_badge);
+        ViewHolder(ItemDamageTypeBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         void bind(CombinedDamageType t, OnItemClickListener listener) {
-            tvName.setText(t.name);
-            tvSource.setText(t.source);
-            tvDescription.setText(t.description != null ? t.description : "");
-            tvCustomBadge.setVisibility(t.isCustom ? View.VISIBLE : View.GONE);
+            binding.tvName.setText(t.name);
+            binding.tvSource.setText(t.source);
+            binding.tvDescription.setText(t.description != null ? t.description : "");
+            binding.tvCustomBadge.setVisibility(t.isCustom ? View.VISIBLE : View.GONE);
             itemView.setOnClickListener(v -> {
                 if (listener != null) listener.onItemClick(t);
             });

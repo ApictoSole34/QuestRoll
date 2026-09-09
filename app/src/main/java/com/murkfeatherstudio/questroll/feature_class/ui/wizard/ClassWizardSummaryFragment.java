@@ -4,40 +4,48 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.FragmentClassWizardSummaryBinding;
 import com.murkfeatherstudio.questroll.feature_class.view_model.ClassWizardViewModel;
 
 public class ClassWizardSummaryFragment extends Fragment
         implements ClassWizardActivity.ClassWizardStep {
 
     private ClassWizardViewModel viewModel;
-    private TextView tvSummary;
+    private FragmentClassWizardSummaryBinding binding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_class_wizard_summary, container, false);
+        binding = FragmentClassWizardSummaryBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(ClassWizardViewModel.class);
 
-        tvSummary = view.findViewById(R.id.tv_summary);
-        tvSummary.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
+        binding.tvSummary.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
 
         generateSummary();
     }
 
     private void generateSummary() {
+        if (binding == null) return;
         StringBuilder sb = new StringBuilder();
 
         // Basic Info
@@ -110,7 +118,7 @@ public class ClassWizardSummaryFragment extends Fragment
                 .append(viewModel.equipmentDescription.isEmpty() ? "none" : viewModel.equipmentDescription)
                 .append("\n");
 
-        tvSummary.setText(sb.toString());
+        binding.tvSummary.setText(sb.toString());
     }
 
     @Override
@@ -120,6 +128,6 @@ public class ClassWizardSummaryFragment extends Fragment
 
     @Override
     public void saveData() {
-        // Nic nie zapisujemy – wszystko już jest w ViewModel
+        // Nothing to save – everything is already in the ViewModel
     }
 }

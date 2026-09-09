@@ -1,17 +1,15 @@
 package com.murkfeatherstudio.questroll.feature_rule.rule_set.adapter;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.models.open5e.rule_set.RulesetEntity;
+import com.murkfeatherstudio.questroll.databinding.ItemRulesetBinding;
 
 public class RulesetAdapter extends ListAdapter<RulesetEntity, RulesetAdapter.ViewHolder> {
     private final OnItemClickListener listener;
@@ -28,8 +26,8 @@ public class RulesetAdapter extends ListAdapter<RulesetEntity, RulesetAdapter.Vi
 
     @NonNull @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_ruleset, parent, false);
-        return new ViewHolder(view);
+        ItemRulesetBinding binding = ItemRulesetBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -38,11 +36,16 @@ public class RulesetAdapter extends ListAdapter<RulesetEntity, RulesetAdapter.Vi
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvDesc;
-        ViewHolder(View v) { super(v); tvName = v.findViewById(R.id.tv_name); tvDesc = v.findViewById(R.id.tv_desc); }
+        private final ItemRulesetBinding binding;
+        
+        ViewHolder(ItemRulesetBinding binding) { 
+            super(binding.getRoot()); 
+            this.binding = binding;
+        }
+        
         void bind(RulesetEntity r, OnItemClickListener listener) {
-            tvName.setText(r.name);
-            tvDesc.setText(r.desc != null ? r.desc : "");
+            binding.tvName.setText(r.name);
+            binding.tvDesc.setText(r.desc != null ? r.desc : "");
             itemView.setOnClickListener(v -> listener.onItemClick(r));
         }
     }

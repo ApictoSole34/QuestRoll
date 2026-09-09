@@ -2,24 +2,20 @@ package com.murkfeatherstudio.questroll.feature_language.ui.language_list;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.SearchView;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
+import com.murkfeatherstudio.questroll.databinding.ActivityLanguageListBinding;
+import com.murkfeatherstudio.questroll.databinding.DialogLanguageFilterBinding;
 import com.murkfeatherstudio.questroll.feature_language.data.repository.LanguageRepository;
 import com.murkfeatherstudio.questroll.feature_language.ui.language_create.CustomLanguageCreateActivity;
 import com.murkfeatherstudio.questroll.feature_language.ui.language_details.LanguageDetailActivity;
@@ -27,7 +23,6 @@ import com.murkfeatherstudio.questroll.feature_language.ui.language_list.adapter
 import com.murkfeatherstudio.questroll.feature_language.model.CombinedLanguage;
 import com.murkfeatherstudio.questroll.feature_language.view_model.LanguageListViewModel;
 import com.murkfeatherstudio.questroll.feature_language.view_model.ViewModelFactory;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
@@ -35,25 +30,27 @@ import java.util.concurrent.Executors;
 public class LanguageListActivity extends BaseActivity {
     private LanguageListAdapter adapter;
     private LanguageListViewModel viewModel;
-    private TextView tvActiveFilters;
+    private ActivityLanguageListBinding binding;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_language_list);
+        binding = ActivityLanguageListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         setupViewModel();
-        initViews();
         setupRecyclerView();
         setupSearch();
         setupObservers();
 
-        findViewById(R.id.btn_filter).setOnClickListener(v -> showFilterDialog());
+        binding.btnFilter.setOnClickListener(v -> showFilterDialog());
         
-        FloatingActionButton fab = findViewById(R.id.fab_create_language);
-        if (fab != null) {
-            fab.setOnClickListener(v -> openCreateLanguage());
+        if (binding.fabCreateLanguage != null) {
+            binding.fabCreateLanguage.setOnClickListener(v -> openCreateLanguage());
         }
+
+        // Initialize Calculator Drawer Width
+        setDrawerWidth(false);
     }
 
     private void setupViewModel() {
@@ -68,13 +65,8 @@ public class LanguageListActivity extends BaseActivity {
                 .get(LanguageListViewModel.class);
     }
 
-    private void initViews() {
-        tvActiveFilters = findViewById(R.id.tv_active_filters);
-    }
-
     private void setupSearch() {
-        SearchView searchView = findViewById(R.id.search_view);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 viewModel.setQuery(query);
@@ -89,14 +81,13 @@ public class LanguageListActivity extends BaseActivity {
     }
 
     private void setupRecyclerView() {
-        RecyclerView rv = findViewById(R.id.rv_languages);
-        rv.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvLanguages.setLayoutManager(new LinearLayoutManager(this));
         adapter = new LanguageListAdapter(
                 new ArrayList<>(),
                 this::openDetails,
                 this::openCreateLanguage
         );
-        rv.setAdapter(adapter);
+        binding.rvLanguages.setAdapter(adapter);
     }
 
     private void setupObservers() {
@@ -106,26 +97,23 @@ public class LanguageListActivity extends BaseActivity {
     }
 
     private void showFilterDialog() {
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_language_filter, null);
-        Spinner spinnerType = dialogView.findViewById(R.id.spinner_type);
-        CheckBox cbExotic = dialogView.findViewById(R.id.cb_exotic);
-        CheckBox cbSecret = dialogView.findViewById(R.id.cb_secret);
+        DialogLanguageFilterBinding filterBinding = DialogLanguageFilterBinding.inflate(getLayoutInflater());
 
         String[] types = {"All", "Official", "Custom"};
-        spinnerType.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, types));
+        filterBinding.spinnerType.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, types));
 
         new AlertDialog.Builder(this)
                 .setTitle("Filter Languages")
-                .setView(dialogView)
+                .setView(filterBinding.getRoot())
                 .setPositiveButton("Apply", (d, w) -> {
-                    viewModel.setTypeFilter(types[spinnerType.getSelectedItemPosition()]);
+                    viewModel.setTypeFilter(types[filterBinding.spinnerType.getSelectedItemPosition()]);
                     // Here you could add exotic/secret filtering logic to ViewModel if needed
-                    tvActiveFilters.setVisibility(View.VISIBLE);
-                    tvActiveFilters.setText("Filters applied");
+                    binding.tvActiveFilters.setVisibility(View.VISIBLE);
+                    binding.tvActiveFilters.setText("Filters applied");
                 })
                 .setNeutralButton("Clear", (d, w) -> {
                     viewModel.setTypeFilter("All");
-                    tvActiveFilters.setVisibility(View.GONE);
+                    binding.tvActiveFilters.setVisibility(View.GONE);
                 })
                 .setNegativeButton("Cancel", null)
                 .show();

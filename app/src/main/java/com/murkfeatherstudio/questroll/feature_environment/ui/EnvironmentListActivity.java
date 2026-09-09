@@ -3,28 +3,27 @@ package com.murkfeatherstudio.questroll.feature_environment.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.SearchView;
-import android.widget.TextView;
 
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
+import com.murkfeatherstudio.questroll.databinding.ActivityEnvironmentListBinding;
 import com.murkfeatherstudio.questroll.feature_environment.adapter.EnvironmentAdapter;
 import com.murkfeatherstudio.questroll.feature_environment.view_model.EnvironmentListViewModel;
 
 public class EnvironmentListActivity extends BaseActivity {
     private EnvironmentListViewModel viewModel;
     private EnvironmentAdapter adapter;
-    private RecyclerView rv;
+    private ActivityEnvironmentListBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_environment_list);
+        binding = ActivityEnvironmentListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         Open5eDatabase open5eDb = Open5eDatabase.getInstance(this);
         UserContentDatabase customDb = UserContentDatabase.getInstance(this);
@@ -35,7 +34,7 @@ public class EnvironmentListActivity extends BaseActivity {
 
         setupRecyclerView();
         setupSearch();
-        findViewById(R.id.fabCreate).setOnClickListener(v -> startActivity(new Intent(this, CustomEnvironmentCreateActivity.class)));
+        binding.fabCreate.setOnClickListener(v -> startActivity(new Intent(this, CustomEnvironmentCreateActivity.class)));
     }
 
     private void setupRecyclerView() {
@@ -50,15 +49,13 @@ public class EnvironmentListActivity extends BaseActivity {
                 startActivity(i);
             }
         });
-        rv = findViewById(R.id.recycler_environments);
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(adapter);
-        rv.setSaveEnabled(false);
+        binding.recyclerEnvironments.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerEnvironments.setAdapter(adapter);
+        binding.recyclerEnvironments.setSaveEnabled(false);
     }
 
     private void setupSearch() {
-        SearchView searchView = findViewById(R.id.search_view);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override public boolean onQueryTextSubmit(String q) { viewModel.setQuery(q); return true; }
             @Override public boolean onQueryTextChange(String q) { viewModel.setQuery(q); return true; }
         });
@@ -68,7 +65,7 @@ public class EnvironmentListActivity extends BaseActivity {
         super.onResume();
         viewModel.getEnvironments().observe(this, list -> {
             adapter.submitList(list);
-            ((TextView) findViewById(R.id.tv_count)).setText(list.size() + " environments");
+            binding.tvCount.setText(list.size() + " environments");
         });
     }
 }

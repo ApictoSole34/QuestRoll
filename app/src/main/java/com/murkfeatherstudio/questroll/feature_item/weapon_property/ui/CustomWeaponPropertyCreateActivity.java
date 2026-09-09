@@ -5,13 +5,11 @@ import android.widget.Toast;
 
 import androidx.lifecycle.ViewModelProvider;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_weapon_property.CustomWeaponPropertyEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityCustomWeaponPropertyCreateBinding;
 import com.murkfeatherstudio.questroll.feature_item.weapon_property.view_model.CustomWeaponPropertyCreateViewModel;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.concurrent.Executors;
 
@@ -20,13 +18,14 @@ public class CustomWeaponPropertyCreateActivity extends BaseActivity {
     public static final String EXTRA_EDIT_ID = "edit_property_id";
 
     private CustomWeaponPropertyCreateViewModel viewModel;
-    private TextInputEditText etName, etDesc, etType;
+    private ActivityCustomWeaponPropertyCreateBinding binding;
     private long editId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_custom_weapon_property_create);
+        binding = ActivityCustomWeaponPropertyCreateBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         editId = getIntent().getLongExtra(EXTRA_EDIT_ID, -1);
         viewModel = new ViewModelProvider(this,
@@ -36,25 +35,18 @@ public class CustomWeaponPropertyCreateActivity extends BaseActivity {
                         Executors.newSingleThreadExecutor()
                 )).get(CustomWeaponPropertyCreateViewModel.class);
 
-        initViews();
         setupObservers();
         setTitle(editId == -1 ? "Create Property" : "Edit Property");
-        ((MaterialButton) findViewById(R.id.btnSave)).setText(editId == -1 ? "Save" : "Update");
-        findViewById(R.id.btnSave).setOnClickListener(v -> save());
-    }
-
-    private void initViews() {
-        etName = findViewById(R.id.etName);
-        etType = findViewById(R.id.etType);
-        etDesc = findViewById(R.id.etDesc);
+        binding.btnSave.setText(editId == -1 ? "Save" : "Update");
+        binding.btnSave.setOnClickListener(v -> save());
     }
 
     private void setupObservers() {
         viewModel.getEditData().observe(this, prop -> {
             if (prop == null) return;
-            etName.setText(prop.name);
-            etType.setText(prop.type);
-            etDesc.setText(prop.desc);
+            binding.etName.setText(prop.name);
+            binding.etType.setText(prop.type);
+            binding.etDesc.setText(prop.desc);
         });
 
         viewModel.getSaveResult().observe(this, success -> {
@@ -69,16 +61,16 @@ public class CustomWeaponPropertyCreateActivity extends BaseActivity {
     }
 
     private void save() {
-        String name = etName.getText().toString().trim();
+        String name = binding.etName.getText() != null ? binding.etName.getText().toString().trim() : "";
         if (name.isEmpty()) {
-            etName.setError("Required");
+            binding.etName.setError("Required");
             return;
         }
 
         CustomWeaponPropertyEntity entity = new CustomWeaponPropertyEntity();
         entity.name = name;
-        entity.type = etType.getText().toString().trim();
-        entity.desc = etDesc.getText().toString().trim();
+        entity.type = binding.etType.getText() != null ? binding.etType.getText().toString().trim() : "";
+        entity.desc = binding.etDesc.getText() != null ? binding.etDesc.getText().toString().trim() : "";
 
         viewModel.save(entity);
     }

@@ -2,29 +2,29 @@ package com.murkfeatherstudio.questroll.feature_item.item_category.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.SearchView;
-import android.widget.TextView;
+
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import com.murkfeatherstudio.questroll.R;
+
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
+import com.murkfeatherstudio.questroll.databinding.ActivityItemCategoryListBinding;
 import com.murkfeatherstudio.questroll.feature_item.item_category.adapter.ItemCategoryAdapter;
 import com.murkfeatherstudio.questroll.feature_item.item_category.view_model.ItemCategoryListViewModel;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class ItemCategoryListActivity extends BaseActivity {
 
     private ItemCategoryListViewModel viewModel;
     private ItemCategoryAdapter adapter;
-    private RecyclerView rv;
+    private ActivityItemCategoryListBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_category_list);
+        binding = ActivityItemCategoryListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        setTitle("Item Categories");
 
         Open5eDatabase open5eDb = Open5eDatabase.getInstance(this);
         UserContentDatabase customDb = UserContentDatabase.getInstance(this);
@@ -38,12 +38,11 @@ public class ItemCategoryListActivity extends BaseActivity {
         setupRecyclerView();
         setupSearch();
 
-        FloatingActionButton fab = findViewById(R.id.fabCreate);
-        fab.setOnClickListener(v -> startActivity(new Intent(this, CustomItemCategoryCreateActivity.class)));
+        binding.fabCreate.setOnClickListener(v -> startActivity(new Intent(this, CustomItemCategoryCreateActivity.class)));
 
         viewModel.getCategories().observe(this, list -> {
             adapter.submitList(list);
-            ((TextView) findViewById(R.id.tv_count)).setText(list.size() + " categories");
+            binding.tvCount.setText(list.size() + " categories");
         });
     }
 
@@ -59,15 +58,12 @@ public class ItemCategoryListActivity extends BaseActivity {
                 startActivity(i);
             }
         });
-        rv = findViewById(R.id.recycler_categories);
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(adapter);
-        rv.setSaveEnabled(false);
+        binding.recyclerCategories.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerCategories.setAdapter(adapter);
     }
 
     private void setupSearch() {
-        SearchView searchView = findViewById(R.id.search_view);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        binding.searchView.setOnQueryTextListener(new android.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String q) { viewModel.setQuery(q); return true; }
             @Override

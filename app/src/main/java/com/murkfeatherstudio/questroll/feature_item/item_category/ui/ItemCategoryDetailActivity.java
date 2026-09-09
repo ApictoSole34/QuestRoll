@@ -2,21 +2,24 @@ package com.murkfeatherstudio.questroll.feature_item.item_category.ui;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
-import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.feature_document.fragment.DocumentDetailDialogFragment;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.models.open5e.item_category.ItemCategoryEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityItemCategoryDetailBinding;
 
-public class ItemCategoryDetailActivity extends AppCompatActivity {
+public class ItemCategoryDetailActivity extends BaseActivity {
+
+    private ActivityItemCategoryDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_category_detail);
+        binding = ActivityItemCategoryDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
         String key = getIntent().getStringExtra("CATEGORY_KEY");
         if (key == null) {
             finish();
@@ -28,17 +31,16 @@ public class ItemCategoryDetailActivity extends AppCompatActivity {
     }
 
     private void populateUI(ItemCategoryEntity cat) {
-        ((TextView) findViewById(R.id.tv_name)).setText(cat.name);
-        ((TextView) findViewById(R.id.tv_desc)).setText("");
+        binding.tvName.setText(cat.name);
+        binding.tvDesc.setText("");
 
-        TextView tvSource = findViewById(R.id.tv_source);
         String sourceText = "Source: " + (cat.documentName != null ? cat.documentName : "Unknown");
-        tvSource.setText(sourceText);
-        tvSource.setVisibility(View.VISIBLE);
-        tvSource.setClickable(true);
-        tvSource.setFocusable(true);
-        tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
-        tvSource.setOnClickListener(v -> {
+        binding.tvSource.setText(sourceText);
+        binding.tvSource.setVisibility(View.VISIBLE);
+        binding.tvSource.setClickable(true);
+        binding.tvSource.setFocusable(true);
+        binding.tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
+        binding.tvSource.setOnClickListener(v -> {
             if (cat.documentKey != null && !cat.documentKey.isEmpty()) {
                 DocumentDetailDialogFragment fragment = DocumentDetailDialogFragment.newInstance(cat.documentKey);
                 fragment.show(getSupportFragmentManager(), "document_detail");
@@ -47,6 +49,6 @@ public class ItemCategoryDetailActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.btnManage).setVisibility(View.GONE);
+        binding.btnManage.setVisibility(View.GONE);
     }
 }

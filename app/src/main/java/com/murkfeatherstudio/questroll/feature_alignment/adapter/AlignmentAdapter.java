@@ -3,14 +3,13 @@ package com.murkfeatherstudio.questroll.feature_alignment.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.ItemAlignmentBinding;
 import com.murkfeatherstudio.questroll.feature_alignment.model.CombinedAlignment;
 
 public class AlignmentAdapter extends ListAdapter<CombinedAlignment, AlignmentAdapter.ViewHolder> {
@@ -39,9 +38,9 @@ public class AlignmentAdapter extends ListAdapter<CombinedAlignment, AlignmentAd
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_alignment, parent, false);
-        return new ViewHolder(view);
+        ItemAlignmentBinding binding = ItemAlignmentBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -50,22 +49,21 @@ public class AlignmentAdapter extends ListAdapter<CombinedAlignment, AlignmentAd
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvShortName, tvMorality, tvCustomBadge;
+        private final ItemAlignmentBinding binding;
 
-        ViewHolder(View v) {
-            super(v);
-            tvName = v.findViewById(R.id.tv_alignment_name);
-            tvShortName = v.findViewById(R.id.tv_alignment_short);
-            tvMorality = v.findViewById(R.id.tv_alignment_morality);
-            tvCustomBadge = v.findViewById(R.id.tv_custom_badge);
+        ViewHolder(ItemAlignmentBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         void bind(CombinedAlignment a, OnItemClickListener listener) {
-            tvName.setText(a.name);
-            tvShortName.setText(a.shortName != null ? a.shortName : "");
-            tvMorality.setText(a.morality != null ? a.morality : "");
-            tvCustomBadge.setVisibility(a.isCustom ? View.VISIBLE : View.GONE);
-            itemView.setOnClickListener(v -> listener.onItemClick(a));
+            binding.tvAlignmentName.setText(a.name);
+            binding.tvAlignmentShort.setText(a.shortName != null ? a.shortName : "");
+            binding.tvAlignmentMorality.setText(a.morality != null ? a.morality : "");
+            binding.tvCustomBadge.setVisibility(a.isCustom ? View.VISIBLE : View.GONE);
+            itemView.setOnClickListener(v -> {
+                if (listener != null) listener.onItemClick(a);
+            });
         }
     }
 }

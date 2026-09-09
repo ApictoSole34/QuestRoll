@@ -3,14 +3,12 @@ package com.murkfeatherstudio.questroll.feature_campaign.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.models.character.InventoryItemEntity;
+import com.murkfeatherstudio.questroll.databinding.ItemInventoryRowBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,9 +55,8 @@ public class InventoryItemAdapter extends RecyclerView.Adapter<InventoryItemAdap
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_inventory_row, parent, false);
-        return new ViewHolder(view);
+        ItemInventoryRowBinding binding = ItemInventoryRowBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -71,48 +68,40 @@ public class InventoryItemAdapter extends RecyclerView.Adapter<InventoryItemAdap
     public int getItemCount() { return items.size(); }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        final View equippedIndicator;
-        final TextView tvName, tvCategory, tvSlot, tvQuantity, tvWeight;
-        final ImageButton btnDetails;
+        private final ItemInventoryRowBinding binding;
 
-        ViewHolder(View v) {
-            super(v);
-            equippedIndicator = v.findViewById(R.id.view_equipped_indicator);
-            tvName     = v.findViewById(R.id.tv_item_name);
-            tvCategory = v.findViewById(R.id.tv_item_category);
-            tvSlot     = v.findViewById(R.id.tv_item_slot);
-            tvQuantity = v.findViewById(R.id.tv_item_quantity);
-            tvWeight   = v.findViewById(R.id.tv_item_weight);
-            btnDetails = v.findViewById(R.id.btn_item_details);
+        ViewHolder(ItemInventoryRowBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         void bind(InventoryItemEntity item, OnItemClickListener listener) {
-            tvName.setText(item.customName != null ? item.customName : "Unknown item");
-            tvQuantity.setText("x" + item.quantity);
+            binding.tvItemName.setText(item.customName != null ? item.customName : "Unknown item");
+            binding.tvItemQuantity.setText("x" + item.quantity);
 
             // Weight: total (unit × quantity)
             float totalWeight = item.customWeight * item.quantity;
-            tvWeight.setText(String.format("%.1f lb", totalWeight));
+            binding.tvItemWeight.setText(String.format("%.1f lb", totalWeight));
 
             // Category (if no custom description — just shows "Item")
-            tvCategory.setText(item.customDescription != null && !item.customDescription.isEmpty()
+            binding.tvItemCategory.setText(item.customDescription != null && !item.customDescription.isEmpty()
                     ? "Custom" : "Item");
 
             // Slot badge — visible only if equipped
             if (item.isEquipped && item.slot != null && !item.slot.isEmpty()) {
-                tvSlot.setText("• " + slotDisplayName(item.slot));
-                tvSlot.setVisibility(View.VISIBLE);
-                equippedIndicator.setBackgroundColor(0xFF1976D2); // blue — equipped
+                binding.tvItemSlot.setText("• " + slotDisplayName(item.slot));
+                binding.tvItemSlot.setVisibility(View.VISIBLE);
+                binding.viewEquippedIndicator.setBackgroundColor(0xFF1976D2); // blue — equipped
             } else {
-                tvSlot.setVisibility(View.GONE);
-                equippedIndicator.setBackgroundColor(0xFFBDBDBD); // grey — not equipped
+                binding.tvItemSlot.setVisibility(View.GONE);
+                binding.viewEquippedIndicator.setBackgroundColor(0xFFBDBDBD); // grey — not equipped
             }
 
             itemView.setOnClickListener(v -> {
                 if (listener != null) listener.onItemClick(item);
             });
 
-            btnDetails.setOnClickListener(v -> {
+            binding.btnItemDetails.setOnClickListener(v -> {
                 if (listener != null) listener.onItemDetailsClick(item);
             });
         }

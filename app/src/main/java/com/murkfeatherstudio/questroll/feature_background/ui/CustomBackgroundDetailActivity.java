@@ -16,6 +16,7 @@ import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.character.CharacterCreationDTO;
 import com.murkfeatherstudio.questroll.core.models.character.CharacterTraitEntity;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_background.CustomBackgroundEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityBackgroundDetailBinding;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -28,11 +29,13 @@ public class CustomBackgroundDetailActivity extends BaseActivity {
 
     public static final String EXTRA_ID = "CUSTOM_BACKGROUND_ID";
     private Markwon markwon;
+    private ActivityBackgroundDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_background_detail);
+        binding = ActivityBackgroundDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         markwon = Markwon.create(this);
 
         long id = getIntent().getLongExtra(EXTRA_ID, -1);
@@ -47,36 +50,36 @@ public class CustomBackgroundDetailActivity extends BaseActivity {
                 });
     }
 
+    /**
+     * NOTE: benefits_container is managed dynamically (addView()).
+     * Headers and rows for benefits are created at runtime based on JSON data.
+     * ViewBinding is not applicable to these dynamically generated children.
+     */
     private void populateUI(CustomBackgroundEntity b) {
-        TextView tvName = findViewById(R.id.tv_background_name);
-        TextView tvSource = findViewById(R.id.tv_source);
-        TextView tvDesc = findViewById(R.id.tv_desc);
-        LinearLayout container = findViewById(R.id.benefits_container);
-
-        tvName.setText(b.name);
-        tvSource.setText("Custom (" + (b.gameSystem != null ? b.gameSystem : "?") + ")");
-        tvSource.setVisibility(View.VISIBLE);
+        binding.tvBackgroundName.setText(b.name);
+        binding.tvSource.setText("Custom (" + (b.gameSystem != null ? b.gameSystem : "?") + ")");
+        binding.tvSource.setVisibility(View.VISIBLE);
 
         if (b.desc != null && !b.desc.isEmpty()) {
-            markwon.setMarkdown(tvDesc, b.desc);
-            tvDesc.setVisibility(View.VISIBLE);
+            markwon.setMarkdown(binding.tvDesc, b.desc);
+            binding.tvDesc.setVisibility(View.VISIBLE);
         } else {
-            tvDesc.setVisibility(View.GONE);
+            binding.tvDesc.setVisibility(View.GONE);
         }
 
-        container.removeAllViews();
+        binding.benefitsContainer.removeAllViews();
 
         // Starting Gold
-        addSimpleRow(container, "Starting Gold", b.startingGold + " gp");
+        addSimpleRow(binding.benefitsContainer, "Starting Gold", b.startingGold + " gp");
 
         // Equipment
         if (b.equipmentJson != null && !b.equipmentJson.isEmpty()) {
             Type type = new TypeToken<List<CharacterCreationDTO.InventoryItemDTO>>(){}.getType();
             List<CharacterCreationDTO.InventoryItemDTO> items = new Gson().fromJson(b.equipmentJson, type);
             if (items != null && !items.isEmpty()) {
-                addHeader(container, "Equipment");
+                addHeader(binding.benefitsContainer, "Equipment");
                 for (CharacterCreationDTO.InventoryItemDTO item : items) {
-                    addSimpleRow(container, null, "• " + item.customName + " (x" + item.quantity + ", " + item.customWeight + " lb)");
+                    addSimpleRow(binding.benefitsContainer, null, "• " + item.customName + " (x" + item.quantity + ", " + item.customWeight + " lb)");
                 }
             }
         }
@@ -86,9 +89,9 @@ public class CustomBackgroundDetailActivity extends BaseActivity {
             Type type = new TypeToken<List<String>>(){}.getType();
             List<String> languages = new Gson().fromJson(b.languagesJson, type);
             if (languages != null && !languages.isEmpty()) {
-                addHeader(container, "Languages");
+                addHeader(binding.benefitsContainer, "Languages");
                 for (String lang : languages) {
-                    addSimpleRow(container, null, "• " + lang);
+                    addSimpleRow(binding.benefitsContainer, null, "• " + lang);
                 }
             }
         }
@@ -98,9 +101,9 @@ public class CustomBackgroundDetailActivity extends BaseActivity {
             Type type = new TypeToken<List<String>>(){}.getType();
             List<String> skills = new Gson().fromJson(b.skillProficienciesJson, type);
             if (skills != null && !skills.isEmpty()) {
-                addHeader(container, "Skill Proficiencies");
+                addHeader(binding.benefitsContainer, "Skill Proficiencies");
                 for (String skill : skills) {
-                    addSimpleRow(container, null, "• " + skill);
+                    addSimpleRow(binding.benefitsContainer, null, "• " + skill);
                 }
             }
         }
@@ -110,9 +113,9 @@ public class CustomBackgroundDetailActivity extends BaseActivity {
             Type type = new TypeToken<List<String>>(){}.getType();
             List<String> tools = new Gson().fromJson(b.toolProficienciesJson, type);
             if (tools != null && !tools.isEmpty()) {
-                addHeader(container, "Tool Proficiencies");
+                addHeader(binding.benefitsContainer, "Tool Proficiencies");
                 for (String tool : tools) {
-                    addSimpleRow(container, null, "• " + tool);
+                    addSimpleRow(binding.benefitsContainer, null, "• " + tool);
                 }
             }
         }
@@ -122,18 +125,15 @@ public class CustomBackgroundDetailActivity extends BaseActivity {
             Type type = new TypeToken<List<CharacterTraitEntity>>(){}.getType();
             List<CharacterTraitEntity> features = new Gson().fromJson(b.featuresJson, type);
             if (features != null && !features.isEmpty()) {
-                addHeader(container, "Features");
+                addHeader(binding.benefitsContainer, "Features");
                 for (CharacterTraitEntity feature : features) {
-                    addSimpleRow(container, feature.name, feature.description);
+                    addSimpleRow(binding.benefitsContainer, feature.name, feature.description);
                 }
             }
         }
 
-        View btnManage = findViewById(R.id.btnManage);
-        if (btnManage != null) {
-            btnManage.setVisibility(View.VISIBLE);
-            btnManage.setOnClickListener(v -> showManageMenu(v, b.id));
-        }
+        binding.btnManage.setVisibility(View.VISIBLE);
+        binding.btnManage.setOnClickListener(v -> showManageMenu(v, b.id));
     }
 
     private void addHeader(LinearLayout container, String title) {
@@ -141,6 +141,7 @@ public class CustomBackgroundDetailActivity extends BaseActivity {
         header.setText(title);
         header.setTypeface(null, Typeface.BOLD);
         header.setTextSize(16);
+        header.setTextColor(getResources().getColor(R.color.threads_gold, null));
         header.setPadding(0, dp(16), 0, dp(4));
         container.addView(header);
     }
@@ -154,6 +155,7 @@ public class CustomBackgroundDetailActivity extends BaseActivity {
             row.setText(value);
         }
         row.setTextSize(14);
+        row.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
         row.setPadding(0, dp(4), 0, dp(4));
         container.addView(row);
     }

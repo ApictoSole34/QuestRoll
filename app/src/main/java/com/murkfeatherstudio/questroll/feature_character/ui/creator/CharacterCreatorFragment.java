@@ -7,16 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RadioGroup;
 import android.widget.SeekBar;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -27,6 +24,8 @@ import com.murkfeatherstudio.questroll.core.models.open5e.alignment.AlignmentEnt
 import com.murkfeatherstudio.questroll.core.models.open5e.background.BackgroundEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.character_class.CharacterClassEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.species.SpeciesEntity;
+import com.murkfeatherstudio.questroll.databinding.FragmentCharacterCreatorBinding;
+import com.murkfeatherstudio.questroll.databinding.ItemPointbuyAttributeBinding;
 import com.murkfeatherstudio.questroll.feature_character.utils.AttributeGenerator;
 import com.murkfeatherstudio.questroll.feature_character.view_model.CharacterCreatorViewModel;
 
@@ -36,36 +35,26 @@ import java.util.List;
 public class CharacterCreatorFragment extends Fragment {
 
     private CharacterCreatorViewModel viewModel;
-
-    private EditText nameEdit;
-    private Spinner alignmentSpinner, backgroundSpinner, speciesSpinner;
-    private Button addClassButton, saveButton;
-    private LinearLayout classContainer;
-    private RadioGroup attrMethodGroup;
-    private LinearLayout attributesStaticContainer;
-    private LinearLayout attributesPointbuyContainer;
-    private List<View> pointBuyViews = new ArrayList<>();
+    private FragmentCharacterCreatorBinding binding;
+    private List<ItemPointbuyAttributeBinding> pointBuyBindings = new ArrayList<>();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_character_creator, container, false);
+        binding = FragmentCharacterCreatorBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+        pointBuyBindings.clear();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(this).get(CharacterCreatorViewModel.class);
-
-        nameEdit = view.findViewById(R.id.character_name);
-        alignmentSpinner = view.findViewById(R.id.alignment_spinner);
-        backgroundSpinner = view.findViewById(R.id.background_spinner);
-        speciesSpinner = view.findViewById(R.id.species_spinner);
-        addClassButton = view.findViewById(R.id.add_class_button);
-        saveButton = view.findViewById(R.id.save_button);
-        classContainer = view.findViewById(R.id.class_container);
-        attrMethodGroup = view.findViewById(R.id.attr_method_group);
-        attributesStaticContainer = view.findViewById(R.id.attributes_static_container);
-        attributesPointbuyContainer = view.findViewById(R.id.attributes_pointbuy_container);
 
         // Observe reference data (alignments, backgrounds, species, classes)
         viewModel.getAlignments().observe(getViewLifecycleOwner(), this::setupAlignmentSpinner);
@@ -76,12 +65,12 @@ public class CharacterCreatorFragment extends Fragment {
         // Switch UI based on attribute generation method
         viewModel.getAttributeMethod().observe(getViewLifecycleOwner(), method -> {
             if ("POINT_BUY".equals(method)) {
-                attributesStaticContainer.setVisibility(View.GONE);
-                attributesPointbuyContainer.setVisibility(View.VISIBLE);
+                binding.attributesStaticContainer.setVisibility(View.GONE);
+                binding.attributesPointbuyContainer.setVisibility(View.VISIBLE);
                 rebuildPointBuyUI();
             } else {
-                attributesStaticContainer.setVisibility(View.VISIBLE);
-                attributesPointbuyContainer.setVisibility(View.GONE);
+                binding.attributesStaticContainer.setVisibility(View.VISIBLE);
+                binding.attributesPointbuyContainer.setVisibility(View.GONE);
                 displayStaticAttributes();
             }
         });
@@ -108,12 +97,12 @@ public class CharacterCreatorFragment extends Fragment {
             }
         });
 
-        saveButton.setOnClickListener(v -> {
-            viewModel.setCharacterName(nameEdit.getText().toString());
+        binding.saveButton.setOnClickListener(v -> {
+            viewModel.setCharacterName(binding.characterName.getText().toString());
             viewModel.saveCharacter();
         });
 
-        attrMethodGroup.setOnCheckedChangeListener((group, checkedId) -> {
+        binding.attrMethodGroup.setOnCheckedChangeListener((group, checkedId) -> {
             String method = "STANDARD";
             if (checkedId == R.id.radio_roll) method = "ROLL";
             else if (checkedId == R.id.radio_point_buy) method = "POINT_BUY";
@@ -127,10 +116,10 @@ public class CharacterCreatorFragment extends Fragment {
     // -------------------- Spinners --------------------
 
     private void setupAlignmentSpinner(List<AlignmentEntity> alignments) {
-        ArrayAdapter<AlignmentEntity> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, alignments);
+        ArrayAdapter<AlignmentEntity> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, alignments);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        alignmentSpinner.setAdapter(adapter);
-        alignmentSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.alignmentSpinner.setAdapter(adapter);
+        binding.alignmentSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 viewModel.setSelectedAlignment(alignments.get(position));
@@ -140,10 +129,10 @@ public class CharacterCreatorFragment extends Fragment {
     }
 
     private void setupBackgroundSpinner(List<BackgroundEntity> backgrounds) {
-        ArrayAdapter<BackgroundEntity> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, backgrounds);
+        ArrayAdapter<BackgroundEntity> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, backgrounds);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        backgroundSpinner.setAdapter(adapter);
-        backgroundSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.backgroundSpinner.setAdapter(adapter);
+        binding.backgroundSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 viewModel.setSelectedBackground(backgrounds.get(position));
@@ -153,10 +142,10 @@ public class CharacterCreatorFragment extends Fragment {
     }
 
     private void setupSpeciesSpinner(List<SpeciesEntity> speciesList) {
-        ArrayAdapter<SpeciesEntity> adapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_item, speciesList);
+        ArrayAdapter<SpeciesEntity> adapter = new ArrayAdapter<>(requireContext(), android.R.layout.simple_spinner_item, speciesList);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        speciesSpinner.setAdapter(adapter);
-        speciesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.speciesSpinner.setAdapter(adapter);
+        binding.speciesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 viewModel.setSelectedSpecies(speciesList.get(position));
@@ -168,15 +157,15 @@ public class CharacterCreatorFragment extends Fragment {
     // -------------------- Classes (multiclass) --------------------
 
     private void setupClassSpinner(List<CharacterClassEntity> classes) {
-        addClassButton.setOnClickListener(v -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        binding.addClassButton.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
             builder.setTitle("Add class");
             final String[] classNames = classes.stream().map(c -> c.name).toArray(String[]::new);
             builder.setItems(classNames, (dialog, which) -> {
                 CharacterClassEntity selected = classes.get(which);
-                EditText input = new EditText(getContext());
+                EditText input = new EditText(requireContext());
                 input.setInputType(InputType.TYPE_CLASS_NUMBER);
-                new AlertDialog.Builder(getContext())
+                new AlertDialog.Builder(requireContext())
                         .setTitle("Level")
                         .setView(input)
                         .setPositiveButton("OK", (d, w) -> {
@@ -194,8 +183,15 @@ public class CharacterCreatorFragment extends Fragment {
         });
     }
 
+    /**
+     * JAVADOC: classContainer is a dynamic layout managed via addView(). 
+     * TextViews are created programmatically to display multiclass assignments 
+     * because the quantity and content are determined by user input at runtime. 
+     * Since these views are not defined in the static XML, View Binding is not applicable here.
+     */
     private void refreshClassList() {
-        classContainer.removeAllViews();
+        if (binding == null) return;
+        binding.classContainer.removeAllViews();
         List<CharacterCreatorViewModel.ClassAssignment> assignments = viewModel.getClassAssignments().getValue();
         if (assignments != null) {
             for (int i = 0; i < assignments.size(); i++) {
@@ -209,15 +205,22 @@ public class CharacterCreatorFragment extends Fragment {
                     refreshClassList();
                     return true;
                 });
-                classContainer.addView(tv);
+                binding.classContainer.addView(tv);
             }
         }
     }
 
     // -------------------- Attributes (static display) --------------------
 
+    /**
+     * JAVADOC: attributesStaticContainer is a dynamic layout populated with TextViews 
+     * at runtime. We use removeAllViews() and addView() because the content 
+     * (labels and values) is generated programmatically based on the current 
+     * attribute values. These dynamically added views are not accessible via View Binding.
+     */
     private void displayStaticAttributes() {
-        attributesStaticContainer.removeAllViews();
+        if (binding == null) return;
+        binding.attributesStaticContainer.removeAllViews();
         List<Integer> attrs = viewModel.getAttributes().getValue();
         if (attrs == null) return;
         String[] names = {"STR", "DEX", "CON", "INT", "WIS", "CHA"};
@@ -226,35 +229,39 @@ public class CharacterCreatorFragment extends Fragment {
             int mod = (val - 10) / 2;
             TextView tv = new TextView(getContext());
             tv.setText(names[i] + ": " + val + " (" + (mod >= 0 ? "+" + mod : String.valueOf(mod)) + ")");
-            attributesStaticContainer.addView(tv);
+            binding.attributesStaticContainer.addView(tv);
         }
     }
 
     // -------------------- Point Buy UI --------------------
 
+    /**
+     * JAVADOC: attributesPointbuyContainer is a dynamic layout that holds several 
+     * instances of a sub-layout. We use removeAllViews() and then inflate 
+     * ItemPointbuyAttributeBinding instances to add them to the container. 
+     * This approach allows us to dynamically build the Point Buy interface 
+     * while still benefiting from View Binding for each individual attribute row.
+     */
     private void rebuildPointBuyUI() {
-        attributesPointbuyContainer.removeAllViews();
-        pointBuyViews.clear();
+        if (binding == null) return;
+        binding.attributesPointbuyContainer.removeAllViews();
+        pointBuyBindings.clear();
         String[] names = {"STR", "DEX", "CON", "INT", "WIS", "CHA"};
         List<Integer> currentVals = viewModel.getAttributes().getValue();
         if (currentVals == null) return;
 
         for (int i = 0; i < names.length; i++) {
             final int index = i;
-            View item = LayoutInflater.from(getContext()).inflate(R.layout.item_pointbuy_attribute, attributesPointbuyContainer, false);
-            TextView label = item.findViewById(R.id.attr_label);
-            TextView valueView = item.findViewById(R.id.attr_value);
-            TextView costView = item.findViewById(R.id.attr_cost);
-            SeekBar seekBar = item.findViewById(R.id.attr_seekbar);
-
-            label.setText(names[i]);
+            ItemPointbuyAttributeBinding itemBinding = ItemPointbuyAttributeBinding.inflate(getLayoutInflater(), binding.attributesPointbuyContainer, false);
+            
+            itemBinding.attrLabel.setText(names[i]);
             int val = currentVals.get(i);
-            valueView.setText(String.valueOf(val));
+            itemBinding.attrValue.setText(String.valueOf(val));
             int cost = AttributeGenerator.getPointCost(val);
-            costView.setText("cost: " + cost);
-            seekBar.setProgress(val - 8); // 8 -> 0, 15 -> 7
+            itemBinding.attrCost.setText("cost: " + cost);
+            itemBinding.attrSeekbar.setProgress(val - 8); // 8 -> 0, 15 -> 7
 
-            seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            itemBinding.attrSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar sb, int progress, boolean fromUser) {
                     if (!fromUser) return;
@@ -265,22 +272,19 @@ public class CharacterCreatorFragment extends Fragment {
                 @Override public void onStopTrackingTouch(SeekBar sb) {}
             });
 
-            attributesPointbuyContainer.addView(item);
-            pointBuyViews.add(item);
+            binding.attributesPointbuyContainer.addView(itemBinding.getRoot());
+            pointBuyBindings.add(itemBinding);
         }
     }
 
     private void updatePointBuyUI(List<Integer> attrs) {
-        for (int i = 0; i < pointBuyViews.size() && i < attrs.size(); i++) {
-            View item = pointBuyViews.get(i);
-            TextView valueView = item.findViewById(R.id.attr_value);
-            TextView costView = item.findViewById(R.id.attr_cost);
-            SeekBar seekBar = item.findViewById(R.id.attr_seekbar);
+        for (int i = 0; i < pointBuyBindings.size() && i < attrs.size(); i++) {
+            ItemPointbuyAttributeBinding itemBinding = pointBuyBindings.get(i);
             int val = attrs.get(i);
-            valueView.setText(String.valueOf(val));
+            itemBinding.attrValue.setText(String.valueOf(val));
             int cost = AttributeGenerator.getPointCost(val);
-            costView.setText("cost: " + cost);
-            seekBar.setProgress(val - 8);
+            itemBinding.attrCost.setText("cost: " + cost);
+            itemBinding.attrSeekbar.setProgress(val - 8);
         }
     }
 }

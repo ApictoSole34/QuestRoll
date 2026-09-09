@@ -3,28 +3,28 @@ package com.murkfeatherstudio.questroll.feature_item.item_rarity.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_item_rarity.CustomItemRarityDao;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_item_rarity.CustomItemRarityEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityItemRarityDetailBinding;
 
 public class CustomItemRarityDetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_ID = "CUSTOM_ITEM_RARITY_ID";
     private long id;
     private CustomItemRarityDao dao;
+    private ActivityItemRarityDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_rarity_detail);
+        binding = ActivityItemRarityDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         id = getIntent().getLongExtra(EXTRA_ID, -1);
         if (id == -1) {
@@ -39,13 +39,12 @@ public class CustomItemRarityDetailActivity extends AppCompatActivity {
     }
 
     private void populateUI(CustomItemRarityEntity r) {
-        ((TextView) findViewById(R.id.tv_name)).setText(r.name);
-        ((TextView) findViewById(R.id.tv_rank)).setText("Rank: " + r.rank);
-        ((TextView) findViewById(R.id.tv_description)).setText(r.description != null ? r.description : "");
+        binding.tvName.setText(r.name);
+        binding.tvRank.setText("Rank: " + r.rank);
+        binding.tvDescription.setText(r.description != null ? r.description : "");
 
-        Button btnManage = findViewById(R.id.btnManage);
-        btnManage.setVisibility(View.VISIBLE);
-        btnManage.setOnClickListener(v -> showManageMenu(v, id));
+        binding.btnManage.setVisibility(View.VISIBLE);
+        binding.btnManage.setOnClickListener(v -> showManageMenu(v, id));
     }
 
     private void showManageMenu(View anchor, long id) {

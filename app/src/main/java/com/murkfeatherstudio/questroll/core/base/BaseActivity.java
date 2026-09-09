@@ -1,19 +1,19 @@
 package com.murkfeatherstudio.questroll.core.base;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import androidx.annotation.LayoutRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
 import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.ActivityBaseDrawerBinding;
 import com.murkfeatherstudio.questroll.feature_ability.ui.AbilityListActivity;
 import com.murkfeatherstudio.questroll.feature_alignment.ui.AlignmentListActivity;
 import com.murkfeatherstudio.questroll.feature_background.ui.BackgroundListActivity;
@@ -45,37 +45,23 @@ import java.util.Random;
 /**
  * Base activity that provides a global themed background and an automatic
  * Navigation Drawer (Quick Campaign & Calculator) for most screens.
- * Subclasses benefit from shared navigation logic and consistent UI decoration.
  */
 public abstract class BaseActivity extends AppCompatActivity {
 
-    /** Array of drawable resources used for the randomized background. */
     private static final int[] BACKGROUNDS = {
             R.drawable.threads_bg_1, R.drawable.threads_bg_2, R.drawable.threads_bg_3,
             R.drawable.threads_bg_4, R.drawable.threads_bg_5, R.drawable.threads_bg_6,
             R.drawable.threads_bg_7, R.drawable.threads_bg_8
     };
 
-    /** The root drawer layout, if present in the current layout configuration. */
-    protected DrawerLayout drawerLayout;
+    protected ActivityBaseDrawerBinding drawerBinding;
 
-    /**
-     * Overridden to wrap the activity layout in a Base Drawer if applicable.
-     * Also triggers the randomized background setup.
-     *
-     * @param layoutResID Resource ID to be inflated as the main content.
-     */
     @Override
     public void setContentView(@LayoutRes int layoutResID) {
         if (shouldShowDrawer()) {
-            // Inflate the base drawer layout
-            drawerLayout = (DrawerLayout) getLayoutInflater().inflate(R.layout.activity_base_drawer, null);
-            FrameLayout container = drawerLayout.findViewById(R.id.activity_content_container);
-
-            // Inflate the actual activity layout into the container
-            getLayoutInflater().inflate(layoutResID, container, true);
-            super.setContentView(drawerLayout);
-
+            drawerBinding = ActivityBaseDrawerBinding.inflate(getLayoutInflater());
+            getLayoutInflater().inflate(layoutResID, drawerBinding.activityContentContainer, true);
+            super.setContentView(drawerBinding.getRoot());
             setupDrawerContent();
         } else {
             super.setContentView(layoutResID);
@@ -83,10 +69,32 @@ public abstract class BaseActivity extends AppCompatActivity {
         setupBackground();
     }
 
-    /**
-     * Injects the correct fragment into the left drawer container based on the activity type.
-     * Campaigns get the Compendium Drawer, while other activities get the Quick Campaign view.
-     */
+    @Override
+    public void setContentView(View view) {
+        if (shouldShowDrawer()) {
+            drawerBinding = ActivityBaseDrawerBinding.inflate(getLayoutInflater());
+            drawerBinding.activityContentContainer.addView(view);
+            super.setContentView(drawerBinding.getRoot());
+            setupDrawerContent();
+        } else {
+            super.setContentView(view);
+        }
+        setupBackground();
+    }
+
+    @Override
+    public void setContentView(View view, ViewGroup.LayoutParams params) {
+        if (shouldShowDrawer()) {
+            drawerBinding = ActivityBaseDrawerBinding.inflate(getLayoutInflater());
+            drawerBinding.activityContentContainer.addView(view, params);
+            super.setContentView(drawerBinding.getRoot());
+            setupDrawerContent();
+        } else {
+            super.setContentView(view, params);
+        }
+        setupBackground();
+    }
+
     private void setupDrawerContent() {
         Fragment drawerFragment;
         if (isCampaignActivity()) {
@@ -100,30 +108,23 @@ public abstract class BaseActivity extends AppCompatActivity {
                 .commit();
     }
 
-    /**
-     * Determines if the drawer should be injected for the current activity.
-     * Screens like Splash or Loading are excluded to maintain a clean UI.
-     *
-     * @return True if the drawer should be shown.
-     */
     private boolean shouldShowDrawer() {
         String className = getClass().getName();
         return !className.contains("SplashActivity") &&
                !className.contains("LoadingActivity");
     }
 
-    /**
-     * Helper to detect if the current activity belongs to the campaign feature set.
-     */
     private boolean isCampaignActivity() {
         return getClass().getName().contains(".feature_campaign.ui");
     }
 
-    /**
-     * Selects a random background from {@link #BACKGROUNDS} and applies randomized
-     * translation/scaling to create a unique look for every screen session.
-     */
     private void setupBackground() {
+        /**
+         * NOTE: findViewById is used here because the backgroundImage might reside 
+         * in different layout hierarchies (either activity_base_drawer or a standalone activity layout).
+         * Since we don't have a single shared binding for this view across all possible roots,
+         * findViewById is the most reliable way to find it after the content view is set.
+         */
         ImageView backgroundImage = findViewById(R.id.backgroundImage);
         if (backgroundImage == null) return;
 
@@ -140,34 +141,24 @@ public abstract class BaseActivity extends AppCompatActivity {
         backgroundImage.setTranslationY(offsetY);
     }
 
-    // --- DRAWER HELPERS ---
-
-    /** Opens the left navigation drawer (Start side). */
     public void openLeftDrawer() {
-        if (drawerLayout != null) drawerLayout.openDrawer(GravityCompat.START);
+        if (drawerBinding != null) drawerBinding.drawerLayout.openDrawer(GravityCompat.START);
     }
 
-    /** Opens the right navigation drawer (End side). */
     public void openRightDrawer() {
-        if (drawerLayout != null) drawerLayout.openDrawer(GravityCompat.END);
+        if (drawerBinding != null) drawerBinding.drawerLayout.openDrawer(GravityCompat.END);
     }
 
-    /**
-     * Adjusts the width of the calculator drawer.
-     *
-     * @param fullScreen If true, set to full screen width; otherwise, 80% of screen width.
-     */
     public void setDrawerWidth(boolean fullScreen) {
-        View calculatorDrawer = findViewById(R.id.calculator_drawer_container);
-        if (calculatorDrawer == null) return;
+        if (drawerBinding == null) return;
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
         int width = fullScreen ? metrics.widthPixels : (int) (metrics.widthPixels * 0.8);
 
-        ViewGroup.LayoutParams params = calculatorDrawer.getLayoutParams();
+        ViewGroup.LayoutParams params = drawerBinding.calculatorDrawerContainer.getLayoutParams();
         params.width = width;
-        calculatorDrawer.setLayoutParams(params);
+        drawerBinding.calculatorDrawerContainer.setLayoutParams(params);
     }
 
     // --- GLOBAL NAVIGATION METHODS ---

@@ -1,14 +1,12 @@
 package com.murkfeatherstudio.questroll.feature_species.adapter;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.ItemLanguageKeyBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,26 +32,26 @@ public class LanguageKeyAdapter extends RecyclerView.Adapter<LanguageKeyAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_language_key, parent, false);
-        return new ViewHolder(view);
+        ItemLanguageKeyBinding binding = ItemLanguageKeyBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.tvLanguage.setText(items.get(position));
-        holder.btnDelete.setOnClickListener(v -> removeListener.onRemove(position));
+        holder.binding.tvLanguage.setText(items.get(position));
+        holder.binding.btnDelete.setOnClickListener(v -> removeListener.onRemove(position));
     }
 
     @Override
     public int getItemCount() { return items.size(); }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvLanguage;
-        View btnDelete;
-        ViewHolder(View itemView) {
-            super(itemView);
-            tvLanguage = itemView.findViewById(R.id.tv_language);
-            btnDelete = itemView.findViewById(R.id.btn_delete);
+        private final ItemLanguageKeyBinding binding;
+
+        ViewHolder(ItemLanguageKeyBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }

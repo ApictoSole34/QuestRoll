@@ -6,8 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -24,6 +22,7 @@ import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.character.CharacterTraitEntity;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_background.CustomBackgroundEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.background.BackgroundEntity;
+import com.murkfeatherstudio.questroll.databinding.FragmentWizardBackgroundBinding;
 import com.murkfeatherstudio.questroll.feature_character.utils.BenefitParser;
 import com.murkfeatherstudio.questroll.feature_character.view_model.WizardViewModel;
 import com.google.gson.Gson;
@@ -36,32 +35,33 @@ import java.util.Map;
 
 public class BackgroundStepFragment extends Fragment {
 
-    private Spinner backgroundSpinner;
-    private TextView descriptionText;
+    private FragmentWizardBackgroundBinding binding;
     private WizardViewModel viewModel;
     private List<Object> combinedList = new ArrayList<>();
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_wizard_background, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentWizardBackgroundBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(WizardViewModel.class);
-        backgroundSpinner = view.findViewById(R.id.background_spinner);
-        descriptionText = view.findViewById(R.id.background_description);
 
-        descriptionText.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
-        descriptionText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
-
-        Button nextButton = view.findViewById(R.id.next_button);
-        Button backButton = view.findViewById(R.id.back_button);
+        binding.backgroundDescription.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
+        binding.backgroundDescription.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
 
         loadBackgrounds();
 
-        backgroundSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.backgroundSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Object selected = combinedList.get(position);
@@ -75,8 +75,8 @@ public class BackgroundStepFragment extends Fragment {
             @Override public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        nextButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.next_action));
-        backButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.back_action));
+        binding.nextButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.next_action));
+        binding.backButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.back_action));
     }
 
     private void loadBackgrounds() {
@@ -102,7 +102,7 @@ public class BackgroundStepFragment extends Fragment {
 
             if (!isAdded()) return;
             AppExecutors.getInstance().mainThread().execute(() -> {
-                if (!isAdded()) return;
+                if (!isAdded() || binding == null) return;
 
                 ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(requireContext(),
                         android.R.layout.simple_spinner_item, combinedList) {
@@ -136,7 +136,7 @@ public class BackgroundStepFragment extends Fragment {
                     }
                 };
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                backgroundSpinner.setAdapter(adapter);
+                binding.backgroundSpinner.setAdapter(adapter);
 
                 if (viewModel.backgroundKey != null) {
                     for (int i = 0; i < combinedList.size(); i++) {
@@ -144,15 +144,15 @@ public class BackgroundStepFragment extends Fragment {
                         String key = (obj instanceof BackgroundEntity) ? ((BackgroundEntity) obj).key
                                 : "custom_" + ((CustomBackgroundEntity) obj).id;
                         if (key.equals(viewModel.backgroundKey)) {
-                            backgroundSpinner.setSelection(i);
+                            binding.backgroundSpinner.setSelection(i);
                             break;
                         }
                     }
                 }
-                if (!combinedList.isEmpty() && backgroundSpinner.getSelectedItem() == null) {
-                    backgroundSpinner.setSelection(0);
+                if (!combinedList.isEmpty() && binding.backgroundSpinner.getSelectedItem() == null) {
+                    binding.backgroundSpinner.setSelection(0);
                 }
-                showDescription(backgroundSpinner.getSelectedItem());
+                showDescription(binding.backgroundSpinner.getSelectedItem());
             });
         });
     }
@@ -278,14 +278,15 @@ public class BackgroundStepFragment extends Fragment {
     }
 
     private void showDescription(Object selected) {
+        if (binding == null) return;
         if (selected instanceof BackgroundEntity) {
             String desc = ((BackgroundEntity) selected).desc;
-            descriptionText.setText(desc != null ? desc : "No description");
+            binding.backgroundDescription.setText(desc != null ? desc : "No description");
         } else if (selected instanceof CustomBackgroundEntity) {
             String desc = ((CustomBackgroundEntity) selected).desc;
-            descriptionText.setText(desc != null ? desc : "No description");
+            binding.backgroundDescription.setText(desc != null ? desc : "No description");
         } else {
-            descriptionText.setText("");
+            binding.backgroundDescription.setText("");
         }
     }
 }

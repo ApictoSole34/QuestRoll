@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +22,9 @@ import com.murkfeatherstudio.questroll.core.models.character.CharacterSpellEntit
 import com.murkfeatherstudio.questroll.core.models.character.CharacterTraitEntity;
 import com.murkfeatherstudio.questroll.core.models.character.CharacterWithRelations;
 import com.murkfeatherstudio.questroll.core.models.open5e.spell.SpellEntity;
+import com.murkfeatherstudio.questroll.databinding.FragmentCampaignTraitsBinding;
+import com.murkfeatherstudio.questroll.databinding.ItemSimpleTextBinding;
+import com.murkfeatherstudio.questroll.databinding.ItemTraitBinding;
 import com.murkfeatherstudio.questroll.feature_campaign.view_model.CampaignDetailViewModel;
 
 import java.util.ArrayList;
@@ -40,9 +42,7 @@ public class CampaignTraitsFragment extends Fragment {
     private boolean initialShowSpells;
     private CampaignDetailViewModel viewModel;
 
-    private Button btnToggleTraits, btnToggleSpells;
-    private RecyclerView rvTraits, rvSpells;
-    private TextView tvEmptyTraits, tvEmptySpells;
+    private FragmentCampaignTraitsBinding binding;
 
     private TraitsAdapter traitsAdapter;
     private SpellAdapter spellAdapter;
@@ -77,33 +77,33 @@ public class CampaignTraitsFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_campaign_traits, container, false);
+        binding = FragmentCampaignTraitsBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        btnToggleTraits = view.findViewById(R.id.btn_toggle_traits);
-        btnToggleSpells = view.findViewById(R.id.btn_toggle_spells);
-        rvTraits = view.findViewById(R.id.rv_traits);
-        rvSpells = view.findViewById(R.id.rv_spells);
-        tvEmptyTraits = view.findViewById(R.id.tv_empty_traits);
-        tvEmptySpells = view.findViewById(R.id.tv_empty_spells);
-
-        rvTraits.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.rvTraits.setLayoutManager(new LinearLayoutManager(requireContext()));
         traitsAdapter = new TraitsAdapter();
-        rvTraits.setAdapter(traitsAdapter);
+        binding.rvTraits.setAdapter(traitsAdapter);
 
-        rvSpells.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.rvSpells.setLayoutManager(new LinearLayoutManager(requireContext()));
         spellAdapter = new SpellAdapter(this::showSpellDetails);
-        rvSpells.setAdapter(spellAdapter);
+        binding.rvSpells.setAdapter(spellAdapter);
 
-        btnToggleTraits.setOnClickListener(v -> setViewMode(false));
-        btnToggleSpells.setOnClickListener(v -> setViewMode(true));
+        binding.btnToggleTraits.setOnClickListener(v -> setViewMode(false));
+        binding.btnToggleSpells.setOnClickListener(v -> setViewMode(true));
 
         viewModel.getCanCastSpells().observe(getViewLifecycleOwner(), canCast -> {
-            btnToggleSpells.setVisibility(canCast ? View.VISIBLE : View.GONE);
+            binding.btnToggleSpells.setVisibility(canCast ? View.VISIBLE : View.GONE);
             if (!canCast) setViewMode(false);
         });
 
@@ -117,16 +117,16 @@ public class CampaignTraitsFragment extends Fragment {
 
     private void setViewMode(boolean spells) {
         this.showSpells = spells;
-        rvTraits.setVisibility(spells ? View.GONE : View.VISIBLE);
-        rvSpells.setVisibility(spells ? View.VISIBLE : View.GONE);
+        binding.rvTraits.setVisibility(spells ? View.GONE : View.VISIBLE);
+        binding.rvSpells.setVisibility(spells ? View.VISIBLE : View.GONE);
         
         updateToggleButtons();
 
         if (spells) {
-            tvEmptyTraits.setVisibility(View.GONE);
+            binding.tvEmptyTraits.setVisibility(View.GONE);
             updateEmptySpellsVisibility();
         } else {
-            tvEmptySpells.setVisibility(View.GONE);
+            binding.tvEmptySpells.setVisibility(View.GONE);
             updateEmptyTraitsVisibility();
         }
     }
@@ -136,15 +136,15 @@ public class CampaignTraitsFragment extends Fragment {
         int inactiveColor = getResources().getColor(android.R.color.darker_gray, null);
 
         if (showSpells) {
-            btnToggleSpells.setTextColor(activeColor);
-            btnToggleSpells.setAlpha(1.0f);
-            btnToggleTraits.setTextColor(inactiveColor);
-            btnToggleTraits.setAlpha(0.7f);
+            binding.btnToggleSpells.setTextColor(activeColor);
+            binding.btnToggleSpells.setAlpha(1.0f);
+            binding.btnToggleTraits.setTextColor(inactiveColor);
+            binding.btnToggleTraits.setAlpha(0.7f);
         } else {
-            btnToggleTraits.setTextColor(activeColor);
-            btnToggleTraits.setAlpha(1.0f);
-            btnToggleSpells.setTextColor(inactiveColor);
-            btnToggleSpells.setAlpha(0.7f);
+            binding.btnToggleTraits.setTextColor(activeColor);
+            binding.btnToggleTraits.setAlpha(1.0f);
+            binding.btnToggleSpells.setTextColor(inactiveColor);
+            binding.btnToggleSpells.setAlpha(0.7f);
         }
     }
 
@@ -164,8 +164,8 @@ public class CampaignTraitsFragment extends Fragment {
     }
 
     private void updateEmptyTraitsVisibility() {
-        if (!showSpells) {
-            tvEmptyTraits.setVisibility(traitsAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
+        if (!showSpells && binding != null) {
+            binding.tvEmptyTraits.setVisibility(traitsAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -179,8 +179,8 @@ public class CampaignTraitsFragment extends Fragment {
     }
 
     private void updateEmptySpellsVisibility() {
-        if (showSpells) {
-            tvEmptySpells.setVisibility(spellAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
+        if (showSpells && binding != null) {
+            binding.tvEmptySpells.setVisibility(spellAdapter.getItemCount() == 0 ? View.VISIBLE : View.GONE);
         }
     }
 
@@ -252,6 +252,12 @@ public class CampaignTraitsFragment extends Fragment {
         
         dialog.show();
 
+        /**
+         * JAVADOC: findViewById is used here with system/library resource IDs (android.R.id.message, 
+         * alertTitle) because these views are part of the internal hierarchy of the standard 
+         * AlertDialog/AppCompatDialog. View Binding only generates classes for layouts defined 
+         * in our own project, not for platform-provided dialog structures.
+         */
         TextView messageView = dialog.findViewById(android.R.id.message);
         if (messageView != null) {
             messageView.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
@@ -274,20 +280,19 @@ public class CampaignTraitsFragment extends Fragment {
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_trait, parent, false);
-            return new ViewHolder(v);
+            ItemTraitBinding binding = ItemTraitBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+            return new ViewHolder(binding);
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             CharacterTraitEntity t = items.get(position);
-            holder.tvName.setText(t.name);
+            holder.binding.tvTraitName.setText(t.name);
             if (t.description != null && !t.description.isEmpty()) {
-                holder.tvDesc.setText(t.description);
-                holder.tvDesc.setVisibility(View.VISIBLE);
+                holder.binding.tvTraitDesc.setText(t.description);
+                holder.binding.tvTraitDesc.setVisibility(View.VISIBLE);
             } else {
-                holder.tvDesc.setVisibility(View.GONE);
+                holder.binding.tvTraitDesc.setVisibility(View.GONE);
             }
         }
 
@@ -295,11 +300,10 @@ public class CampaignTraitsFragment extends Fragment {
         public int getItemCount() { return items.size(); }
 
         static class ViewHolder extends RecyclerView.ViewHolder {
-            TextView tvName, tvDesc;
-            ViewHolder(@NonNull View itemView) {
-                super(itemView);
-                tvName = itemView.findViewById(R.id.tv_trait_name);
-                tvDesc = itemView.findViewById(R.id.tv_trait_desc);
+            final ItemTraitBinding binding;
+            ViewHolder(ItemTraitBinding binding) {
+                super(binding.getRoot());
+                this.binding = binding;
             }
         }
     }
@@ -324,24 +328,27 @@ public class CampaignTraitsFragment extends Fragment {
         @NonNull
         @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_simple_text, parent, false);
-            return new ViewHolder((TextView) v);
+            ItemSimpleTextBinding binding = ItemSimpleTextBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+            return new ViewHolder(binding);
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             SpellDisplayItem item = items.get(position);
             String display = item.name + (item.isPrepared ? " [Prepared]" : "");
-            holder.textView.setText(display);
-            holder.textView.setOnClickListener(v -> listener.onSpellClick(item));
+            holder.binding.tvText.setText(display);
+            holder.binding.getRoot().setOnClickListener(v -> listener.onSpellClick(item));
         }
 
         @Override
         public int getItemCount() { return items.size(); }
 
         static class ViewHolder extends RecyclerView.ViewHolder {
-            TextView textView;
-            ViewHolder(TextView v) { super(v); textView = v; }
+            final ItemSimpleTextBinding binding;
+            ViewHolder(ItemSimpleTextBinding binding) {
+                super(binding.getRoot());
+                this.binding = binding;
+            }
         }
     }
 

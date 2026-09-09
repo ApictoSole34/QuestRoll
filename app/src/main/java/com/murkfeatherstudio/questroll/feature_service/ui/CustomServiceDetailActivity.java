@@ -3,28 +3,28 @@ package com.murkfeatherstudio.questroll.feature_service.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_service.CustomServiceDao;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_service.CustomServiceEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityServiceDetailBinding;
 
 public class CustomServiceDetailActivity extends BaseActivity {
 
     public static final String EXTRA_ID = "CUSTOM_SERVICE_ID";
     private long id;
     private CustomServiceDao dao;
+    private ActivityServiceDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_service_detail);
+        binding = ActivityServiceDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         id = getIntent().getLongExtra(EXTRA_ID, -1);
         if (id == -1) {
@@ -39,14 +39,13 @@ public class CustomServiceDetailActivity extends BaseActivity {
     }
 
     private void populateUI(CustomServiceEntity s) {
-        ((TextView) findViewById(R.id.tv_name)).setText(s.name);
-        ((TextView) findViewById(R.id.tv_cost_detail)).setText("Cost: " + s.cost + " gp / " + s.detail);
-        ((TextView) findViewById(R.id.tv_desc)).setText(s.desc != null ? s.desc : "");
-        ((TextView) findViewById(R.id.tv_source)).setVisibility(View.GONE);
+        binding.tvName.setText(s.name);
+        binding.tvCostDetail.setText("Cost: " + s.cost + " gp / " + s.detail);
+        binding.tvDesc.setText(s.desc != null ? s.desc : "");
+        binding.tvSource.setVisibility(View.GONE);
 
-        Button btnManage = findViewById(R.id.btnManage);
-        btnManage.setVisibility(View.VISIBLE);
-        btnManage.setOnClickListener(v -> showManageMenu(v, id));
+        binding.btnManage.setVisibility(View.VISIBLE);
+        binding.btnManage.setOnClickListener(v -> showManageMenu(v, id));
     }
 
     private void showManageMenu(View anchor, long id) {

@@ -5,13 +5,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -22,6 +20,7 @@ import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_character_class.CustomCharacterClassEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.character_class.CharacterClassEntity;
+import com.murkfeatherstudio.questroll.databinding.FragmentWizardSubclassInfoBinding;
 import com.murkfeatherstudio.questroll.feature_class.model.CombinedClass;
 import com.murkfeatherstudio.questroll.feature_class.view_model.ClassWizardViewModel;
 
@@ -32,32 +31,33 @@ public class ClassWizardSubclassInfoFragment extends Fragment
         implements ClassWizardActivity.ClassWizardStep {
 
     private ClassWizardViewModel viewModel;
-    private CheckBox cbIsSubclass;
-    private LinearLayout parentClassContainer;
-    private Spinner spinnerParentClass;
+    private FragmentWizardSubclassInfoBinding binding;
     private List<CombinedClass> parentClasses = new ArrayList<>();
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_wizard_subclass_info, container, false);
+        binding = FragmentWizardSubclassInfoBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(ClassWizardViewModel.class);
 
-        cbIsSubclass = view.findViewById(R.id.cb_is_subclass);
-        parentClassContainer = view.findViewById(R.id.parent_class_container);
-        spinnerParentClass = view.findViewById(R.id.spinner_parent_class);
+        binding.cbIsSubclass.setChecked(viewModel.isSubclass);
+        binding.parentClassContainer.setVisibility(viewModel.isSubclass ? View.VISIBLE : View.GONE);
 
-        cbIsSubclass.setChecked(viewModel.isSubclass);
-        parentClassContainer.setVisibility(viewModel.isSubclass ? View.VISIBLE : View.GONE);
-
-        cbIsSubclass.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        binding.cbIsSubclass.setOnCheckedChangeListener((buttonView, isChecked) -> {
             viewModel.isSubclass = isChecked;
-            parentClassContainer.setVisibility(isChecked ? View.VISIBLE : View.GONE);
+            binding.parentClassContainer.setVisibility(isChecked ? View.VISIBLE : View.GONE);
             if (!isChecked) {
                 viewModel.parentClassKey = null;
                 viewModel.parentClassName = null;
@@ -71,11 +71,11 @@ public class ClassWizardSubclassInfoFragment extends Fragment
         AppExecutors.getInstance().diskIO().execute(() -> {
             if (!isAdded()) return;
 
-            // Pobierz klasy bazowe (nie subklasy) z Open5e
+            // Fetch base classes (not subclasses) from Open5e
             List<CharacterClassEntity> open5eClasses = Open5eDatabase.getInstance(requireContext())
                     .characterClassDao().getBaseClassesByGameSystem(viewModel.gameSystem);
 
-            // Pobierz customowe klasy bazowe
+            // Fetch custom base classes
             List<CustomCharacterClassEntity> customClasses = UserContentDatabase.getInstance(requireContext())
                     .customCharacterClassDao().getBaseClassesSync(viewModel.gameSystem);
 
@@ -89,7 +89,7 @@ public class ClassWizardSubclassInfoFragment extends Fragment
                             false,
                             null,
                             null,
-                            viewModel.gameSystem  // 👈 DODANY gameSystem
+                            viewModel.gameSystem
                     ));
                 }
             }
@@ -110,7 +110,7 @@ public class ClassWizardSubclassInfoFragment extends Fragment
             parentClasses.sort((a, b) -> a.getName().compareTo(b.getName()));
 
             AppExecutors.getInstance().mainThread().execute(() -> {
-                if (!isAdded()) return;
+                if (!isAdded() || binding == null) return;
 
                 ArrayAdapter<CombinedClass> adapter = new ArrayAdapter<CombinedClass>(
                         requireContext(),
@@ -139,13 +139,13 @@ public class ClassWizardSubclassInfoFragment extends Fragment
                     }
                 };
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                spinnerParentClass.setAdapter(adapter);
+                binding.spinnerParentClass.setAdapter(adapter);
 
-                // Przywróć poprzedni wybór
+                // Restore previous selection
                 if (viewModel.parentClassKey != null) {
                     for (int i = 0; i < parentClasses.size(); i++) {
                         if (parentClasses.get(i).getKey().equals(viewModel.parentClassKey)) {
-                            spinnerParentClass.setSelection(i);
+                            binding.spinnerParentClass.setSelection(i);
                             break;
                         }
                     }
@@ -156,8 +156,9 @@ public class ClassWizardSubclassInfoFragment extends Fragment
 
     @Override
     public boolean validate() {
+        if (binding == null) return false;
         if (viewModel.isSubclass) {
-            int position = spinnerParentClass.getSelectedItemPosition();
+            int position = binding.spinnerParentClass.getSelectedItemPosition();
             if (position < 0 || position >= parentClasses.size()) {
                 Toast.makeText(getContext(), "Please select a parent class", Toast.LENGTH_SHORT).show();
                 return false;
@@ -168,14 +169,13 @@ public class ClassWizardSubclassInfoFragment extends Fragment
 
     @Override
     public void saveData() {
+        if (binding == null) return;
         if (viewModel.isSubclass) {
-            int position = spinnerParentClass.getSelectedItemPosition();
+            int position = binding.spinnerParentClass.getSelectedItemPosition();
             if (position >= 0 && position < parentClasses.size()) {
                 CombinedClass selected = parentClasses.get(position);
                 viewModel.parentClassKey = selected.getKey();
                 viewModel.parentClassName = selected.getName();
-                // Subklasa MUSI dzielić game system z rodzicem - inaczej dostalibyśmy
-                // np. subklasę 5e-2014 podpiętą pod klasę bazową z 5e-2014.
                 viewModel.gameSystem = selected.getGameSystem();
             }
         } else {

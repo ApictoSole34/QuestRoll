@@ -66,13 +66,13 @@ public class CustomCharacterClassEntity {
     public int languageChoices = 0;
 
     /**
-     * Serializowana (Gson) lista ClassWizardViewModel.ClassProgressionRow.
+     * Serialized (Gson) list of ClassWizardViewModel.ClassProgressionRow.
      */
     @ColumnInfo(name = "progression_json")
     public String progressionJson = "[]";
 
     /**
-     * Lista kluczy zaklęć przypisanych do tej klasy.
+     * List of spell keys assigned to this class.
      */
     @ColumnInfo(name = "spell_keys_json")
     public String spellKeysJson = "[]";

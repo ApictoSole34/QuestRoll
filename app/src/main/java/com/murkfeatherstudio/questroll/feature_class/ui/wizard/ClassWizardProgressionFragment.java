@@ -6,20 +6,20 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.FragmentWizardProgressionBinding;
 import com.murkfeatherstudio.questroll.feature_class.class_adapter.ProgressionAdapter;
 import com.murkfeatherstudio.questroll.feature_class.view_model.ClassWizardViewModel;
 
@@ -34,25 +34,28 @@ public class ClassWizardProgressionFragment extends Fragment
     };
 
     private ClassWizardViewModel viewModel;
-    private RecyclerView rvProgression;
+    private FragmentWizardProgressionBinding binding;
     private ProgressionAdapter adapter;
-    private Button btnAddLevel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_wizard_progression, container, false);
+        binding = FragmentWizardProgressionBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(ClassWizardViewModel.class);
 
-        rvProgression = view.findViewById(R.id.rv_progression);
-        btnAddLevel = view.findViewById(R.id.btn_add_level);
-
-        rvProgression.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.rvProgression.setLayoutManager(new LinearLayoutManager(getContext()));
 
         adapter = new ProgressionAdapter(
                 viewModel.progression,
@@ -71,7 +74,7 @@ public class ClassWizardProgressionFragment extends Fragment
                     }
                 }
         );
-        rvProgression.setAdapter(adapter);
+        binding.rvProgression.setAdapter(adapter);
 
         if (viewModel.progression.isEmpty()) {
             for (int i = 1; i <= 5; i++) {
@@ -80,13 +83,13 @@ public class ClassWizardProgressionFragment extends Fragment
             adapter.notifyDataSetChanged();
         }
 
-        btnAddLevel.setOnClickListener(v -> {
+        binding.btnAddLevel.setOnClickListener(v -> {
             int nextLevel = viewModel.progression.isEmpty() ? 1 :
                     viewModel.progression.get(viewModel.progression.size() - 1).level + 1;
             if (nextLevel > 20) return;
             viewModel.progression.add(new ClassWizardViewModel.ClassProgressionRow(nextLevel));
             adapter.notifyItemInserted(viewModel.progression.size() - 1);
-            rvProgression.scrollToPosition(viewModel.progression.size() - 1);
+            binding.rvProgression.scrollToPosition(viewModel.progression.size() - 1);
         });
     }
 
@@ -100,6 +103,14 @@ public class ClassWizardProgressionFragment extends Fragment
         }
     }
 
+    /**
+     * JAVADOC: This dialog constructs its UI programmatically by inflating a ScrollView 
+     * and a LinearLayout, and adding input fields via addView(). 
+     * Since the number of spell slot fields depends on the class's caster type 
+     * (e.g., Full Caster needs 9 levels of slots), the UI is dynamic and not 
+     * defined in a static XML file. Therefore, View Binding cannot be used 
+     * for these generated fields.
+     */
     private void showEditLevelDialog(int position, ClassWizardViewModel.ClassProgressionRow row) {
         Context ctx = requireContext();
 
@@ -183,11 +194,11 @@ public class ClassWizardProgressionFragment extends Fragment
 
     @Override
     public boolean validate() {
-        return !viewModel.progression.isEmpty();
+        return viewModel != null && !viewModel.progression.isEmpty();
     }
 
     @Override
     public void saveData() {
-        // Dane już są w ViewModel — modyfikowane na bieżąco przez dialog edycji.
+        // Data is already in ViewModel — modified in real-time by the edit dialog.
     }
 }

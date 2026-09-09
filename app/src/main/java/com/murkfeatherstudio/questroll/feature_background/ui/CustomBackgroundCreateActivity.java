@@ -3,13 +3,10 @@ package com.murkfeatherstudio.questroll.feature_background.ui;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +31,9 @@ import com.murkfeatherstudio.questroll.core.models.open5e.game_system.GameSystem
 import com.murkfeatherstudio.questroll.core.models.open5e.item.ItemEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.item_set.ItemSetEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.language.LanguageEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityCustomBackgroundCreateBinding;
+import com.murkfeatherstudio.questroll.databinding.DialogAddFeatureBinding;
+import com.murkfeatherstudio.questroll.databinding.DialogSearchableListBinding;
 import com.murkfeatherstudio.questroll.feature_background.adapter.GenericItemAdapter;
 import com.murkfeatherstudio.questroll.feature_background.view_model.CustomBackgroundCreateViewModel;
 
@@ -48,10 +48,7 @@ public class CustomBackgroundCreateActivity extends BaseActivity {
     private static final String DEFAULT_SYSTEM = "5e-2014";
 
     private CustomBackgroundCreateViewModel viewModel;
-    private EditText etName, etDesc;
-    private Spinner spinnerGameSystem;
-    private EditText etStartingGold;
-    private EditText etEquipmentDescription, etLanguagesDescription, etLanguageChoices;
+    private ActivityCustomBackgroundCreateBinding binding;
     private final List<GameSystemEntity> gameSystems = new ArrayList<>();
 
     private GenericItemAdapter<String> equipmentAdapter;
@@ -63,7 +60,8 @@ public class CustomBackgroundCreateActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_custom_background_create);
+        binding = ActivityCustomBackgroundCreateBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         initViewModel();
         initViews();
@@ -83,33 +81,25 @@ public class CustomBackgroundCreateActivity extends BaseActivity {
     }
 
     private void initViews() {
-        etName = findViewById(R.id.etName);
-        etDesc = findViewById(R.id.etDesc);
-        spinnerGameSystem = findViewById(R.id.spinnerGameSystem);
-        etStartingGold = findViewById(R.id.etStartingGold);
-        etEquipmentDescription = findViewById(R.id.etEquipmentDescription);
-        etLanguagesDescription = findViewById(R.id.etLanguagesDescription);
-        etLanguageChoices = findViewById(R.id.etLanguageChoices);
-
-        findViewById(R.id.btnAddEquipment).setOnClickListener(v -> showAddItemDialog());
-        findViewById(R.id.btnAddLanguage).setOnClickListener(v -> showAddLanguageDialog());
-        findViewById(R.id.btnAddSkill).setOnClickListener(v -> showAddSkillDialog());
-        findViewById(R.id.btnAddTool).setOnClickListener(v -> showAddStringDialog("Tool", toolsAdapter, viewModel::addTool, viewModel::getToolItems));
-        findViewById(R.id.btnAddFeature).setOnClickListener(v -> showAddFeatureDialog());
-        findViewById(R.id.btnSave).setOnClickListener(v -> save());
+        binding.btnAddEquipment.setOnClickListener(v -> showAddItemDialog());
+        binding.btnAddLanguage.setOnClickListener(v -> showAddLanguageDialog());
+        binding.btnAddSkill.setOnClickListener(v -> showAddSkillDialog());
+        binding.btnAddTool.setOnClickListener(v -> showAddStringDialog("Tool", toolsAdapter, viewModel::addTool, viewModel::getToolItems));
+        binding.btnAddFeature.setOnClickListener(v -> showAddFeatureDialog());
+        binding.btnSave.setOnClickListener(v -> save());
     }
 
     private void observeViewModel() {
         viewModel.getEditData().observe(this, entity -> {
             if (entity != null) {
-                etName.setText(entity.name);
-                etDesc.setText(entity.desc);
-                etStartingGold.setText(String.valueOf(entity.startingGold));
+                binding.etName.setText(entity.name);
+                binding.etDesc.setText(entity.desc);
+                binding.etStartingGold.setText(String.valueOf(entity.startingGold));
                 selectGameSystem(entity.gameSystem);
                 refreshAdapters();
-                etEquipmentDescription.setText(viewModel.getEquipmentDescription());
-                etLanguagesDescription.setText(viewModel.getLanguagesDescription());
-                etLanguageChoices.setText(String.valueOf(viewModel.getLanguageChoices()));
+                binding.etEquipmentDescription.setText(viewModel.getEquipmentDescription());
+                binding.etLanguagesDescription.setText(viewModel.getLanguagesDescription());
+                binding.etLanguageChoices.setText(String.valueOf(viewModel.getLanguageChoices()));
             }
         });
 
@@ -166,14 +156,14 @@ public class CustomBackgroundCreateActivity extends BaseActivity {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, names);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerGameSystem.setAdapter(adapter);
+        binding.spinnerGameSystem.setAdapter(adapter);
     }
 
     private void selectGameSystem(String systemKey) {
         if (systemKey == null) return;
         for (int i = 0; i < gameSystems.size(); i++) {
             if (systemKey.equals(gameSystems.get(i).key)) {
-                spinnerGameSystem.setSelection(i);
+                binding.spinnerGameSystem.setSelection(i);
                 break;
             }
         }
@@ -205,15 +195,14 @@ public class CustomBackgroundCreateActivity extends BaseActivity {
             featuresAdapter.setItems(viewModel.getFeatureItems());
         }, i -> i.name);
 
-        initRv(R.id.rvEquipment, equipmentAdapter);
-        initRv(R.id.rvLanguages, languagesAdapter);
-        initRv(R.id.rvSkillProficiencies, skillsAdapter);
-        initRv(R.id.rvToolProficiencies, toolsAdapter);
-        initRv(R.id.rvFeatures, featuresAdapter);
+        initRv(binding.rvEquipment, equipmentAdapter);
+        initRv(binding.rvLanguages, languagesAdapter);
+        initRv(binding.rvSkillProficiencies, skillsAdapter);
+        initRv(binding.rvToolProficiencies, toolsAdapter);
+        initRv(binding.rvFeatures, featuresAdapter);
     }
 
-    private void initRv(int id, RecyclerView.Adapter<?> adapter) {
-        RecyclerView rv = findViewById(id);
+    private void initRv(RecyclerView rv, RecyclerView.Adapter<?> adapter) {
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.setAdapter(adapter);
     }
@@ -231,10 +220,7 @@ public class CustomBackgroundCreateActivity extends BaseActivity {
     }
 
     private void showItemSelectionDialog(List<Object> items) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = getLayoutInflater().inflate(R.layout.dialog_searchable_list, null);
-        EditText search = view.findViewById(R.id.search_input);
-        ListView list = view.findViewById(R.id.list_view);
+        DialogSearchableListBinding dialogBinding = DialogSearchableListBinding.inflate(getLayoutInflater());
 
         List<Object> filtered = new ArrayList<>(items);
         ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(this, android.R.layout.simple_list_item_1, filtered) {
@@ -246,9 +232,9 @@ public class CustomBackgroundCreateActivity extends BaseActivity {
                 return tv;
             }
         };
-        list.setAdapter(adapter);
+        dialogBinding.listView.setAdapter(adapter);
 
-        search.addTextChangedListener(new TextWatcher() {
+        dialogBinding.searchInput.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
             @Override public void afterTextChanged(Editable s) {
@@ -261,14 +247,16 @@ public class CustomBackgroundCreateActivity extends BaseActivity {
             }
         });
 
-        builder.setView(view).setNegativeButton("Cancel", null);
-        AlertDialog dialog = builder.create();
-        list.setOnItemClickListener((p, v, pos, id) -> {
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(dialogBinding.getRoot())
+                .setNegativeButton("Cancel", null)
+                .show();
+
+        dialogBinding.listView.setOnItemClickListener((p, v, pos, id) -> {
             Object selected = filtered.get(pos);
             dialog.dismiss();
             handleItemSelected(selected);
         });
-        dialog.show();
     }
 
     private String getItemName(Object o) {
@@ -381,10 +369,7 @@ public class CustomBackgroundCreateActivity extends BaseActivity {
     }
 
     private <T> void showSearchableListDialog(String title, List<T> items, java.util.function.Consumer<T> onSelect) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        View view = getLayoutInflater().inflate(R.layout.dialog_searchable_list, null);
-        EditText search = view.findViewById(R.id.search_input);
-        ListView list = view.findViewById(R.id.list_view);
+        DialogSearchableListBinding dialogBinding = DialogSearchableListBinding.inflate(getLayoutInflater());
         List<T> filtered = new ArrayList<>(items);
         ArrayAdapter<T> adapter = new ArrayAdapter<T>(this, android.R.layout.simple_list_item_1, filtered) {
             @NonNull @Override
@@ -394,8 +379,8 @@ public class CustomBackgroundCreateActivity extends BaseActivity {
                 return tv;
             }
         };
-        list.setAdapter(adapter);
-        search.addTextChangedListener(new TextWatcher() {
+        dialogBinding.listView.setAdapter(adapter);
+        dialogBinding.searchInput.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
             @Override public void afterTextChanged(Editable s) {
@@ -405,26 +390,28 @@ public class CustomBackgroundCreateActivity extends BaseActivity {
                 adapter.notifyDataSetChanged();
             }
         });
-        builder.setView(view).setNegativeButton("Cancel", null);
-        AlertDialog dialog = builder.create();
-        list.setOnItemClickListener((p, v, pos, id) -> {
+        
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setView(dialogBinding.getRoot())
+                .setNegativeButton("Cancel", null)
+                .show();
+        
+        dialogBinding.listView.setOnItemClickListener((p, v, pos, id) -> {
             onSelect.accept(filtered.get(pos));
             dialog.dismiss();
         });
-        dialog.show();
     }
 
     private void showAddFeatureDialog() {
-        View view = LayoutInflater.from(this).inflate(R.layout.dialog_add_feature, null);
-        EditText fName = view.findViewById(R.id.feature_name);
-        EditText fDesc = view.findViewById(R.id.feature_desc);
-        new AlertDialog.Builder(this).setTitle("Add Feature").setView(view)
+        DialogAddFeatureBinding dialogBinding = DialogAddFeatureBinding.inflate(getLayoutInflater());
+        new AlertDialog.Builder(this).setTitle("Add Feature").setView(dialogBinding.getRoot())
                 .setPositiveButton("Add", (d, w) -> {
-                    String name = fName.getText().toString().trim();
+                    String name = dialogBinding.featureName.getText() != null ? dialogBinding.featureName.getText().toString().trim() : "";
                     if (!name.isEmpty()) {
                         CharacterTraitEntity feat = new CharacterTraitEntity();
                         feat.name = name;
-                        feat.description = fDesc.getText().toString().trim();
+                        feat.description = dialogBinding.featureDesc.getText() != null ? dialogBinding.featureDesc.getText().toString().trim() : "";
                         viewModel.addFeature(feat);
                         featuresAdapter.setItems(viewModel.getFeatureItems());
                     }
@@ -432,27 +419,33 @@ public class CustomBackgroundCreateActivity extends BaseActivity {
     }
 
     private void save() {
-        String name = etName.getText().toString().trim();
+        String name = binding.etName.getText() != null ? binding.etName.getText().toString().trim() : "";
         if (name.isEmpty()) {
-            etName.setError("Required");
+            binding.etName.setError("Required");
             return;
         }
-        int pos = spinnerGameSystem.getSelectedItemPosition();
+        int pos = binding.spinnerGameSystem.getSelectedItemPosition();
         String system = (pos >= 0 && pos < gameSystems.size()) ? gameSystems.get(pos).key : DEFAULT_SYSTEM;
         
         int gold = 0;
-        try { gold = Integer.parseInt(etStartingGold.getText().toString()); } catch (NumberFormatException ignored) {}
+        try {
+            String goldStr = binding.etStartingGold.getText() != null ? binding.etStartingGold.getText().toString() : "0";
+            gold = Integer.parseInt(goldStr.isEmpty() ? "0" : goldStr);
+        } catch (NumberFormatException ignored) {}
         
         int choices = 0;
-        try { choices = Integer.parseInt(etLanguageChoices.getText().toString()); } catch (NumberFormatException ignored) {}
+        try {
+            String choicesStr = binding.etLanguageChoices.getText() != null ? binding.etLanguageChoices.getText().toString() : "0";
+            choices = Integer.parseInt(choicesStr.isEmpty() ? "0" : choicesStr);
+        } catch (NumberFormatException ignored) {}
 
-        viewModel.save(name, etDesc.getText().toString().trim(), system, gold,
-                etEquipmentDescription.getText().toString().trim(),
-                etLanguagesDescription.getText().toString().trim(), choices);
+        viewModel.save(name, binding.etDesc.getText().toString().trim(), system, gold,
+                binding.etEquipmentDescription.getText().toString().trim(),
+                binding.etLanguagesDescription.getText().toString().trim(), choices);
     }
 
     private String getCurrentGameSystemKey() {
-        int pos = spinnerGameSystem.getSelectedItemPosition();
+        int pos = binding.spinnerGameSystem.getSelectedItemPosition();
         return (pos >= 0 && pos < gameSystems.size()) ? gameSystems.get(pos).key : DEFAULT_SYSTEM;
     }
 }

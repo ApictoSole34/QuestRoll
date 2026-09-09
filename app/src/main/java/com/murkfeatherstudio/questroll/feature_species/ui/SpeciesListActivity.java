@@ -4,24 +4,22 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.SearchView;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
+import com.murkfeatherstudio.questroll.databinding.ActivitySpeciesListBinding;
+import com.murkfeatherstudio.questroll.databinding.DialogSpeciesFilterBinding;
 import com.murkfeatherstudio.questroll.feature_species.adapter.SpeciesAdapter;
 import com.murkfeatherstudio.questroll.feature_species.model.SpeciesFilter;
 import com.murkfeatherstudio.questroll.feature_species.viewmodel.SpeciesListViewModel;
 import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,13 +28,13 @@ public class SpeciesListActivity extends BaseActivity {
 
     private SpeciesListViewModel viewModel;
     private SpeciesAdapter adapter;
-    private RecyclerView rv;
-    private ChipGroup chipGroupSources;
+    private ActivitySpeciesListBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_species_list);
+        binding = ActivitySpeciesListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         Open5eDatabase open5eDb = Open5eDatabase.getInstance(this);
         UserContentDatabase customDb = UserContentDatabase.getInstance(this);
@@ -47,16 +45,13 @@ public class SpeciesListActivity extends BaseActivity {
                         customDb.customSpeciesDao()
                 )).get(SpeciesListViewModel.class);
 
-        chipGroupSources = findViewById(R.id.chip_group_sources);
-        rv = findViewById(R.id.recycler_species);
-
         setupRecyclerView();
         setupSearch();
         setupObservers();
         viewModel.loadSources();
 
-        findViewById(R.id.btnFilter).setOnClickListener(v -> showFilterDialog());
-        findViewById(R.id.fabCreateSpecies).setOnClickListener(v ->
+        binding.btnFilter.setOnClickListener(v -> showFilterDialog());
+        binding.fabCreateSpecies.setOnClickListener(v ->
                 startActivity(new Intent(this, CustomSpeciesCreateActivity.class)));
     }
 
@@ -72,29 +67,29 @@ public class SpeciesListActivity extends BaseActivity {
                 startActivity(i);
             }
         });
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(adapter);
+        binding.recyclerSpecies.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerSpecies.setAdapter(adapter);
     }
 
     private void setupSearch() {
-        ((SearchView) findViewById(R.id.search_view))
-                .setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                    @Override public boolean onQueryTextSubmit(String q) { viewModel.setQuery(q); return true; }
-                    @Override public boolean onQueryTextChange(String q) { viewModel.setQuery(q); return true; }
-                });
+        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override public boolean onQueryTextSubmit(String q) { viewModel.setQuery(q); return true; }
+            @Override public boolean onQueryTextChange(String q) { viewModel.setQuery(q); return true; }
+        });
     }
 
     private void setupObservers() {
         viewModel.getSpecies().observe(this, species -> {
-            adapter.submitList(species, () -> rv.scrollToPosition(0));
-            ((TextView) findViewById(R.id.tv_species_count))
-                    .setText(species.size() + " species");
+            adapter.submitList(species, () -> binding.recyclerSpecies.scrollToPosition(0));
+            binding.tvSpeciesCount.setText(species.size() + " species");
         });
 
         viewModel.getFilter().observe(this, f -> {
-            TextView tv = findViewById(R.id.tv_active_filters);
-            if (f.isEmpty()) { tv.setVisibility(View.GONE); }
-            else { tv.setVisibility(View.VISIBLE); tv.setText(buildFilterSummary(f)); }
+            if (f.isEmpty()) { binding.tvActiveFilters.setVisibility(View.GONE); }
+            else {
+                binding.tvActiveFilters.setVisibility(View.VISIBLE);
+                binding.tvActiveFilters.setText(buildFilterSummary(f));
+            }
         });
 
         viewModel.getSources().observe(this, sources -> {
@@ -103,9 +98,14 @@ public class SpeciesListActivity extends BaseActivity {
         });
     }
 
+    /**
+     * NOTE: chip_group_sources is managed dynamically (addView()).
+     * Chips for individual sources are created at runtime based on the list fetched from the ViewModel.
+     * ViewBinding is not applicable to these dynamically generated elements.
+     */
     private void buildSourceChips(List<String> sources) {
-        int count = chipGroupSources.getChildCount();
-        if (count > 1) chipGroupSources.removeViews(1, count - 1);
+        int count = binding.chipGroupSources.getChildCount();
+        if (count > 1) binding.chipGroupSources.removeViews(1, count - 1);
 
         for (String source : sources) {
             Chip chip = new Chip(this);
@@ -116,24 +116,20 @@ public class SpeciesListActivity extends BaseActivity {
             chip.setCheckedIconVisible(true);
             chip.setOnCheckedChangeListener((btn, isChecked) -> {
                 if (isChecked) {
-                    Chip chipAll = findViewById(R.id.chip_all);
-                    if (chipAll != null) chipAll.setChecked(false);
+                    binding.chipAll.setChecked(false);
                     viewModel.setSource((String) btn.getTag());
                 }
             });
-            chipGroupSources.addView(chip);
+            binding.chipGroupSources.addView(chip);
         }
 
-        Chip chipAll = findViewById(R.id.chip_all);
-        if (chipAll != null) {
-            chipAll.setOnCheckedChangeListener((btn, isChecked) -> {
-                if (isChecked) {
-                    for (int i = 1; i < chipGroupSources.getChildCount(); i++)
-                        ((Chip) chipGroupSources.getChildAt(i)).setChecked(false);
-                    viewModel.setSource("");
-                }
-            });
-        }
+        binding.chipAll.setOnCheckedChangeListener((btn, isChecked) -> {
+            if (isChecked) {
+                for (int i = 1; i < binding.chipGroupSources.getChildCount(); i++)
+                    ((Chip) binding.chipGroupSources.getChildAt(i)).setChecked(false);
+                viewModel.setSource("");
+            }
+        });
     }
 
     private String formatSource(String source) {
@@ -156,29 +152,28 @@ public class SpeciesListActivity extends BaseActivity {
     }
 
     private void showFilterDialog() {
-        View dv = LayoutInflater.from(this).inflate(R.layout.dialog_species_filter, null);
-        CheckBox cbSubspecies = dv.findViewById(R.id.cb_subspecies_only);
-        CheckBox cbMainOnly = dv.findViewById(R.id.cb_main_only);
+        DialogSpeciesFilterBinding dialogBinding = DialogSpeciesFilterBinding.inflate(getLayoutInflater());
 
         SpeciesFilter current = viewModel.getFilter().getValue();
         if (current == null) current = new SpeciesFilter();
-        cbSubspecies.setChecked(current.subspeciesOnly);
-        cbMainOnly.setChecked(current.mainOnly);
+        dialogBinding.cbSubspeciesOnly.setChecked(current.subspeciesOnly);
+        dialogBinding.cbMainOnly.setChecked(current.mainOnly);
 
-        cbSubspecies.setOnCheckedChangeListener((v, checked) -> {
-            if (checked) cbMainOnly.setChecked(false);
+        dialogBinding.cbSubspeciesOnly.setOnCheckedChangeListener((v, checked) -> {
+            if (checked) dialogBinding.cbMainOnly.setChecked(false);
         });
-        cbMainOnly.setOnCheckedChangeListener((v, checked) -> {
-            if (checked) cbSubspecies.setChecked(false);
+        dialogBinding.cbMainOnly.setChecked(current.mainOnly);
+        dialogBinding.cbMainOnly.setOnCheckedChangeListener((v, checked) -> {
+            if (checked) dialogBinding.cbSubspeciesOnly.setChecked(false);
         });
 
         new AlertDialog.Builder(this)
                 .setTitle("Filter Species")
-                .setView(dv)
+                .setView(dialogBinding.getRoot())
                 .setPositiveButton("Apply", (d, w) ->
                         viewModel.applySubspeciesFilter(
-                                cbSubspecies.isChecked(),
-                                cbMainOnly.isChecked()))
+                                dialogBinding.cbSubspeciesOnly.isChecked(),
+                                dialogBinding.cbMainOnly.isChecked()))
                 .setNeutralButton("Clear", (d, w) -> viewModel.clearFilters())
                 .setNegativeButton("Cancel", null)
                 .show();

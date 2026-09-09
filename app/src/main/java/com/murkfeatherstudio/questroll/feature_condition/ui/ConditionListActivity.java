@@ -3,31 +3,27 @@ package com.murkfeatherstudio.questroll.feature_condition.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.SearchView;
-import android.widget.TextView;
 
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
+import com.murkfeatherstudio.questroll.databinding.ActivityConditionListBinding;
 import com.murkfeatherstudio.questroll.feature_condition.adapter.ConditionAdapter;
 import com.murkfeatherstudio.questroll.feature_condition.view_model.ConditionListViewModel;
 import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class ConditionListActivity extends BaseActivity {
     private ConditionListViewModel viewModel;
     private ConditionAdapter adapter;
-    private RecyclerView rv;
-    private ChipGroup chipGroupSources;
+    private ActivityConditionListBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_condition_list);
+        binding = ActivityConditionListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         Open5eDatabase open5eDb = Open5eDatabase.getInstance(this);
         UserContentDatabase customDb = UserContentDatabase.getInstance(this);
@@ -36,13 +32,11 @@ public class ConditionListActivity extends BaseActivity {
                 new ConditionListViewModel.Factory(open5eDb.conditionDao(), customDb.customConditionDao()))
                 .get(ConditionListViewModel.class);
 
-        chipGroupSources = findViewById(R.id.chip_group_sources);
         setupRecyclerView();
         setupSearch();
         setupSourcesObserver();
 
-        FloatingActionButton fab = findViewById(R.id.fabCreate);
-        fab.setOnClickListener(v -> startActivity(new Intent(this, CustomConditionCreateActivity.class)));
+        binding.fabCreate.setOnClickListener(v -> startActivity(new Intent(this, CustomConditionCreateActivity.class)));
     }
 
     private void setupRecyclerView() {
@@ -57,15 +51,13 @@ public class ConditionListActivity extends BaseActivity {
             }
             startActivity(i);
         });
-        rv = findViewById(R.id.recycler_conditions);
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(adapter);
-        rv.setSaveEnabled(false);
+        binding.recyclerConditions.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerConditions.setAdapter(adapter);
+        binding.recyclerConditions.setSaveEnabled(false);
     }
 
     private void setupSearch() {
-        SearchView searchView = findViewById(R.id.search_view);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String q) { viewModel.setQuery(q); return true; }
             @Override
@@ -73,9 +65,14 @@ public class ConditionListActivity extends BaseActivity {
         });
     }
 
+    /**
+     * NOTE: chip_group_sources is managed dynamically (addView()).
+     * Chips are created in code based on data from the ViewModel. ViewBinding 
+     * does not apply to these dynamically added elements.
+     */
     private void setupSourcesObserver() {
         viewModel.getSources().observe(this, sources -> {
-            chipGroupSources.removeAllViews();
+            binding.chipGroupSources.removeAllViews();
 
             Chip chipAll = new Chip(this);
             chipAll.setText("All");
@@ -88,7 +85,7 @@ public class ConditionListActivity extends BaseActivity {
                     viewModel.setCustomOnly(false);
                 }
             });
-            chipGroupSources.addView(chipAll);
+            binding.chipGroupSources.addView(chipAll);
 
             Chip chipCustom = new Chip(this);
             chipCustom.setText("Custom");
@@ -97,8 +94,8 @@ public class ConditionListActivity extends BaseActivity {
             chipCustom.setOnCheckedChangeListener((btn, isChecked) -> {
                 if (isChecked) {
                     chipAll.setChecked(false);
-                    for (int i = 2; i < chipGroupSources.getChildCount(); i++) {
-                        ((Chip) chipGroupSources.getChildAt(i)).setChecked(false);
+                    for (int i = 2; i < binding.chipGroupSources.getChildCount(); i++) {
+                        ((Chip) binding.chipGroupSources.getChildAt(i)).setChecked(false);
                     }
                     viewModel.setSelectedSource("");
                     viewModel.setCustomOnly(true);
@@ -109,7 +106,7 @@ public class ConditionListActivity extends BaseActivity {
                     }
                 }
             });
-            chipGroupSources.addView(chipCustom);
+            binding.chipGroupSources.addView(chipCustom);
 
             if (sources == null) return;
             for (String source : sources) {
@@ -125,14 +122,14 @@ public class ConditionListActivity extends BaseActivity {
                         viewModel.setCustomOnly(false);
                     }
                 });
-                chipGroupSources.addView(chip);
+                binding.chipGroupSources.addView(chip);
             }
         });
 
         viewModel.getCustomOnly().observe(this, isCustomOnly -> {
             if (isCustomOnly) {
-                for (int i = 0; i < chipGroupSources.getChildCount(); i++) {
-                    Chip chip = (Chip) chipGroupSources.getChildAt(i);
+                for (int i = 0; i < binding.chipGroupSources.getChildCount(); i++) {
+                    Chip chip = (Chip) binding.chipGroupSources.getChildAt(i);
                     if ("custom".equals(chip.getTag())) {
                         chip.setChecked(true);
                     } else {
@@ -148,8 +145,7 @@ public class ConditionListActivity extends BaseActivity {
         super.onResume();
         viewModel.getConditions().observe(this, list -> {
             adapter.submitList(list);
-            TextView tvCount = findViewById(R.id.tv_count);
-            tvCount.setText(list.size() + " conditions");
+            binding.tvCount.setText(list.size() + " conditions");
         });
     }
 }

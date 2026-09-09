@@ -3,14 +3,13 @@ package com.murkfeatherstudio.questroll.feature_creature.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.ItemCreatureBinding;
 import com.murkfeatherstudio.questroll.feature_creature.model.CombinedCreature;
 
 public class CreatureAdapter extends ListAdapter<CombinedCreature, CreatureAdapter.ViewHolder> {
@@ -41,9 +40,9 @@ public class CreatureAdapter extends ListAdapter<CombinedCreature, CreatureAdapt
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_creature, parent, false);
-        return new ViewHolder(view);
+        ItemCreatureBinding binding = ItemCreatureBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -52,26 +51,21 @@ public class CreatureAdapter extends ListAdapter<CombinedCreature, CreatureAdapt
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvCr, tvType, tvSize, tvAlignment, tvCustomBadge;
+        private final ItemCreatureBinding binding;
 
-        ViewHolder(View itemView) {
-            super(itemView);
-            tvName = itemView.findViewById(R.id.tv_creature_name);
-            tvCr = itemView.findViewById(R.id.tv_creature_cr);
-            tvType = itemView.findViewById(R.id.tv_creature_type);
-            tvSize = itemView.findViewById(R.id.tv_creature_size);
-            tvAlignment = itemView.findViewById(R.id.tv_creature_alignment);
-            tvCustomBadge = itemView.findViewById(R.id.tv_custom_badge);
+        ViewHolder(ItemCreatureBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         void bind(CombinedCreature creature, OnCreatureClickListener listener) {
-            tvName.setText(creature.name);
-            tvCr.setText("CR " + (creature.crText != null ? creature.crText : "?"));
-            tvType.setText(creature.typeName != null ? creature.typeName : "");
-            tvSize.setText(creature.sizeName != null ? creature.sizeName : "");
-            tvAlignment.setText(creature.alignment != null ? creature.alignment : "");
-            if (tvCustomBadge != null)
-                tvCustomBadge.setVisibility(creature.isCustom ? View.VISIBLE : View.GONE);
+            binding.tvCreatureName.setText(creature.name);
+            binding.tvCreatureCr.setText("CR " + (creature.crText != null ? creature.crText : "?"));
+            binding.tvCreatureType.setText(creature.typeName != null ? creature.typeName : "");
+            binding.tvCreatureSize.setText(creature.sizeName != null ? creature.sizeName : "");
+            binding.tvCreatureAlignment.setText(creature.alignment != null ? creature.alignment : "");
+            
+            binding.tvCustomBadge.setVisibility(creature.isCustom ? View.VISIBLE : View.GONE);
 
             itemView.setOnClickListener(v -> {
                 if (listener != null) {

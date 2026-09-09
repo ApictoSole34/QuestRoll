@@ -3,16 +3,14 @@ package com.murkfeatherstudio.questroll.feature_creature.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_creature_type.CustomCreatureTypeEntity;
+import com.murkfeatherstudio.questroll.databinding.ItemCustomSchoolBinding;
 
 public class CustomCreatureTypeAdapter
         extends ListAdapter<CustomCreatureTypeEntity, CustomCreatureTypeAdapter.ViewHolder> {
@@ -44,33 +42,34 @@ public class CustomCreatureTypeAdapter
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_custom_school, parent, false));
+        ItemCustomSchoolBinding binding = ItemCustomSchoolBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        CustomCreatureTypeEntity t = getItem(position);
-        holder.tvName.setText(t.name);
-        if (t.description != null && !t.description.isEmpty()) {
-            holder.tvDesc.setText(t.description);
-            holder.tvDesc.setVisibility(View.VISIBLE);
-        } else {
-            holder.tvDesc.setVisibility(View.GONE);
-        }
-        holder.btnEdit.setOnClickListener(v -> onEdit.onEdit(t));
-        holder.btnDelete.setOnClickListener(v -> onDelete.onDelete(t));
+        holder.bind(getItem(position), onEdit, onDelete);
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvDesc;
-        ImageButton btnEdit, btnDelete;
-        ViewHolder(View v) {
-            super(v);
-            tvName = v.findViewById(R.id.tv_school_name);
-            tvDesc = v.findViewById(R.id.tv_school_desc);
-            btnEdit = v.findViewById(R.id.btn_edit_school);
-            btnDelete = v.findViewById(R.id.btn_delete_school);
+        private final ItemCustomSchoolBinding binding;
+
+        ViewHolder(ItemCustomSchoolBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+
+        void bind(CustomCreatureTypeEntity t, OnEditListener onEdit, OnDeleteListener onDelete) {
+            binding.tvSchoolName.setText(t.name);
+            if (t.description != null && !t.description.isEmpty()) {
+                binding.tvSchoolDesc.setText(t.description);
+                binding.tvSchoolDesc.setVisibility(View.VISIBLE);
+            } else {
+                binding.tvSchoolDesc.setVisibility(View.GONE);
+            }
+            binding.btnEditSchool.setOnClickListener(v -> onEdit.onEdit(t));
+            binding.btnDeleteSchool.setOnClickListener(v -> onDelete.onDelete(t));
         }
     }
 }

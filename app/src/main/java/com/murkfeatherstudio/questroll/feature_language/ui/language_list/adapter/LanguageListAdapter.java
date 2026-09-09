@@ -3,14 +3,14 @@ package com.murkfeatherstudio.questroll.feature_language.ui.language_list.adapte
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.AsyncListDiffer;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.ItemCreateLanguageBinding;
+import com.murkfeatherstudio.questroll.databinding.ItemLanguageBinding;
 import com.murkfeatherstudio.questroll.feature_language.model.CombinedLanguage;
 
 import java.util.List;
@@ -27,16 +27,15 @@ public class LanguageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         void onCreateClick();
     }
 
-    private List<CombinedLanguage> items;
     private final OnLanguageClickListener languageListener;
     private final OnCreateClickListener   createListener;
 
     public LanguageListAdapter(@NonNull List<CombinedLanguage> items,
                                @NonNull OnLanguageClickListener languageListener,
                                @NonNull OnCreateClickListener createListener) {
-        this.items = items;
         this.languageListener = languageListener;
         this.createListener = createListener;
+        differ.submitList(items);
     }
     private final DiffUtil.ItemCallback<CombinedLanguage> diffCallback =
             new DiffUtil.ItemCallback<CombinedLanguage>() {
@@ -71,11 +70,11 @@ public class LanguageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inf = LayoutInflater.from(parent.getContext());
         if (viewType == TYPE_CREATE) {
-            View v = inf.inflate(R.layout.item_create_language, parent, false);
-            return new CreateViewHolder(v);
+            ItemCreateLanguageBinding binding = ItemCreateLanguageBinding.inflate(inf, parent, false);
+            return new CreateViewHolder(binding);
         } else {
-            View v = inf.inflate(R.layout.item_language, parent, false);
-            return new LanguageViewHolder(v);
+            ItemLanguageBinding binding = ItemLanguageBinding.inflate(inf, parent, false);
+            return new LanguageViewHolder(binding);
         }
     }
 
@@ -90,40 +89,38 @@ public class LanguageListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     static class CreateViewHolder extends RecyclerView.ViewHolder {
-        CreateViewHolder(@NonNull View itemView) { super(itemView); }
+        CreateViewHolder(ItemCreateLanguageBinding binding) {
+            super(binding.getRoot());
+        }
         void bind(OnCreateClickListener listener) {
             itemView.setOnClickListener(v -> listener.onCreateClick());
         }
     }
 
     static class LanguageViewHolder extends RecyclerView.ViewHolder {
-        private final TextView tvName;
-        private final TextView tvFlags;
-        private final TextView tvScript;
+        private final ItemLanguageBinding binding;
 
-        LanguageViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvName = itemView.findViewById(R.id.tvName);
-            tvFlags = itemView.findViewById(R.id.tvFlags);
-            tvScript = itemView.findViewById(R.id.tvScript);
+        LanguageViewHolder(ItemLanguageBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         void bind(CombinedLanguage lang, OnLanguageClickListener listener) {
-            tvName.setText(lang.getName());
+            binding.tvName.setText(lang.getName());
 
             StringBuilder flags = new StringBuilder();
             if (lang.isExotic()) flags.append("[Exotic] ");
             if (lang.isSecret()) flags.append("[Secret]");
-            tvFlags.setText(flags.toString());
+            binding.tvFlags.setText(flags.toString());
 
             if (lang.getScriptLanguageName() != null &&
                     !lang.getScriptLanguageName().isEmpty() &&
                     !lang.getScriptLanguageName().equals(lang.getName())) {
 
-                tvScript.setText("Script: " + lang.getScriptLanguageName());
-                tvScript.setVisibility(View.VISIBLE);
+                binding.tvScript.setText("Script: " + lang.getScriptLanguageName());
+                binding.tvScript.setVisibility(View.VISIBLE);
             } else {
-                tvScript.setVisibility(View.GONE);
+                binding.tvScript.setVisibility(View.GONE);
             }
 
             itemView.setOnClickListener(v -> listener.onLanguageClick(lang));

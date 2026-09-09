@@ -4,15 +4,15 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.models.campaign.CampaignNoteEntity;
+import com.murkfeatherstudio.questroll.databinding.FragmentCampaignNotesBinding;
+import com.murkfeatherstudio.questroll.databinding.DialogAddNoteBinding;
 import com.murkfeatherstudio.questroll.feature_campaign.adapter.NoteAdapter;
 import com.murkfeatherstudio.questroll.feature_campaign.view_model.CampaignDetailViewModel;
 
@@ -22,6 +22,7 @@ public class CampaignNotesFragment extends Fragment {
     private long campaignId;
     private CampaignDetailViewModel viewModel;
     private NoteAdapter adapter;
+    private FragmentCampaignNotesBinding binding;
 
     public static CampaignNotesFragment newInstance(long campaignId) {
         Bundle args = new Bundle();
@@ -43,13 +44,19 @@ public class CampaignNotesFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_campaign_notes, container, false);
+        binding = FragmentCampaignNotesBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_notes);
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        binding.recyclerNotes.setLayoutManager(new LinearLayoutManager(requireContext()));
         adapter = new NoteAdapter(new NoteAdapter.OnNoteClickListener() {
             @Override
             public void onNoteClick(CampaignNoteEntity note) {
@@ -60,26 +67,23 @@ public class CampaignNotesFragment extends Fragment {
                 viewModel.deleteNote(note);
             }
         });
-        recyclerView.setAdapter(adapter);
+        binding.recyclerNotes.setAdapter(adapter);
 
         viewModel.notes.observe(getViewLifecycleOwner(), notes -> {
             if (notes != null) adapter.setNotes(notes);
         });
 
-        Button btnAdd = view.findViewById(R.id.btn_add_note);
-        btnAdd.setOnClickListener(v -> showAddNoteDialog());
+        binding.btnAddNote.setOnClickListener(v -> showAddNoteDialog());
     }
 
     private void showAddNoteDialog() {
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_note, null);
-        android.widget.EditText etTitle = dialogView.findViewById(R.id.et_note_title);
-        android.widget.EditText etContent = dialogView.findViewById(R.id.et_note_content);
+        DialogAddNoteBinding dialogBinding = DialogAddNoteBinding.inflate(getLayoutInflater());
         new AlertDialog.Builder(requireContext())
                 .setTitle("Add Note")
-                .setView(dialogView)
+                .setView(dialogBinding.getRoot())
                 .setPositiveButton("Save", (d, which) -> {
-                    String title = etTitle.getText().toString().trim();
-                    String content = etContent.getText().toString().trim();
+                    String title = dialogBinding.etNoteTitle.getText().toString().trim();
+                    String content = dialogBinding.etNoteContent.getText().toString().trim();
                     if (!title.isEmpty()) viewModel.addNote(title, content);
                 })
                 .setNegativeButton("Cancel", null)
@@ -87,17 +91,15 @@ public class CampaignNotesFragment extends Fragment {
     }
 
     private void showEditNoteDialog(CampaignNoteEntity note) {
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_note, null);
-        android.widget.EditText etTitle = dialogView.findViewById(R.id.et_note_title);
-        android.widget.EditText etContent = dialogView.findViewById(R.id.et_note_content);
-        etTitle.setText(note.title);
-        etContent.setText(note.content);
+        DialogAddNoteBinding dialogBinding = DialogAddNoteBinding.inflate(getLayoutInflater());
+        dialogBinding.etNoteTitle.setText(note.title);
+        dialogBinding.etNoteContent.setText(note.content);
         new AlertDialog.Builder(requireContext())
                 .setTitle("Edit Note")
-                .setView(dialogView)
+                .setView(dialogBinding.getRoot())
                 .setPositiveButton("Update", (d, which) -> {
-                    String newTitle = etTitle.getText().toString().trim();
-                    String newContent = etContent.getText().toString().trim();
+                    String newTitle = dialogBinding.etNoteTitle.getText().toString().trim();
+                    String newContent = dialogBinding.etNoteContent.getText().toString().trim();
                     if (!newTitle.isEmpty()) {
                         note.title = newTitle;
                         note.content = newContent;

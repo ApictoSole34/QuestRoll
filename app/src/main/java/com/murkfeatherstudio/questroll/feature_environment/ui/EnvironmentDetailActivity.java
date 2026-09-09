@@ -2,7 +2,6 @@ package com.murkfeatherstudio.questroll.feature_environment.ui;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 
 import androidx.core.content.res.ResourcesCompat;
 
@@ -11,6 +10,7 @@ import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.feature_document.fragment.DocumentDetailDialogFragment;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.models.open5e.environment.EnvironmentEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityEnvironmentDetailBinding;
 
 import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
@@ -19,11 +19,13 @@ import io.noties.markwon.html.HtmlPlugin;
 public class EnvironmentDetailActivity extends BaseActivity {
 
     private Markwon markwon;
+    private ActivityEnvironmentDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_environment_detail);
+        binding = ActivityEnvironmentDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         markwon = Markwon.builder(this)
                 .usePlugin(TablePlugin.create(this))
@@ -43,10 +45,9 @@ public class EnvironmentDetailActivity extends BaseActivity {
     }
 
     private void populateUI(EnvironmentEntity e) {
-        TextView tvName = findViewById(R.id.tv_name);
-        tvName.setText(e.name);
-        tvName.setTypeface(ResourcesCompat.getFont(this, R.font.cinzel_bold));
-        tvName.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        binding.tvName.setText(e.name);
+        binding.tvName.setTypeface(ResourcesCompat.getFont(this, R.font.cinzel_bold));
+        binding.tvName.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
 
         String type = "";
         if (e.aquatic) type = "Aquatic";
@@ -54,32 +55,28 @@ public class EnvironmentDetailActivity extends BaseActivity {
         else if (e.interior) type = "Interior";
         else type = "Land";
 
-        TextView tvType = findViewById(R.id.tv_type);
-        tvType.setText("Type: " + type);
-        tvType.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
-        tvType.setTextColor(getResources().getColor(R.color.threads_gold, null));
+        binding.tvType.setText("Type: " + type);
+        binding.tvType.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvType.setTextColor(getResources().getColor(R.color.threads_gold, null));
 
-        TextView tvDesc = findViewById(R.id.tv_desc);
         String descText = e.desc != null ? e.desc : "No description.";
-        markwon.setMarkdown(tvDesc, descText);
-        tvDesc.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
-        tvDesc.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
-
-        TextView tvSource = findViewById(R.id.tv_source);
+        markwon.setMarkdown(binding.tvDesc, descText);
+        binding.tvDesc.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvDesc.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
 
         final String docKey = (e.document != null && !e.document.isEmpty())
                 ? extractKeyFromUrl(e.document)
                 : null;
 
         String sourceDisplay = "Source: " + (docKey != null ? formatDocumentName(docKey) : "Unknown");
-        tvSource.setText(sourceDisplay);
-        tvSource.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
-        tvSource.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
-        tvSource.setClickable(true);
-        tvSource.setFocusable(true);
-        tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
+        binding.tvSource.setText(sourceDisplay);
+        binding.tvSource.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvSource.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
+        binding.tvSource.setClickable(true);
+        binding.tvSource.setFocusable(true);
+        binding.tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
 
-        tvSource.setOnClickListener(v -> {
+        binding.tvSource.setOnClickListener(v -> {
             if (docKey != null) {
                 DocumentDetailDialogFragment fragment =
                         DocumentDetailDialogFragment.newInstance(docKey);
@@ -87,7 +84,7 @@ public class EnvironmentDetailActivity extends BaseActivity {
             }
         });
 
-        findViewById(R.id.btnManage).setVisibility(View.GONE);
+        binding.btnManage.setVisibility(View.GONE);
     }
 
     private String extractKeyFromUrl(String url) {

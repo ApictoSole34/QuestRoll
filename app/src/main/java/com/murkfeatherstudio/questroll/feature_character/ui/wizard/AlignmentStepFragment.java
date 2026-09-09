@@ -6,11 +6,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -20,37 +19,39 @@ import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.AppExecutors;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.models.open5e.alignment.AlignmentEntity;
+import com.murkfeatherstudio.questroll.databinding.FragmentWizardAlignmentBinding;
 import com.murkfeatherstudio.questroll.feature_character.view_model.WizardViewModel;
 
 import java.util.List;
 
 public class AlignmentStepFragment extends Fragment {
-    private Spinner alignmentSpinner;
-    private TextView descriptionText;
+    private FragmentWizardAlignmentBinding binding;
     private WizardViewModel viewModel;
     private List<AlignmentEntity> alignmentList;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_wizard_alignment, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentWizardAlignmentBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(WizardViewModel.class);
-        alignmentSpinner = view.findViewById(R.id.alignment_spinner);
-        descriptionText = view.findViewById(R.id.alignment_description);
 
-        descriptionText.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
-        descriptionText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
-
-        Button nextButton = view.findViewById(R.id.next_button);
-        Button backButton = view.findViewById(R.id.back_button);
+        binding.alignmentDescription.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
+        binding.alignmentDescription.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
 
         loadAlignments();
 
-        alignmentSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.alignmentSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (alignmentList != null && position < alignmentList.size()) {
@@ -61,8 +62,8 @@ public class AlignmentStepFragment extends Fragment {
             @Override public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        nextButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.next_action));
-        backButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.back_action));
+        binding.nextButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.next_action));
+        binding.backButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.back_action));
     }
 
     private void loadAlignments() {
@@ -74,7 +75,7 @@ public class AlignmentStepFragment extends Fragment {
 
             if (!isAdded()) return;
             AppExecutors.getInstance().mainThread().execute(() -> {
-                if (!isAdded()) return;
+                if (!isAdded() || binding == null) return;
 
                 ArrayAdapter<AlignmentEntity> adapter = new ArrayAdapter<AlignmentEntity>(requireContext(),
                         android.R.layout.simple_spinner_item, alignmentList) {
@@ -84,7 +85,7 @@ public class AlignmentStepFragment extends Fragment {
                         TextView view = (TextView) super.getView(position, convertView, parent);
                         AlignmentEntity item = getItem(position);
                         view.setText(item != null ? (item.shortName != null ? item.shortName : item.key) : "");
-                        view.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                        view.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
                         view.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                         return view;
                     }
@@ -94,18 +95,18 @@ public class AlignmentStepFragment extends Fragment {
                         TextView view = (TextView) super.getDropDownView(position, convertView, parent);
                         AlignmentEntity item = getItem(position);
                         view.setText(item != null ? (item.shortName != null ? item.shortName : item.key) : "");
-                        view.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                        view.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
                         view.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                         return view;
                     }
                 };
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                alignmentSpinner.setAdapter(adapter);
+                binding.alignmentSpinner.setAdapter(adapter);
 
                 if (viewModel.alignmentKey != null) {
                     for (int i = 0; i < alignmentList.size(); i++) {
                         if (alignmentList.get(i).key.equals(viewModel.alignmentKey)) {
-                            alignmentSpinner.setSelection(i);
+                            binding.alignmentSpinner.setSelection(i);
                             break;
                         }
                     }
@@ -116,6 +117,7 @@ public class AlignmentStepFragment extends Fragment {
     }
 
     private void showDescription() {
+        if (binding == null) return;
         if (alignmentList != null && viewModel.alignmentKey != null) {
             for (AlignmentEntity a : alignmentList) {
                 if (a.key.equals(viewModel.alignmentKey)) {
@@ -123,11 +125,11 @@ public class AlignmentStepFragment extends Fragment {
                     if (a.description != null && !a.description.isEmpty()) {
                         desc += "\n" + a.description;
                     }
-                    descriptionText.setText(desc);
+                    binding.alignmentDescription.setText(desc);
                     return;
                 }
             }
         }
-        descriptionText.setText("");
+        binding.alignmentDescription.setText("");
     }
 }

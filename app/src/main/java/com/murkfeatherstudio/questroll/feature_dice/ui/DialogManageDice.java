@@ -2,13 +2,13 @@ package com.murkfeatherstudio.questroll.feature_dice.ui;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
 import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.DialogManageDiceBinding;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -34,39 +34,49 @@ public class DialogManageDice {
 
     public void show() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View dialogView = inflater.inflate(R.layout.dialog_manage_dice, null);
-        builder.setView(dialogView);
+        DialogManageDiceBinding binding = DialogManageDiceBinding.inflate(LayoutInflater.from(context));
+        builder.setView(binding.getRoot());
 
-        AlertDialog dialog = builder.create();
+        dialog = builder.create();
 
         String[] diceTypes = {"d20", "d12", "d10", "d8", "d6", "d4"};
 
         for (String diceType : diceTypes) {
+            /**
+             * JAVADOC: We use getIdentifier and findViewById here because the dice type keys 
+             * are processed in a loop. View Binding generates static fields for views, 
+             * which does not allow dynamic access by string-based IDs without reflection.
+             * This approach is more concise for grids with many repeating elements.
+             */
             int btnPlusId = context.getResources().getIdentifier("btnPlus" + diceType.toUpperCase(), "id", context.getPackageName());
             int btnMinusId = context.getResources().getIdentifier("btnMinus" + diceType.toUpperCase(), "id", context.getPackageName());
             int counterId = context.getResources().getIdentifier("counter" + diceType.toUpperCase(), "id", context.getPackageName());
 
-            Button btnPlus = dialogView.findViewById(btnPlusId);
-            Button btnMinus = dialogView.findViewById(btnMinusId);
-            TextView counter = dialogView.findViewById(counterId);
-            Button applyButton = dialogView.findViewById(R.id.applyChangesButton);
+            Button btnPlus = binding.getRoot().findViewById(btnPlusId);
+            Button btnMinus = binding.getRoot().findViewById(btnMinusId);
+            TextView counter = binding.getRoot().findViewById(counterId);
 
-            counter.setText(String.valueOf(getDiceCount(diceType)));
-
-            applyButton.setOnClickListener(v -> applyChanges());
-
-            btnPlus.setOnClickListener(v -> {
-                addDice(diceType);
+            if (counter != null) {
                 counter.setText(String.valueOf(getDiceCount(diceType)));
-            });
-            btnMinus.setOnClickListener(v -> {
-                removeDice(diceType);
-                counter.setText(String.valueOf(getDiceCount(diceType)));
-            });
+            }
+
+            if (btnPlus != null) {
+                btnPlus.setOnClickListener(v -> {
+                    addDice(diceType);
+                    if (counter != null) counter.setText(String.valueOf(getDiceCount(diceType)));
+                });
+            }
+            
+            if (btnMinus != null) {
+                btnMinus.setOnClickListener(v -> {
+                    removeDice(diceType);
+                    if (counter != null) counter.setText(String.valueOf(getDiceCount(diceType)));
+                });
+            }
         }
 
-        dialog = builder.create();
+        binding.applyChangesButton.setOnClickListener(v -> applyChanges());
+
         dialog.show();
     }
 

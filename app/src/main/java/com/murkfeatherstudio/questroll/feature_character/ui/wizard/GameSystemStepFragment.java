@@ -4,33 +4,43 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+
 import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.FragmentWizardGameSystemBinding;
 import com.murkfeatherstudio.questroll.feature_character.view_model.WizardViewModel;
 
 public class GameSystemStepFragment extends Fragment {
 
     private WizardViewModel viewModel;
+    private FragmentWizardGameSystemBinding binding;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_wizard_game_system, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentWizardGameSystemBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(WizardViewModel.class);
 
         // Force game system to 5e-2014 (the only supported version)
         viewModel.gameSystem = "5e-2014";
 
-        Button nextButton = view.findViewById(R.id.next_button);
-        nextButton.setOnClickListener(v ->
+        binding.nextButton.setOnClickListener(v ->
                 Navigation.findNavController(v).navigate(R.id.next_action));
     }
 }

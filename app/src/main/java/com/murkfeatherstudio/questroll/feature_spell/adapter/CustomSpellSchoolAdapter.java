@@ -3,16 +3,14 @@ package com.murkfeatherstudio.questroll.feature_spell.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_spell.CustomSpellSchoolEntity;
+import com.murkfeatherstudio.questroll.databinding.ItemCustomSchoolBinding;
 
 public class CustomSpellSchoolAdapter
         extends ListAdapter<CustomSpellSchoolEntity, CustomSpellSchoolAdapter.ViewHolder> {
@@ -52,9 +50,9 @@ public class CustomSpellSchoolAdapter
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_custom_school, parent, false);
-        return new ViewHolder(view);
+        ItemCustomSchoolBinding binding = ItemCustomSchoolBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -63,26 +61,22 @@ public class CustomSpellSchoolAdapter
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvDesc;
-        ImageButton btnEdit, btnDelete;
+        private final ItemCustomSchoolBinding binding;
 
-        ViewHolder(View itemView) {
-            super(itemView);
-            tvName = itemView.findViewById(R.id.tv_school_name);
-            tvDesc = itemView.findViewById(R.id.tv_school_desc);
-            btnEdit = itemView.findViewById(R.id.btn_edit_school);
-            btnDelete = itemView.findViewById(R.id.btn_delete_school);
+        ViewHolder(ItemCustomSchoolBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         void bind(CustomSpellSchoolEntity school,
                   OnEditListener onEdit, OnDeleteListener onDelete) {
-            tvName.setText(school.name);
-            tvDesc.setText(school.description != null
+            binding.tvSchoolName.setText(school.name);
+            binding.tvSchoolDesc.setText(school.description != null
                     && !school.description.isEmpty() ? school.description : "");
-            tvDesc.setVisibility(school.description != null
+            binding.tvSchoolDesc.setVisibility(school.description != null
                     && !school.description.isEmpty() ? View.VISIBLE : View.GONE);
-            btnEdit.setOnClickListener(v -> onEdit.onEdit(school));
-            btnDelete.setOnClickListener(v -> onDelete.onDelete(school));
+            binding.btnEditSchool.setOnClickListener(v -> onEdit.onEdit(school));
+            binding.btnDeleteSchool.setOnClickListener(v -> onDelete.onDelete(school));
         }
     }
 }

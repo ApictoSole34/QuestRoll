@@ -9,19 +9,18 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.models.custom.pdf.CustomPdfEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityPdfListBinding;
 import com.murkfeatherstudio.questroll.feature_tools.pdf.adapter.PdfAdapter;
 import com.murkfeatherstudio.questroll.feature_tools.pdf.viewmodel.PdfListViewModel;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class PdfListActivity extends BaseActivity {
 
     private PdfListViewModel viewModel;
     private PdfAdapter adapter;
+    private ActivityPdfListBinding binding;
 
     private final ActivityResultLauncher<String[]> pdfPickerLauncher = registerForActivityResult(
             new ActivityResultContracts.OpenDocument(),
@@ -31,7 +30,6 @@ public class PdfListActivity extends BaseActivity {
                         getContentResolver().takePersistableUriPermission(uri, 
                                 Intent.FLAG_GRANT_READ_URI_PERMISSION);
                         
-                        // We could extract the real name from DocumentFile or cursor
                         String fileName = "Manual_" + System.currentTimeMillis() + ".pdf";
                         viewModel.addPdf(fileName, uri);
                     } catch (Exception e) {
@@ -44,23 +42,22 @@ public class PdfListActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_pdf_list);
+        binding = ActivityPdfListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         viewModel = new ViewModelProvider(this).get(PdfListViewModel.class);
         
-        RecyclerView recyclerView = findViewById(R.id.rv_pdfs);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvPdfs.setLayoutManager(new LinearLayoutManager(this));
         
         adapter = new PdfAdapter(
                 this::openPdf,
                 pdf -> viewModel.deletePdf(pdf)
         );
-        recyclerView.setAdapter(adapter);
+        binding.rvPdfs.setAdapter(adapter);
 
         viewModel.getAllPdfs().observe(this, adapter::submitList);
 
-        FloatingActionButton fab = findViewById(R.id.fab_add_pdf);
-        fab.setOnClickListener(v -> pdfPickerLauncher.launch(new String[]{"application/pdf"}));
+        binding.fabAddPdf.setOnClickListener(v -> pdfPickerLauncher.launch(new String[]{"application/pdf"}));
     }
 
     private void openPdf(CustomPdfEntity pdf) {

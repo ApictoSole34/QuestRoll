@@ -22,6 +22,10 @@ import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.models.open5e.character_class.CharacterClassEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.character_class.feature.FeatureEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.spell.SpellEntity;
+import com.murkfeatherstudio.questroll.databinding.FragmentLevelUpWizardBinding;
+import com.murkfeatherstudio.questroll.databinding.StepLevelUpAsiBinding;
+import com.murkfeatherstudio.questroll.databinding.StepLevelUpFeaturesBinding;
+import com.murkfeatherstudio.questroll.databinding.StepLevelUpSpellsBinding;
 import com.murkfeatherstudio.questroll.feature_campaign.view_model.LevelUpWizardViewModel;
 
 import java.util.ArrayList;
@@ -41,9 +45,7 @@ public class LevelUpWizardFragment extends Fragment {
     private List<FeatureEntity>        features   = new ArrayList<>();
     private List<CharacterClassEntity> subclasses = new ArrayList<>();
 
-    private LinearLayout stepContainer;
-    private TextView     tvStepTitle, tvStepHint;
-    private Button       btnNext, btnBack, btnCancel;
+    private FragmentLevelUpWizardBinding binding;
 
     public static LevelUpWizardFragment newInstance(long characterId, String classKey, boolean isNewClass) {
         Bundle args = new Bundle();
@@ -70,26 +72,26 @@ public class LevelUpWizardFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_level_up_wizard, container, false);
+        binding = FragmentLevelUpWizardBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        stepContainer = view.findViewById(R.id.step_container);
-        tvStepTitle   = view.findViewById(R.id.tv_step_title);
-        tvStepHint    = view.findViewById(R.id.tv_step_hint);
-        btnNext       = view.findViewById(R.id.btn_next);
-        btnBack       = view.findViewById(R.id.btn_back);
-        btnCancel     = view.findViewById(R.id.btn_cancel);
-
-        btnCancel.setOnClickListener(v -> dismiss());
-        btnBack.setOnClickListener(v -> goBack());
-        btnNext.setOnClickListener(v -> goNext());
+        binding.btnCancel.setOnClickListener(v -> dismiss());
+        binding.btnBack.setOnClickListener(v -> goBack());
+        binding.btnNext.setOnClickListener(v -> goNext());
 
         viewModel.isLoading.observe(getViewLifecycleOwner(), loading ->
-                btnNext.setEnabled(!Boolean.TRUE.equals(loading)));
+                binding.btnNext.setEnabled(!Boolean.TRUE.equals(loading)));
 
         viewModel.initDone.observe(getViewLifecycleOwner(), done -> {
             if (!Boolean.TRUE.equals(done)) return;
@@ -147,17 +149,16 @@ public class LevelUpWizardFragment extends Fragment {
     }
 
     private void updateNavButtons() {
-        if (btnBack != null) btnBack.setVisibility(currentStepIndex > 0 ? View.VISIBLE : View.GONE);
-        if (btnNext != null) {
-            Step current = steps.isEmpty() ? null : steps.get(currentStepIndex);
-            boolean hideNext = (current == Step.SUBCLASS || current == Step.SPELLS || current == Step.FEATURES);
-            btnNext.setVisibility(hideNext ? View.GONE : View.VISIBLE);
-        }
+        if (binding == null) return;
+        binding.btnBack.setVisibility(currentStepIndex > 0 ? View.VISIBLE : View.GONE);
+        Step current = steps.isEmpty() ? null : steps.get(currentStepIndex);
+        boolean hideNext = (current == Step.SUBCLASS || current == Step.SPELLS || current == Step.FEATURES);
+        binding.btnNext.setVisibility(hideNext ? View.GONE : View.VISIBLE);
     }
 
     private void showCurrentStep() {
-        if (steps.isEmpty()) return;
-        stepContainer.removeAllViews();
+        if (steps.isEmpty() || binding == null) return;
+        binding.stepContainer.removeAllViews();
         Step step = steps.get(currentStepIndex);
         updateNavButtons();
 
@@ -172,8 +173,8 @@ public class LevelUpWizardFragment extends Fragment {
 
     // ---------- HP Step ----------
     private void showHpStep() {
-        if (tvStepTitle != null) tvStepTitle.setText("Step " + (currentStepIndex + 1) + " of " + steps.size() + " — Hit Points");
-        if (tvStepHint != null) tvStepHint.setText("Roll your d" + viewModel.hitDiceSides + " or take the average.");
+        binding.tvStepTitle.setText("Step " + (currentStepIndex + 1) + " of " + steps.size() + " — Hit Points");
+        binding.tvStepHint.setText("Roll your d" + viewModel.hitDiceSides + " or take the average.");
 
         LinearLayout inner = new LinearLayout(getContext());
         inner.setOrientation(LinearLayout.VERTICAL);
@@ -234,13 +235,13 @@ public class LevelUpWizardFragment extends Fragment {
         });
         inner.addView(btnAvg);
 
-        stepContainer.addView(inner);
+        binding.stepContainer.addView(inner);
     }
 
     // ---------- Subclass Step ----------
     private void showSubclassStep() {
-        if (tvStepTitle != null) tvStepTitle.setText("Step " + (currentStepIndex + 1) + " of " + steps.size() + " — Choose Subclass");
-        if (tvStepHint != null) tvStepHint.setText("Select your " + viewModel.className + " subclass (archetype).");
+        binding.tvStepTitle.setText("Step " + (currentStepIndex + 1) + " of " + steps.size() + " — Choose Subclass");
+        binding.tvStepHint.setText("Select your " + viewModel.className + " subclass (archetype).");
 
         LinearLayout inner = new LinearLayout(getContext());
         inner.setOrientation(LinearLayout.VERTICAL);
@@ -254,17 +255,15 @@ public class LevelUpWizardFragment extends Fragment {
             showCurrentStep();
         }, requireContext()));
         inner.addView(rv);
-        stepContainer.addView(inner);
+        binding.stepContainer.addView(inner);
     }
 
     // ---------- ASI Step ----------
     private void showAsiStep() {
-        if (tvStepTitle != null) tvStepTitle.setText("Step " + (currentStepIndex + 1) + " of " + steps.size() + " — Ability Score Improvement");
-        if (tvStepHint != null) tvStepHint.setText("Distribute +2 among ability scores. Pick one stat (+2) or two stats (+1 each).");
+        binding.tvStepTitle.setText("Step " + (currentStepIndex + 1) + " of " + steps.size() + " — Ability Score Improvement");
+        binding.tvStepHint.setText("Distribute +2 among ability scores. Pick one stat (+2) or two stats (+1 each).");
 
-        View v = LayoutInflater.from(getContext()).inflate(R.layout.step_level_up_asi, stepContainer, false);
-        LinearLayout attrContainer = v.findViewById(R.id.attr_container);
-        Button btnConfirm = v.findViewById(R.id.btn_confirm_asi);
+        StepLevelUpAsiBinding asiBinding = StepLevelUpAsiBinding.inflate(getLayoutInflater(), binding.stepContainer, false);
 
         String[] statKeys   = {"strength","dexterity","constitution","intelligence","wisdom","charisma"};
         String[] statLabels = {"Strength","Dexterity","Constitution","Intelligence","Wisdom","Charisma"};
@@ -274,11 +273,11 @@ public class LevelUpWizardFragment extends Fragment {
             cb.setText(statLabels[i]);
             cb.setTextSize(15f);
             cb.setPadding(dp(4), dp(8), 0, dp(8));
-            attrContainer.addView(cb);
+            asiBinding.attrContainer.addView(cb);
             checks[i] = cb;
         }
 
-        btnConfirm.setOnClickListener(confirm -> {
+        asiBinding.btnConfirmAsi.setOnClickListener(confirm -> {
             List<String> chosen = new ArrayList<>();
             int count = 0;
             for (int i = 0; i < checks.length; i++) {
@@ -302,26 +301,24 @@ public class LevelUpWizardFragment extends Fragment {
                 showCurrentStep();
             }
         });
-        stepContainer.addView(v);
+        binding.stepContainer.addView(asiBinding.getRoot());
     }
 
     // ---------- Spells Step ----------
     private void showSpellsStep() {
-        if (tvStepTitle != null) tvStepTitle.setText("Step " + (currentStepIndex + 1) + " of " + steps.size() + " — Choose Spells");
-        if (tvStepHint != null) tvStepHint.setText("Select " + viewModel.getSpellsToChoose().getValue() + " new spells.");
+        binding.tvStepTitle.setText("Step " + (currentStepIndex + 1) + " of " + steps.size() + " — Choose Spells");
+        binding.tvStepHint.setText("Select " + viewModel.getSpellsToChoose().getValue() + " new spells.");
 
-        View v = LayoutInflater.from(getContext()).inflate(R.layout.step_level_up_spells, stepContainer, false);
-        RecyclerView rv = v.findViewById(R.id.rv_spells);
-        Button btnConfirm = v.findViewById(R.id.btn_confirm_spells);
+        StepLevelUpSpellsBinding spellsBinding = StepLevelUpSpellsBinding.inflate(getLayoutInflater(), binding.stepContainer, false);
 
         final Integer toChoose = viewModel.getSpellsToChoose().getValue();
         final int needed = (toChoose == null) ? 0 : toChoose;
 
         final SpellSelectionAdapter adapter = new SpellSelectionAdapter(viewModel.getAvailableSpells().getValue(), needed);
-        rv.setLayoutManager(new LinearLayoutManager(getContext()));
-        rv.setAdapter(adapter);
+        spellsBinding.rvSpells.setLayoutManager(new LinearLayoutManager(getContext()));
+        spellsBinding.rvSpells.setAdapter(adapter);
 
-        btnConfirm.setOnClickListener(btn -> {
+        spellsBinding.btnConfirmSpells.setOnClickListener(btn -> {
             if (adapter.getSelectedCount() < needed) {
                 Toast.makeText(getContext(), "Please select " + needed + " spells.", Toast.LENGTH_SHORT).show();
                 return;
@@ -330,16 +327,15 @@ public class LevelUpWizardFragment extends Fragment {
             goNext();
         });
 
-        stepContainer.addView(v);
+        binding.stepContainer.addView(spellsBinding.getRoot());
     }
 
     // ---------- Features (Summary) Step ----------
     private void showFeaturesStep() {
-        if (tvStepTitle != null) tvStepTitle.setText("Step " + (currentStepIndex + 1) + " of " + steps.size() + " — Summary");
-        if (tvStepHint != null) tvStepHint.setText("Review and confirm your level up.");
+        binding.tvStepTitle.setText("Step " + (currentStepIndex + 1) + " of " + steps.size() + " — Summary");
+        binding.tvStepHint.setText("Review and confirm your level up.");
 
-        View v = LayoutInflater.from(getContext()).inflate(R.layout.step_level_up_features, stepContainer, false);
-        TextView tvContent = v.findViewById(R.id.tv_features_content);
+        StepLevelUpFeaturesBinding featuresBinding = StepLevelUpFeaturesBinding.inflate(getLayoutInflater(), binding.stepContainer, false);
 
         StringBuilder sb = new StringBuilder();
         sb.append("🎉  ").append(viewModel.className).append("  →  Level ").append(viewModel.newLevel).append("\n\n");
@@ -381,15 +377,14 @@ public class LevelUpWizardFragment extends Fragment {
             sb.append("No new class features at this level.\n");
         }
 
-        tvContent.setText(sb.toString());
+        featuresBinding.tvFeaturesContent.setText(sb.toString());
 
-        Button btnConfirm = v.findViewById(R.id.btn_confirm_level_up);
-        if (btnConfirm != null) {
-            btnConfirm.setText("✅  Confirm Level Up!");
-            btnConfirm.setOnClickListener(btn -> confirmLevelUp());
+        if (featuresBinding.btnConfirmLevelUp != null) {
+            featuresBinding.btnConfirmLevelUp.setText("✅  Confirm Level Up!");
+            featuresBinding.btnConfirmLevelUp.setOnClickListener(btn -> confirmLevelUp());
         }
 
-        stepContainer.addView(v);
+        binding.stepContainer.addView(featuresBinding.getRoot());
     }
 
     // ---------- Validation ----------

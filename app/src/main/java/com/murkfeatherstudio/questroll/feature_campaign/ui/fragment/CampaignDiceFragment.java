@@ -13,19 +13,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.Switch;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.FragmentCampaignDiceBinding;
 import com.murkfeatherstudio.questroll.feature_campaign.view_model.CampaignDetailViewModel;
 import com.murkfeatherstudio.questroll.feature_dice.adapter.DiceAdapter;
 import com.murkfeatherstudio.questroll.feature_dice.model.Dice;
@@ -43,12 +38,8 @@ import java.util.Map;
 public class CampaignDiceFragment extends Fragment implements DialogManageDice.DiceManageListener, SensorEventListener {
 
     private CampaignDetailViewModel viewModel;
-    private Switch showResultSwitch;
-    private Switch shakeToRollSwitch;
-    private LinearLayout resultWindow;
-    private TextView resultText;
-    private RecyclerView diceRecyclerView;
     private DiceAdapter diceAdapter;
+    private FragmentCampaignDiceBinding binding;
     
     private Map<String, Integer> localDiceCounts = new HashMap<>();
     private SensorManager sensorManager;
@@ -84,7 +75,14 @@ public class CampaignDiceFragment extends Fragment implements DialogManageDice.D
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_campaign_dice, container, false);
+        binding = FragmentCampaignDiceBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
@@ -94,15 +92,7 @@ public class CampaignDiceFragment extends Fragment implements DialogManageDice.D
         // Access the shared ViewModel from the Activity
         viewModel = new ViewModelProvider(requireActivity()).get(CampaignDetailViewModel.class);
 
-        diceRecyclerView = view.findViewById(R.id.diceRecyclerView);
-        diceRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-
-        Button rollButton = view.findViewById(R.id.rollButton);
-        showResultSwitch = view.findViewById(R.id.showResultSwitch);
-        shakeToRollSwitch = view.findViewById(R.id.shakeToRollSwitch);
-        resultWindow = view.findViewById(R.id.resultWindow);
-        Button manageDiceButton = view.findViewById(R.id.manageDiceButton);
-        resultText = view.findViewById(R.id.resultText);
+        binding.diceRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
 
         sensorManager = (SensorManager) requireContext().getSystemService(Context.SENSOR_SERVICE);
         if (sensorManager != null) {
@@ -110,7 +100,7 @@ public class CampaignDiceFragment extends Fragment implements DialogManageDice.D
         }
 
         diceAdapter = new DiceAdapter(new ArrayList<>());
-        diceRecyclerView.setAdapter(diceAdapter);
+        binding.diceRecyclerView.setAdapter(diceAdapter);
 
         // Restore State from ViewModel
         viewModel.getDiceCounts().observe(getViewLifecycleOwner(), counts -> {
@@ -123,24 +113,24 @@ public class CampaignDiceFragment extends Fragment implements DialogManageDice.D
 
         viewModel.getLastRollResult().observe(getViewLifecycleOwner(), result -> {
             if (result != null && !result.isEmpty()) {
-                resultText.setText(result);
-                if (showResultSwitch.isChecked()) {
-                    resultWindow.setVisibility(View.VISIBLE);
+                binding.resultText.setText(result);
+                if (binding.showResultSwitch.isChecked()) {
+                    binding.resultWindow.setVisibility(View.VISIBLE);
                 }
             }
         });
 
-        rollButton.setOnClickListener(v -> rollDice());
+        binding.rollButton.setOnClickListener(v -> rollDice());
 
-        showResultSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            if (isChecked && !resultText.getText().toString().isEmpty()) {
-                resultWindow.setVisibility(View.VISIBLE);
+        binding.showResultSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked && !binding.resultText.getText().toString().isEmpty()) {
+                binding.resultWindow.setVisibility(View.VISIBLE);
             } else {
-                resultWindow.setVisibility(View.GONE);
+                binding.resultWindow.setVisibility(View.GONE);
             }
         });
 
-        shakeToRollSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        binding.shakeToRollSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             isShakeToRollEnabled = isChecked;
             if (isChecked && accelerometer != null) {
                 sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME);
@@ -150,7 +140,7 @@ public class CampaignDiceFragment extends Fragment implements DialogManageDice.D
             }
         });
 
-        manageDiceButton.setOnClickListener(v -> {
+        binding.manageDiceButton.setOnClickListener(v -> {
             DialogManageDice dialogManageDice = new DialogManageDice(requireContext(), localDiceCounts, this);
             dialogManageDice.show();
         });
@@ -264,9 +254,9 @@ public class CampaignDiceFragment extends Fragment implements DialogManageDice.D
         
         diceAdapter.notifyDataSetChanged();
 
-        if (showResultSwitch.isChecked()) {
-            resultText.setText(currentResultStr);
-            resultWindow.setVisibility(View.VISIBLE);
+        if (binding.showResultSwitch.isChecked()) {
+            binding.resultText.setText(currentResultStr);
+            binding.resultWindow.setVisibility(View.VISIBLE);
         }
     }
 }

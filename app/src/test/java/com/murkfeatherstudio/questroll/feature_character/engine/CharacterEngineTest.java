@@ -11,14 +11,14 @@ public class CharacterEngineTest {
 
     @Before
     public void setUp() {
-        // Używamy konstruktora DI z nullami, aby uniknąć wywołania Room.databaseBuilder,
-        // ponieważ testujemy tu tylko metody, które nie korzystają bezpośrednio z bazy danych w tych testach.
+        // Using DI constructor with nulls to avoid Room.databaseBuilder calls,
+        // because we are only testing methods that do not directly use the database in these tests.
         engine = new CharacterEngine(null, null);
     }
 
     @Test
     public void getProficiencyBonus_calculatesCorrectValues() {
-        // Testowanie metody statycznej
+        // Testing static method
         assertEquals(2, CharacterEngine.getProficiencyBonus(1));
         assertEquals(2, CharacterEngine.getProficiencyBonus(4));
         assertEquals(3, CharacterEngine.getProficiencyBonus(5));
@@ -30,7 +30,7 @@ public class CharacterEngineTest {
 
     @Test
     public void getAbilityModifier_calculatesCorrectValues_includingNegatives() {
-        // Testowanie logiki modyfikatorów
+        // Testing modifier logic
         assertEquals(-5, CharacterEngine.getAbilityModifier(1));
         assertEquals(-4, CharacterEngine.getAbilityModifier(3));
         assertEquals(-2, CharacterEngine.getAbilityModifier(7));
@@ -45,7 +45,7 @@ public class CharacterEngineTest {
 
     @Test
     public void hpParsing_handlesStandardAndComplex5eFormats() {
-        // Testowanie parsowania HP
+        // Testing HP parsing
         assertEquals(10, CharacterEngine.parseHpString("8 + 2", 2, true));
         assertEquals(7, CharacterEngine.parseHpString("1d8 (or 5) + 2", 2, false));
         assertEquals(5, CharacterEngine.parseHpString("1d8", 0, false));

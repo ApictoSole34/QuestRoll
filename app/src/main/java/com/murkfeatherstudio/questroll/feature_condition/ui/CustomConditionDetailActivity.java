@@ -3,26 +3,27 @@ package com.murkfeatherstudio.questroll.feature_condition.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.PopupMenu;
-import android.widget.TextView;
+
 import androidx.appcompat.app.AlertDialog;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_condition.CustomConditionDao;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_condition.CustomConditionEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityConditionDetailBinding;
 
 public class CustomConditionDetailActivity extends BaseActivity {
     public static final String EXTRA_ID = "CUSTOM_CONDITION_ID";
     private long id;
     private CustomConditionDao dao;
+    private ActivityConditionDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_condition_detail);
+        binding = ActivityConditionDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         id = getIntent().getLongExtra(EXTRA_ID, -1);
         if (id == -1) {
@@ -37,13 +38,12 @@ public class CustomConditionDetailActivity extends BaseActivity {
     }
 
     private void populateUI(CustomConditionEntity c) {
-        ((TextView) findViewById(R.id.tv_name)).setText(c.name);
-        ((TextView) findViewById(R.id.tv_desc)).setText(c.description != null ? c.description : "");
-        findViewById(R.id.tv_source).setVisibility(View.GONE);
+        binding.tvName.setText(c.name);
+        binding.tvDesc.setText(c.description != null ? c.description : "");
+        binding.tvSource.setVisibility(View.GONE);
 
-        Button btnManage = findViewById(R.id.btnManage);
-        btnManage.setVisibility(View.VISIBLE);
-        btnManage.setOnClickListener(v -> showManageMenu(v, id));
+        binding.btnManage.setVisibility(View.VISIBLE);
+        binding.btnManage.setOnClickListener(v -> showManageMenu(v, id));
     }
 
     private void showManageMenu(View anchor, long id) {

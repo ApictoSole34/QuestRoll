@@ -3,14 +3,13 @@ package com.murkfeatherstudio.questroll.feature_species.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.ItemSpeciesBinding;
 import com.murkfeatherstudio.questroll.feature_species.model.CombinedSpecies;
 
 public class SpeciesAdapter extends ListAdapter<CombinedSpecies, SpeciesAdapter.ViewHolder> {
@@ -39,8 +38,9 @@ public class SpeciesAdapter extends ListAdapter<CombinedSpecies, SpeciesAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_species, parent, false));
+        ItemSpeciesBinding binding = ItemSpeciesBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -49,31 +49,28 @@ public class SpeciesAdapter extends ListAdapter<CombinedSpecies, SpeciesAdapter.
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvSubtitle, tvCustomBadge, tvSubspeciesBadge;
+        private final ItemSpeciesBinding binding;
 
-        ViewHolder(View v) {
-            super(v);
-            tvName = v.findViewById(R.id.tv_species_name);
-            tvSubtitle = v.findViewById(R.id.tv_species_subtitle);
-            tvCustomBadge = v.findViewById(R.id.tv_custom_badge);
-            tvSubspeciesBadge = v.findViewById(R.id.tv_subspecies_badge);
+        ViewHolder(ItemSpeciesBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         void bind(CombinedSpecies s, OnSpeciesClickListener listener) {
-            tvName.setText(s.name);
+            binding.tvSpeciesName.setText(s.name);
 
             if (s.isSubspecies && s.subspeciesOfName != null && !s.subspeciesOfName.isEmpty()) {
-                tvSubtitle.setText("Subspecies of " + s.subspeciesOfName);
-                tvSubtitle.setVisibility(View.VISIBLE);
+                binding.tvSpeciesSubtitle.setText("Subspecies of " + s.subspeciesOfName);
+                binding.tvSpeciesSubtitle.setVisibility(View.VISIBLE);
             } else if (s.documentName != null && !s.documentName.isEmpty()) {
-                tvSubtitle.setText(s.documentName);
-                tvSubtitle.setVisibility(View.VISIBLE);
+                binding.tvSpeciesSubtitle.setText(s.documentName);
+                binding.tvSpeciesSubtitle.setVisibility(View.VISIBLE);
             } else {
-                tvSubtitle.setVisibility(View.GONE);
+                binding.tvSpeciesSubtitle.setVisibility(View.GONE);
             }
 
-            tvCustomBadge.setVisibility(s.isCustom ? View.VISIBLE : View.GONE);
-            tvSubspeciesBadge.setVisibility(s.isSubspecies ? View.VISIBLE : View.GONE);
+            binding.tvCustomBadge.setVisibility(s.isCustom ? View.VISIBLE : View.GONE);
+            binding.tvSubspeciesBadge.setVisibility(s.isSubspecies ? View.VISIBLE : View.GONE);
 
             itemView.setOnClickListener(v -> { if (listener != null) listener.onSpeciesClick(s); });
         }

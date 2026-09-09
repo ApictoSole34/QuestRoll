@@ -3,25 +3,26 @@ package com.murkfeatherstudio.questroll.feature_item.item_category.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_item_category.CustomItemCategoryDao;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_item_category.CustomItemCategoryEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityItemCategoryDetailBinding;
 
 public class CustomItemCategoryDetailActivity extends AppCompatActivity {
     public static final String EXTRA_ID = "CUSTOM_CATEGORY_ID";
     private long id;
     private CustomItemCategoryDao dao;
+    private ActivityItemCategoryDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_category_detail);
+        binding = ActivityItemCategoryDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
         id = getIntent().getLongExtra(EXTRA_ID, -1);
         if (id == -1) { finish(); return; }
         dao = UserContentDatabase.getInstance(this).customItemCategoryDao();
@@ -29,14 +30,15 @@ public class CustomItemCategoryDetailActivity extends AppCompatActivity {
             if (cat != null) populateUI(cat);
         });
     }
+
     private void populateUI(CustomItemCategoryEntity cat) {
-        ((TextView) findViewById(R.id.tv_name)).setText(cat.name);
-        ((TextView) findViewById(R.id.tv_desc)).setText(cat.description != null ? cat.description : "");
-        ((TextView) findViewById(R.id.tv_source)).setVisibility(View.GONE);
-        Button btnManage = findViewById(R.id.btnManage);
-        btnManage.setVisibility(View.VISIBLE);
-        btnManage.setOnClickListener(v -> showManageMenu(v, id));
+        binding.tvName.setText(cat.name);
+        binding.tvDesc.setText(cat.description != null ? cat.description : "");
+        binding.tvSource.setVisibility(View.GONE);
+        binding.btnManage.setVisibility(View.VISIBLE);
+        binding.btnManage.setOnClickListener(v -> showManageMenu(v, id));
     }
+
     private void showManageMenu(View anchor, long id) {
         PopupMenu popup = new PopupMenu(this, anchor);
         popup.getMenu().add(0, 1, 0, "Edit");

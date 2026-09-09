@@ -4,15 +4,21 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.CheckBox;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+
 import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.models.open5e.spell.SpellEntity;
+import com.murkfeatherstudio.questroll.databinding.FragmentWizardSpellsBinding;
 import com.murkfeatherstudio.questroll.feature_character.view_model.WizardViewModel;
 
 import java.util.ArrayList;
@@ -21,26 +27,28 @@ import java.util.List;
 public class SpellsStepFragment extends Fragment {
 
     private WizardViewModel viewModel;
-    private LinearLayout container;
-    private Button nextButton, backButton;
+    private FragmentWizardSpellsBinding binding;
     private List<CheckBox> cantripCheckboxes = new ArrayList<>();
     private List<CheckBox> spellCheckboxes = new ArrayList<>();
     private int maxCantrips = 0;
     private int maxSpells = 0;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_wizard_spells, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentWizardSpellsBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(WizardViewModel.class);
-
-        container = view.findViewById(R.id.spells_container);
-        nextButton = view.findViewById(R.id.next_button);
-        backButton = view.findViewById(R.id.back_button);
 
         maxCantrips = viewModel.cantripsCount;
         if (viewModel.isPreparedCaster) {
@@ -56,7 +64,7 @@ public class SpellsStepFragment extends Fragment {
 
         loadSpells();
 
-        nextButton.setOnClickListener(v -> {
+        binding.nextButton.setOnClickListener(v -> {
             viewModel.chosenCantripKeys.clear();
             for (CheckBox cb : cantripCheckboxes) {
                 if (cb.isChecked()) {
@@ -79,9 +87,15 @@ public class SpellsStepFragment extends Fragment {
             }
             Navigation.findNavController(v).navigate(R.id.next_action);
         });
-        backButton.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
+        binding.backButton.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
     }
 
+    /**
+     * JAVADOC: spellsContainer is a dynamic layout. We use addView() to add CheckBoxes 
+     * for available spells and TextViews for headers because the content is 
+     * generated based on the character's class and level at runtime. 
+     * View Binding is not suitable for views not present in the XML.
+     */
     private void loadSpells() {
         new Thread(() -> {
             List<SpellEntity> allSpells = Open5eDatabase.getInstance(requireContext())
@@ -106,32 +120,33 @@ public class SpellsStepFragment extends Fragment {
             }
 
             requireActivity().runOnUiThread(() -> {
-                container.removeAllViews();
+                if (binding == null) return;
+                binding.spellsContainer.removeAllViews();
                 cantripCheckboxes.clear();
                 spellCheckboxes.clear();
 
                 if (cantrips.isEmpty() && firstLevelSpells.isEmpty()) {
                     TextView info = new TextView(getContext());
                     info.setText("No spells available for this class (or data missing).");
-                    info.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                    info.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
                     info.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
                     info.setPadding(0, dp(16), 0, 0);
-                    container.addView(info);
+                    binding.spellsContainer.addView(info);
                     return;
                 }
 
                 if (maxCantrips > 0 && !cantrips.isEmpty()) {
                     TextView header = new TextView(getContext());
                     header.setText("Select cantrips (max " + maxCantrips + "):");
-                    header.setTypeface(ResourcesCompat.getFont(getContext(), R.font.cinzel_bold));
+                    header.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.cinzel_bold));
                     header.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                     header.setPadding(0, dp(16), 0, dp(8));
-                    container.addView(header);
+                    binding.spellsContainer.addView(header);
 
                     for (SpellEntity spell : cantrips) {
                         CheckBox cb = new CheckBox(getContext());
                         cb.setText(spell.name);
-                        cb.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                        cb.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
                         cb.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                         cb.setTag(spell.key);
                         cb.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -140,7 +155,7 @@ public class SpellsStepFragment extends Fragment {
                                 Toast.makeText(getContext(), "You can select only " + maxCantrips + " cantrips", Toast.LENGTH_SHORT).show();
                             }
                         });
-                        container.addView(cb);
+                        binding.spellsContainer.addView(cb);
                         cantripCheckboxes.add(cb);
                     }
                 }
@@ -148,15 +163,15 @@ public class SpellsStepFragment extends Fragment {
                 if (maxSpells > 0 && !firstLevelSpells.isEmpty()) {
                     TextView header = new TextView(getContext());
                     header.setText("Select 1st-level spells (max " + maxSpells + "):");
-                    header.setTypeface(ResourcesCompat.getFont(getContext(), R.font.cinzel_bold));
+                    header.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.cinzel_bold));
                     header.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                     header.setPadding(0, dp(24), 0, dp(8));
-                    container.addView(header);
+                    binding.spellsContainer.addView(header);
 
                     for (SpellEntity spell : firstLevelSpells) {
                         CheckBox cb = new CheckBox(getContext());
                         cb.setText(spell.name);
-                        cb.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                        cb.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
                         cb.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                         cb.setTag(spell.key);
                         cb.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -165,7 +180,7 @@ public class SpellsStepFragment extends Fragment {
                                 Toast.makeText(getContext(), "You can select only " + maxSpells + " spells", Toast.LENGTH_SHORT).show();
                             }
                         });
-                        container.addView(cb);
+                        binding.spellsContainer.addView(cb);
                         spellCheckboxes.add(cb);
                     }
                 }
@@ -174,10 +189,10 @@ public class SpellsStepFragment extends Fragment {
                 } else if (maxCantrips == 0 && maxSpells == 0) {
                     TextView info = new TextView(getContext());
                     info.setText("This class does not cast spells at 1st level.");
-                    info.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                    info.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
                     info.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
                     info.setPadding(0, dp(16), 0, 0);
-                    container.addView(info);
+                    binding.spellsContainer.addView(info);
                 }
             });
         }).start();

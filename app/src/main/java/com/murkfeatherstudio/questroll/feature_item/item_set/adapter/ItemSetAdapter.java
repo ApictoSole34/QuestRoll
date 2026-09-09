@@ -3,12 +3,13 @@ package com.murkfeatherstudio.questroll.feature_item.item_set.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
-import com.murkfeatherstudio.questroll.R;
+
+import com.murkfeatherstudio.questroll.databinding.ItemItemSetBinding;
 import com.murkfeatherstudio.questroll.feature_item.item_set.model.CombinedItemSet;
 
 public class ItemSetAdapter extends ListAdapter<CombinedItemSet, ItemSetAdapter.ViewHolder> {
@@ -33,8 +34,8 @@ public class ItemSetAdapter extends ListAdapter<CombinedItemSet, ItemSetAdapter.
 
     @NonNull @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_item_set, parent, false));
+        ItemItemSetBinding binding = ItemItemSetBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -43,17 +44,17 @@ public class ItemSetAdapter extends ListAdapter<CombinedItemSet, ItemSetAdapter.
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvDesc, tvCustomBadge;
-        ViewHolder(View v) {
-            super(v);
-            tvName = v.findViewById(R.id.tv_name);
-            tvDesc = v.findViewById(R.id.tv_desc);
-            tvCustomBadge = v.findViewById(R.id.tv_custom_badge);
+        private final ItemItemSetBinding binding;
+
+        ViewHolder(ItemItemSetBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
+
         void bind(CombinedItemSet s, OnItemClickListener listener) {
-            tvName.setText(s.name);
-            tvDesc.setText(s.desc != null ? s.desc : "");
-            tvCustomBadge.setVisibility(s.isCustom ? View.VISIBLE : View.GONE);
+            binding.tvName.setText(s.name);
+            binding.tvDesc.setText(s.desc != null ? s.desc : "");
+            binding.tvCustomBadge.setVisibility(s.isCustom ? View.VISIBLE : View.GONE);
             itemView.setOnClickListener(v -> listener.onItemClick(s));
         }
     }

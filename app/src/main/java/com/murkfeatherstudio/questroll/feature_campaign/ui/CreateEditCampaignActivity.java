@@ -1,7 +1,8 @@
 package com.murkfeatherstudio.questroll.feature_campaign.ui;
 
 import android.os.Bundle;
-import android.widget.*;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -13,20 +14,21 @@ import com.murkfeatherstudio.questroll.core.local_database.PlayerCharacterDataba
 import com.murkfeatherstudio.questroll.core.models.campaign.CampaignEntity;
 import com.murkfeatherstudio.questroll.core.models.character.CharacterEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.game_system.GameSystemEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityCreateEditCampaignBinding;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Activity for creating or editing a campaign.
+ */
 public class CreateEditCampaignActivity extends BaseActivity {
 
     public static final String EXTRA_CAMPAIGN_ID = "campaign_id";
 
-    private EditText etName, etDescription;
-    private Spinner spinnerGameSystem;
-    private TextView tvSelectedCharacter;
-
+    private ActivityCreateEditCampaignBinding binding;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private final List<String> gameSystemKeys = new ArrayList<>();
@@ -39,22 +41,16 @@ public class CreateEditCampaignActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_edit_campaign);
-
-        etName = findViewById(R.id.et_name);
-        etDescription = findViewById(R.id.et_description);
-        spinnerGameSystem = findViewById(R.id.spinner_game_system);
-        tvSelectedCharacter = findViewById(R.id.tv_selected_character);
-        Button btnSelectCharacter = findViewById(R.id.btn_select_character);
-        Button btnSave = findViewById(R.id.btn_save);
+        binding = ActivityCreateEditCampaignBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         editId = getIntent().getLongExtra(EXTRA_CAMPAIGN_ID, -1L);
         setTitle(editId != -1L ? "Edit Campaign" : "New Campaign");
 
         loadGameSystems();
 
-        btnSelectCharacter.setOnClickListener(v -> showCharacterPickerDialog());
-        btnSave.setOnClickListener(v -> saveCampaign());
+        binding.btnSelectCharacter.setOnClickListener(v -> showCharacterPickerDialog());
+        binding.btnSave.setOnClickListener(v -> saveCampaign());
     }
 
     private void loadGameSystems() {
@@ -84,7 +80,7 @@ public class CreateEditCampaignActivity extends BaseActivity {
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                         android.R.layout.simple_spinner_item, gameSystemNames);
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                spinnerGameSystem.setAdapter(adapter);
+                binding.spinnerGameSystem.setAdapter(adapter);
 
                 if (editId != -1L) loadExistingCampaign();
             });
@@ -95,17 +91,17 @@ public class CreateEditCampaignActivity extends BaseActivity {
         CampaignDatabase.getInstance(this).campaignDao().getById(editId)
                 .observe(this, campaign -> {
                     if (campaign == null) return;
-                    etName.setText(campaign.name);
-                    etDescription.setText(campaign.description != null ? campaign.description : "");
+                    binding.etName.setText(campaign.name);
+                    binding.etDescription.setText(campaign.description != null ? campaign.description : "");
 
                     int pos = gameSystemKeys.indexOf(campaign.gameSystem);
-                    if (pos >= 0) spinnerGameSystem.setSelection(pos);
+                    if (pos >= 0) binding.spinnerGameSystem.setSelection(pos);
 
                     selectedCharacterId = campaign.characterId;
                     if (selectedCharacterId != -1L) {
                         loadCharacterName(selectedCharacterId);
                     } else {
-                        tvSelectedCharacter.setText("No character selected");
+                        binding.tvSelectedCharacter.setText("No character selected");
                     }
                 });
     }
@@ -117,9 +113,9 @@ public class CreateEditCampaignActivity extends BaseActivity {
             runOnUiThread(() -> {
                 if (character != null) {
                     selectedCharacterName = character.name;
-                    tvSelectedCharacter.setText("Selected: " + character.name);
+                    binding.tvSelectedCharacter.setText("Selected: " + character.name);
                 } else {
-                    tvSelectedCharacter.setText("No character selected");
+                    binding.tvSelectedCharacter.setText("No character selected");
                     selectedCharacterId = -1L;
                 }
             });
@@ -144,12 +140,12 @@ public class CreateEditCampaignActivity extends BaseActivity {
                         .setItems(names, (dialog, which) -> {
                             selectedCharacterId = allCharacters.get(which).id;
                             selectedCharacterName = allCharacters.get(which).name;
-                            tvSelectedCharacter.setText("Selected: " + selectedCharacterName);
+                            binding.tvSelectedCharacter.setText("Selected: " + selectedCharacterName);
                         })
                         .setNeutralButton("Clear selection", (d, w) -> {
                             selectedCharacterId = -1L;
                             selectedCharacterName = "";
-                            tvSelectedCharacter.setText("No character selected");
+                            binding.tvSelectedCharacter.setText("No character selected");
                         })
                         .setNegativeButton("Cancel", null)
                         .show();
@@ -158,14 +154,14 @@ public class CreateEditCampaignActivity extends BaseActivity {
     }
 
     private void saveCampaign() {
-        String name = etName.getText().toString().trim();
+        String name = binding.etName.getText().toString().trim();
         if (name.isEmpty()) {
-            etName.setError("Name required");
+            binding.etName.setError("Name required");
             return;
         }
 
-        String desc = etDescription.getText().toString().trim();
-        int pos = spinnerGameSystem.getSelectedItemPosition();
+        String desc = binding.etDescription.getText().toString().trim();
+        int pos = binding.spinnerGameSystem.getSelectedItemPosition();
         String gameSystem = (pos >= 0 && pos < gameSystemKeys.size())
                 ? gameSystemKeys.get(pos) : "5e-2014";
 

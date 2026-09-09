@@ -13,7 +13,7 @@ import com.murkfeatherstudio.questroll.core.feature_document.fragment.DocumentDe
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.models.open5e.ability.AbilityDto;
 import com.murkfeatherstudio.questroll.core.models.open5e.ability.skill.SkillEntity;
-import com.google.android.material.chip.Chip;
+import com.murkfeatherstudio.questroll.databinding.ActivitySkillDetailBinding;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -27,11 +27,13 @@ import io.noties.markwon.html.HtmlPlugin;
 public class SkillDetailActivity extends BaseActivity {
 
     private Markwon markwon;
+    private ActivitySkillDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_skill_detail);
+        binding = ActivitySkillDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         markwon = Markwon.builder(this)
                 .usePlugin(TablePlugin.create(this))
@@ -52,40 +54,37 @@ public class SkillDetailActivity extends BaseActivity {
     }
 
     private void populateUI(SkillEntity skill) {
-        TextView tvName = findViewById(R.id.tv_skill_name);
-        tvName.setText(skill.name);
-        tvName.setTypeface(ResourcesCompat.getFont(this, R.font.cinzel_bold));
-        tvName.setTextColor(getColor(R.color.threads_text_primary));
+        binding.tvSkillName.setText(skill.name);
+        binding.tvSkillName.setTypeface(ResourcesCompat.getFont(this, R.font.cinzel_bold));
+        binding.tvSkillName.setTextColor(getColor(R.color.threads_text_primary));
 
-        Chip chipAbility = findViewById(R.id.chip_ability);
-        chipAbility.setTextColor(getColor(R.color.threads_text_primary));
-        chipAbility.setChipBackgroundColorResource(R.color.threads_surface);
+        binding.chipAbility.setTextColor(getColor(R.color.threads_text_primary));
+        binding.chipAbility.setChipBackgroundColorResource(R.color.threads_surface);
 
         Open5eDatabase.getInstance(this).abilityDao()
                 .getByKey(skill.abilityKey)
                 .observe(this, ability -> {
                     if (ability != null) {
-                        chipAbility.setText(ability.name);
-                        chipAbility.setTypeface(ResourcesCompat.getFont(this, R.font.inter_medium));
+                        binding.chipAbility.setText(ability.name);
+                        binding.chipAbility.setTypeface(ResourcesCompat.getFont(this, R.font.inter_medium));
                     }
                 });
 
-        TextView tvSource = findViewById(R.id.tv_source);
         if (skill.documentKey != null && !skill.documentKey.isEmpty()) {
             String displayName = formatDocumentName(skill.documentKey);
-            tvSource.setText("Source: " + displayName);
-            tvSource.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
-            tvSource.setTextColor(getColor(R.color.threads_text_secondary));
-            tvSource.setVisibility(View.VISIBLE);
-            tvSource.setClickable(true);
-            tvSource.setFocusable(true);
-            tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
-            tvSource.setOnClickListener(v -> {
+            binding.tvSource.setText("Source: " + displayName);
+            binding.tvSource.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+            binding.tvSource.setTextColor(getColor(R.color.threads_text_secondary));
+            binding.tvSource.setVisibility(View.VISIBLE);
+            binding.tvSource.setClickable(true);
+            binding.tvSource.setFocusable(true);
+            binding.tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
+            binding.tvSource.setOnClickListener(v -> {
                 DocumentDetailDialogFragment fragment = DocumentDetailDialogFragment.newInstance(skill.documentKey);
                 fragment.show(getSupportFragmentManager(), "document_detail");
             });
         } else {
-            tvSource.setVisibility(View.GONE);
+            binding.tvSource.setVisibility(View.GONE);
         }
 
         if (skill.descriptionsJson != null) {
@@ -96,9 +95,14 @@ public class SkillDetailActivity extends BaseActivity {
         }
     }
 
+    /**
+     * NOTE: descriptions_container is managed dynamically (addView()).
+     * TextView views for individual game systems are created at runtime
+     * based on JSON data. ViewBinding is not applicable to these
+     * dynamically generated children.
+     */
     private void buildDescriptions(List<AbilityDto.AbilityDescriptionDto> descs) {
-        LinearLayout container = findViewById(R.id.descriptions_container);
-        container.removeAllViews();
+        binding.descriptionsContainer.removeAllViews();
         if (descs == null) return;
 
         for (AbilityDto.AbilityDescriptionDto d : descs) {
@@ -107,7 +111,7 @@ public class SkillDetailActivity extends BaseActivity {
             label.setTypeface(ResourcesCompat.getFont(this, R.font.cinzel_semibold));
             label.setTextSize(14);
             label.setTextColor(getColor(R.color.threads_gold));
-            container.addView(label);
+            binding.descriptionsContainer.addView(label);
 
             TextView body = new TextView(this);
             markwon.setMarkdown(body, d.desc != null ? d.desc : "");
@@ -119,7 +123,7 @@ public class SkillDetailActivity extends BaseActivity {
                     LinearLayout.LayoutParams.WRAP_CONTENT);
             lp.setMargins(0, dp(4), 0, dp(16));
             body.setLayoutParams(lp);
-            container.addView(body);
+            binding.descriptionsContainer.addView(body);
         }
     }
 

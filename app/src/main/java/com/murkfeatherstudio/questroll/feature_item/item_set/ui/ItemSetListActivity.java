@@ -3,26 +3,26 @@ package com.murkfeatherstudio.questroll.feature_item.item_set.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.SearchView;
-import android.widget.TextView;
 
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
+import com.murkfeatherstudio.questroll.databinding.ActivityItemSetListBinding;
 import com.murkfeatherstudio.questroll.feature_item.item_set.adapter.ItemSetAdapter;
 import com.murkfeatherstudio.questroll.feature_item.item_set.view_model.ItemSetListViewModel;
 
 public class ItemSetListActivity extends BaseActivity {
     private ItemSetListViewModel viewModel;
     private ItemSetAdapter adapter;
-    private RecyclerView rv;
+    private ActivityItemSetListBinding binding;
 
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_set_list);
+        binding = ActivityItemSetListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
         Open5eDatabase open5eDb = Open5eDatabase.getInstance(this);
         UserContentDatabase customDb = UserContentDatabase.getInstance(this);
         viewModel = new ViewModelProvider(this,
@@ -32,9 +32,9 @@ public class ItemSetListActivity extends BaseActivity {
         setupSearch();
         viewModel.getItemSets().observe(this, list -> {
             adapter.submitList(list);
-            ((TextView) findViewById(R.id.tv_count)).setText(list.size() + " item sets");
+            binding.tvCount.setText(list.size() + " item sets");
         });
-        findViewById(R.id.fabCreate).setOnClickListener(v ->
+        binding.fabCreate.setOnClickListener(v ->
                 startActivity(new Intent(this, CustomItemSetCreateActivity.class)));
     }
 
@@ -50,15 +50,13 @@ public class ItemSetListActivity extends BaseActivity {
                 startActivity(i);
             }
         });
-        rv = findViewById(R.id.recycler_item_sets);
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(adapter);
-        rv.setSaveEnabled(false);
+        binding.recyclerItemSets.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerItemSets.setAdapter(adapter);
+        binding.recyclerItemSets.setSaveEnabled(false);
     }
 
     private void setupSearch() {
-        SearchView searchView = findViewById(R.id.search_view);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override public boolean onQueryTextSubmit(String q) { viewModel.setQuery(q); return true; }
             @Override public boolean onQueryTextChange(String q) { viewModel.setQuery(q); return true; }
         });

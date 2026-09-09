@@ -3,14 +3,13 @@ package com.murkfeatherstudio.questroll.feature_item.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.ItemItemBinding;
 import com.murkfeatherstudio.questroll.feature_item.model.CombinedItem;
 
 public class ItemAdapter extends ListAdapter<CombinedItem, ItemAdapter.ViewHolder> {
@@ -39,8 +38,9 @@ public class ItemAdapter extends ListAdapter<CombinedItem, ItemAdapter.ViewHolde
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new ViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_item, parent, false));
+        ItemItemBinding binding = ItemItemBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -49,29 +49,26 @@ public class ItemAdapter extends ListAdapter<CombinedItem, ItemAdapter.ViewHolde
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvCategory, tvRarity, tvCustomBadge;
+        private final ItemItemBinding binding;
 
-        ViewHolder(View v) {
-            super(v);
-            tvName = v.findViewById(R.id.tv_item_name);
-            tvCategory = v.findViewById(R.id.tv_item_category);
-            tvRarity = v.findViewById(R.id.tv_item_rarity);
-            tvCustomBadge = v.findViewById(R.id.tv_custom_badge);
+        ViewHolder(ItemItemBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         void bind(CombinedItem item, OnItemClickListener listener) {
-            tvName.setText(item.name);
-            tvCategory.setText(item.categoryName != null ? item.categoryName : "Misc");
-            tvCategory.setVisibility(View.VISIBLE);
+            binding.tvItemName.setText(item.name);
+            binding.tvItemCategory.setText(item.categoryName != null ? item.categoryName : "Misc");
+            binding.tvItemCategory.setVisibility(View.VISIBLE);
 
             if (item.rarityName != null && !item.rarityName.isEmpty()) {
-                tvRarity.setText(item.rarityName);
-                tvRarity.setVisibility(View.VISIBLE);
+                binding.tvItemRarity.setText(item.rarityName);
+                binding.tvItemRarity.setVisibility(View.VISIBLE);
             } else {
-                tvRarity.setVisibility(View.GONE);
+                binding.tvItemRarity.setVisibility(View.GONE);
             }
 
-            tvCustomBadge.setVisibility(item.isCustom ? View.VISIBLE : View.GONE);
+            binding.tvCustomBadge.setVisibility(item.isCustom ? View.VISIBLE : View.GONE);
 
             itemView.setOnClickListener(v -> {
                 if (listener != null) listener.onItemClick(item);

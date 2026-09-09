@@ -3,21 +3,18 @@ package com.murkfeatherstudio.questroll.feature_ability.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_ability.CustomAbilityDao;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_ability.CustomAbilityEntity;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_ability.CustomSkillDao;
+import com.murkfeatherstudio.questroll.databinding.ActivityCustomAbilityDetailBinding;
 import com.murkfeatherstudio.questroll.feature_ability.adapter.SkillAdapter;
 import com.murkfeatherstudio.questroll.feature_ability.model.CombinedSkill;
 
@@ -34,15 +31,13 @@ public class CustomAbilityDetailActivity extends BaseActivity {
     private Executor executor;
     private CustomAbilityEntity current;
     private Markwon markwon;
-
-    private TextView tvName;
-    private TextView tvShortDesc;
-    private TextView tvDescription;
+    private ActivityCustomAbilityDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_custom_ability_detail);
+        binding = ActivityCustomAbilityDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         markwon = Markwon.create(this);
 
@@ -51,15 +46,9 @@ public class CustomAbilityDetailActivity extends BaseActivity {
         skillDao   = udb.customSkillDao();
         executor   = Open5eDatabase.getInstance(this).getQueryExecutor();
 
-        tvName        = findViewById(R.id.tv_ability_name);
-        tvShortDesc   = findViewById(R.id.tv_ability_short_desc);
-        tvDescription = findViewById(R.id.tv_ability_description);
-
-
         long id = getIntent().getLongExtra("CUSTOM_ABILITY_ID", -1);
 
-        ImageButton btnManage = findViewById(R.id.btn_manage);
-        btnManage.setOnClickListener(v -> showManagePopup(v));
+        binding.btnManage.setOnClickListener(this::showManagePopup);
 
         abilityDao.getById(id).observe(this, ability -> {
             if (ability == null) return;
@@ -72,57 +61,48 @@ public class CustomAbilityDetailActivity extends BaseActivity {
     }
 
     private void populateUI(CustomAbilityEntity ability) {
-        tvName.setText(ability.name);
-
-        tvShortDesc.setText(
-                ability.shortDesc != null ? ability.shortDesc : ""
-        );
+        binding.tvAbilityName.setText(ability.name);
+        binding.tvAbilityShortDesc.setText(ability.shortDesc != null ? ability.shortDesc : "");
 
         if (ability.description != null && !ability.description.isEmpty()) {
-            markwon.setMarkdown(tvDescription, ability.description);
+            markwon.setMarkdown(binding.tvAbilityDescription, ability.description);
         } else {
-            tvDescription.setText("No description.");
+            binding.tvAbilityDescription.setText("No description.");
         }
     }
 
     private void setupSkillsList(long abilityId) {
-        RecyclerView rv = findViewById(R.id.rv_skills_custom);
-
         SkillAdapter adapter = new SkillAdapter(skill -> {
             Intent i = new Intent(this, CustomSkillDetailActivity.class);
             i.putExtra("CUSTOM_SKILL_ID", skill.customId);
             startActivity(i);
         });
 
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(adapter);
+        binding.rvSkillsCustom.setLayoutManager(new LinearLayoutManager(this));
+        binding.rvSkillsCustom.setAdapter(adapter);
 
         skillDao.getByAbility(String.valueOf(abilityId), true)
                 .observe(this, skills -> {
-
                     List<CombinedSkill> list = skills.stream()
                             .map(CombinedSkill::new)
                             .collect(Collectors.toList());
 
                     adapter.submitList(list);
-
-                    findViewById(R.id.tv_no_custom_skills)
-                            .setVisibility(list.isEmpty() ? View.VISIBLE : View.GONE);
+                    binding.tvNoCustomSkills.setVisibility(list.isEmpty() ? View.VISIBLE : View.GONE);
                 });
     }
 
     private void setupButtons(long abilityId) {
-        findViewById(R.id.btn_add_custom_skill).setOnClickListener(v -> {
+        binding.btnAddCustomSkill.setOnClickListener(v -> {
             Intent i = new Intent(this, CustomSkillCreateActivity.class);
             i.putExtra("PRESET_ABILITY_KEY", String.valueOf(abilityId));
             i.putExtra("PRESET_ABILITY_IS_CUSTOM", true);
-            i.putExtra("PRESET_ABILITY_NAME",
-                    current != null ? current.name : "");
+            i.putExtra("PRESET_ABILITY_NAME", current != null ? current.name : "");
             startActivity(i);
         });
 
-        findViewById(R.id.fab_add_custom_skill).setOnClickListener(v ->
-                findViewById(R.id.btn_add_custom_skill).performClick()
+        binding.fabAddCustomSkill.setOnClickListener(v ->
+                binding.btnAddCustomSkill.performClick()
         );
     }
 
@@ -133,13 +113,11 @@ public class CustomAbilityDetailActivity extends BaseActivity {
 
         popup.setOnMenuItemClickListener(item -> {
             int itemId = item.getItemId();
-
             if (itemId == 1) { // Edit
                 Intent i = new Intent(this, CustomAbilityCreateActivity.class);
                 i.putExtra("CUSTOM_ABILITY_ID", current.id);
                 startActivity(i);
                 return true;
-
             } else if (itemId == 2) { // Delete
                 new AlertDialog.Builder(this)
                         .setTitle("Delete ability")
@@ -156,7 +134,6 @@ public class CustomAbilityDetailActivity extends BaseActivity {
             }
             return false;
         });
-
         popup.show();
     }
 }

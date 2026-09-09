@@ -4,9 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +21,7 @@ import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_language.CustomLanguageEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.language.LanguageEntity;
+import com.murkfeatherstudio.questroll.databinding.FragmentWizardLanguagesBinding;
 import com.murkfeatherstudio.questroll.feature_character.view_model.WizardViewModel;
 
 import java.util.ArrayList;
@@ -35,26 +34,28 @@ import java.util.Set;
 public class LanguagesStepFragment extends Fragment {
 
     private WizardViewModel viewModel;
-    private LinearLayout container;
-    private Button nextButton, backButton;
+    private FragmentWizardLanguagesBinding binding;
     private List<Object> allLanguages = new ArrayList<>();
     private List<CheckBox> checkBoxes = new ArrayList<>();
     private int maxSelections = 0;
     private Set<String> alreadyKnown = new HashSet<>();
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_wizard_languages, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentWizardLanguagesBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(WizardViewModel.class);
-
-        container = view.findViewById(R.id.languages_container);
-        nextButton = view.findViewById(R.id.next_button);
-        backButton = view.findViewById(R.id.back_button);
 
         alreadyKnown.addAll(viewModel.racialFixedLanguages);
         alreadyKnown.addAll(viewModel.backgroundFixedLanguages);
@@ -66,7 +67,7 @@ public class LanguagesStepFragment extends Fragment {
 
         loadLanguages();
 
-        nextButton.setOnClickListener(v -> {
+        binding.nextButton.setOnClickListener(v -> {
             viewModel.chosenBonusLanguages.clear();
             for (int i = 0; i < checkBoxes.size(); i++) {
                 if (checkBoxes.get(i).isChecked()) {
@@ -82,7 +83,7 @@ public class LanguagesStepFragment extends Fragment {
             }
             Navigation.findNavController(v).navigate(R.id.next_action);
         });
-        backButton.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
+        binding.backButton.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
     }
 
     private void loadLanguages() {
@@ -122,40 +123,40 @@ public class LanguagesStepFragment extends Fragment {
             });
 
             AppExecutors.getInstance().mainThread().execute(() -> {
-                if (!isAdded()) return;
-                container.removeAllViews();
+                if (!isAdded() || binding == null) return;
+                binding.languagesContainer.removeAllViews();
                 checkBoxes.clear();
 
                 if (viewModel.backgroundLanguagesDescription != null && !viewModel.backgroundLanguagesDescription.isEmpty()) {
                     TextView descView = new TextView(getContext());
                     descView.setText(viewModel.backgroundLanguagesDescription);
-                    descView.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                    descView.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
                     descView.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
                     descView.setPadding(0, dp(8), 0, dp(8));
-                    container.addView(descView);
+                    binding.languagesContainer.addView(descView);
                 }
 
                 TextView knownHeader = new TextView(getContext());
                 knownHeader.setText("Known languages (from race, background and class):");
-                knownHeader.setTypeface(ResourcesCompat.getFont(getContext(), R.font.cinzel_bold));
+                knownHeader.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.cinzel_bold));
                 knownHeader.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                 knownHeader.setPadding(0, dp(16), 0, dp(8));
-                container.addView(knownHeader);
+                binding.languagesContainer.addView(knownHeader);
 
                 if (knownNames.isEmpty()) {
                     TextView none = new TextView(getContext());
                     none.setText("None");
-                    none.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                    none.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
                     none.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
-                    container.addView(none);
+                    binding.languagesContainer.addView(none);
                 } else {
                     for (String langName : knownNames) {
                         TextView tv = new TextView(getContext());
                         tv.setText("• " + langName);
-                        tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                        tv.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
                         tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                         tv.setPadding(dp(32), dp(4), 0, dp(4));
-                        container.addView(tv);
+                        binding.languagesContainer.addView(tv);
                     }
                 }
 
@@ -166,25 +167,25 @@ public class LanguagesStepFragment extends Fragment {
                         viewModel.bonusLanguagesFromInt,
                         viewModel.classLanguageChoices,
                         maxSelections));
-                sourceInfo.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                sourceInfo.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
                 sourceInfo.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
                 sourceInfo.setPadding(0, dp(16), 0, dp(8));
-                container.addView(sourceInfo);
+                binding.languagesContainer.addView(sourceInfo);
 
                 if (maxSelections > 0) {
                     TextView selectHeader = new TextView(getContext());
                     selectHeader.setText("Select additional languages (max " + maxSelections + "):");
-                    selectHeader.setTypeface(ResourcesCompat.getFont(getContext(), R.font.cinzel_bold));
+                    selectHeader.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.cinzel_bold));
                     selectHeader.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                     selectHeader.setPadding(0, dp(24), 0, dp(8));
-                    container.addView(selectHeader);
+                    binding.languagesContainer.addView(selectHeader);
 
                     for (Object obj : allLanguages) {
                         String name = (obj instanceof LanguageEntity) ? ((LanguageEntity) obj).name : ((CustomLanguageEntity) obj).name;
                         if (knownNames.contains(name)) continue;
                         CheckBox cb = new CheckBox(getContext());
                         cb.setText(name);
-                        cb.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                        cb.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
                         cb.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                         cb.setTag(obj);
                         cb.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -193,16 +194,16 @@ public class LanguagesStepFragment extends Fragment {
                                 Toast.makeText(getContext(), "You can select only " + maxSelections + " languages", Toast.LENGTH_SHORT).show();
                             }
                         });
-                        container.addView(cb);
+                        binding.languagesContainer.addView(cb);
                         checkBoxes.add(cb);
                     }
                 } else {
                     TextView info = new TextView(getContext());
                     info.setText("No additional languages to choose.");
-                    info.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                    info.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
                     info.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
                     info.setPadding(0, dp(16), 0, 0);
-                    container.addView(info);
+                    binding.languagesContainer.addView(info);
                 }
             });
         });

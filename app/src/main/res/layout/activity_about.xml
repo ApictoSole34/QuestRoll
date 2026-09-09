@@ -111,7 +111,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="24dp"
-                android:text="QuestRoll is homebrew-friendly. You can create your own Spells, Classes, Languages, and even upload PDF manuals to keep your rules in one place." />
+                android:text="QusetRoll is homebrew-friendly. You can create your own Spells, Classes, Languages, and even upload PDF manuals to keep your rules in one place." />
 
             <!-- Feature 5 -->
             <TextView

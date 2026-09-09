@@ -3,12 +3,12 @@ package com.murkfeatherstudio.questroll.feature_class.class_adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.ItemClassListBinding;
+import com.murkfeatherstudio.questroll.databinding.ItemCreateClassBinding;
 import com.murkfeatherstudio.questroll.feature_class.model.CombinedClass;
 
 import java.util.ArrayList;
@@ -33,15 +33,14 @@ public class ClassAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         if (viewType == TYPE_CREATE) {
-            View view = LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.item_create_class, parent, false);
-            return new CreateViewHolder(view);
+            ItemCreateClassBinding binding = ItemCreateClassBinding.inflate(inflater, parent, false);
+            return new CreateViewHolder(binding);
         }
 
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_class_list, parent, false);
-        return new ClassViewHolder(view);
+        ItemClassListBinding binding = ItemClassListBinding.inflate(inflater, parent, false);
+        return new ClassViewHolder(binding);
     }
 
     @Override
@@ -70,23 +69,21 @@ public class ClassAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     static class ClassViewHolder extends RecyclerView.ViewHolder {
-        private final TextView tvClassName;
-        private final TextView tvSubclass;
+        private final ItemClassListBinding binding;
 
-        ClassViewHolder(View itemView) {
-            super(itemView);
-            tvClassName = itemView.findViewById(R.id.tv_class_name);
-            tvSubclass = itemView.findViewById(R.id.tv_subclass);
+        ClassViewHolder(ItemClassListBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         void bind(CombinedClass item, OnItemClickListener listener) {
-            tvClassName.setText(item.name);
+            binding.tvClassName.setText(item.name);
 
             if (item.parentName != null && !item.parentName.isEmpty()) {
-                tvSubclass.setVisibility(View.VISIBLE);
-                tvSubclass.setText("Subclass of " + item.parentName);
+                binding.tvSubclass.setVisibility(View.VISIBLE);
+                binding.tvSubclass.setText("Subclass of " + item.parentName);
             } else {
-                tvSubclass.setVisibility(View.GONE);
+                binding.tvSubclass.setVisibility(View.GONE);
             }
 
             itemView.setOnClickListener(v -> {
@@ -98,8 +95,8 @@ public class ClassAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     }
 
     static class CreateViewHolder extends RecyclerView.ViewHolder {
-        CreateViewHolder(View itemView) {
-            super(itemView);
+        CreateViewHolder(ItemCreateClassBinding binding) {
+            super(binding.getRoot());
         }
 
         void bind(OnItemClickListener listener) {

@@ -11,16 +11,11 @@ import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.Switch;
-import android.widget.TextView;
 
 import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
+import com.murkfeatherstudio.questroll.databinding.ActivityRollDiceBinding;
 import com.murkfeatherstudio.questroll.feature_dice.adapter.DiceAdapter;
 import com.murkfeatherstudio.questroll.feature_dice.model.Dice;
 
@@ -40,12 +35,7 @@ import java.util.Map;
  */
 public class RollDiceActivity extends BaseActivity implements DialogManageDice.DiceManageListener, SensorEventListener {
 
-    @SuppressLint("UseSwitchCompatOrMaterialCode")
-    private Switch showResultSwitch;
-    private Switch shakeToRollSwitch;
-    private LinearLayout resultWindow;
-    private TextView resultText;
-    private RecyclerView diceRecyclerView;
+    private ActivityRollDiceBinding binding;
     private DiceAdapter diceAdapter;
     private Map<String, Integer> diceCounts = new HashMap<>();
     private String currentResult = "";
@@ -79,18 +69,12 @@ public class RollDiceActivity extends BaseActivity implements DialogManageDice.D
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_roll_dice);
+        binding = ActivityRollDiceBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         diceCounts.clear();
 
-        diceRecyclerView = findViewById(R.id.diceRecyclerView);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 2);
-        diceRecyclerView.setLayoutManager(gridLayoutManager);
-        Button rollButton = findViewById(R.id.rollButton);
-        showResultSwitch = findViewById(R.id.showResultSwitch);
-        shakeToRollSwitch = findViewById(R.id.shakeToRollSwitch);
-        resultWindow = findViewById(R.id.resultWindow);
-        Button manageDiceButton = findViewById(R.id.manageDiceButton);
-        resultText = findViewById(R.id.resultText);
+        binding.diceRecyclerView.setLayoutManager(gridLayoutManager);
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
@@ -102,20 +86,20 @@ public class RollDiceActivity extends BaseActivity implements DialogManageDice.D
 
         List<Dice> diceList = new ArrayList<>();
         diceAdapter = new DiceAdapter(diceList);
-        diceRecyclerView.setAdapter(diceAdapter);
+        binding.diceRecyclerView.setAdapter(diceAdapter);
 
-        rollButton.setOnClickListener(v -> rollDice());
+        binding.rollButton.setOnClickListener(v -> rollDice());
 
-        showResultSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        binding.showResultSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                resultText.setText(currentResult);
-                resultWindow.setVisibility(View.VISIBLE);
+                binding.resultText.setText(currentResult);
+                binding.resultWindow.setVisibility(View.VISIBLE);
             } else {
-                resultWindow.setVisibility(View.GONE);
+                binding.resultWindow.setVisibility(View.GONE);
             }
         });
 
-        shakeToRollSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
+        binding.shakeToRollSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             isShakeToRollEnabled = isChecked;
             if (isChecked && accelerometer != null) {
                 sensorManager.registerListener(this, accelerometer,
@@ -126,7 +110,7 @@ public class RollDiceActivity extends BaseActivity implements DialogManageDice.D
             }
         });
 
-        manageDiceButton.setOnClickListener(v -> {
+        binding.manageDiceButton.setOnClickListener(v -> {
             DialogManageDice dialogManageDice = new DialogManageDice(this, diceCounts, this);
             dialogManageDice.show();
         });
@@ -144,7 +128,9 @@ public class RollDiceActivity extends BaseActivity implements DialogManageDice.D
     @Override
     protected void onPause() {
         super.onPause();
-        sensorManager.unregisterListener(this);
+        if (sensorManager != null) {
+            sensorManager.unregisterListener(this);
+        }
         settleHandler.removeCallbacks(settleRunnable);
         resetShakeState();
     }
@@ -229,10 +215,10 @@ public class RollDiceActivity extends BaseActivity implements DialogManageDice.D
     }
 
     private void toggleDiceRecyclerView() {
-        if (diceRecyclerView.getVisibility() == View.VISIBLE) {
-            diceRecyclerView.setVisibility(View.GONE);
+        if (binding.diceRecyclerView.getVisibility() == View.VISIBLE) {
+            binding.diceRecyclerView.setVisibility(View.GONE);
         } else {
-            diceRecyclerView.setVisibility(View.VISIBLE);
+            binding.diceRecyclerView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -264,9 +250,9 @@ public class RollDiceActivity extends BaseActivity implements DialogManageDice.D
         currentResult = result.toString();
         diceAdapter.notifyDataSetChanged();
 
-        if (showResultSwitch.isChecked()) {
-            resultText.setText(currentResult);
-            resultWindow.setVisibility(View.VISIBLE);
+        if (binding.showResultSwitch.isChecked()) {
+            binding.resultText.setText(currentResult);
+            binding.resultWindow.setVisibility(View.VISIBLE);
         }
     }
 }

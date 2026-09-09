@@ -6,7 +6,6 @@ import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -14,15 +13,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_character_class.custom_feature.CustomFeatureEntity;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_character_class.custom_gained_at.CustomGainedAt;
+import com.murkfeatherstudio.questroll.databinding.FragmentWizardFeaturesBinding;
 import com.murkfeatherstudio.questroll.feature_class.class_adapter.FeatureAdapter;
 import com.murkfeatherstudio.questroll.feature_class.view_model.ClassWizardViewModel;
 
@@ -33,25 +33,28 @@ public class ClassWizardFeaturesFragment extends Fragment
         implements ClassWizardActivity.ClassWizardStep {
 
     private ClassWizardViewModel viewModel;
-    private RecyclerView rvFeatures;
+    private FragmentWizardFeaturesBinding binding;
     private FeatureAdapter adapter;
-    private Button btnAddFeature;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_wizard_features, container, false);
+        binding = FragmentWizardFeaturesBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(ClassWizardViewModel.class);
 
-        rvFeatures = view.findViewById(R.id.rv_features);
-        btnAddFeature = view.findViewById(R.id.btn_add_feature);
-
-        rvFeatures.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.rvFeatures.setLayoutManager(new LinearLayoutManager(getContext()));
 
         adapter = new FeatureAdapter(new FeatureAdapter.OnFeatureClickListener() {
             @Override
@@ -66,15 +69,18 @@ public class ClassWizardFeaturesFragment extends Fragment
             }
         });
         adapter.setDeleteEnabled(true);
-        rvFeatures.setAdapter(adapter);
+        binding.rvFeatures.setAdapter(adapter);
 
         adapter.submitList(new ArrayList<>(viewModel.features));
 
-        btnAddFeature.setOnClickListener(v -> showFeatureDialog(-1, null));
+        binding.btnAddFeature.setOnClickListener(v -> showFeatureDialog(-1, null));
     }
 
     /**
-     * @param index -1 = nowa cecha, w przeciwnym razie indeks edytowanej cechy w viewModel.features
+     * JAVADOC: This dialog builds its UI programmatically using a ScrollView and LinearLayout. 
+     * Since the form fields (etName, etDesc, etLevels) are created dynamically in code 
+     * and not defined in a standalone XML layout for this specific dialog, 
+     * View Binding is not applicable here. Traditional programmatical UI construction is kept.
      */
     private void showFeatureDialog(int index, CustomFeatureEntity existing) {
         Context ctx = requireContext();
@@ -157,11 +163,6 @@ public class ClassWizardFeaturesFragment extends Fragment
         return sb.toString();
     }
 
-    /**
-     * UWAGA: zakładam konstruktor CustomGainedAt(int level, String detail) — analogicznie
-     * do {"level": N, "detail": ...} z open5e API. Jeśli Twoja klasa ma inny konstruktor
-     * lub inne nazwy pól, dostosuj tylko tę jedną metodę.
-     */
     private List<CustomGainedAt> parseGainedAtLevels(String csv) {
         List<CustomGainedAt> result = new ArrayList<>();
         if (csv == null) return result;
@@ -171,9 +172,7 @@ public class ClassWizardFeaturesFragment extends Fragment
             try {
                 int level = Integer.parseInt(trimmed);
                 result.add(new CustomGainedAt(level, null));
-            } catch (NumberFormatException ignored) {
-                // pomijamy niepoprawne wpisy zamiast crashować cały dialog
-            }
+            } catch (NumberFormatException ignored) {}
         }
         return result;
     }
@@ -188,7 +187,5 @@ public class ClassWizardFeaturesFragment extends Fragment
     }
 
     @Override
-    public void saveData() {
-        // Dane już są w ViewModel — modyfikowane na bieżąco przez dialog.
-    }
+    public void saveData() {}
 }

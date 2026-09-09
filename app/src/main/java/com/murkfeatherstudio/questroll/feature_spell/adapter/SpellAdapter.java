@@ -3,14 +3,13 @@ package com.murkfeatherstudio.questroll.feature_spell.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.ItemSpellBinding;
 import com.murkfeatherstudio.questroll.feature_spell.model.CombinedSpell;
 
 public class SpellAdapter extends ListAdapter<CombinedSpell, SpellAdapter.ViewHolder> {
@@ -42,9 +41,9 @@ public class SpellAdapter extends ListAdapter<CombinedSpell, SpellAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_spell, parent, false);
-        return new ViewHolder(view);
+        ItemSpellBinding binding = ItemSpellBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -53,30 +52,22 @@ public class SpellAdapter extends ListAdapter<CombinedSpell, SpellAdapter.ViewHo
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvLevel, tvSchool, tvCastingTime;
-        TextView tvRitual, tvConcentration, tvCustomBadge;
+        private final ItemSpellBinding binding;
 
-        ViewHolder(View itemView) {
-            super(itemView);
-            tvName = itemView.findViewById(R.id.tv_spell_name);
-            tvLevel = itemView.findViewById(R.id.tv_spell_level);
-            tvSchool = itemView.findViewById(R.id.tv_spell_school);
-            tvCastingTime = itemView.findViewById(R.id.tv_casting_time);
-            tvRitual = itemView.findViewById(R.id.tv_ritual);
-            tvConcentration = itemView.findViewById(R.id.tv_concentration);
-            tvCustomBadge = itemView.findViewById(R.id.tv_custom_badge);
+        ViewHolder(ItemSpellBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         void bind(CombinedSpell spell, OnSpellClickListener listener) {
-            tvName.setText(spell.name);
-            tvLevel.setText(spell.level == 0 ? "Cantrip" : "Level " + spell.level);
-            tvSchool.setText(spell.schoolName != null ? spell.schoolName : "");
-            tvCastingTime.setText(spell.castingTime != null ? spell.castingTime : "");
-            tvRitual.setVisibility(spell.ritual ? View.VISIBLE : View.GONE);
-            tvConcentration.setVisibility(spell.concentration ? View.VISIBLE : View.GONE);
-            if (tvCustomBadge != null) {
-                tvCustomBadge.setVisibility(spell.isCustom ? View.VISIBLE : View.GONE);
-            }
+            binding.tvSpellName.setText(spell.name);
+            binding.tvSpellLevel.setText(spell.level == 0 ? "Cantrip" : "Level " + spell.level);
+            binding.tvSpellSchool.setText(spell.schoolName != null ? spell.schoolName : "");
+            binding.tvCastingTime.setText(spell.castingTime != null ? spell.castingTime : "");
+            binding.tvRitual.setVisibility(spell.ritual ? View.VISIBLE : View.GONE);
+            binding.tvConcentration.setVisibility(spell.concentration ? View.VISIBLE : View.GONE);
+            binding.tvCustomBadge.setVisibility(spell.isCustom ? View.VISIBLE : View.GONE);
+            
             itemView.setOnClickListener(v -> {
                 if (listener != null) listener.onSpellClick(spell);
             });

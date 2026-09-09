@@ -3,17 +3,15 @@ package com.murkfeatherstudio.questroll.feature_item.item_set.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_item_set.CustomItemSetDao;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_item_set.CustomItemSetEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityItemSetDetailBinding;
+import com.murkfeatherstudio.questroll.databinding.ItemItemSetItemBinding;
 import com.murkfeatherstudio.questroll.feature_item.ui.CustomItemDetailActivity;
 import com.murkfeatherstudio.questroll.feature_item.ui.ItemDetailActivity;
 import io.noties.markwon.Markwon;
@@ -23,9 +21,12 @@ public class CustomItemSetDetailActivity extends BaseActivity {
     private long id;
     private CustomItemSetDao dao;
     private Markwon markwon;
+    private ActivityItemSetDetailBinding binding;
+
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_set_detail);
+        binding = ActivityItemSetDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         markwon = Markwon.create(this);
         id = getIntent().getLongExtra(EXTRA_ID, -1);
         if (id == -1) { finish(); return; }
@@ -34,19 +35,22 @@ public class CustomItemSetDetailActivity extends BaseActivity {
             if (set != null) populateUI(set);
         });
     }
+
+    /**
+     * NOTE: Elements inside binding.itemsContainer are built dynamically at runtime.
+     * We use ItemItemSetItemBinding for each row added via addView().
+     */
     private void populateUI(CustomItemSetEntity set) {
-        ((TextView) findViewById(R.id.tv_name)).setText(set.name);
-        TextView tvDesc = findViewById(R.id.tv_desc);
-        markwon.setMarkdown(tvDesc, set.desc != null ? set.desc : "");
-        findViewById(R.id.tv_source).setVisibility(View.GONE);
-        LinearLayout itemsContainer = findViewById(R.id.items_container);
-        itemsContainer.removeAllViews();
+        binding.tvName.setText(set.name);
+        markwon.setMarkdown(binding.tvDesc, set.desc != null ? set.desc : "");
+        binding.tvSource.setVisibility(View.GONE);
+        
+        binding.itemsContainer.removeAllViews();
         if (set.itemKeys != null) {
             for (String itemKey : set.itemKeys) {
-                View itemView = getLayoutInflater().inflate(R.layout.item_item_set_item, itemsContainer, false);
-                TextView tvItem = itemView.findViewById(R.id.tv_item_name);
-                tvItem.setText(itemKey);
-                itemView.setOnClickListener(v -> {
+                ItemItemSetItemBinding itemBinding = ItemItemSetItemBinding.inflate(getLayoutInflater(), binding.itemsContainer, false);
+                itemBinding.tvItemName.setText(itemKey);
+                itemBinding.getRoot().setOnClickListener(v -> {
                     if (itemKey.startsWith("custom_")) {
                         Intent i = new Intent(this, CustomItemDetailActivity.class);
                         i.putExtra("CUSTOM_ITEM_ID", Long.parseLong(itemKey.substring(7)));
@@ -57,13 +61,13 @@ public class CustomItemSetDetailActivity extends BaseActivity {
                         startActivity(i);
                     }
                 });
-                itemsContainer.addView(itemView);
+                binding.itemsContainer.addView(itemBinding.getRoot());
             }
         }
-        Button btnManage = findViewById(R.id.btnManage);
-        btnManage.setVisibility(View.VISIBLE);
-        btnManage.setOnClickListener(v -> showManageMenu(v, id));
+        binding.btnManage.setVisibility(View.VISIBLE);
+        binding.btnManage.setOnClickListener(v -> showManageMenu(v, id));
     }
+
     private void showManageMenu(View anchor, long id) {
         PopupMenu popup = new PopupMenu(this, anchor);
         popup.getMenu().add(0, 1, 0, "Edit");

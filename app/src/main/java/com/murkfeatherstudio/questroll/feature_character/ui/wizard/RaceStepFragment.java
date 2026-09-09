@@ -6,13 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -26,6 +24,7 @@ import com.murkfeatherstudio.questroll.core.models.custom.custom_creature.Custom
 import com.murkfeatherstudio.questroll.core.models.custom.custom_species.CustomSpeciesEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.language.LanguageEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.species.SpeciesEntity;
+import com.murkfeatherstudio.questroll.databinding.FragmentWizardRaceBinding;
 import com.murkfeatherstudio.questroll.feature_character.utils.BonusParser;
 import com.murkfeatherstudio.questroll.feature_character.view_model.WizardViewModel;
 import com.google.gson.Gson;
@@ -43,9 +42,7 @@ import io.noties.markwon.Markwon;
 
 public class RaceStepFragment extends Fragment {
 
-    private Spinner raceSpinner, subspeciesSpinner;
-    private TextView descriptionText;
-    private LinearLayout subspeciesContainer;
+    private FragmentWizardRaceBinding binding;
     private WizardViewModel viewModel;
     private List<Object> combinedBaseRaces = new ArrayList<>();
     private List<Object> combinedSubraces = new ArrayList<>();
@@ -61,8 +58,15 @@ public class RaceStepFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_wizard_race, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentWizardRaceBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
@@ -71,20 +75,12 @@ public class RaceStepFragment extends Fragment {
         viewModel = new ViewModelProvider(requireActivity()).get(WizardViewModel.class);
         markwon = Markwon.create(requireContext());
         
-        raceSpinner = view.findViewById(R.id.race_spinner);
-        subspeciesSpinner = view.findViewById(R.id.subspecies_spinner);
-        descriptionText = view.findViewById(R.id.race_description);
-        subspeciesContainer = view.findViewById(R.id.subspecies_container);
-
-        Button nextButton = view.findViewById(R.id.next_button);
-        Button backButton = view.findViewById(R.id.back_button);
-
-        descriptionText.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
-        descriptionText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        binding.raceDescription.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+        binding.raceDescription.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
 
         loadBaseRaces();
 
-        raceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.raceSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position >= 0 && position < combinedBaseRaces.size()) {
@@ -96,7 +92,7 @@ public class RaceStepFragment extends Fragment {
             @Override public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        subspeciesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.subspeciesSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (combinedSubraces != null && !combinedSubraces.isEmpty() && position >= 0 && position < combinedSubraces.size()) {
@@ -119,8 +115,8 @@ public class RaceStepFragment extends Fragment {
             }
         });
 
-        nextButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.next_action));
-        backButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.back_action));
+        binding.nextButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.next_action));
+        binding.backButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.back_action));
     }
 
     private void loadBaseRaces() {
@@ -156,8 +152,10 @@ public class RaceStepFragment extends Fragment {
                             return tv;
                         }
                     };
-                    raceSpinner.setAdapter(adapter);
-                    if (!combinedBaseRaces.isEmpty()) raceSpinner.setSelection(0);
+                    if (binding != null) {
+                        binding.raceSpinner.setAdapter(adapter);
+                        if (!combinedBaseRaces.isEmpty()) binding.raceSpinner.setSelection(0);
+                    }
                 });
             } catch (Exception e) {
                 if (!isAdded()) return;
@@ -179,8 +177,9 @@ public class RaceStepFragment extends Fragment {
                 combinedSubraces.addAll(customSubs);
                 if (!isAdded()) return;
                 requireActivity().runOnUiThread(() -> {
+                    if (binding == null) return;
                     if (!combinedSubraces.isEmpty()) {
-                        subspeciesContainer.setVisibility(View.VISIBLE);
+                        binding.subspeciesContainer.setVisibility(View.VISIBLE);
                         ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(requireContext(),
                                 android.R.layout.simple_spinner_item, combinedSubraces) {
                             @NonNull
@@ -201,10 +200,10 @@ public class RaceStepFragment extends Fragment {
                                 return tv;
                             }
                         };
-                        subspeciesSpinner.setAdapter(adapter);
-                        if (!combinedSubraces.isEmpty()) subspeciesSpinner.setSelection(0);
+                        binding.subspeciesSpinner.setAdapter(adapter);
+                        if (!combinedSubraces.isEmpty()) binding.subspeciesSpinner.setSelection(0);
                     } else {
-                        subspeciesContainer.setVisibility(View.GONE);
+                        binding.subspeciesContainer.setVisibility(View.GONE);
                         updateRacialFeatures(currentRaceObj, null);
                     }
                 });
@@ -224,7 +223,6 @@ public class RaceStepFragment extends Fragment {
             List<Integer> bonusList = new ArrayList<>();
             for (int b : totalData.abilityBonuses) bonusList.add(b);
             
-            // Deduplicate traits by name during the final merge
             Map<String, CharacterTraitEntity> dedupedTraits = new LinkedHashMap<>();
             for (CharacterTraitEntity t : totalData.otherTraits) {
                 dedupedTraits.put(t.name, t);
@@ -240,7 +238,6 @@ public class RaceStepFragment extends Fragment {
                 viewModel.racialFixedLanguages = totalData.fixedLanguages;
                 viewModel.racialLanguageChoices = totalData.languageChoices;
                 
-                // Clear only RACE traits and add current set
                 viewModel.characterTraits.removeIf(t -> "RACE".equals(t.sourceType));
                 viewModel.characterTraits.addAll(finalTraits);
                 
@@ -304,6 +301,7 @@ public class RaceStepFragment extends Fragment {
     }
 
     private void showDescription(Object obj) {
+        if (binding == null) return;
         String desc = "";
         if (obj instanceof SpeciesEntity) {
             desc = ((SpeciesEntity) obj).desc;
@@ -311,10 +309,10 @@ public class RaceStepFragment extends Fragment {
             desc = ((CustomSpeciesEntity) obj).desc;
         }
         
-        if (markwon != null && descriptionText != null) {
-            markwon.setMarkdown(descriptionText, desc != null ? desc : "No description");
-        } else if (descriptionText != null) {
-            descriptionText.setText(desc != null ? desc : "No description");
+        if (markwon != null) {
+            markwon.setMarkdown(binding.raceDescription, desc != null ? desc : "No description");
+        } else {
+            binding.raceDescription.setText(desc != null ? desc : "No description");
         }
     }
 

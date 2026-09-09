@@ -3,20 +3,17 @@ package com.murkfeatherstudio.questroll.feature_background.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.SearchView;
-import android.widget.TextView;
 
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
+import com.murkfeatherstudio.questroll.databinding.ActivityBackgroundListBinding;
 import com.murkfeatherstudio.questroll.feature_background.adapter.BackgroundAdapter;
 import com.murkfeatherstudio.questroll.feature_background.view_model.BackgroundListViewModel;
 import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
 
 import java.util.List;
 
@@ -24,13 +21,13 @@ public class BackgroundListActivity extends BaseActivity {
 
     private BackgroundListViewModel viewModel;
     private BackgroundAdapter adapter;
-    private RecyclerView rv;
-    private ChipGroup chipGroupSources;
+    private ActivityBackgroundListBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_background_list);
+        binding = ActivityBackgroundListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         Open5eDatabase open5eDb = Open5eDatabase.getInstance(this);
         UserContentDatabase customDb = UserContentDatabase.getInstance(this);
@@ -41,15 +38,12 @@ public class BackgroundListActivity extends BaseActivity {
                         customDb.customBackgroundDao()
                 )).get(BackgroundListViewModel.class);
 
-        chipGroupSources = findViewById(R.id.chip_group_sources);
-        rv = findViewById(R.id.recycler_backgrounds);
-
         setupRecyclerView();
         setupSearch();
         setupObservers();
         viewModel.loadSources();
 
-        findViewById(R.id.fabCreateBackground).setOnClickListener(v ->
+        binding.fabCreateBackground.setOnClickListener(v ->
                 startActivity(new Intent(this, CustomBackgroundCreateActivity.class)));
     }
 
@@ -65,23 +59,21 @@ public class BackgroundListActivity extends BaseActivity {
                 startActivity(i);
             }
         });
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(adapter);
+        binding.recyclerBackgrounds.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerBackgrounds.setAdapter(adapter);
     }
 
     private void setupSearch() {
-        ((SearchView) findViewById(R.id.search_view))
-                .setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                    @Override public boolean onQueryTextSubmit(String q) { viewModel.setQuery(q); return true; }
-                    @Override public boolean onQueryTextChange(String q) { viewModel.setQuery(q); return true; }
-                });
+        binding.searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override public boolean onQueryTextSubmit(String q) { viewModel.setQuery(q); return true; }
+            @Override public boolean onQueryTextChange(String q) { viewModel.setQuery(q); return true; }
+        });
     }
 
     private void setupObservers() {
         viewModel.getBackgrounds().observe(this, backgrounds -> {
-            adapter.submitList(backgrounds, () -> rv.scrollToPosition(0));
-            ((TextView) findViewById(R.id.tv_background_count))
-                    .setText(backgrounds.size() + " backgrounds");
+            adapter.submitList(backgrounds, () -> binding.recyclerBackgrounds.scrollToPosition(0));
+            binding.tvBackgroundCount.setText(backgrounds.size() + " backgrounds");
         });
 
         viewModel.getSources().observe(this, sources -> {
@@ -90,9 +82,14 @@ public class BackgroundListActivity extends BaseActivity {
         });
     }
 
+    /**
+     * NOTE: chip_group_sources is managed dynamically (addView()).
+     * Source chips are created at runtime based on data from the database.
+     * ViewBinding is not applicable to these dynamically added elements.
+     */
     private void buildSourceChips(List<String> sources) {
-        int count = chipGroupSources.getChildCount();
-        if (count > 1) chipGroupSources.removeViews(1, count - 1);
+        int count = binding.chipGroupSources.getChildCount();
+        if (count > 1) binding.chipGroupSources.removeViews(1, count - 1);
 
         for (String source : sources) {
             Chip chip = new Chip(this);
@@ -103,24 +100,20 @@ public class BackgroundListActivity extends BaseActivity {
             chip.setCheckedIconVisible(true);
             chip.setOnCheckedChangeListener((btn, isChecked) -> {
                 if (isChecked) {
-                    Chip chipAll = findViewById(R.id.chip_all);
-                    if (chipAll != null) chipAll.setChecked(false);
+                    binding.chipAll.setChecked(false);
                     viewModel.setSource((String) btn.getTag());
                 }
             });
-            chipGroupSources.addView(chip);
+            binding.chipGroupSources.addView(chip);
         }
 
-        Chip chipAll = findViewById(R.id.chip_all);
-        if (chipAll != null) {
-            chipAll.setOnCheckedChangeListener((btn, isChecked) -> {
-                if (isChecked) {
-                    for (int i = 1; i < chipGroupSources.getChildCount(); i++)
-                        ((Chip) chipGroupSources.getChildAt(i)).setChecked(false);
-                    viewModel.setSource("");
-                }
-            });
-        }
+        binding.chipAll.setOnCheckedChangeListener((btn, isChecked) -> {
+            if (isChecked) {
+                for (int i = 1; i < binding.chipGroupSources.getChildCount(); i++)
+                    ((Chip) binding.chipGroupSources.getChildAt(i)).setChecked(false);
+                viewModel.setSource("");
+            }
+        });
     }
 
     private String formatSource(String source) {

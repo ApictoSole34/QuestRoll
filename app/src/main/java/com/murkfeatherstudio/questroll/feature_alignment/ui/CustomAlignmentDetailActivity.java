@@ -3,28 +3,28 @@ package com.murkfeatherstudio.questroll.feature_alignment.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_alignment.CustomAlignmentDao;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_alignment.CustomAlignmentEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityAlignmentDetailBinding;
 
 public class CustomAlignmentDetailActivity extends BaseActivity {
 
     public static final String EXTRA_ID = "CUSTOM_ALIGNMENT_ID";
     private long id;
     private CustomAlignmentDao dao;
+    private ActivityAlignmentDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_alignment_detail);
+        binding = ActivityAlignmentDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         id = getIntent().getLongExtra(EXTRA_ID, -1);
         if (id == -1) {
@@ -39,15 +39,14 @@ public class CustomAlignmentDetailActivity extends BaseActivity {
     }
 
     private void populateUI(CustomAlignmentEntity a) {
-        ((TextView) findViewById(R.id.tv_name)).setText(a.name);
-        ((TextView) findViewById(R.id.tv_short)).setText(a.shortName != null ? "(" + a.shortName + ")" : "");
-        ((TextView) findViewById(R.id.tv_morality)).setText("Morality: " + (a.morality != null ? a.morality : ""));
-        ((TextView) findViewById(R.id.tv_attitude)).setText("Attitude: " + (a.societalAttitude != null ? a.societalAttitude : ""));
-        ((TextView) findViewById(R.id.tv_description)).setText(a.description != null ? a.description : "");
+        binding.tvName.setText(a.name);
+        binding.tvShort.setText(a.shortName != null ? "(" + a.shortName + ")" : "");
+        binding.tvMorality.setText("Morality: " + (a.morality != null ? a.morality : ""));
+        binding.tvAttitude.setText("Attitude: " + (a.societalAttitude != null ? a.societalAttitude : ""));
+        binding.tvDescription.setText(a.description != null ? a.description : "");
 
-        Button btnManage = findViewById(R.id.btnManage);
-        btnManage.setVisibility(View.VISIBLE);
-        btnManage.setOnClickListener(v -> showManageMenu(v, id));
+        binding.btnManage.setVisibility(View.VISIBLE);
+        binding.btnManage.setOnClickListener(v -> showManageMenu(v, id));
     }
 
     private void showManageMenu(View anchor, long id) {

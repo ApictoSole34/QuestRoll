@@ -1,12 +1,13 @@
 package com.murkfeatherstudio.questroll.feature_campaign.adapter;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.murkfeatherstudio.questroll.R;
+
+import com.murkfeatherstudio.questroll.databinding.ItemSimpleTextBinding;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,13 +22,13 @@ public class SimpleTextAdapter extends RecyclerView.Adapter<SimpleTextAdapter.Vi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_simple_text, parent, false);
-        return new ViewHolder(view);
+        ItemSimpleTextBinding binding = ItemSimpleTextBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.textView.setText(items.get(position));
+        holder.binding.tvText.setText(items.get(position));
     }
 
     @Override
@@ -36,10 +37,10 @@ public class SimpleTextAdapter extends RecyclerView.Adapter<SimpleTextAdapter.Vi
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView textView;
-        ViewHolder(View itemView) {
-            super(itemView);
-            textView = itemView.findViewById(R.id.tv_text);
+        final ItemSimpleTextBinding binding;
+        ViewHolder(ItemSimpleTextBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }

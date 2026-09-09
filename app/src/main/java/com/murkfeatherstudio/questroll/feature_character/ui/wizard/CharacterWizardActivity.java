@@ -1,7 +1,6 @@
 package com.murkfeatherstudio.questroll.feature_character.ui.wizard;
 
 import android.os.Bundle;
-import android.widget.ProgressBar;
 
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
@@ -9,6 +8,7 @@ import androidx.navigation.fragment.NavHostFragment;
 
 import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
+import com.murkfeatherstudio.questroll.databinding.ActivityCharacterWizardBinding;
 import com.murkfeatherstudio.questroll.feature_character.view_model.WizardViewModel;
 
 /**
@@ -18,15 +18,15 @@ import com.murkfeatherstudio.questroll.feature_character.view_model.WizardViewMo
 public class CharacterWizardActivity extends BaseActivity {
 
     private WizardViewModel viewModel;
-    private ProgressBar progressBar;
+    private ActivityCharacterWizardBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_character_wizard);
+        binding = ActivityCharacterWizardBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         viewModel = new ViewModelProvider(this).get(WizardViewModel.class);
-        progressBar = findViewById(R.id.wizard_progress_bar);
 
         // Initialize Calculator Drawer Width
         setDrawerWidth(false);
@@ -48,7 +48,7 @@ public class CharacterWizardActivity extends BaseActivity {
     }
 
     private void updateProgress(int destinationId) {
-        if (progressBar == null) return;
+        if (binding == null || binding.wizardProgressBar == null) return;
 
         int progress = 1;
         if (destinationId == R.id.gameSystemStepFragment) progress = 1;
@@ -66,6 +66,6 @@ public class CharacterWizardActivity extends BaseActivity {
         else if (destinationId == R.id.equipmentStepFragment) progress = 13;
         else if (destinationId == R.id.summaryStepFragment) progress = 14;
 
-        progressBar.setProgress(progress);
+        binding.wizardProgressBar.setProgress(progress);
     }
 }

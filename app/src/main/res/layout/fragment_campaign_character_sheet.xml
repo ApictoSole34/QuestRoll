@@ -106,7 +106,7 @@
                     </LinearLayout>
 
                     <CheckBox
-                        android:id="@+id/cb_inspiration"
+                        android:id="@+id/cb_inspiration_quick"
                         style="@style/QuestRollBody"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

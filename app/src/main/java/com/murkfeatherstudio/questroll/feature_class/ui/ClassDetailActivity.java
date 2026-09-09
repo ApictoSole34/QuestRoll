@@ -7,17 +7,14 @@ import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
-import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.murkfeatherstudio.questroll.R;
@@ -35,6 +32,7 @@ import com.murkfeatherstudio.questroll.core.models.open5e.character_class.featur
 import com.murkfeatherstudio.questroll.core.models.open5e.character_class.gained_at.GainedAt;
 import com.murkfeatherstudio.questroll.core.models.open5e.character_class.hit_points.HitPointsEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.character_class.table_data.TableData;
+import com.murkfeatherstudio.questroll.databinding.ActivityClassDetailBinding;
 import com.murkfeatherstudio.questroll.feature_class.class_adapter.FeatureAdapter;
 import com.murkfeatherstudio.questroll.feature_class.ui.wizard.ClassWizardActivity;
 import com.murkfeatherstudio.questroll.feature_class.view_model.ClassDetailViewModel;
@@ -57,8 +55,7 @@ import io.noties.markwon.html.HtmlPlugin;
 
 public class ClassDetailActivity extends BaseActivity {
 
-    private TextView className, hitDiceTextView, tvHitPoints, tvSavingThrows;
-    private RecyclerView featuresRecycler;
+    private ActivityClassDetailBinding binding;
     private ClassDetailViewModel viewModel;
     private LinearLayout detailsContainer;
     private Markwon markwon;
@@ -94,7 +91,8 @@ public class ClassDetailActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_class_detail);
+        binding = ActivityClassDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         markwon = Markwon.builder(this)
                 .usePlugin(TablePlugin.create(this))
@@ -102,7 +100,7 @@ public class ClassDetailActivity extends BaseActivity {
                 .build();
 
         String classKey = getIntent().getStringExtra("CLASS_KEY");
-        initViews();
+        initStyling();
         setupViewModel(classKey);
         observeData();
 
@@ -111,19 +109,15 @@ public class ClassDetailActivity extends BaseActivity {
         }
     }
 
-    private void initViews() {
-        className = findViewById(R.id.tv_class_name);
-        hitDiceTextView = findViewById(R.id.tv_hit_dice);
-        featuresRecycler = findViewById(R.id.recycler_features);
-        tvHitPoints = findViewById(R.id.tv_hit_points);
-        featuresRecycler.setLayoutManager(new LinearLayoutManager(this));
+    private void initStyling() {
+        binding.recyclerFeatures.setLayoutManager(new LinearLayoutManager(this));
 
-        className.setTypeface(ResourcesCompat.getFont(this, R.font.cinzel_bold));
-        className.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
-        hitDiceTextView.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
-        hitDiceTextView.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
-        tvHitPoints.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
-        tvHitPoints.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        binding.tvClassName.setTypeface(ResourcesCompat.getFont(this, R.font.cinzel_bold));
+        binding.tvClassName.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        binding.tvHitDice.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvHitDice.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        binding.tvHitPoints.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvHitPoints.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
     }
 
     private void setupViewModel(String classKey) {
@@ -150,11 +144,9 @@ public class ClassDetailActivity extends BaseActivity {
         }
     }
 
-    // ------ class menu -----
     private void setupCustomClassMenu(String classKey) {
-        Button btnManage = findViewById(R.id.btnManage);
-        btnManage.setVisibility(View.VISIBLE);
-        btnManage.setOnClickListener(v -> showManageMenu(v, classKey));
+        binding.btnManage.setVisibility(View.VISIBLE);
+        binding.btnManage.setOnClickListener(v -> showManageMenu(v, classKey));
     }
 
     private void showManageMenu(View anchor, String classKey) {
@@ -203,7 +195,6 @@ public class ClassDetailActivity extends BaseActivity {
                 });
     }
 
-    // --- Open5e ---
     private void observeOpen5eData() {
         viewModel.getClassWithDetails().observe(this, classWithDetails -> {
             if (classWithDetails != null) {
@@ -214,17 +205,17 @@ public class ClassDetailActivity extends BaseActivity {
 
     private void updateOpen5eClassInfo(CharacterClassWithDetails classWithDetails) {
         CharacterClassEntity entity = classWithDetails.characterClass;
-        className.setText(entity.name);
+        binding.tvClassName.setText(entity.name);
 
         boolean isSubclass = entity.subclassOfKey != null;
         if (isSubclass) {
-            findViewById(R.id.hit_points_section).setVisibility(View.GONE);
+            binding.hitPointsSection.setVisibility(View.GONE);
         } else {
-            findViewById(R.id.hit_points_section).setVisibility(View.VISIBLE);
+            binding.hitPointsSection.setVisibility(View.VISIBLE);
             if (classWithDetails.hitPoints != null) {
                 HitPointsEntity hp = classWithDetails.hitPoints;
-                hitDiceTextView.setText("Hit Dice: " + hp.hitDice);
-                tvHitPoints.setText("HP at 1st: " + hp.at1stLevel +
+                binding.tvHitDice.setText("Hit Dice: " + hp.hitDice);
+                binding.tvHitPoints.setText("HP at 1st: " + hp.at1stLevel +
                         "\nHP at Higher: " + hp.atHigherLevels);
             }
         }
@@ -235,7 +226,7 @@ public class ClassDetailActivity extends BaseActivity {
 
     private void updateOpen5eFeatures(List<FeatureEntity> features) {
         FeatureAdapter adapter = buildReadOnlyFeatureAdapter();
-        featuresRecycler.setAdapter(adapter);
+        binding.recyclerFeatures.setAdapter(adapter);
         adapter.submitList(convertToCustomFeatures(features));
     }
 
@@ -253,7 +244,6 @@ public class ClassDetailActivity extends BaseActivity {
                 .collect(Collectors.toList());
     }
 
-    // --- Custom ---
     private void observeCustomData() {
         viewModel.getCustomClass().observe(this, data -> {
             if (data != null) {
@@ -263,50 +253,54 @@ public class ClassDetailActivity extends BaseActivity {
     }
 
     private int dp(int v) {
-        return dpToPx(v);
+        return (int) (v * getResources().getDisplayMetrics().density);
     }
 
+    /**
+     * JAVADOC: detailsContainer is a dynamic LinearLayout. We use removeAllViews() 
+     * and addDetailRow() to build the class specification list programmatically 
+     * because the available metadata (Caster Type, Skill Choices, etc.) depends 
+     * on the class data provided at runtime. View Binding is used to safely 
+     * access the parent container, but not for the dynamic children.
+     */
     private void updateCustomClassInfo(CustomCharacterClassWithFeatures data) {
         CustomCharacterClassEntity entity = data.characterClassEntity;
         if (entity == null) return;
 
-        className.setText(entity.name);
+        binding.tvClassName.setText(entity.name);
 
-        LinearLayout mainContainer = findViewById(R.id.traits_container);
-        if (mainContainer != null && detailsContainer == null) {
-            ViewGroup parent = (ViewGroup) mainContainer.getParent();
-            int index = parent.indexOfChild(mainContainer);
+        if (detailsContainer == null) {
+            ViewGroup parent = (ViewGroup) binding.traitsContainer.getParent();
+            int index = parent.indexOfChild(binding.traitsContainer);
             detailsContainer = new LinearLayout(this);
             detailsContainer.setOrientation(LinearLayout.VERTICAL);
             detailsContainer.setPadding(0, 0, 0, dp(16));
             parent.addView(detailsContainer, index);
         }
 
-        if (detailsContainer != null) {
-            detailsContainer.removeAllViews();
-            addDetailRow(detailsContainer, "Game System", entity.gameSystem);
-            addDetailRow(detailsContainer, "Hit Dice", entity.hitDice);
-            addDetailRow(detailsContainer, "Caster Type", entity.casterType);
-            addDetailRow(detailsContainer, "Spellcasting Ability", entity.spellcastingAbility);
-            addDetailRow(detailsContainer, "Starting Gold", entity.startingGoldDice);
-            addDetailRow(detailsContainer, "Skill Choices", String.valueOf(entity.skillChoicesCount));
-            if (entity.skillOptionsJson != null && !entity.skillOptionsJson.isEmpty()) {
-                try {
-                    Type listType = new TypeToken<List<String>>(){}.getType();
-                    List<String> opts = new Gson().fromJson(entity.skillOptionsJson, listType);
-                    addDetailRow(detailsContainer, "Skill Options", TextUtils.join(", ", opts));
-                } catch (Exception e) {}
-            }
-            addDetailRow(detailsContainer, "Equipment Description", entity.equipmentDescription);
+        detailsContainer.removeAllViews();
+        addDetailRow(detailsContainer, "Game System", entity.gameSystem);
+        addDetailRow(detailsContainer, "Hit Dice", entity.hitDice);
+        addDetailRow(detailsContainer, "Caster Type", entity.casterType);
+        addDetailRow(detailsContainer, "Spellcasting Ability", entity.spellcastingAbility);
+        addDetailRow(detailsContainer, "Starting Gold", entity.startingGoldDice);
+        addDetailRow(detailsContainer, "Skill Choices", String.valueOf(entity.skillChoicesCount));
+        if (entity.skillOptionsJson != null && !entity.skillOptionsJson.isEmpty()) {
+            try {
+                Type listType = new TypeToken<List<String>>(){}.getType();
+                List<String> opts = new Gson().fromJson(entity.skillOptionsJson, listType);
+                addDetailRow(detailsContainer, "Skill Options", TextUtils.join(", ", opts));
+            } catch (Exception ignored) {}
         }
+        addDetailRow(detailsContainer, "Equipment Description", entity.equipmentDescription);
 
         boolean isSubclass = entity.subclassOf != null;
         if (isSubclass) {
-            findViewById(R.id.hit_points_section).setVisibility(View.GONE);
+            binding.hitPointsSection.setVisibility(View.GONE);
         } else {
-            findViewById(R.id.hit_points_section).setVisibility(View.VISIBLE);
-            hitDiceTextView.setText("Hit Dice: " + entity.hitDice);
-            tvHitPoints.setText("HP at 1st: 1" + entity.hitDice + " + Constitution modifier");
+            binding.hitPointsSection.setVisibility(View.VISIBLE);
+            binding.tvHitDice.setText("Hit Dice: " + entity.hitDice);
+            binding.tvHitPoints.setText("HP at 1st: 1" + entity.hitDice + " + Constitution modifier");
         }
 
         processCustomClassTable(data.features);
@@ -333,7 +327,7 @@ public class ClassDetailActivity extends BaseActivity {
 
     private void processCustomClassTable(List<CustomFeatureEntity> features) {
         if (features == null || features.isEmpty()) {
-            findViewById(R.id.class_table_section).setVisibility(View.GONE);
+            binding.classTableSection.setVisibility(View.GONE);
             return;
         }
 
@@ -377,19 +371,18 @@ public class ClassDetailActivity extends BaseActivity {
                 if (!columnHeaders.contains(col)) columnHeaders.add(col);
             }
             setupFullClassTable(columnHeaders, levelData);
-            findViewById(R.id.class_table_section).setVisibility(View.VISIBLE);
+            binding.classTableSection.setVisibility(View.VISIBLE);
         } else {
-            findViewById(R.id.class_table_section).setVisibility(View.GONE);
+            binding.classTableSection.setVisibility(View.GONE);
         }
     }
 
     private void updateCustomFeatures(List<CustomFeatureEntity> features) {
         FeatureAdapter adapter = buildReadOnlyFeatureAdapter();
-        featuresRecycler.setAdapter(adapter);
+        binding.recyclerFeatures.setAdapter(adapter);
         adapter.submitList(features != null ? new ArrayList<>(features) : new ArrayList<>());
     }
 
-    // --- Class table (Open5e) ---
     private void processClassTable(List<FeatureEntity> features) {
         Map<Integer, Map<String, String>> levelData = new HashMap<>();
         Set<String> availableColumns = new HashSet<>();
@@ -445,30 +438,36 @@ public class ClassDetailActivity extends BaseActivity {
                 if (!columnHeaders.contains(column)) columnHeaders.add(column);
             }
             setupFullClassTable(columnHeaders, levelData);
-            findViewById(R.id.class_table_section).setVisibility(View.VISIBLE);
+            binding.classTableSection.setVisibility(View.VISIBLE);
         } else {
-            findViewById(R.id.class_table_section).setVisibility(View.GONE);
+            binding.classTableSection.setVisibility(View.GONE);
         }
     }
 
+    /**
+     * JAVADOC: full_class_table is a dynamic TableLayout. We use removeAllViews() 
+     * and TableRow.addView() in nested loops to generate the 20-level class progression 
+     * table programmatically. Because the number of columns and cell content are 
+     * highly variable between different D&D classes, View Binding is used only 
+     * for the main TableLayout reference.
+     */
     private void setupFullClassTable(List<String> columnHeaders,
                                      Map<Integer, Map<String, String>> levelData) {
-        TableLayout fullTable = findViewById(R.id.full_class_table);
-        fullTable.removeAllViews();
-        fullTable.setStretchAllColumns(true);
+        binding.fullClassTable.removeAllViews();
+        binding.fullClassTable.setStretchAllColumns(true);
 
         TableRow headerRow = new TableRow(this);
         for (int i = 0; i < columnHeaders.size(); i++) {
             headerRow.addView(createHeaderCell(columnHeaders.get(i), i == 0));
         }
-        fullTable.addView(headerRow);
+        binding.fullClassTable.addView(headerRow);
 
         for (int level = 1; level <= 20; level++) {
             TableRow dataRow = new TableRow(this);
             for (int i = 0; i < columnHeaders.size(); i++) {
                 dataRow.addView(createDataCell(columnHeaders.get(i), level, levelData, i == 0));
             }
-            fullTable.addView(dataRow);
+            binding.fullClassTable.addView(dataRow);
         }
     }
 
@@ -476,9 +475,9 @@ public class ClassDetailActivity extends BaseActivity {
         TextView textView = new TextView(this);
         TableRow.LayoutParams params = new TableRow.LayoutParams(
                 getHeaderWidth(header), TableRow.LayoutParams.WRAP_CONTENT);
-        params.setMargins(dpToPx(1), dpToPx(1), dpToPx(1), dpToPx(1));
+        params.setMargins(dp(1), dp(1), dp(1), dp(1));
         textView.setLayoutParams(params);
-        textView.setPadding(dpToPx(8), dpToPx(8), dpToPx(8), dpToPx(8));
+        textView.setPadding(dp(8), dp(8), dp(8), dp(8));
         textView.setText(header);
         textView.setTypeface(ResourcesCompat.getFont(this, R.font.cinzel_semibold));
         textView.setBackgroundColor(Color.parseColor(isFirstColumn ? "#808080" : "#9E9E9E"));
@@ -487,7 +486,7 @@ public class ClassDetailActivity extends BaseActivity {
         textView.setTextSize(12);
         textView.setSingleLine(false);
         textView.setMaxLines(2);
-        textView.setEllipsize(TextUtils.TruncateAt.END);
+        textView.setEllipsize(android.text.TextUtils.TruncateAt.END);
         return textView;
     }
 
@@ -497,14 +496,14 @@ public class ClassDetailActivity extends BaseActivity {
         TextView textView = new TextView(this);
         TableRow.LayoutParams params = new TableRow.LayoutParams(
                 getHeaderWidth(columnName), TableRow.LayoutParams.WRAP_CONTENT);
-        params.setMargins(dpToPx(1), dpToPx(1), dpToPx(1), dpToPx(1));
+        params.setMargins(dp(1), dp(1), dp(1), dp(1));
         textView.setLayoutParams(params);
-        textView.setPadding(dpToPx(8), dpToPx(6), dpToPx(8), dpToPx(6));
+        textView.setPadding(dp(8), dp(6), dp(8), dp(6));
         textView.setTextSize(12);
         textView.setGravity(Gravity.CENTER);
         textView.setSingleLine(false);
         textView.setMaxLines(2);
-        textView.setEllipsize(TextUtils.TruncateAt.END);
+        textView.setEllipsize(android.text.TextUtils.TruncateAt.END);
 
         if (isFirstColumn) {
             textView.setTypeface(ResourcesCompat.getFont(this, R.font.cinzel_semibold));
@@ -528,19 +527,19 @@ public class ClassDetailActivity extends BaseActivity {
 
     private int getHeaderWidth(String columnName) {
         switch (columnName) {
-            case "Level":        return dpToPx(50);
-            case "Prof Bonus":   return dpToPx(70);
-            case "Features":     return dpToPx(180);
+            case "Level":        return dp(50);
+            case "Prof Bonus":   return dp(70);
+            case "Features":     return dp(180);
             case "Cantrips":
-            case "Spells Known": return dpToPx(90);
+            case "Spells Known": return dp(90);
             case "Martial Arts":
             case "Ki Points":
             case "Movement":
             case "Rages":
-            case "Rage Damage":  return dpToPx(80);
+            case "Rage Damage":  return dp(80);
             case "1st": case "2nd": case "3rd": case "4th": case "5th":
-            case "6th": case "7th": case "8th": case "9th": return dpToPx(45);
-            default:             return dpToPx(100);
+            case "6th": case "7th": case "8th": case "9th": return dp(45);
+            default:             return dp(100);
         }
     }
 
@@ -549,9 +548,5 @@ public class ClassDetailActivity extends BaseActivity {
             @Override public void onEdit(CustomFeatureEntity feature, int index) {}
             @Override public void onDelete(int index) {}
         });
-    }
-
-    private int dpToPx(int dp) {
-        return (int) (dp * getResources().getDisplayMetrics().density);
     }
 }

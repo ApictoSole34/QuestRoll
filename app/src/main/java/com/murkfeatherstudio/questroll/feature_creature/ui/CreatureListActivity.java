@@ -1,29 +1,25 @@
 package com.murkfeatherstudio.questroll.feature_creature.ui;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.SearchView;
-import android.widget.Spinner;
-import android.widget.TextView;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 
 import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
+import com.murkfeatherstudio.questroll.databinding.ActivityCreatureListBinding;
+import com.murkfeatherstudio.questroll.databinding.DialogCreatureFilterBinding;
 import com.murkfeatherstudio.questroll.feature_creature.adapter.CreatureAdapter;
 import com.murkfeatherstudio.questroll.feature_creature.model.CreatureFilter;
 import com.murkfeatherstudio.questroll.feature_creature.viewmodel.CreatureListViewModel;
 import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,8 +30,7 @@ public class CreatureListActivity extends BaseActivity {
 
     private CreatureListViewModel viewModel;
     private CreatureAdapter adapter;
-    private ChipGroup chipGroupSources;
-    private RecyclerView rv;
+    private ActivityCreatureListBinding binding;
 
     private List<String> currentTypeNames = new ArrayList<>(Collections.singletonList(""));
 
@@ -64,7 +59,8 @@ public class CreatureListActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_creature_list);
+        binding = ActivityCreatureListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         Open5eDatabase open5eDb = Open5eDatabase.getInstance(this);
         UserContentDatabase customDb = UserContentDatabase.getInstance(this);
@@ -77,23 +73,20 @@ public class CreatureListActivity extends BaseActivity {
                         open5eDb.creatureTypeDao()
                 )).get(CreatureListViewModel.class);
 
-        chipGroupSources = findViewById(R.id.chip_group_sources);
-
         setupRecyclerView();
         setupSearch();
         setupObservers();
         viewModel.loadSources();
 
-        findViewById(R.id.btnFilter).setOnClickListener(v -> showFilterDialog());
-        findViewById(R.id.fabCreateCreature).setOnClickListener(v ->
+        binding.btnFilter.setOnClickListener(v -> showFilterDialog());
+        binding.fabCreateCreature.setOnClickListener(v ->
                 startActivity(new Intent(this, CustomCreatureCreateActivity.class)));
-        findViewById(R.id.btnManageTypes).setOnClickListener(v ->
+        binding.btnManageTypes.setOnClickListener(v ->
                 new CustomCreatureTypeBottomSheet()
                         .show(getSupportFragmentManager(), "creature_types"));
     }
 
     private void setupRecyclerView() {
-        rv = findViewById(R.id.recycler_creatures);
         adapter = new CreatureAdapter(creature -> {
             if (creature.isCustom) {
                 Intent i = new Intent(this, CustomCreatureDetailActivity.class);
@@ -105,29 +98,30 @@ public class CreatureListActivity extends BaseActivity {
                 startActivity(i);
             }
         });
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(adapter);
+        binding.recyclerCreatures.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerCreatures.setAdapter(adapter);
     }
 
     private void setupSearch() {
-        ((SearchView) findViewById(R.id.search_view))
-                .setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                    @Override public boolean onQueryTextSubmit(String q) { viewModel.setQuery(q); return true; }
-                    @Override public boolean onQueryTextChange(String q) { viewModel.setQuery(q); return true; }
-                });
+        binding.searchView.setOnQueryTextListener(new android.widget.SearchView.OnQueryTextListener() {
+            @Override public boolean onQueryTextSubmit(String q) { viewModel.setQuery(q); return true; }
+            @Override public boolean onQueryTextChange(String q) { viewModel.setQuery(q); return true; }
+        });
     }
 
     private void setupObservers() {
         viewModel.getCreatures().observe(this, creatures -> {
-            adapter.submitList(creatures, () -> rv.scrollToPosition(0));
-            ((TextView) findViewById(R.id.tv_creature_count))
-                    .setText(creatures.size() + " creatures");
+            adapter.submitList(creatures, () -> binding.recyclerCreatures.scrollToPosition(0));
+            binding.tvCreatureCount.setText(creatures.size() + " creatures");
         });
 
         viewModel.getFilter().observe(this, f -> {
-            TextView tv = findViewById(R.id.tv_active_filters);
-            if (f.isEmpty()) { tv.setVisibility(View.GONE); }
-            else { tv.setVisibility(View.VISIBLE); tv.setText(buildFilterSummary(f)); }
+            if (f.isEmpty()) { 
+                binding.tvActiveFilters.setVisibility(View.GONE); 
+            } else { 
+                binding.tvActiveFilters.setVisibility(View.VISIBLE); 
+                binding.tvActiveFilters.setText(buildFilterSummary(f)); 
+            }
         });
 
         viewModel.getSources().observe(this, sources -> {
@@ -140,9 +134,15 @@ public class CreatureListActivity extends BaseActivity {
         });
     }
 
+    /**
+     * JAVADOC: chipGroupSources is a dynamic container. We use removeViews() and addView() 
+     * to manage Material Chips programmatically because the rule sources are loaded 
+     * from the database at runtime. Static View Binding is not possible for these 
+     * dynamic children.
+     */
     private void buildSourceChips(List<String> sources) {
-        int count = chipGroupSources.getChildCount();
-        if (count > 1) chipGroupSources.removeViews(1, count - 1);
+        int count = binding.chipGroupSources.getChildCount();
+        if (count > 1) binding.chipGroupSources.removeViews(1, count - 1);
 
         for (String source : sources) {
             Chip chip = new Chip(this);
@@ -153,24 +153,20 @@ public class CreatureListActivity extends BaseActivity {
             chip.setCheckedIconVisible(true);
             chip.setOnCheckedChangeListener((btn, isChecked) -> {
                 if (isChecked) {
-                    Chip chipAll = findViewById(R.id.chip_all);
-                    if (chipAll != null) chipAll.setChecked(false);
+                    binding.chipAll.setChecked(false);
                     viewModel.setSource((String) btn.getTag());
                 }
             });
-            chipGroupSources.addView(chip);
+            binding.chipGroupSources.addView(chip);
         }
 
-        Chip chipAll = findViewById(R.id.chip_all);
-        if (chipAll != null) {
-            chipAll.setOnCheckedChangeListener((btn, isChecked) -> {
-                if (isChecked) {
-                    for (int i = 1; i < chipGroupSources.getChildCount(); i++)
-                        ((Chip) chipGroupSources.getChildAt(i)).setChecked(false);
-                    viewModel.setSource("");
-                }
-            });
-        }
+        binding.chipAll.setOnCheckedChangeListener((btn, isChecked) -> {
+            if (isChecked) {
+                for (int i = 1; i < binding.chipGroupSources.getChildCount(); i++)
+                    ((Chip) binding.chipGroupSources.getChildAt(i)).setChecked(false);
+                viewModel.setSource("");
+            }
+        });
     }
 
     private String formatSource(String source) {
@@ -202,12 +198,7 @@ public class CreatureListActivity extends BaseActivity {
     }
 
     private void showFilterDialog() {
-        View dialogView = LayoutInflater.from(this)
-                .inflate(R.layout.dialog_creature_filter, null);
-        Spinner spinnerType = dialogView.findViewById(R.id.spinner_type);
-        Spinner spinnerAlignment = dialogView.findViewById(R.id.spinner_alignment);
-        Spinner spinnerCrMin = dialogView.findViewById(R.id.spinner_cr_min);
-        Spinner spinnerCrMax = dialogView.findViewById(R.id.spinner_cr_max);
+        DialogCreatureFilterBinding filterBinding = DialogCreatureFilterBinding.inflate(getLayoutInflater());
 
         CreatureFilter current = viewModel.getFilter().getValue();
         if (current == null) current = new CreatureFilter();
@@ -218,37 +209,38 @@ public class CreatureListActivity extends BaseActivity {
         List<String> typeLabels = new ArrayList<>();
         typeLabels.add("All Types");
         for (int i = 1; i < finalTypeNames.size(); i++) typeLabels.add(finalTypeNames.get(i));
-        spinnerType.setAdapter(new ArrayAdapter<>(this,
+        
+        filterBinding.spinnerType.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, typeLabels));
         int ti = finalTypeNames.indexOf(finalCurrent.typeKey);
-        if (ti >= 0) spinnerType.setSelection(ti);
+        if (ti >= 0) filterBinding.spinnerType.setSelection(ti);
 
-        spinnerAlignment.setAdapter(new ArrayAdapter<>(this,
+        filterBinding.spinnerAlignment.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, ALIGNMENT_LABELS));
         for (int i = 0; i < ALIGNMENTS.length; i++) {
             if (ALIGNMENTS[i].equals(finalCurrent.alignment)) {
-                spinnerAlignment.setSelection(i);
+                filterBinding.spinnerAlignment.setSelection(i);
                 break;
             }
         }
 
         List<String> crAll = new ArrayList<>(Collections.singletonList("Any"));
         crAll.addAll(Arrays.asList(CR_LABELS));
-        spinnerCrMin.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, crAll));
-        spinnerCrMax.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, crAll));
+        filterBinding.spinnerCrMin.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, crAll));
+        filterBinding.spinnerCrMax.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, crAll));
 
         new AlertDialog.Builder(this)
                 .setTitle("Filter Creatures")
-                .setView(dialogView)
+                .setView(filterBinding.getRoot())
                 .setPositiveButton("Apply", (d, w) -> {
-                    int tp = spinnerType.getSelectedItemPosition();
+                    int tp = filterBinding.spinnerType.getSelectedItemPosition();
                     viewModel.setTypeKey(tp == 0 ? "" : finalTypeNames.get(tp));
 
-                    int ap = spinnerAlignment.getSelectedItemPosition();
+                    int ap = filterBinding.spinnerAlignment.getSelectedItemPosition();
                     viewModel.setAlignment(ALIGNMENTS[ap]);
 
-                    int crMinPos = spinnerCrMin.getSelectedItemPosition();
-                    int crMaxPos = spinnerCrMax.getSelectedItemPosition();
+                    int crMinPos = filterBinding.spinnerCrMin.getSelectedItemPosition();
+                    int crMaxPos = filterBinding.spinnerCrMax.getSelectedItemPosition();
                     viewModel.setCrRange(
                             crMinPos == 0 ? -1f : CR_VALUES[crMinPos - 1],
                             crMaxPos == 0 ? -1f : CR_VALUES[crMaxPos - 1]);

@@ -2,47 +2,40 @@ package com.murkfeatherstudio.questroll.feature_rule.rule_set.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.SearchView;
-import android.widget.TextView;
+import android.view.View;
 
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
+import com.murkfeatherstudio.questroll.databinding.ActivityRulesetListBinding;
 import com.murkfeatherstudio.questroll.feature_rule.rule.ui.RuleListActivity;
 import com.murkfeatherstudio.questroll.feature_rule.rule_set.adapter.RulesetAdapter;
 import com.murkfeatherstudio.questroll.feature_rule.rule_set.view_model.RulesetListViewModel;
 import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
+
+import java.util.List;
 
 public class RulesetListActivity extends BaseActivity {
+
     private RulesetListViewModel viewModel;
     private RulesetAdapter adapter;
-    private RecyclerView rv;
-    private ChipGroup chipGroupSources;
+    private ActivityRulesetListBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ruleset_list);
-
-        chipGroupSources = findViewById(R.id.chip_group_sources);
-        rv = findViewById(R.id.recycler_rulesets);
-        setupRecyclerView();
-        setupSearch();
+        binding = ActivityRulesetListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        setTitle("Rules & Lore");
 
         viewModel = new ViewModelProvider(this,
                 new RulesetListViewModel.Factory(Open5eDatabase.getInstance(this).rulesetDao()))
                 .get(RulesetListViewModel.class);
 
-        setupSourcesObserver();
-        viewModel.getFilteredRulesets().observe(this, rulesets -> {
-            adapter.submitList(rulesets);
-            ((TextView) findViewById(R.id.tv_count)).setText(rulesets.size() + " rulesets");
-        });
+        setupRecyclerView();
+        setupObservers();
     }
 
     private void setupRecyclerView() {
@@ -51,45 +44,61 @@ public class RulesetListActivity extends BaseActivity {
             i.putExtra("RULESET_KEY", ruleset.key);
             startActivity(i);
         });
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(adapter);
-        rv.setSaveEnabled(false);
+        binding.recyclerRulesets.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerRulesets.setAdapter(adapter);
     }
 
-    private void setupSearch() {
-        SearchView searchView = findViewById(R.id.search_view);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override public boolean onQueryTextSubmit(String q) { viewModel.setQuery(q); return true; }
-            @Override public boolean onQueryTextChange(String q) { viewModel.setQuery(q); return true; }
-        });
-    }
-
-    private void setupSourcesObserver() {
-        viewModel.getSources().observe(this, sources -> {
-            chipGroupSources.removeAllViews();
-            Chip chipAll = new Chip(this);
-            chipAll.setText("All");
-            chipAll.setCheckable(true);
-            chipAll.setChecked(true);
-            chipAll.setTag("");
-            chipAll.setOnCheckedChangeListener((btn, isChecked) -> {
-                if (isChecked) viewModel.setSelectedSource("");
-            });
-            chipGroupSources.addView(chipAll);
-            if (sources == null) return;
-            for (String source : sources) {
-                Chip chip = new Chip(this);
-                chip.setText(source);
-                chip.setTag(source);
-                chip.setCheckable(true);
-                chip.setOnCheckedChangeListener((btn, isChecked) -> {
-                    if (isChecked) {
-                        chipAll.setChecked(false);
-                        viewModel.setSelectedSource(source);
-                    }
-                });
-                chipGroupSources.addView(chip);
+    private void setupObservers() {
+        viewModel.getFilteredRulesets().observe(this, list -> {
+            if (list != null) {
+                adapter.submitList(list);
+                binding.tvCount.setText(list.size() + " categories");
             }
         });
+
+        viewModel.getSources().observe(this, sources -> {
+            if (sources != null && !sources.isEmpty()) buildSourceChips(sources);
+        });
+    }
+
+    /**
+     * JAVADOC: chipGroupSources is a dynamic container. Chips are created programmatically 
+     * based on the distinct rule sources found in the database. Since these chips are 
+     * not defined in the static XML layout, they are added via addView() and are 
+     * not accessible through View Binding.
+     */
+    private void buildSourceChips(List<String> sources) {
+        binding.chipGroupSources.removeAllViews();
+        Chip chipAll = new Chip(this);
+        chipAll.setText("All");
+        chipAll.setCheckable(true);
+        chipAll.setChecked(true);
+        chipAll.setTag("");
+        chipAll.setOnCheckedChangeListener((btn, isChecked) -> {
+            if (isChecked) {
+                for (int i = 1; i < binding.chipGroupSources.getChildCount(); i++) {
+                    View child = binding.chipGroupSources.getChildAt(i);
+                    if (child instanceof Chip) {
+                        ((Chip) child).setChecked(false);
+                    }
+                }
+                viewModel.setSelectedSource("");
+            }
+        });
+        binding.chipGroupSources.addView(chipAll);
+
+        for (String source : sources) {
+            Chip chip = new Chip(this);
+            chip.setText(source);
+            chip.setTag(source);
+            chip.setCheckable(true);
+            chip.setOnCheckedChangeListener((btn, isChecked) -> {
+                if (isChecked) {
+                    chipAll.setChecked(false);
+                    viewModel.setSelectedSource((String) btn.getTag());
+                }
+            });
+            binding.chipGroupSources.addView(chip);
+        }
     }
 }

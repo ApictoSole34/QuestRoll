@@ -16,6 +16,7 @@ import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_creature.CustomCreatureAction;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_species.CustomSpeciesEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivitySpeciesDetailBinding;
 import com.murkfeatherstudio.questroll.feature_species.viewmodel.CustomSpeciesCreateViewModel;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -29,12 +30,14 @@ public class CustomSpeciesDetailActivity extends BaseActivity {
 
     public static final String EXTRA_ID = "CUSTOM_SPECIES_ID";
     private Markwon markwon;
+    private ActivitySpeciesDetailBinding binding;
     private boolean detailsAdded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_species_detail);
+        binding = ActivitySpeciesDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         markwon = Markwon.create(this);
 
         long id = getIntent().getLongExtra(EXTRA_ID, -1);
@@ -49,21 +52,24 @@ public class CustomSpeciesDetailActivity extends BaseActivity {
                 });
     }
 
+    /**
+     * NOTE: Part of the UI (race details and traits) is built dynamically at runtime (addView()),
+     * there is no static XML layout for these fields - in these places ViewBinding does not apply.
+     */
     private void populateUI(CustomSpeciesEntity s) {
-        ((TextView) findViewById(R.id.tv_species_name)).setText(s.name);
+        binding.tvSpeciesName.setText(s.name);
 
-        TextView tvSubtitle = findViewById(R.id.tv_subtitle);
         if (s.isSubspecies && s.subspeciesOfName != null && !s.subspeciesOfName.isEmpty()) {
-            tvSubtitle.setText("Subspecies of " + s.subspeciesOfName);
-            tvSubtitle.setVisibility(View.VISIBLE);
-            tvSubtitle.setPaintFlags(tvSubtitle.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
-            tvSubtitle.setOnClickListener(v -> {
+            binding.tvSubtitle.setText("Subspecies of " + s.subspeciesOfName);
+            binding.tvSubtitle.setVisibility(View.VISIBLE);
+            binding.tvSubtitle.setPaintFlags(binding.tvSubtitle.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+            binding.tvSubtitle.setOnClickListener(v -> {
                 String key = s.subspeciesOfKey;
                 if (key == null || key.isEmpty()) return;
                 if (key.startsWith("custom_")) {
-                    long id = Long.parseLong(key.replace("custom_", ""));
+                    long subId = Long.parseLong(key.replace("custom_", ""));
                     Intent i = new Intent(this, CustomSpeciesDetailActivity.class);
-                    i.putExtra(EXTRA_ID, id);
+                    i.putExtra(EXTRA_ID, subId);
                     startActivity(i);
                 } else {
                     Intent i = new Intent(this, SpeciesDetailActivity.class);
@@ -72,27 +78,28 @@ public class CustomSpeciesDetailActivity extends BaseActivity {
                 }
             });
         } else {
-            tvSubtitle.setText("Custom Species");
-            tvSubtitle.setVisibility(View.VISIBLE);
-            tvSubtitle.setOnClickListener(null);
-            tvSubtitle.setPaintFlags(tvSubtitle.getPaintFlags() & ~Paint.UNDERLINE_TEXT_FLAG);
+            binding.tvSubtitle.setText("Custom Species");
+            binding.tvSubtitle.setVisibility(View.VISIBLE);
+            binding.tvSubtitle.setOnClickListener(null);
+            binding.tvSubtitle.setPaintFlags(binding.tvSubtitle.getPaintFlags() & ~Paint.UNDERLINE_TEXT_FLAG);
         }
 
-        TextView tvDesc = findViewById(R.id.tv_desc);
         if (s.desc != null && !s.desc.isEmpty()) {
-            markwon.setMarkdown(tvDesc, s.desc);
-            tvDesc.setVisibility(View.VISIBLE);
+            markwon.setMarkdown(binding.tvDesc, s.desc);
+            binding.tvDesc.setVisibility(View.VISIBLE);
         } else {
-            tvDesc.setVisibility(View.GONE);
+            binding.tvDesc.setVisibility(View.GONE);
         }
 
-        LinearLayout traitsContainer = findViewById(R.id.traits_container);
-        View parent = (View) traitsContainer.getParent();
-        if (parent instanceof LinearLayout && !detailsAdded) {
+        if (!detailsAdded) {
             LinearLayout detailsContainer = new LinearLayout(this);
             detailsContainer.setOrientation(LinearLayout.VERTICAL);
             detailsContainer.setPadding(0, 0, 0, dp(16));
-            ((LinearLayout) parent).addView(detailsContainer, ((LinearLayout) parent).indexOfChild(traitsContainer));
+            
+            // Inserting the details container before traits_section
+            View traitsSection = binding.traitsSection;
+            LinearLayout parent = (LinearLayout) traitsSection.getParent();
+            parent.addView(detailsContainer, parent.indexOfChild(traitsSection));
             detailsAdded = true;
 
             if (s.speed != null && !s.speed.isEmpty()) {
@@ -131,14 +138,10 @@ public class CustomSpeciesDetailActivity extends BaseActivity {
 
         buildOtherTraits(s.otherTraitsJson);
 
-        findViewById(R.id.traits_section).setVisibility(View.GONE);
-        findViewById(R.id.subspecies_section).setVisibility(View.GONE);
+        binding.subspeciesSection.setVisibility(View.GONE);
 
-        View btnManage = findViewById(R.id.btnManage);
-        if (btnManage != null) {
-            btnManage.setVisibility(View.VISIBLE);
-            btnManage.setOnClickListener(v -> showManageMenu(v, s.id));
-        }
+        binding.btnManage.setVisibility(View.VISIBLE);
+        binding.btnManage.setOnClickListener(v -> showManageMenu(v, s.id));
     }
 
     private void addDetailRow(LinearLayout container, String label, String value) {
@@ -146,24 +149,24 @@ public class CustomSpeciesDetailActivity extends BaseActivity {
         row.setText(label + ": " + value);
         row.setPadding(0, dp(4), 0, dp(4));
         row.setTextSize(14);
+        row.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
         container.addView(row);
     }
 
     private void buildOtherTraits(String otherTraitsJson) {
-        LinearLayout container = findViewById(R.id.traits_container);
-        container.removeAllViews();
+        binding.traitsContainer.removeAllViews();
         if (otherTraitsJson == null || otherTraitsJson.isEmpty()) {
-            findViewById(R.id.traits_section).setVisibility(View.GONE);
+            binding.traitsSection.setVisibility(View.GONE);
             return;
         }
         try {
             Type type = new TypeToken<List<CustomCreatureAction>>(){}.getType();
             List<CustomCreatureAction> traits = new Gson().fromJson(otherTraitsJson, type);
             if (traits == null || traits.isEmpty()) {
-                findViewById(R.id.traits_section).setVisibility(View.GONE);
+                binding.traitsSection.setVisibility(View.GONE);
                 return;
             }
-            findViewById(R.id.traits_section).setVisibility(View.VISIBLE);
+            binding.traitsSection.setVisibility(View.VISIBLE);
             for (CustomCreatureAction t : traits) {
                 LinearLayout row = new LinearLayout(this);
                 row.setOrientation(LinearLayout.VERTICAL);
@@ -173,18 +176,20 @@ public class CustomSpeciesDetailActivity extends BaseActivity {
                 tvName.setText(t.name);
                 tvName.setTypeface(null, Typeface.BOLD);
                 tvName.setTextSize(15);
+                tvName.setTextColor(getResources().getColor(R.color.threads_gold, null));
                 row.addView(tvName);
 
                 if (t.desc != null && !t.desc.isEmpty()) {
                     TextView tvDesc = new TextView(this);
                     markwon.setMarkdown(tvDesc, t.desc);
                     tvDesc.setTextSize(14);
+                    tvDesc.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                     row.addView(tvDesc);
                 }
-                container.addView(row);
+                binding.traitsContainer.addView(row);
             }
         } catch (Exception e) {
-            findViewById(R.id.traits_section).setVisibility(View.GONE);
+            binding.traitsSection.setVisibility(View.GONE);
         }
     }
 

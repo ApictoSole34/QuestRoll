@@ -5,26 +5,41 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+
 import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.local_database.PlayerCharacterDatabase;
-import com.murkfeatherstudio.questroll.core.models.character.*;
+import com.murkfeatherstudio.questroll.core.models.character.CharacterAttributesEntity;
+import com.murkfeatherstudio.questroll.core.models.character.CharacterCreationDTO;
+import com.murkfeatherstudio.questroll.core.models.character.CharacterEntity;
+import com.murkfeatherstudio.questroll.core.models.character.CharacterLanguageEntity;
+import com.murkfeatherstudio.questroll.core.models.character.CharacterMapper;
+import com.murkfeatherstudio.questroll.core.models.character.CharacterSavingThrowEntity;
+import com.murkfeatherstudio.questroll.core.models.character.CharacterSkillProficiencyEntity;
+import com.murkfeatherstudio.questroll.core.models.character.CharacterSpellEntity;
+import com.murkfeatherstudio.questroll.core.models.character.CharacterTraitEntity;
+import com.murkfeatherstudio.questroll.core.models.character.InventoryItemEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.character_class.CharacterClassEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.species.SpeciesEntity;
+import com.murkfeatherstudio.questroll.databinding.FragmentWizardSummaryBinding;
 import com.murkfeatherstudio.questroll.feature_character.view_model.WizardViewModel;
-import java.util.*;
 
-import de.hdodenhof.circleimageview.CircleImageView;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import io.noties.markwon.Markwon;
 
 /**
@@ -33,34 +48,33 @@ import io.noties.markwon.Markwon;
  */
 public class SummaryStepFragment extends Fragment {
     private WizardViewModel viewModel;
-    private TextView summaryText;
-    private CircleImageView thumbnailPreview;
-    private ImageView fullImagePreview;
+    private FragmentWizardSummaryBinding binding;
     private PlayerCharacterDatabase pcDb;
     private Open5eDatabase open5eDb;
     private Markwon markwon;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_wizard_summary, container, false);
+        binding = FragmentWizardSummaryBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(WizardViewModel.class);
         pcDb = PlayerCharacterDatabase.getInstance(requireContext());
         open5eDb = Open5eDatabase.getInstance(requireContext());
         markwon = Markwon.create(requireContext());
 
-        summaryText = view.findViewById(R.id.summary_text);
-        thumbnailPreview = view.findViewById(R.id.thumbnail_preview);
-        fullImagePreview = view.findViewById(R.id.full_image_preview);
-        Button saveButton = view.findViewById(R.id.save_button);
-        Button backButton = view.findViewById(R.id.back_button);
-
-        summaryText.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
-        summaryText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        binding.summaryText.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
+        binding.summaryText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
 
         viewModel.errorLiveData.observe(getViewLifecycleOwner(), error -> {
             if (error != null && !error.isEmpty()) {
@@ -71,8 +85,8 @@ public class SummaryStepFragment extends Fragment {
         displaySummary();
         displayImages();
 
-        saveButton.setOnClickListener(v -> saveCharacter());
-        backButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.back_action));
+        binding.saveButton.setOnClickListener(v -> saveCharacter());
+        binding.backButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.back_action));
     }
 
     private void displaySummary() {
@@ -136,7 +150,11 @@ public class SummaryStepFragment extends Fragment {
 
             final String finalMarkdown = sb.toString();
             if (isAdded()) {
-                requireActivity().runOnUiThread(() -> markwon.setMarkdown(summaryText, finalMarkdown));
+                requireActivity().runOnUiThread(() -> {
+                    if (binding != null) {
+                        markwon.setMarkdown(binding.summaryText, finalMarkdown);
+                    }
+                });
             }
         }).start();
     }
@@ -146,7 +164,6 @@ public class SummaryStepFragment extends Fragment {
             CharacterClassEntity classEntity = open5eDb.characterClassDao().getClassByKeySync(classKey);
             if (classEntity == null || classEntity.hitDice == null) return 10 + conMod * totalLevel;
 
-            // Using full path to avoid ambiguity with multiple CharacterEngine classes
             int diceSides = com.murkfeatherstudio.questroll.feature_character.engine.CharacterEngine.parseHitDie(classEntity.hitDice);
             int firstLevelHp = diceSides + conMod;
             int additionalLevels = totalLevel - 1;
@@ -197,15 +214,16 @@ public class SummaryStepFragment extends Fragment {
     }
 
     private void displayImages() {
+        if (binding == null) return;
         if (viewModel.characterThumbnailPath != null && !viewModel.characterThumbnailPath.isEmpty()) {
-            thumbnailPreview.setImageURI(Uri.parse(viewModel.characterThumbnailPath));
+            binding.thumbnailPreview.setImageURI(Uri.parse(viewModel.characterThumbnailPath));
         } else {
-            thumbnailPreview.setImageResource(android.R.drawable.ic_menu_gallery);
+            binding.thumbnailPreview.setImageResource(android.R.drawable.ic_menu_gallery);
         }
         if (viewModel.characterImagePath != null && !viewModel.characterImagePath.isEmpty()) {
-            fullImagePreview.setImageURI(Uri.parse(viewModel.characterImagePath));
+            binding.fullImagePreview.setImageURI(Uri.parse(viewModel.characterImagePath));
         } else {
-            fullImagePreview.setImageResource(android.R.drawable.ic_menu_gallery);
+            binding.fullImagePreview.setImageResource(android.R.drawable.ic_menu_gallery);
         }
     }
 
@@ -253,7 +271,7 @@ public class SummaryStepFragment extends Fragment {
         } else {
             CharacterCreationDTO.InventoryItemDTO classGoldItem = new CharacterCreationDTO.InventoryItemDTO();
             classGoldItem.customName = "Starting Gold";
-            classGoldItem.quantity = viewModel.classStartingGold;
+            classGoldItem.quantity = (int) viewModel.classStartingGold;
             classGoldItem.customWeight = 0;
             finalEquipment.add(classGoldItem);
         }

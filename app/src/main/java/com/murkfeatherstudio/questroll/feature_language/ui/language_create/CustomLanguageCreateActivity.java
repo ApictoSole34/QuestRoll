@@ -4,18 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.lifecycle.ViewModelProvider;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
+import com.murkfeatherstudio.questroll.databinding.ActivityCustomLanguageCreateBinding;
 import com.murkfeatherstudio.questroll.feature_language.data.repository.LanguageRepository;
 import com.murkfeatherstudio.questroll.feature_language.model.item.ScriptItem;
 import com.murkfeatherstudio.questroll.feature_language.view_model.CustomLanguageCreateViewModel;
@@ -26,10 +22,7 @@ import java.util.Objects;
 import java.util.concurrent.Executors;
 
 public class CustomLanguageCreateActivity extends BaseActivity {
-    private EditText etName, etDesc;
-    private CheckBox cbExotic, cbSecret;
-    private Spinner spinnerScript;
-    private Button btnSave;
+    private ActivityCustomLanguageCreateBinding binding;
     private CustomLanguageCreateViewModel viewModel;
     private ArrayAdapter<ScriptItem> scriptAdapter;
     private long existingLanguageId = -1;
@@ -37,7 +30,8 @@ public class CustomLanguageCreateActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_custom_language_create);
+        binding = ActivityCustomLanguageCreateBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         LanguageRepository repo = new LanguageRepository(
                 Open5eDatabase.getInstance(this).documentDao(),
@@ -56,7 +50,7 @@ public class CustomLanguageCreateActivity extends BaseActivity {
             // Edit Mode: Load existing language and exclude self from script options
             viewModel.loadExistingLanguage(existingLanguageId);
             viewModel.loadScriptOptions(existingLanguageId);
-            btnSave.setText("Update");
+            binding.btnSave.setText("Update");
         } else {
             // Create Mode: Show all script options
             viewModel.loadScriptOptions(-1);
@@ -64,31 +58,24 @@ public class CustomLanguageCreateActivity extends BaseActivity {
     }
 
     private void setupUI() {
-        etName = findViewById(R.id.et_name);
-        etDesc = findViewById(R.id.et_desc);
-        cbExotic = findViewById(R.id.cb_exotic);
-        cbSecret = findViewById(R.id.cb_secret);
-        spinnerScript = findViewById(R.id.spinner_script);
-        btnSave = findViewById(R.id.btn_save);
-
         scriptAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
         scriptAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerScript.setAdapter(scriptAdapter);
+        binding.spinnerScript.setAdapter(scriptAdapter);
 
-        btnSave.setOnClickListener(v -> attemptSave());
+        binding.btnSave.setOnClickListener(v -> attemptSave());
     }
 
     private void attemptSave() {
-        String name = etName.getText().toString().trim();
+        String name = binding.etName.getText() != null ? binding.etName.getText().toString().trim() : "";
         if (name.isEmpty()) {
-            etName.setError("Required");
+            binding.etName.setError("Required");
             return;
         }
 
-        String desc = etDesc.getText().toString().trim();
-        boolean exotic = cbExotic.isChecked();
-        boolean secret = cbSecret.isChecked();
-        ScriptItem selectedScript = (ScriptItem) spinnerScript.getSelectedItem();
+        String desc = binding.etDesc.getText() != null ? binding.etDesc.getText().toString().trim() : "";
+        boolean exotic = binding.cbExotic.isChecked();
+        boolean secret = binding.cbSecret.isChecked();
+        ScriptItem selectedScript = (ScriptItem) binding.spinnerScript.getSelectedItem();
         String scriptId = selectedScript != null ? selectedScript.scriptIdentifier : null;
 
         viewModel.saveLanguage(
@@ -109,10 +96,10 @@ public class CustomLanguageCreateActivity extends BaseActivity {
 
         viewModel.getExistingLanguage().observe(this, entity -> {
             if (entity != null) {
-                etName.setText(entity.name);
-                etDesc.setText(entity.desc);
-                cbExotic.setChecked(entity.isExotic);
-                cbSecret.setChecked(entity.isSecret);
+                binding.etName.setText(entity.name);
+                binding.etDesc.setText(entity.desc);
+                binding.cbExotic.setChecked(entity.isExotic);
+                binding.cbSecret.setChecked(entity.isSecret);
                 selectScriptInSpinner(entity.scriptLanguageId);
             }
         });
@@ -134,12 +121,12 @@ public class CustomLanguageCreateActivity extends BaseActivity {
         if (items != null) {
             for (int i = 0; i < items.size(); i++) {
                 if (Objects.equals(items.get(i).scriptIdentifier, scriptId)) {
-                    spinnerScript.setSelection(i);
+                    binding.spinnerScript.setSelection(i);
                     return;
                 }
             }
         }
-        spinnerScript.setSelection(0);
+        binding.spinnerScript.setSelection(0);
     }
 
     public static Intent getEditIntent(Context context, long languageId) {

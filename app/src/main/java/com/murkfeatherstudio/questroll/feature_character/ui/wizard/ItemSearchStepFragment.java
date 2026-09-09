@@ -6,9 +6,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,6 +25,8 @@ import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.models.character.CharacterCreationDTO;
 import com.murkfeatherstudio.questroll.core.models.open5e.item.ItemEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.item_set.ItemSetEntity;
+import com.murkfeatherstudio.questroll.databinding.FragmentWizardItemSearchStepBinding;
+import com.murkfeatherstudio.questroll.databinding.ItemSearchRowBinding;
 import com.murkfeatherstudio.questroll.feature_character.view_model.WizardViewModel;
 
 import java.util.ArrayList;
@@ -36,8 +35,7 @@ import java.util.List;
 public class ItemSearchStepFragment extends Fragment {
 
     private WizardViewModel viewModel;
-    private EditText searchEditText;
-    private RecyclerView recyclerView;
+    private FragmentWizardItemSearchStepBinding binding;
     private ItemSearchAdapter adapter;
     private List<ItemEntity> allItems = new ArrayList<>();
     private List<ItemSetEntity> allItemSets = new ArrayList<>();
@@ -46,8 +44,15 @@ public class ItemSearchStepFragment extends Fragment {
     private boolean addToClass = false;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_wizard_item_search_step, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentWizardItemSearchStepBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
@@ -60,21 +65,17 @@ public class ItemSearchStepFragment extends Fragment {
             addToClass = getArguments().getBoolean("add_to_class", false);
         }
 
-        searchEditText = view.findViewById(R.id.search_edit_text);
-        recyclerView = view.findViewById(R.id.item_recycler);
-        Button cancelButton = view.findViewById(R.id.cancel_button);
+        binding.searchEditText.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
+        binding.searchEditText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        binding.searchEditText.setHintTextColor(getResources().getColor(R.color.threads_text_secondary, null));
 
-        searchEditText.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
-        searchEditText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
-        searchEditText.setHintTextColor(getResources().getColor(R.color.threads_text_secondary, null));
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.itemRecycler.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new ItemSearchAdapter();
-        recyclerView.setAdapter(adapter);
+        binding.itemRecycler.setAdapter(adapter);
 
         loadData();
 
-        searchEditText.addTextChangedListener(new TextWatcher() {
+        binding.searchEditText.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
             @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
                 filterItems(s.toString());
@@ -82,7 +83,7 @@ public class ItemSearchStepFragment extends Fragment {
             @Override public void afterTextChanged(Editable s) {}
         });
 
-        cancelButton.setOnClickListener(v -> {
+        binding.cancelButton.setOnClickListener(v -> {
             NavController navController = Navigation.findNavController(v);
             navController.popBackStack();
         });
@@ -124,7 +125,9 @@ public class ItemSearchStepFragment extends Fragment {
                 }
             }
         }
-        adapter.setResults(results);
+        if (adapter != null) {
+            adapter.setResults(results);
+        }
     }
 
     private class ItemSearchAdapter extends RecyclerView.Adapter<ItemSearchAdapter.ViewHolder> {
@@ -137,24 +140,24 @@ public class ItemSearchStepFragment extends Fragment {
 
         @NonNull @Override
         public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_search_row, parent, false);
-            return new ViewHolder(view);
+            ItemSearchRowBinding itemBinding = ItemSearchRowBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+            return new ViewHolder(itemBinding);
         }
 
         @Override
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             Object obj = results.get(position);
 
-            holder.nameText.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
-            holder.nameText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
-            holder.descText.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
-            holder.descText.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
+            holder.binding.itemName.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
+            holder.binding.itemName.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+            holder.binding.itemDesc.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
+            holder.binding.itemDesc.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
 
             if (obj instanceof ItemEntity) {
                 ItemEntity item = (ItemEntity) obj;
-                holder.nameText.setText(item.name);
-                holder.descText.setText(item.desc != null ? item.desc : "");
-                holder.selectButton.setOnClickListener(v -> {
+                holder.binding.itemName.setText(item.name);
+                holder.binding.itemDesc.setText(item.desc != null ? item.desc : "");
+                holder.binding.selectButton.setOnClickListener(v -> {
                     CharacterCreationDTO.InventoryItemDTO dtoItem = new CharacterCreationDTO.InventoryItemDTO();
                     dtoItem.itemKey = item.key;
                     dtoItem.customName = item.name;
@@ -172,9 +175,9 @@ public class ItemSearchStepFragment extends Fragment {
                 });
             } else if (obj instanceof ItemSetEntity) {
                 ItemSetEntity set = (ItemSetEntity) obj;
-                holder.nameText.setText(set.name);
-                holder.descText.setText(set.desc != null ? set.desc : "");
-                holder.selectButton.setOnClickListener(v -> showItemSetSelectionDialog(set));
+                holder.binding.itemName.setText(set.name);
+                holder.binding.itemDesc.setText(set.desc != null ? set.desc : "");
+                holder.binding.selectButton.setOnClickListener(v -> showItemSetSelectionDialog(set));
             }
         }
 
@@ -182,13 +185,10 @@ public class ItemSearchStepFragment extends Fragment {
         public int getItemCount() { return results.size(); }
 
         class ViewHolder extends RecyclerView.ViewHolder {
-            TextView nameText, descText;
-            Button selectButton;
-            ViewHolder(View itemView) {
-                super(itemView);
-                nameText = itemView.findViewById(R.id.item_name);
-                descText = itemView.findViewById(R.id.item_desc);
-                selectButton = itemView.findViewById(R.id.select_button);
+            final ItemSearchRowBinding binding;
+            ViewHolder(ItemSearchRowBinding binding) {
+                super(binding.getRoot());
+                this.binding = binding;
             }
         }
     }
@@ -206,7 +206,7 @@ public class ItemSearchStepFragment extends Fragment {
                     Toast.makeText(getContext(), "No items in this set for the selected system", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
                 builder.setTitle("Select items from set: " + set.name);
                 String[] itemNames = items.stream().map(i -> i.name).toArray(String[]::new);
                 boolean[] checkedItems = new boolean[items.size()];

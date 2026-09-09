@@ -3,14 +3,13 @@ package com.murkfeatherstudio.questroll.feature_ability.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.ItemAbilityBinding;
 import com.murkfeatherstudio.questroll.feature_ability.model.CombinedAbility;
 
 public class AbilityAdapter extends ListAdapter<CombinedAbility, AbilityAdapter.ViewHolder> {
@@ -39,8 +38,8 @@ public class AbilityAdapter extends ListAdapter<CombinedAbility, AbilityAdapter.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup p, int t) {
-        return new ViewHolder(LayoutInflater.from(p.getContext())
-                .inflate(R.layout.item_ability, p, false));
+        ItemAbilityBinding binding = ItemAbilityBinding.inflate(LayoutInflater.from(p.getContext()), p, false);
+        return new ViewHolder(binding);
     }
 
     @Override public void onBindViewHolder(@NonNull ViewHolder h, int pos) {
@@ -48,20 +47,19 @@ public class AbilityAdapter extends ListAdapter<CombinedAbility, AbilityAdapter.
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvShortDesc, tvCustomBadge;
+        private final ItemAbilityBinding binding;
 
-        ViewHolder(View v) {
-            super(v);
-            tvName        = v.findViewById(R.id.tv_ability_name);
-            tvShortDesc   = v.findViewById(R.id.tv_ability_short_desc);
-            tvCustomBadge = v.findViewById(R.id.tv_custom_badge);
+        ViewHolder(ItemAbilityBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         void bind(CombinedAbility a, OnClickListener listener) {
-            tvName.setText(a.name);
-            tvShortDesc.setText(a.shortDesc != null ? a.shortDesc : "");
-            if (tvCustomBadge != null)
-                tvCustomBadge.setVisibility(a.isCustom ? View.VISIBLE : View.GONE);
+            binding.tvAbilityName.setText(a.name);
+            binding.tvAbilityShortDesc.setText(a.shortDesc != null ? a.shortDesc : "");
+            
+            binding.tvCustomBadge.setVisibility(a.isCustom ? View.VISIBLE : View.GONE);
+            
             itemView.setOnClickListener(v -> { if (listener != null) listener.onClick(a); });
         }
     }

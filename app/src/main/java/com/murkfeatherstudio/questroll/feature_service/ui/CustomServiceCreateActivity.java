@@ -5,13 +5,11 @@ import android.widget.Toast;
 
 import androidx.lifecycle.ViewModelProvider;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_service.CustomServiceEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityCustomServiceCreateBinding;
 import com.murkfeatherstudio.questroll.feature_service.view_model.CustomServiceCreateViewModel;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.concurrent.Executors;
 
@@ -20,13 +18,14 @@ public class CustomServiceCreateActivity extends BaseActivity {
     public static final String EXTRA_EDIT_ID = "edit_service_id";
 
     private CustomServiceCreateViewModel viewModel;
-    private TextInputEditText etName, etCost, etDetail, etDesc;
+    private ActivityCustomServiceCreateBinding binding;
     private long editId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_custom_service_create);
+        binding = ActivityCustomServiceCreateBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         editId = getIntent().getLongExtra(EXTRA_EDIT_ID, -1);
         viewModel = new ViewModelProvider(this,
@@ -36,27 +35,26 @@ public class CustomServiceCreateActivity extends BaseActivity {
                         Executors.newSingleThreadExecutor()
                 )).get(CustomServiceCreateViewModel.class);
 
-        initViews();
+        setupUI();
         setupObservers();
-        setTitle(editId == -1 ? "Create Service" : "Edit Service");
-        ((MaterialButton) findViewById(R.id.btnSave)).setText(editId == -1 ? "Save" : "Update");
-        findViewById(R.id.btnSave).setOnClickListener(v -> save());
+        
+        // Initialize Calculator Drawer Width
+        setDrawerWidth(false);
     }
 
-    private void initViews() {
-        etName = findViewById(R.id.etName);
-        etCost = findViewById(R.id.etCost);
-        etDetail = findViewById(R.id.etDetail);
-        etDesc = findViewById(R.id.etDesc);
+    private void setupUI() {
+        setTitle(editId == -1 ? "Create Service" : "Edit Service");
+        binding.btnSave.setText(editId == -1 ? "Save" : "Update");
+        binding.btnSave.setOnClickListener(v -> save());
     }
 
     private void setupObservers() {
         viewModel.getEditData().observe(this, service -> {
             if (service == null) return;
-            etName.setText(service.name);
-            etCost.setText(service.cost);
-            etDetail.setText(service.detail);
-            etDesc.setText(service.desc);
+            binding.etName.setText(service.name);
+            binding.etCost.setText(service.cost);
+            binding.etDetail.setText(service.detail);
+            binding.etDesc.setText(service.desc);
         });
 
         viewModel.getSaveResult().observe(this, success -> {
@@ -71,17 +69,17 @@ public class CustomServiceCreateActivity extends BaseActivity {
     }
 
     private void save() {
-        String name = etName.getText().toString().trim();
+        String name = binding.etName.getText() != null ? binding.etName.getText().toString().trim() : "";
         if (name.isEmpty()) {
-            etName.setError("Required");
+            binding.etName.setError("Required");
             return;
         }
 
         CustomServiceEntity entity = new CustomServiceEntity();
         entity.name = name;
-        entity.cost = etCost.getText().toString().trim();
-        entity.detail = etDetail.getText().toString().trim();
-        entity.desc = etDesc.getText().toString().trim();
+        entity.cost = binding.etCost.getText() != null ? binding.etCost.getText().toString().trim() : "";
+        entity.detail = binding.etDetail.getText() != null ? binding.etDetail.getText().toString().trim() : "";
+        entity.desc = binding.etDesc.getText() != null ? binding.etDesc.getText().toString().trim() : "";
 
         viewModel.save(entity);
     }

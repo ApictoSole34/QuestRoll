@@ -1,13 +1,13 @@
 package com.murkfeatherstudio.questroll.feature_campaign.adapter;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.murkfeatherstudio.questroll.R;
+
 import com.murkfeatherstudio.questroll.core.models.campaign.CampaignNoteEntity;
+import com.murkfeatherstudio.questroll.databinding.ItemNoteBinding;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,39 +37,35 @@ public class NoteAdapter extends RecyclerView.Adapter<NoteAdapter.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_note, parent, false);
-        return new ViewHolder(view);
+        ItemNoteBinding binding = ItemNoteBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         CampaignNoteEntity note = notes.get(position);
-        holder.tvTitle.setText(note.title);
-        holder.tvContentPreview.setText(note.content != null ? note.content : "");
+        holder.binding.tvNoteTitle.setText(note.title);
+        holder.binding.tvNotePreview.setText(note.content != null ? note.content : "");
         
         if (note.createdAt != null) {
-            holder.tvDate.setText(dateFormat.format(note.createdAt));
-            holder.tvDate.setVisibility(View.VISIBLE);
+            holder.binding.tvNoteDate.setText(dateFormat.format(note.createdAt));
+            holder.binding.tvNoteDate.setVisibility(android.view.View.VISIBLE);
         } else {
-            holder.tvDate.setVisibility(View.GONE);
+            holder.binding.tvNoteDate.setVisibility(android.view.View.GONE);
         }
 
         holder.itemView.setOnClickListener(v -> listener.onNoteClick(note));
-        holder.btnDelete.setOnClickListener(v -> listener.onDeleteClick(note, position));
+        holder.binding.btnDeleteNote.setOnClickListener(v -> listener.onDeleteClick(note, position));
     }
 
     @Override
     public int getItemCount() { return notes.size(); }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTitle, tvDate, tvContentPreview;
-        View btnDelete;
-        ViewHolder(View itemView) {
-            super(itemView);
-            tvTitle = itemView.findViewById(R.id.tv_note_title);
-            tvDate = itemView.findViewById(R.id.tv_note_date);
-            tvContentPreview = itemView.findViewById(R.id.tv_note_preview);
-            btnDelete = itemView.findViewById(R.id.btn_delete_note);
+        final ItemNoteBinding binding;
+        ViewHolder(ItemNoteBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }

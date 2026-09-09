@@ -6,12 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -28,6 +27,7 @@ import com.murkfeatherstudio.questroll.core.models.custom.custom_character_class
 import com.murkfeatherstudio.questroll.core.models.custom.custom_character_class.custom_gained_at.CustomGainedAt;
 import com.murkfeatherstudio.questroll.core.models.open5e.character_class.CharacterClassEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.character_class.feature.FeatureEntity;
+import com.murkfeatherstudio.questroll.databinding.FragmentWizardSubclassBinding;
 import com.murkfeatherstudio.questroll.feature_character.view_model.WizardViewModel;
 
 import java.util.ArrayList;
@@ -38,30 +38,31 @@ import io.noties.markwon.Markwon;
 public class SubclassChoiceStepFragment extends Fragment {
 
     private WizardViewModel viewModel;
-    private Spinner subclassSpinner;
-    private TextView descriptionText;
+    private FragmentWizardSubclassBinding binding;
     private List<Object> availableSubclasses = new ArrayList<>();
     private Markwon markwon;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_wizard_subclass, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentWizardSubclassBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(WizardViewModel.class);
         markwon = Markwon.create(requireContext());
 
-        subclassSpinner  = view.findViewById(R.id.subclass_spinner);
-        descriptionText  = view.findViewById(R.id.subclass_description);
-        Button nextButton = view.findViewById(R.id.next_button);
-        Button backButton = view.findViewById(R.id.back_button);
-
         loadSubclasses();
 
-        subclassSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.subclassSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position >= 0 && position < availableSubclasses.size()) {
@@ -74,7 +75,7 @@ public class SubclassChoiceStepFragment extends Fragment {
             @Override public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        nextButton.setOnClickListener(v -> {
+        binding.nextButton.setOnClickListener(v -> {
             if (viewModel.chosenSubclassKey == null) {
                 Toast.makeText(getContext(), "Please select a subclass", Toast.LENGTH_SHORT).show();
                 return;
@@ -82,9 +83,9 @@ public class SubclassChoiceStepFragment extends Fragment {
             Navigation.findNavController(v).navigate(R.id.next_action);
         });
 
-        descriptionText.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
-        descriptionText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
-        backButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.back_action));
+        binding.subclassDescription.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
+        binding.subclassDescription.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        binding.backButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.back_action));
     }
 
     private void loadSubclasses() {
@@ -126,7 +127,7 @@ public class SubclassChoiceStepFragment extends Fragment {
             final List<Object> finalList = new ArrayList<>(availableSubclasses);
 
             AppExecutors.getInstance().mainThread().execute(() -> {
-                if (!isAdded()) return;
+                if (!isAdded() || binding == null) return;
 
                 if (finalList.isEmpty()) {
                     Toast.makeText(getContext(),
@@ -159,17 +160,17 @@ public class SubclassChoiceStepFragment extends Fragment {
                     }
                 };
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                subclassSpinner.setAdapter(adapter);
+                binding.subclassSpinner.setAdapter(adapter);
 
                 if (viewModel.chosenSubclassKey != null) {
                     for (int i = 0; i < finalList.size(); i++) {
                         if (viewModel.chosenSubclassKey.equals(getKey(finalList.get(i)))) {
-                            subclassSpinner.setSelection(i);
+                            binding.subclassSpinner.setSelection(i);
                             return;
                         }
                     }
                 }
-                subclassSpinner.setSelection(0);
+                binding.subclassSpinner.setSelection(0);
             });
         });
     }
@@ -254,6 +255,7 @@ public class SubclassChoiceStepFragment extends Fragment {
     }
 
     private void showDescription(Object obj) {
+        if (binding == null) return;
         String descText = "";
         if (obj instanceof CharacterClassEntity) {
             CharacterClassEntity cls = (CharacterClassEntity) obj;
@@ -265,10 +267,10 @@ public class SubclassChoiceStepFragment extends Fragment {
             descText = (custom.description != null) ? custom.description : custom.name;
         }
         
-        if (markwon != null && descriptionText != null) {
-            markwon.setMarkdown(descriptionText, !descText.isEmpty() ? descText : "No description available.");
-        } else if (descriptionText != null) {
-            descriptionText.setText(!descText.isEmpty() ? descText : "No description available.");
+        if (markwon != null) {
+            markwon.setMarkdown(binding.subclassDescription, !descText.isEmpty() ? descText : "No description available.");
+        } else {
+            binding.subclassDescription.setText(!descText.isEmpty() ? descText : "No description available.");
         }
     }
 }

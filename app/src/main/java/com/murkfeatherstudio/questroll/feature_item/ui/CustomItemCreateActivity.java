@@ -2,9 +2,9 @@ package com.murkfeatherstudio.questroll.feature_item.ui;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -18,8 +18,8 @@ import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_item.CustomItemEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.item.ItemDto;
+import com.murkfeatherstudio.questroll.databinding.ActivityCustomItemCreateBinding;
 import com.murkfeatherstudio.questroll.feature_item.view_model.CustomItemCreateViewModel;
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.textfield.TextInputEditText;
@@ -35,6 +35,8 @@ public class CustomItemCreateActivity extends BaseActivity {
     public static final String EXTRA_EDIT_ID = "edit_item_id";
 
     private CustomItemCreateViewModel viewModel;
+    private ActivityCustomItemCreateBinding binding;
+
     private TextInputEditText etName, etDesc, etWeight, etCost;
     private AutoCompleteTextView actvCategory, actvRarity;
     private CheckBox cbMagic, cbAttunement;
@@ -56,7 +58,8 @@ public class CustomItemCreateActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_custom_item_create);
+        binding = ActivityCustomItemCreateBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         long editId = getIntent().getLongExtra(EXTRA_EDIT_ID, -1);
         viewModel = new ViewModelProvider(this,
@@ -77,20 +80,20 @@ public class CustomItemCreateActivity extends BaseActivity {
         initViews();
         setupObservers();
         setTitle(viewModel.isEditMode() ? "Edit Item" : "Create Item");
-        ((MaterialButton) findViewById(R.id.btnSave)).setText(viewModel.isEditMode() ? "Update Item" : "Save Item");
-        findViewById(R.id.btnSave).setOnClickListener(v -> save());
+        binding.btnSave.setText(viewModel.isEditMode() ? "Update Item" : "Save Item");
+        binding.btnSave.setOnClickListener(v -> save());
     }
 
     private void initViews() {
-        etName = findViewById(R.id.etName);
-        etDesc = findViewById(R.id.etDesc);
-        actvCategory = findViewById(R.id.actvCategory);
-        actvRarity = findViewById(R.id.actvRarity);
-        cbMagic = findViewById(R.id.cbMagic);
-        cbAttunement = findViewById(R.id.cbAttunement);
-        etAttunementDetail = findViewById(R.id.etAttunementDetail);
-        etWeight = findViewById(R.id.etWeight);
-        etCost = findViewById(R.id.etCost);
+        etName = binding.etName;
+        etDesc = binding.etDesc;
+        actvCategory = binding.actvCategory;
+        actvRarity = binding.actvRarity;
+        cbMagic = binding.cbMagic;
+        cbAttunement = binding.cbAttunement;
+        etAttunementDetail = binding.etAttunementDetail;
+        etWeight = binding.etWeight;
+        etCost = binding.etCost;
 
         viewModel.getAllCategoryNames().observe(this, categoryNames -> {
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
@@ -110,17 +113,16 @@ public class CustomItemCreateActivity extends BaseActivity {
             actvDamageType.setAdapter(adapter);
         });
 
-        weaponSection = findViewById(R.id.weapon_section);
-        etDamageDice = findViewById(R.id.etDamageDice);
-        etRange = findViewById(R.id.etRange);
-        etLongRange = findViewById(R.id.etLongRange);
-        actvDamageType = findViewById(R.id.actvDamageType);
-        cbSimple = findViewById(R.id.cbSimple);
-        cbImprovised = findViewById(R.id.cbImprovised);
+        weaponSection = binding.weaponSection;
+        etDamageDice = binding.etDamageDice;
+        etRange = binding.etRange;
+        etLongRange = binding.etLongRange;
+        actvDamageType = binding.actvDamageType;
+        cbSimple = binding.cbSimple;
+        cbImprovised = binding.cbImprovised;
 
-        spinnerWeaponProperty = findViewById(R.id.spinnerWeaponProperty);
-        chipGroupSelectedProperties = findViewById(R.id.chipGroupSelectedProperties);
-        Button btnAddProperty = findViewById(R.id.btnAddSelectedProperty);
+        spinnerWeaponProperty = binding.spinnerWeaponProperty;
+        chipGroupSelectedProperties = binding.chipGroupSelectedProperties;
 
         viewModel.getAllWeaponPropertyNames().observe(this, propertyNames -> {
             ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
@@ -129,6 +131,12 @@ public class CustomItemCreateActivity extends BaseActivity {
             spinnerWeaponProperty.setAdapter(adapter);
         });
 
+        /**
+         * JAVADOC: chipGroupSelectedProperties is a dynamic container. We use addView() 
+         * to insert Material Chips programmatically because the selection of weapon 
+         * properties is dynamic and determined by user interaction at runtime. 
+         * These chips do not exist in the static XML layout.
+         */
         viewModel.getSelectedWeaponProperties().observe(this, selectedSet -> {
             chipGroupSelectedProperties.removeAllViews();
             if (selectedSet != null) {
@@ -142,18 +150,18 @@ public class CustomItemCreateActivity extends BaseActivity {
             }
         });
 
-        btnAddProperty.setOnClickListener(v -> {
+        binding.btnAddSelectedProperty.setOnClickListener(v -> {
             String selected = (String) spinnerWeaponProperty.getSelectedItem();
             if (selected != null && !selected.isEmpty()) {
                 viewModel.addWeaponProperty(selected);
             }
         });
 
-        armorSection = findViewById(R.id.armor_section);
-        etAcBase = findViewById(R.id.etAcBase);
-        etAcDisplay = findViewById(R.id.etAcDisplay);
-        cbStealthDisadvantage = findViewById(R.id.cbStealthDisadvantage);
-        etStrengthRequired = findViewById(R.id.etStrengthRequired);
+        armorSection = binding.armorSection;
+        etAcBase = binding.etAcBase;
+        etAcDisplay = binding.etAcDisplay;
+        cbStealthDisadvantage = binding.cbStealthDisadvantage;
+        etStrengthRequired = binding.etStrengthRequired;
 
         actvCategory.setOnItemClickListener((parent, view, position, id) -> {
             String category = (String) parent.getItemAtPosition(position);

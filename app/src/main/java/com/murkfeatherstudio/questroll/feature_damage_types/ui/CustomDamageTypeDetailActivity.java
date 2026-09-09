@@ -3,27 +3,27 @@ package com.murkfeatherstudio.questroll.feature_damage_types.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.PopupMenu;
-import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_damage_types.CustomDamageTypeDao;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_damage_types.CustomDamageTypeEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityDamageTypeDetailBinding;
 
 public class CustomDamageTypeDetailActivity extends BaseActivity {
 
     public static final String EXTRA_ID = "CUSTOM_DAMAGE_TYPE_ID";
     private long id;
     private CustomDamageTypeDao dao;
+    private ActivityDamageTypeDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_damage_type_detail);
+        binding = ActivityDamageTypeDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         id = getIntent().getLongExtra(EXTRA_ID, -1);
         if (id == -1) {
@@ -38,14 +38,13 @@ public class CustomDamageTypeDetailActivity extends BaseActivity {
     }
 
     private void populateUI(CustomDamageTypeEntity type) {
-        ((TextView) findViewById(R.id.tv_name)).setText(type.name);
-        ((TextView) findViewById(R.id.tv_source)).setText("Source: Custom");
+        binding.tvName.setText(type.name);
+        binding.tvSource.setText("Source: Custom");
         String desc = type.description != null ? type.description : "No description.";
-        ((TextView) findViewById(R.id.tv_description)).setText(desc);
+        binding.tvDescription.setText(desc);
 
-        Button btnManage = findViewById(R.id.btnManage);
-        btnManage.setVisibility(View.VISIBLE);
-        btnManage.setOnClickListener(v -> showManageMenu(v, id));
+        binding.btnManage.setVisibility(View.VISIBLE);
+        binding.btnManage.setOnClickListener(v -> showManageMenu(v, id));
     }
 
     private void showManageMenu(View anchor, long id) {

@@ -85,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp" />
 
-            <!-- Ability scores grid – same staty są w sub-TextView, więc wstawiam style -->
+            <!-- Ability scores grid – actual stats are in sub-TextViews, applying styles here -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

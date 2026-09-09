@@ -5,19 +5,17 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
-import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.feature_document.fragment.DocumentDetailDialogFragment;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.open5e.document.DocumentEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityLanguageDetailBinding;
 import com.murkfeatherstudio.questroll.feature_language.data.repository.LanguageRepository;
 import com.murkfeatherstudio.questroll.feature_language.ui.language_create.CustomLanguageCreateActivity;
 import com.murkfeatherstudio.questroll.feature_language.model.CombinedLanguage;
@@ -34,13 +32,13 @@ public class LanguageDetailActivity extends BaseActivity {
     public static final String EXTRA_LANGUAGE = "combinedLanguage";
 
     private LanguageDetailViewModel viewModel;
-    private TextView tvName, tvDesc, tvFlags, tvScript, tvLicense;
-    private Button btnManage;
+    private ActivityLanguageDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_language_detail);
+        binding = ActivityLanguageDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         LanguageRepository repo = new LanguageRepository(
                 Open5eDatabase.getInstance(this).documentDao(),
@@ -52,18 +50,8 @@ public class LanguageDetailActivity extends BaseActivity {
         viewModel = new ViewModelProvider(this, new ViewModelFactory(repo))
                 .get(LanguageDetailViewModel.class);
 
-        initViews();
         setupObservers();
         handleInitialIntent();
-    }
-
-    private void initViews() {
-        tvName = findViewById(R.id.tv_detail_name);
-        tvDesc = findViewById(R.id.tv_detail_desc);
-        tvFlags = findViewById(R.id.tv_detail_flags);
-        tvScript = findViewById(R.id.tv_detail_script);
-        tvLicense = findViewById(R.id.tv_detail_license);
-        btnManage = findViewById(R.id.btn_manage);
     }
 
     private void setupObservers() {
@@ -129,51 +117,51 @@ public class LanguageDetailActivity extends BaseActivity {
     }
 
     private void updateMainInfo(CombinedLanguage language) {
-        tvName.setText(language.getName());
-        tvDesc.setText(language.getDesc());
+        binding.tvDetailName.setText(language.getName());
+        binding.tvDetailDesc.setText(language.getDesc());
 
         String flags = "Exotic: " + (language.isExotic() ? "Yes" : "No") +
                 "\nSecret: " + (language.isSecret() ? "Yes" : "No");
-        tvFlags.setText(flags);
+        binding.tvDetailFlags.setText(flags);
     }
 
     private void updateScriptSection(CombinedLanguage language) {
         if (language.getScriptLanguageName() != null && !isSelfReference(language)) {
-            tvScript.setText("Script: " + language.getScriptLanguageName());
-            tvScript.setOnClickListener(v -> handleScriptClick(language));
-            tvScript.setVisibility(View.VISIBLE);
+            binding.tvDetailScript.setText("Script: " + language.getScriptLanguageName());
+            binding.tvDetailScript.setOnClickListener(v -> handleScriptClick(language));
+            binding.tvDetailScript.setVisibility(View.VISIBLE);
         } else {
-            tvScript.setVisibility(View.GONE);
+            binding.tvDetailScript.setVisibility(View.GONE);
         }
     }
 
     private void updateManageButton(CombinedLanguage language) {
         if (language.getCustomId() != null) {
-            btnManage.setVisibility(View.VISIBLE);
-            btnManage.setOnClickListener(v -> showManageDialog(language));
+            binding.btnManage.setVisibility(View.VISIBLE);
+            binding.btnManage.setOnClickListener(v -> showManageDialog(language));
         } else {
-            btnManage.setVisibility(View.GONE);
+            binding.btnManage.setVisibility(View.GONE);
         }
     }
 
     private void updateLicenseInfo(CombinedLanguage language, DocumentEntity doc) {
         if (language.isCustom()) {
-            tvLicense.setVisibility(View.GONE);
-            tvLicense.setOnClickListener(null);
+            binding.tvDetailLicense.setVisibility(View.GONE);
+            binding.tvDetailLicense.setOnClickListener(null);
             return;
         }
 
         if (doc != null) {
-            tvLicense.setText("License: " + doc.name);
-            tvLicense.setOnClickListener(v -> showLicenseDialog(doc.key));
-            tvLicense.setVisibility(View.VISIBLE);
+            binding.tvDetailLicense.setText("License: " + doc.name);
+            binding.tvDetailLicense.setOnClickListener(v -> showLicenseDialog(doc.key));
+            binding.tvDetailLicense.setVisibility(View.VISIBLE);
         } else {
-            tvLicense.setText("License");
-            tvLicense.setOnClickListener(null);
-            tvLicense.setVisibility(View.VISIBLE);
+            binding.tvDetailLicense.setText("License");
+            binding.tvDetailLicense.setOnClickListener(null);
+            binding.tvDetailLicense.setVisibility(View.VISIBLE);
         }
-        tvLicense.setClickable(true);
-        tvLicense.setFocusable(true);
+        binding.tvDetailLicense.setClickable(true);
+        binding.tvDetailLicense.setFocusable(true);
     }
 
     private boolean isSelfReference(CombinedLanguage language) {
@@ -184,7 +172,7 @@ public class LanguageDetailActivity extends BaseActivity {
 
     private void handleScriptClick(CombinedLanguage language) {
         viewModel.getScriptLanguage(language.getScriptKey(),
-                script -> openLanguageDetails(script),
+                this::openLanguageDetails,
                 e -> showToast("Error loading script: " + e.getMessage())
         );
     }

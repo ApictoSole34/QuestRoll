@@ -3,12 +3,13 @@ package com.murkfeatherstudio.questroll.feature_creature.creature_type.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
-import com.murkfeatherstudio.questroll.R;
+
+import com.murkfeatherstudio.questroll.databinding.ItemCreatureTypeBinding;
 import com.murkfeatherstudio.questroll.feature_creature.creature_type.model.CombinedCreatureType;
 
 public class CreatureTypeAdapter extends ListAdapter<CombinedCreatureType, CreatureTypeAdapter.ViewHolder> {
@@ -36,9 +37,9 @@ public class CreatureTypeAdapter extends ListAdapter<CombinedCreatureType, Creat
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_creature_type, parent, false);
-        return new ViewHolder(view);
+        ItemCreatureTypeBinding binding = ItemCreatureTypeBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -47,19 +48,17 @@ public class CreatureTypeAdapter extends ListAdapter<CombinedCreatureType, Creat
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvDesc, tvCustomBadge;
+        private final ItemCreatureTypeBinding binding;
 
-        ViewHolder(View v) {
-            super(v);
-            tvName = v.findViewById(R.id.tv_name);
-            tvDesc = v.findViewById(R.id.tv_desc);
-            tvCustomBadge = v.findViewById(R.id.tv_custom_badge);
+        ViewHolder(ItemCreatureTypeBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         void bind(CombinedCreatureType t, OnItemClickListener listener) {
-            tvName.setText(t.name);
-            tvDesc.setText(t.description != null ? t.description : "");
-            tvCustomBadge.setVisibility(t.isCustom ? View.VISIBLE : View.GONE);
+            binding.tvName.setText(t.name);
+            binding.tvDesc.setText(t.description != null ? t.description : "");
+            binding.tvCustomBadge.setVisibility(t.isCustom ? View.VISIBLE : View.GONE);
             itemView.setOnClickListener(v -> listener.onItemClick(t));
         }
     }

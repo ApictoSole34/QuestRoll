@@ -1,15 +1,12 @@
 package com.murkfeatherstudio.questroll.feature_class.class_adapter;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.ItemSpellPickBinding;
 import com.murkfeatherstudio.questroll.feature_class.model.CombinedSpell;
 
 import java.util.ArrayList;
@@ -54,18 +51,18 @@ public class SpellPickAdapter extends RecyclerView.Adapter<SpellPickAdapter.View
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_spell_pick, parent, false);
-        return new ViewHolder(view);
+        ItemSpellPickBinding binding = ItemSpellPickBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         CombinedSpell spell = visibleSpells.get(position);
 
-        holder.tvLevel.setText(spell.getLevel() == 0 ? "C" : String.valueOf(spell.getLevel()));
-        holder.tvName.setText(spell.getName() + (spell.isCustom() ? " (custom)" : ""));
-        holder.checkBox.setChecked(selectedKeys.contains(spell.getKey()));
+        holder.binding.tvSpellLevel.setText(spell.getLevel() == 0 ? "C" : String.valueOf(spell.getLevel()));
+        holder.binding.tvSpellName.setText(spell.getName() + (spell.isCustom() ? " (custom)" : ""));
+        holder.binding.cbSpellSelected.setChecked(selectedKeys.contains(spell.getKey()));
 
         holder.itemView.setOnClickListener(v -> {
             boolean newState = !selectedKeys.contains(spell.getKey());
@@ -74,7 +71,7 @@ public class SpellPickAdapter extends RecyclerView.Adapter<SpellPickAdapter.View
             } else {
                 selectedKeys.remove(spell.getKey());
             }
-            holder.checkBox.setChecked(newState);
+            holder.binding.cbSpellSelected.setChecked(newState);
             if (listener != null) listener.onToggle(spell.getKey(), newState);
         });
     }
@@ -85,14 +82,11 @@ public class SpellPickAdapter extends RecyclerView.Adapter<SpellPickAdapter.View
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvLevel, tvName;
-        CheckBox checkBox;
+        private final ItemSpellPickBinding binding;
 
-        ViewHolder(@NonNull View itemView) {
-            super(itemView);
-            tvLevel = itemView.findViewById(R.id.tv_spell_level);
-            tvName = itemView.findViewById(R.id.tv_spell_name);
-            checkBox = itemView.findViewById(R.id.cb_spell_selected);
+        ViewHolder(ItemSpellPickBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }

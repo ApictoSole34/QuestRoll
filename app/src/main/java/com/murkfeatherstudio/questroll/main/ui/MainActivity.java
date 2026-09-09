@@ -7,10 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
+import com.murkfeatherstudio.questroll.databinding.ActivityMainBinding;
 import com.murkfeatherstudio.questroll.feature_ability.ui.AbilityListActivity;
 import com.murkfeatherstudio.questroll.feature_alignment.ui.AlignmentListActivity;
 import com.murkfeatherstudio.questroll.feature_background.ui.BackgroundListActivity;
@@ -37,41 +37,37 @@ import com.murkfeatherstudio.questroll.feature_tools.pdf.ui.PdfListActivity;
 
 /**
  * The main entry point of the application.
- * This activity coordinates navigation and hosts the global D&D calculator drawer.
  */
 public class MainActivity extends BaseActivity {
 
-    private DrawerLayout drawerLayout;
-    private View calculatorDrawer;
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        drawerLayout = findViewById(R.id.drawer_layout);
-        calculatorDrawer = findViewById(R.id.calculator_drawer);
-
-        // Initial drawer width set to 80% of the screen to make it more prominent
+        // Initial drawer width set to 80% of the screen
         setDrawerWidth(false);
 
-        findViewById(R.id.btnManageData).setOnClickListener(v -> showDataManagementDialog());
+        binding.btnManageData.setOnClickListener(v -> showDataManagementDialog());
     }
 
-    /**
-     * Resizes the calculator drawer width dynamically.
-     * @param fullScreen If true, covers 100% width. If false, covers 80% to ensure calculator is very visible.
-     */
+    @Override
     public void setDrawerWidth(boolean fullScreen) {
-        if (calculatorDrawer == null) return;
+        // JAVADOC: calculatorDrawerContainer is accessed via drawerBinding from BaseActivity
+        // because it belongs to the activity_base_drawer layout which wraps this activity.
+        if (drawerBinding == null || drawerBinding.calculatorDrawerContainer == null) return;
+        
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
         int width = fullScreen ? metrics.widthPixels : (int) (metrics.widthPixels * 0.8);
 
-        ViewGroup.LayoutParams params = calculatorDrawer.getLayoutParams();
+        ViewGroup.LayoutParams params = drawerBinding.calculatorDrawerContainer.getLayoutParams();
         params.width = width;
-        calculatorDrawer.setLayoutParams(params);
+        drawerBinding.calculatorDrawerContainer.setLayoutParams(params);
     }
 
     // ── NAVIGATION METHODS ──

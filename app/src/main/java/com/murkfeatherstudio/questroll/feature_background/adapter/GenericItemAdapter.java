@@ -10,6 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
+/**
+ * NOTE: This adapter uses the system layout 'android.R.layout.simple_list_item_1'.
+ * Since ViewBinding does not generate classes for Android system library resources,
+ * traditional findViewById(android.R.id.text1) is kept inside the ViewHolder.
+ */
 public class GenericItemAdapter<T> extends RecyclerView.Adapter<GenericItemAdapter.ViewHolder> {
     private final List<T> items = new ArrayList<>();
     private final Consumer<T> onRemove;

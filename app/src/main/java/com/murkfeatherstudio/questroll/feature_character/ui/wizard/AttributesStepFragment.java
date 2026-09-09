@@ -4,17 +4,26 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+
 import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.FragmentWizardAttributesBinding;
+import com.murkfeatherstudio.questroll.databinding.ItemAttributeEditorBinding;
+import com.murkfeatherstudio.questroll.databinding.ItemStandardAttributeBinding;
 import com.murkfeatherstudio.questroll.feature_character.engine.CharacterEngine;
 import com.murkfeatherstudio.questroll.feature_character.utils.AttributeGenerator;
 import com.murkfeatherstudio.questroll.feature_character.view_model.WizardViewModel;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -27,59 +36,47 @@ import java.util.List;
 public class AttributesStepFragment extends Fragment {
 
     private WizardViewModel viewModel;
-    private RadioGroup methodGroup;
-    private LinearLayout standardContainer, pointBuyContainer, rollContainer;
-    private TextView remainingPointsText, rollResultText, racialBonusText;
-    private Button rollButton, applyRollButton, resetButton;
+    private FragmentWizardAttributesBinding binding;
 
     private List<Integer> availableStandardValues = new ArrayList<>(Arrays.asList(15, 14, 13, 12, 10, 8));
-    private List<Spinner> standardSpinners = new ArrayList<>();
-    private List<ArrayAdapter<Object>> standardAdapters = new ArrayList<>();
     private List<Integer> rolledRaw = new ArrayList<>();
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_wizard_attributes, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentWizardAttributesBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(WizardViewModel.class);
 
-        methodGroup = view.findViewById(R.id.attr_method_group);
-        standardContainer = view.findViewById(R.id.attributes_standard_container);
-        pointBuyContainer = view.findViewById(R.id.attributes_pointbuy_container);
-        rollContainer = view.findViewById(R.id.attributes_roll_container);
-        remainingPointsText = view.findViewById(R.id.remaining_points_text);
-        rollResultText = view.findViewById(R.id.roll_result_text);
-        racialBonusText = view.findViewById(R.id.racial_bonus_text);
-        rollButton = view.findViewById(R.id.roll_button);
-        applyRollButton = view.findViewById(R.id.apply_roll_button);
-        resetButton = view.findViewById(R.id.reset_button);
-
-        Button nextButton = view.findViewById(R.id.next_button);
-        Button backButton = view.findViewById(R.id.back_button);
-
         String savedMethod = viewModel.attributeMethod;
-        if ("ROLL".equals(savedMethod)) methodGroup.check(R.id.radio_roll);
-        else if ("POINT_BUY".equals(savedMethod)) methodGroup.check(R.id.radio_point_buy);
-        else methodGroup.check(R.id.radio_standard);
+        if ("ROLL".equals(savedMethod)) binding.attrMethodGroup.check(R.id.radio_roll);
+        else if ("POINT_BUY".equals(savedMethod)) binding.attrMethodGroup.check(R.id.radio_point_buy);
+        else binding.attrMethodGroup.check(R.id.radio_standard);
 
-        methodGroup.setOnCheckedChangeListener((group, checkedId) -> {
+        binding.attrMethodGroup.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.radio_roll) switchToRollMethod();
             else if (checkedId == R.id.radio_point_buy) switchToPointBuyMethod();
             else switchToStandardMethod();
         });
 
-        rollResultText.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
-        rollResultText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        binding.rollResultText.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
+        binding.rollResultText.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
 
-        rollButton.setOnClickListener(v -> performRoll());
-        applyRollButton.setOnClickListener(v -> applyRolledValues());
-        resetButton.setOnClickListener(v -> resetStandardMethod());
+        binding.rollButton.setOnClickListener(v -> performRoll());
+        binding.applyRollButton.setOnClickListener(v -> applyRolledValues());
+        binding.resetButton.setOnClickListener(v -> resetStandardMethod());
 
-        nextButton.setOnClickListener(v -> {
+        binding.nextButton.setOnClickListener(v -> {
             // Calculate language bonus from INT
             int intScore = viewModel.attributes.get(3);
             int intMod = CharacterEngine.getAbilityModifier(intScore);
@@ -115,32 +112,34 @@ public class AttributesStepFragment extends Fragment {
                 viewModel.spellcastingAbilityMod = mod; // Can be negative in 5e
             }
 
-            int checkedId = methodGroup.getCheckedRadioButtonId();
+            int checkedId = binding.attrMethodGroup.getCheckedRadioButtonId();
             if (checkedId == R.id.radio_roll) viewModel.attributeMethod = "ROLL";
             else if (checkedId == R.id.radio_point_buy) viewModel.attributeMethod = "POINT_BUY";
             else viewModel.attributeMethod = "STANDARD";
             Navigation.findNavController(v).navigate(R.id.next_action);
         });
-        backButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.back_action));
+        binding.backButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.back_action));
 
         updateRacialBonusText();
 
-        int startId = methodGroup.getCheckedRadioButtonId();
+        int startId = binding.attrMethodGroup.getCheckedRadioButtonId();
         if (startId == R.id.radio_roll) switchToRollMethod();
         else if (startId == R.id.radio_point_buy) switchToPointBuyMethod();
         else switchToStandardMethod();
     }
 
     public void refreshAttributesWithRacialBonuses() {
+        if (binding == null) return;
         viewModel.recalcFinalAttributes();
         updateRacialBonusText();
-        int checkedId = methodGroup.getCheckedRadioButtonId();
+        int checkedId = binding.attrMethodGroup.getCheckedRadioButtonId();
         if (checkedId == R.id.radio_standard) refreshStandardUI();
         else if (checkedId == R.id.radio_point_buy) refreshPointBuyUI();
         else if (checkedId == R.id.radio_roll) refreshRollUI();
     }
 
     private void updateRacialBonusText() {
+        if (binding == null) return;
         List<Integer> bonuses = viewModel.racialBonuses;
         String[] names = {"STR", "DEX", "CON", "INT", "WIS", "CHA"};
         StringBuilder sb = new StringBuilder("Racial bonuses: ");
@@ -154,25 +153,25 @@ public class AttributesStepFragment extends Fragment {
             }
         }
         if (!hasBonus) sb.append("none");
-        racialBonusText.setText(sb.toString());
+        binding.racialBonusText.setText(sb.toString());
     }
 
     // ---------- Standard method ----------
     private void switchToStandardMethod() {
-        standardContainer.setVisibility(View.VISIBLE);
-        pointBuyContainer.setVisibility(View.GONE);
-        rollContainer.setVisibility(View.GONE);
-        remainingPointsText.setVisibility(View.GONE);
-        resetButton.setVisibility(View.VISIBLE);
+        if (binding == null) return;
+        binding.attributesStandardContainer.setVisibility(View.VISIBLE);
+        binding.attributesPointbuyContainer.setVisibility(View.GONE);
+        binding.attributesRollContainer.setVisibility(View.GONE);
+        binding.remainingPointsText.setVisibility(View.GONE);
+        binding.resetButton.setVisibility(View.VISIBLE);
         for (int i = 0; i < 6; i++) viewModel.baseAttributes.set(i, 0);
         viewModel.recalcFinalAttributes();
         refreshStandardUI();
     }
 
     private void refreshStandardUI() {
-        standardContainer.removeAllViews();
-        standardSpinners.clear();
-        standardAdapters.clear();
+        if (binding == null) return;
+        binding.attributesStandardContainer.removeAllViews();
         availableStandardValues = new ArrayList<>(Arrays.asList(15, 14, 13, 12, 10, 8));
         for (int val : viewModel.baseAttributes) {
             if (val != 0 && availableStandardValues.contains(val)) {
@@ -182,12 +181,10 @@ public class AttributesStepFragment extends Fragment {
         String[] attrNames = {"STR", "DEX", "CON", "INT", "WIS", "CHA"};
         for (int i = 0; i < attrNames.length; i++) {
             final int index = i;
-            View item = LayoutInflater.from(getContext()).inflate(R.layout.item_standard_attribute, standardContainer, false);
-            TextView label = item.findViewById(R.id.attr_label);
-            Spinner spinner = item.findViewById(R.id.attr_spinner);
-            label.setText(attrNames[index]);
-            label.setTypeface(ResourcesCompat.getFont(getContext(), R.font.cinzel_semibold));
-            label.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+            ItemStandardAttributeBinding itemBinding = ItemStandardAttributeBinding.inflate(getLayoutInflater(), binding.attributesStandardContainer, false);
+            itemBinding.attrLabel.setText(attrNames[index]);
+            itemBinding.attrLabel.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.cinzel_semibold));
+            itemBinding.attrLabel.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
 
             List<Object> displayList = new ArrayList<>();
             displayList.add("— Choose —");
@@ -198,7 +195,7 @@ public class AttributesStepFragment extends Fragment {
                 Collections.sort(displayList.subList(1, displayList.size()), (a, b) -> ((Integer) b).compareTo((Integer) a));
             }
 
-            ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(getContext(), android.R.layout.simple_spinner_item, displayList) {
+            ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(requireContext(), android.R.layout.simple_spinner_item, displayList) {
                 @NonNull
                 @Override
                 public View getView(int position, View convertView, @NonNull ViewGroup parent) {
@@ -206,7 +203,7 @@ public class AttributesStepFragment extends Fragment {
                     Object item = getItem(position);
                     if (item instanceof Integer) view.setText(String.valueOf(item));
                     else view.setText((String) item);
-                    view.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                    view.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
                     view.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                     return view;
                 }
@@ -217,23 +214,23 @@ public class AttributesStepFragment extends Fragment {
                     Object item = getItem(position);
                     if (item instanceof Integer) view.setText(String.valueOf(item));
                     else view.setText((String) item);
-                    view.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                    view.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
                     view.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                     return view;
                 }
             };
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner.setAdapter(adapter);
+            itemBinding.attrSpinner.setAdapter(adapter);
 
             if (currentBase != 0) {
                 int pos = displayList.indexOf(currentBase);
-                if (pos >= 0) spinner.setSelection(pos, false);
-                else spinner.setSelection(0, false);
+                if (pos >= 0) itemBinding.attrSpinner.setSelection(pos, false);
+                else itemBinding.attrSpinner.setSelection(0, false);
             } else {
-                spinner.setSelection(0, false);
+                itemBinding.attrSpinner.setSelection(0, false);
             }
 
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            itemBinding.attrSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     Object selected = parent.getItemAtPosition(position);
@@ -265,14 +262,12 @@ public class AttributesStepFragment extends Fragment {
                 public void onNothingSelected(AdapterView<?> parent) {
                 }
             });
-            standardContainer.addView(item);
-            standardSpinners.add(spinner);
-            standardAdapters.add(adapter);
+            binding.attributesStandardContainer.addView(itemBinding.getRoot());
         }
     }
 
     private void resetStandardMethod() {
-        if (methodGroup.getCheckedRadioButtonId() == R.id.radio_standard) {
+        if (binding != null && binding.attrMethodGroup.getCheckedRadioButtonId() == R.id.radio_standard) {
             for (int i = 0; i < 6; i++) viewModel.baseAttributes.set(i, 0);
             viewModel.recalcFinalAttributes();
             refreshStandardUI();
@@ -282,51 +277,49 @@ public class AttributesStepFragment extends Fragment {
 
     // ---------- Point Buy method ----------
     private void switchToPointBuyMethod() {
-        standardContainer.setVisibility(View.GONE);
-        pointBuyContainer.setVisibility(View.VISIBLE);
-        rollContainer.setVisibility(View.GONE);
-        remainingPointsText.setVisibility(View.VISIBLE);
-        resetButton.setVisibility(View.GONE);
+        if (binding == null) return;
+        binding.attributesStandardContainer.setVisibility(View.GONE);
+        binding.attributesPointbuyContainer.setVisibility(View.VISIBLE);
+        binding.attributesRollContainer.setVisibility(View.GONE);
+        binding.remainingPointsText.setVisibility(View.VISIBLE);
+        binding.resetButton.setVisibility(View.GONE);
         for (int i = 0; i < 6; i++) viewModel.baseAttributes.set(i, 8);
         viewModel.recalcFinalAttributes();
         refreshPointBuyUI();
     }
 
     private void refreshPointBuyUI() {
-        pointBuyContainer.removeAllViews();
+        if (binding == null) return;
+        binding.attributesPointbuyContainer.removeAllViews();
         String[] names = {"STR", "DEX", "CON", "INT", "WIS", "CHA"};
         for (int i = 0; i < names.length; i++) {
             final int index = i;
-            View item = LayoutInflater.from(getContext()).inflate(R.layout.item_attribute_editor, pointBuyContainer, false);
-            TextView label = item.findViewById(R.id.attr_label);
-            TextView valueView = item.findViewById(R.id.attr_value);
-            Button btnMinus = item.findViewById(R.id.btn_minus);
-            Button btnPlus = item.findViewById(R.id.btn_plus);
-            TextView costHint = new TextView(getContext());
+            ItemAttributeEditorBinding itemBinding = ItemAttributeEditorBinding.inflate(getLayoutInflater(), binding.attributesPointbuyContainer, false);
+            TextView costHint = new TextView(requireContext());
             costHint.setTextSize(12);
             costHint.setPadding((8), 0, 0, 0);
-            costHint.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+            costHint.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
             costHint.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
-            ((LinearLayout) item).addView(costHint);
+            itemBinding.getRoot().addView(costHint);
 
-            label.setText(names[index]);
-            label.setTypeface(ResourcesCompat.getFont(getContext(), R.font.cinzel_semibold));
-            label.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+            itemBinding.attrLabel.setText(names[index]);
+            itemBinding.attrLabel.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.cinzel_semibold));
+            itemBinding.attrLabel.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
 
             int currentBase = viewModel.baseAttributes.get(index);
-            valueView.setText(String.valueOf(currentBase));
-            valueView.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
-            valueView.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+            itemBinding.attrValue.setText(String.valueOf(currentBase));
+            itemBinding.attrValue.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
+            itemBinding.attrValue.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
             updateCostHint(costHint, currentBase, currentBase);
 
-            btnMinus.setOnClickListener(v -> {
+            itemBinding.btnMinus.setOnClickListener(v -> {
                 int oldVal = viewModel.baseAttributes.get(index);
                 if (oldVal > 8) {
                     int newVal = oldVal - 1;
                     if (isPointBuyValid(index, newVal)) {
                         viewModel.baseAttributes.set(index, newVal);
                         viewModel.recalcFinalAttributes();
-                        valueView.setText(String.valueOf(newVal));
+                        itemBinding.attrValue.setText(String.valueOf(newVal));
                         updateCostHint(costHint, newVal, oldVal);
                         updateRemainingPoints();
                     } else {
@@ -334,14 +327,14 @@ public class AttributesStepFragment extends Fragment {
                     }
                 }
             });
-            btnPlus.setOnClickListener(v -> {
+            itemBinding.btnPlus.setOnClickListener(v -> {
                 int oldVal = viewModel.baseAttributes.get(index);
                 if (oldVal < 15) {
                     int newVal = oldVal + 1;
                     if (isPointBuyValid(index, newVal)) {
                         viewModel.baseAttributes.set(index, newVal);
                         viewModel.recalcFinalAttributes();
-                        valueView.setText(String.valueOf(newVal));
+                        itemBinding.attrValue.setText(String.valueOf(newVal));
                         updateCostHint(costHint, newVal, oldVal);
                         updateRemainingPoints();
                     } else {
@@ -351,7 +344,7 @@ public class AttributesStepFragment extends Fragment {
                     Toast.makeText(getContext(), "Maximum 15", Toast.LENGTH_SHORT).show();
                 }
             });
-            pointBuyContainer.addView(item);
+            binding.attributesPointbuyContainer.addView(itemBinding.getRoot());
         }
         updateRemainingPoints();
     }
@@ -375,22 +368,24 @@ public class AttributesStepFragment extends Fragment {
     }
 
     private void updateRemainingPoints() {
+        if (binding == null) return;
         int totalCost = 0;
         for (int i = 0; i < 6; i++) {
             totalCost += AttributeGenerator.getPointCost(viewModel.baseAttributes.get(i));
         }
         int remaining = 27 - totalCost;
-        remainingPointsText.setText("Remaining points: " + remaining);
-        remainingPointsText.setTextColor(remaining < 0 ? 0xFFFF0000 : 0xFF000000);
+        binding.remainingPointsText.setText("Remaining points: " + remaining);
+        binding.remainingPointsText.setTextColor(remaining < 0 ? 0xFFFF0000 : 0xFF000000);
     }
 
     // ---------- Roll method ----------
     private void switchToRollMethod() {
-        standardContainer.setVisibility(View.GONE);
-        pointBuyContainer.setVisibility(View.GONE);
-        rollContainer.setVisibility(View.VISIBLE);
-        remainingPointsText.setVisibility(View.GONE);
-        resetButton.setVisibility(View.GONE);
+        if (binding == null) return;
+        binding.attributesStandardContainer.setVisibility(View.GONE);
+        binding.attributesPointbuyContainer.setVisibility(View.GONE);
+        binding.attributesRollContainer.setVisibility(View.VISIBLE);
+        binding.remainingPointsText.setVisibility(View.GONE);
+        binding.resetButton.setVisibility(View.GONE);
         if (rolledRaw.isEmpty()) performRoll();
         else displayRolledValues();
         refreshRollUI();
@@ -402,9 +397,10 @@ public class AttributesStepFragment extends Fragment {
     }
 
     private void displayRolledValues() {
+        if (binding == null) return;
         StringBuilder sb = new StringBuilder("Rolled values:\n");
         for (int v : rolledRaw) sb.append(v).append(" ");
-        rollResultText.setText(sb.toString());
+        binding.rollResultText.setText(sb.toString());
     }
 
     private void applyRolledValues() {
@@ -419,18 +415,17 @@ public class AttributesStepFragment extends Fragment {
     }
 
     private void refreshRollUI() {
-        LinearLayout preview = getView().findViewById(R.id.roll_preview_container);
-        if (preview == null) return;
-        preview.removeAllViews();
+        if (binding == null || binding.rollPreviewContainer == null) return;
+        binding.rollPreviewContainer.removeAllViews();
         String[] names = {"STR", "DEX", "CON", "INT", "WIS", "CHA"};
         List<Integer> finalAttrs = viewModel.attributes;
         for (int i = 0; i < names.length; i++) {
-            TextView tv = new TextView(getContext());
+            TextView tv = new TextView(requireContext());
             tv.setText(names[i] + ": " + finalAttrs.get(i));
-            tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+            tv.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
             tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
             tv.setPadding(0, (4), 0, (4));
-            preview.addView(tv);
+            binding.rollPreviewContainer.addView(tv);
         }
     }
 }

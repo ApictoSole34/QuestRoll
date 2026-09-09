@@ -2,22 +2,24 @@ package com.murkfeatherstudio.questroll.feature_item.weapon_property.ui;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.feature_document.fragment.DocumentDetailDialogFragment;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.models.open5e.weapon_property.WeaponPropertyDao;
 import com.murkfeatherstudio.questroll.core.models.open5e.weapon_property.WeaponPropertyEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityWeaponPropertyDetailBinding;
 
 public class WeaponPropertyDetailActivity extends BaseActivity {
+
+    private ActivityWeaponPropertyDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_weapon_property_detail);
+        binding = ActivityWeaponPropertyDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         String key = getIntent().getStringExtra("PROPERTY_KEY");
         String name = getIntent().getStringExtra("PROPERTY_NAME");
@@ -48,38 +50,35 @@ public class WeaponPropertyDetailActivity extends BaseActivity {
     }
 
     private void populateUI(WeaponPropertyEntity p) {
-        ((TextView) findViewById(R.id.tv_name)).setText(p.name);
-        ((TextView) findViewById(R.id.tv_type)).setText(p.type != null ? p.type : "Property");
-        ((TextView) findViewById(R.id.tv_desc)).setText(p.desc != null ? p.desc : "");
+        binding.tvName.setText(p.name);
+        binding.tvType.setText(p.type != null ? p.type : "Property");
+        binding.tvDesc.setText(p.desc != null ? p.desc : "");
 
-        TextView tvSource = findViewById(R.id.tv_source);
-        if (tvSource != null) {
-            String sourceDisplay = "Source: ";
-            String docKey;
-            if (p.document != null && !p.document.isEmpty()) {
-                docKey = extractKeyFromUrl(p.document);
-                String displayName = formatDocumentName(docKey);
-                sourceDisplay += displayName;
-            } else {
-                docKey = null;
-                sourceDisplay += "Unknown";
-            }
-            tvSource.setText(sourceDisplay);
-            tvSource.setVisibility(View.VISIBLE);
-            tvSource.setClickable(true);
-            tvSource.setFocusable(true);
-            tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
-            tvSource.setOnClickListener(v -> {
-                if (docKey != null && !docKey.isEmpty()) {
-                    DocumentDetailDialogFragment fragment = DocumentDetailDialogFragment.newInstance(docKey);
-                    fragment.show(getSupportFragmentManager(), "document_detail");
-                } else {
-                    Toast.makeText(this, "Document key not available", Toast.LENGTH_SHORT).show();
-                }
-            });
+        String sourceDisplay = "Source: ";
+        String docKey;
+        if (p.document != null && !p.document.isEmpty()) {
+            docKey = extractKeyFromUrl(p.document);
+            String displayName = formatDocumentName(docKey);
+            sourceDisplay += displayName;
+        } else {
+            docKey = null;
+            sourceDisplay += "Unknown";
         }
+        binding.tvSource.setText(sourceDisplay);
+        binding.tvSource.setVisibility(View.VISIBLE);
+        binding.tvSource.setClickable(true);
+        binding.tvSource.setFocusable(true);
+        binding.tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
+        binding.tvSource.setOnClickListener(v -> {
+            if (docKey != null && !docKey.isEmpty()) {
+                DocumentDetailDialogFragment fragment = DocumentDetailDialogFragment.newInstance(docKey);
+                fragment.show(getSupportFragmentManager(), "document_detail");
+            } else {
+                Toast.makeText(this, "Document key not available", Toast.LENGTH_SHORT).show();
+            }
+        });
 
-        findViewById(R.id.btnManage).setVisibility(View.GONE);
+        binding.btnManage.setVisibility(View.GONE);
     }
 
     private String extractKeyFromUrl(String url) {

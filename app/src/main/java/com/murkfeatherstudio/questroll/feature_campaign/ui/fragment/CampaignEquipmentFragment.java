@@ -7,13 +7,13 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -25,6 +25,8 @@ import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.models.character.CharacterWithRelations;
 import com.murkfeatherstudio.questroll.core.models.character.InventoryItemEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.item.ItemEntity;
+import com.murkfeatherstudio.questroll.databinding.FragmentCampaignEquipmentBinding;
+import com.murkfeatherstudio.questroll.databinding.DialogQuickGoldBinding;
 import com.murkfeatherstudio.questroll.feature_campaign.adapter.InventoryItemAdapter;
 import com.murkfeatherstudio.questroll.feature_campaign.view_model.CampaignDetailViewModel;
 
@@ -39,15 +41,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Equipment tab of the campaign character sheet: shows the assigned character's gold,
- * effective AC and inventory, and lets the player buy items, receive loot from the DM,
- * manage what's equipped in which slot, and inspect item details.
+ * Equipment tab of the campaign character sheet.
  */
 public class CampaignEquipmentFragment extends Fragment {
 
     private static final String ARG_CAMPAIGN_ID = "campaign_id";
 
-    /** Slot keys understood by {@link InventoryItemAdapter} / equip UI, in display order. */
     private static final String[] SLOT_KEYS = {
             "body", "main_hand", "off_hand", "head", "neck",
             "cloak", "hands", "ring_left", "ring_right", "waist", "feet"
@@ -61,10 +60,8 @@ public class CampaignEquipmentFragment extends Fragment {
     private CampaignDetailViewModel viewModel;
     private InventoryItemAdapter inventoryAdapter;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private FragmentCampaignEquipmentBinding binding;
 
-    private TextView tvNoCharacter, tvEmptyInventory, tvAcValue, tvGold, tvTotalWeight;
-    private View cardSlots, cardBackpack, cardGold;
-    
     private final Map<String, TextView> slotTextViews = new HashMap<>();
     private final Map<String, View> slotRows = new HashMap<>();
     private final Map<String, ImageButton> slotInfoButtons = new HashMap<>();
@@ -87,82 +84,110 @@ public class CampaignEquipmentFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_campaign_equipment, container, false);
+        binding = FragmentCampaignEquipmentBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        bindViews(view);
-        setupRecyclerView(view);
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
 
-        view.findViewById(R.id.layout_gold_click).setOnClickListener(v -> showQuickGoldDialog());
-        view.findViewById(R.id.btn_add_item_inline).setOnClickListener(v -> openShopDialog());
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        initSlotMappings();
+        setupRecyclerView();
+
+        binding.layoutGoldClick.setOnClickListener(v -> showQuickGoldDialog());
+        binding.btnAddItemInline.setOnClickListener(v -> openShopDialog());
 
         viewModel.characterWithRelations.observe(getViewLifecycleOwner(), this::onInventoryChanged);
         viewModel.getEffectiveAc().observe(getViewLifecycleOwner(), ac -> {
-            tvAcValue.setText("AC: " + (ac != null ? ac : "—"));
+            binding.tvAcValue.setText("AC: " + (ac != null ? ac : "—"));
         });
     }
 
-    private void bindViews(View v) {
-        tvNoCharacter = v.findViewById(R.id.tv_no_character);
-        cardGold = v.findViewById(R.id.card_gold);
-        cardSlots = v.findViewById(R.id.card_slots);
-        cardBackpack = v.findViewById(R.id.card_backpack);
-        tvGold = v.findViewById(R.id.tv_gold);
-        tvAcValue = v.findViewById(R.id.tv_ac_value);
-        tvEmptyInventory = v.findViewById(R.id.tv_empty_inventory);
-        tvTotalWeight = v.findViewById(R.id.tv_total_weight);
+    /**
+     * JAVADOC: This method manually maps View Binding fields to helper Maps.
+     * Traditional loop with findViewById(resId) was replaced with direct binding references 
+     * to ensure type safety and better performance, while still allowing the fragment 
+     * to manage equipment slots generically via keys.
+     */
+    private void initSlotMappings() {
+        slotRows.put("body", binding.rowSlotBody);
+        slotTextViews.put("body", binding.tvSlotBody);
+        slotInfoButtons.put("body", binding.btnSlotBodyInfo);
 
-        // Bind slots
-        bindSlot(v, "body", R.id.row_slot_body, R.id.tv_slot_body, R.id.btn_slot_body_info);
-        bindSlot(v, "main_hand", R.id.row_slot_main_hand, R.id.tv_slot_main_hand, R.id.btn_slot_main_hand_info);
-        bindSlot(v, "off_hand", R.id.row_slot_off_hand, R.id.tv_slot_off_hand, R.id.btn_slot_off_hand_info);
-        bindSlot(v, "head", R.id.row_slot_head, R.id.tv_slot_head, R.id.btn_slot_head_info);
-        bindSlot(v, "neck", R.id.row_slot_neck, R.id.tv_slot_neck, R.id.btn_slot_neck_info);
-        bindSlot(v, "cloak", R.id.row_slot_cloak, R.id.tv_slot_cloak, R.id.btn_slot_cloak_info);
-        bindSlot(v, "hands", R.id.row_slot_hands, R.id.tv_slot_hands, R.id.btn_slot_hands_info);
-        bindSlot(v, "ring_left", R.id.row_slot_ring_left, R.id.tv_slot_ring_left, R.id.btn_slot_ring_left_info);
-        bindSlot(v, "ring_right", R.id.row_slot_ring_right, R.id.tv_slot_ring_right, R.id.btn_slot_ring_right_info);
-        bindSlot(v, "waist", R.id.row_slot_waist, R.id.tv_slot_waist, R.id.btn_slot_waist_info);
-        bindSlot(v, "feet", R.id.row_slot_feet, R.id.tv_slot_feet, R.id.btn_slot_feet_info);
+        slotRows.put("main_hand", binding.rowSlotMainHand);
+        slotTextViews.put("main_hand", binding.tvSlotMainHand);
+        slotInfoButtons.put("main_hand", binding.btnSlotMainHandInfo);
+
+        slotRows.put("off_hand", binding.rowSlotOffHand);
+        slotTextViews.put("off_hand", binding.tvSlotOffHand);
+        slotInfoButtons.put("off_hand", binding.btnSlotOffHandInfo);
+
+        slotRows.put("head", binding.rowSlotHead);
+        slotTextViews.put("head", binding.tvSlotHead);
+        slotInfoButtons.put("head", binding.btnSlotHeadInfo);
+
+        slotRows.put("neck", binding.rowSlotNeck);
+        slotTextViews.put("neck", binding.tvSlotNeck);
+        slotInfoButtons.put("neck", binding.btnSlotNeckInfo);
+
+        slotRows.put("cloak", binding.rowSlotCloak);
+        slotTextViews.put("cloak", binding.tvSlotCloak);
+        slotInfoButtons.put("cloak", binding.btnSlotCloakInfo);
+
+        slotRows.put("hands", binding.rowSlotHands);
+        slotTextViews.put("hands", binding.tvSlotHands);
+        slotInfoButtons.put("hands", binding.btnSlotHandsInfo);
+
+        slotRows.put("ring_left", binding.rowSlotRingLeft);
+        slotTextViews.put("ring_left", binding.tvSlotRingLeft);
+        slotInfoButtons.put("ring_left", binding.btnSlotRingLeftInfo);
+
+        slotRows.put("ring_right", binding.rowSlotRingRight);
+        slotTextViews.put("ring_right", binding.tvSlotRingRight);
+        slotInfoButtons.put("ring_right", binding.btnSlotRingRightInfo);
+
+        slotRows.put("waist", binding.rowSlotWaist);
+        slotTextViews.put("waist", binding.tvSlotWaist);
+        slotInfoButtons.put("waist", binding.btnSlotWaistInfo);
+
+        slotRows.put("feet", binding.rowSlotFeet);
+        slotTextViews.put("feet", binding.tvSlotFeet);
+        slotInfoButtons.put("feet", binding.btnSlotFeetInfo);
     }
 
-    private void bindSlot(View v, String key, int rowId, int textId, int infoBtnId) {
-        slotRows.put(key, v.findViewById(rowId));
-        slotTextViews.put(key, v.findViewById(textId));
-        slotInfoButtons.put(key, v.findViewById(infoBtnId));
-    }
-
-    private void setupRecyclerView(View view) {
-        RecyclerView rv = view.findViewById(R.id.rv_inventory);
-        rv.setLayoutManager(new LinearLayoutManager(requireContext()));
+    private void setupRecyclerView() {
+        binding.rvInventory.setLayoutManager(new LinearLayoutManager(requireContext()));
         inventoryAdapter = new InventoryItemAdapter(new InventoryItemAdapter.OnItemClickListener() {
             @Override public void onItemClick(InventoryItemEntity item) { showItemDialog(item); }
             @Override public void onItemDetailsClick(InventoryItemEntity item) { showItemDetailsDialog(item); }
         });
-        rv.setAdapter(inventoryAdapter);
+        binding.rvInventory.setAdapter(inventoryAdapter);
     }
 
     private void onInventoryChanged(CharacterWithRelations cwr) {
         if (cwr == null || cwr.character == null) {
-            tvNoCharacter.setVisibility(View.VISIBLE);
-            cardGold.setVisibility(View.GONE);
-            cardSlots.setVisibility(View.GONE);
-            cardBackpack.setVisibility(View.GONE);
+            binding.tvNoCharacter.setVisibility(View.VISIBLE);
+            binding.cardGold.setVisibility(View.GONE);
+            binding.cardSlots.setVisibility(View.GONE);
+            binding.cardBackpack.setVisibility(View.GONE);
             return;
         }
 
-        tvNoCharacter.setVisibility(View.GONE);
-        cardGold.setVisibility(View.VISIBLE);
-        cardSlots.setVisibility(View.VISIBLE);
-        cardBackpack.setVisibility(View.VISIBLE);
+        binding.tvNoCharacter.setVisibility(View.GONE);
+        binding.cardGold.setVisibility(View.VISIBLE);
+        binding.cardSlots.setVisibility(View.VISIBLE);
+        binding.cardBackpack.setVisibility(View.VISIBLE);
 
-        tvGold.setText(String.format("%.1f gp", cwr.character.currentGold));
+        binding.tvGold.setText(String.format("%.1f gp", cwr.character.currentGold));
         List<InventoryItemEntity> inventory = cwr.inventory != null ? cwr.inventory : new ArrayList<>();
         inventoryAdapter.setItems(inventory);
-        tvEmptyInventory.setVisibility(inventory.isEmpty() ? View.VISIBLE : View.GONE);
+        binding.tvEmptyInventory.setVisibility(inventory.isEmpty() ? View.VISIBLE : View.GONE);
 
         updateSlots(inventory);
         updateTotalWeight(inventory);
@@ -200,30 +225,28 @@ public class CampaignEquipmentFragment extends Fragment {
         for (InventoryItemEntity item : inventory) {
             total += (item.customWeight * item.quantity);
         }
-        if (tvTotalWeight != null) {
-            tvTotalWeight.setText(String.format("Total Weight: %.1f lb", total));
+        if (binding != null) {
+            binding.tvTotalWeight.setText(String.format("Total Weight: %.1f lb", total));
         }
     }
 
     private void showQuickGoldDialog() {
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_quick_gold, null);
-        TextView tvSign = dialogView.findViewById(R.id.tv_gold_sign);
-        EditText etAmount = dialogView.findViewById(R.id.et_gold_amount);
+        DialogQuickGoldBinding dialogBinding = DialogQuickGoldBinding.inflate(getLayoutInflater());
 
         final boolean[] isAddition = {true};
 
-        tvSign.setOnClickListener(v -> {
+        dialogBinding.tvGoldSign.setOnClickListener(v -> {
             isAddition[0] = !isAddition[0];
-            tvSign.setText(isAddition[0] ? "+" : "−");
-            tvSign.setTextColor(isAddition[0] ? 0xFF388E3C : 0xFFD32F2F);
+            dialogBinding.tvGoldSign.setText(isAddition[0] ? "+" : "−");
+            dialogBinding.tvGoldSign.setTextColor(isAddition[0] ? 0xFF388E3C : 0xFFD32F2F);
         });
 
         new AlertDialog.Builder(requireContext())
                 .setTitle("Adjust Gold")
-                .setView(dialogView)
+                .setView(dialogBinding.getRoot())
                 .setPositiveButton("Apply", (d, w) -> {
                     try {
-                        float amount = Float.parseFloat(etAmount.getText().toString().trim());
+                        float amount = Float.parseFloat(dialogBinding.etGoldAmount.getText().toString().trim());
                         if (!isAddition[0]) amount = -amount;
                         viewModel.adjustGold(amount);
                     } catch (Exception ignored) {}
@@ -322,15 +345,12 @@ public class CampaignEquipmentFragment extends Fragment {
     }
 
     private void showCatalogItemPickerDialog(boolean isBuy) {
-        View dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_item_shop, null);
-        EditText etSearch = dialogView.findViewById(R.id.et_shop_search);
-        TextView tvLoading = dialogView.findViewById(R.id.tv_shop_loading);
-        RecyclerView rv = dialogView.findViewById(R.id.rv_shop_items);
-        rv.setLayoutManager(new LinearLayoutManager(requireContext()));
+        com.murkfeatherstudio.questroll.databinding.DialogItemShopBinding shopBinding = com.murkfeatherstudio.questroll.databinding.DialogItemShopBinding.inflate(getLayoutInflater());
+        shopBinding.rvShopItems.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         AlertDialog dialog = new AlertDialog.Builder(requireContext())
                 .setTitle(isBuy ? "Buy item" : "Add loot")
-                .setView(dialogView)
+                .setView(shopBinding.getRoot())
                 .setNegativeButton("Cancel", null)
                 .create();
 
@@ -338,19 +358,19 @@ public class CampaignEquipmentFragment extends Fragment {
             dialog.dismiss();
             promptQuantityAndAdd(chosen, isBuy);
         });
-        rv.setAdapter(adapter);
+        shopBinding.rvShopItems.setAdapter(adapter);
 
         executor.execute(() -> {
             String gameSystem = viewModel.getCurrentGameSystem();
             List<ItemEntity> items = Open5eDatabase.getInstance(requireContext()).itemDao().getAllByGameSystem(gameSystem);
             if (!isAdded()) return;
             requireActivity().runOnUiThread(() -> {
-                tvLoading.setVisibility(View.GONE);
+                shopBinding.tvShopLoading.setVisibility(View.GONE);
                 adapter.setAllItems(items);
             });
         });
 
-        etSearch.addTextChangedListener(new TextWatcher() {
+        shopBinding.etShopSearch.addTextChangedListener(new TextWatcher() {
             @Override public void beforeTextChanged(CharSequence s, int a, int b, int c) {}
             @Override public void onTextChanged(CharSequence s, int a, int b, int c) { adapter.filter(s.toString()); }
             @Override public void afterTextChanged(Editable s) {}
@@ -439,33 +459,32 @@ public class CampaignEquipmentFragment extends Fragment {
         @NonNull
         @Override
         public VH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_search_row, parent, false);
-            return new VH(v);
+            com.murkfeatherstudio.questroll.databinding.ItemSearchRowBinding itemBinding = 
+                com.murkfeatherstudio.questroll.databinding.ItemSearchRowBinding.inflate(
+                    LayoutInflater.from(parent.getContext()), parent, false);
+            return new VH(itemBinding);
         }
 
         @Override
         public void onBindViewHolder(@NonNull VH h, int pos) {
             ItemEntity item = shown.get(pos);
-            h.name.setText(item.name);
-            h.desc.setText(isBuy
+            h.itemBinding.itemName.setText(item.name);
+            h.itemBinding.itemDesc.setText(isBuy
                     ? String.format("%.1f gp • %.1f lb", item.cost, item.weight)
                     : String.format("%.1f lb", item.weight));
-            h.select.setText(isBuy ? "Buy" : "Get");
-            h.select.setOnClickListener(v -> onPick.onPick(item));
+            h.itemBinding.selectButton.setText(isBuy ? "Buy" : "Get");
+            h.itemBinding.selectButton.setOnClickListener(v -> onPick.onPick(item));
         }
 
         @Override
         public int getItemCount() { return shown.size(); }
 
         static class VH extends RecyclerView.ViewHolder {
-            TextView name, desc;
-            Button select;
+            final com.murkfeatherstudio.questroll.databinding.ItemSearchRowBinding itemBinding;
 
-            VH(View v) {
-                super(v);
-                name = v.findViewById(R.id.item_name);
-                desc = v.findViewById(R.id.item_desc);
-                select = v.findViewById(R.id.select_button);
+            VH(com.murkfeatherstudio.questroll.databinding.ItemSearchRowBinding itemBinding) {
+                super(itemBinding.getRoot());
+                this.itemBinding = itemBinding;
             }
         }
     }

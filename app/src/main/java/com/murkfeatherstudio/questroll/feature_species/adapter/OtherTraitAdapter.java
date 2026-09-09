@@ -1,15 +1,13 @@
 package com.murkfeatherstudio.questroll.feature_species.adapter;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_creature.CustomCreatureAction;
+import com.murkfeatherstudio.questroll.databinding.ItemOtherTraitBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,29 +33,28 @@ public class OtherTraitAdapter extends RecyclerView.Adapter<OtherTraitAdapter.Vi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_other_trait, parent, false);
-        return new ViewHolder(view);
+        ItemOtherTraitBinding binding = ItemOtherTraitBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         CustomCreatureAction item = items.get(position);
-        holder.tvName.setText(item.name);
-        holder.tvDesc.setText(item.desc);
-        holder.btnDelete.setOnClickListener(v -> removeListener.onRemove(position));
+        holder.binding.tvTraitName.setText(item.name);
+        holder.binding.tvTraitDesc.setText(item.desc);
+        holder.binding.btnDelete.setOnClickListener(v -> removeListener.onRemove(position));
     }
 
     @Override
     public int getItemCount() { return items.size(); }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvDesc;
-        View btnDelete;
-        ViewHolder(View itemView) {
-            super(itemView);
-            tvName = itemView.findViewById(R.id.tv_trait_name);
-            tvDesc = itemView.findViewById(R.id.tv_trait_desc);
-            btnDelete = itemView.findViewById(R.id.btn_delete);
+        final ItemOtherTraitBinding binding;
+
+        ViewHolder(ItemOtherTraitBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }

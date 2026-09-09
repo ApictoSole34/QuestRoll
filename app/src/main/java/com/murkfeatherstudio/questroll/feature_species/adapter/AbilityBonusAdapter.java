@@ -1,14 +1,12 @@
 package com.murkfeatherstudio.questroll.feature_species.adapter;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.ItemAbilityBonusBinding;
 import com.murkfeatherstudio.questroll.feature_species.viewmodel.CustomSpeciesCreateViewModel;
 
 import java.util.ArrayList;
@@ -35,29 +33,28 @@ public class AbilityBonusAdapter extends RecyclerView.Adapter<AbilityBonusAdapte
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_ability_bonus, parent, false);
-        return new ViewHolder(view);
+        ItemAbilityBonusBinding binding = ItemAbilityBonusBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         CustomSpeciesCreateViewModel.AbilityBonus item = items.get(position);
-        holder.tvAbility.setText(item.ability);
-        holder.tvBonus.setText("+" + item.bonus);
-        holder.btnDelete.setOnClickListener(v -> removeListener.onRemove(position));
+        holder.binding.tvAbility.setText(item.ability);
+        holder.binding.tvBonus.setText("+" + item.bonus);
+        holder.binding.btnDelete.setOnClickListener(v -> removeListener.onRemove(position));
     }
 
     @Override
     public int getItemCount() { return items.size(); }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvAbility, tvBonus;
-        View btnDelete;
-        ViewHolder(View itemView) {
-            super(itemView);
-            tvAbility = itemView.findViewById(R.id.tv_ability);
-            tvBonus = itemView.findViewById(R.id.tv_bonus);
-            btnDelete = itemView.findViewById(R.id.btn_delete);
+        final ItemAbilityBonusBinding binding;
+
+        ViewHolder(ItemAbilityBonusBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }

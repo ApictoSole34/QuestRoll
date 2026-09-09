@@ -4,13 +4,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -22,6 +21,7 @@ import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_ability.CustomSkillEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.ability.skill.SkillEntity;
+import com.murkfeatherstudio.questroll.databinding.FragmentWizardSkillsBinding;
 import com.murkfeatherstudio.questroll.feature_character.view_model.WizardViewModel;
 
 import java.util.ArrayList;
@@ -34,8 +34,7 @@ import java.util.Set;
 public class SkillsStepFragment extends Fragment {
 
     private WizardViewModel viewModel;
-    private LinearLayout container;
-    private Button nextButton, backButton;
+    private FragmentWizardSkillsBinding binding;
     private List<Object> allSkills = new ArrayList<>();
     private List<CheckBox> checkBoxes = new ArrayList<>();
     private int maxSelections = 0;
@@ -43,18 +42,21 @@ public class SkillsStepFragment extends Fragment {
     private Set<String> allowedSkillNames = new HashSet<>();
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_wizard_skills, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentWizardSkillsBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(WizardViewModel.class);
-
-        container = view.findViewById(R.id.skills_container);
-        nextButton = view.findViewById(R.id.next_button);
-        backButton = view.findViewById(R.id.back_button);
 
         alreadyKnown.addAll(viewModel.backgroundSkillProficiencies);
         maxSelections = viewModel.classSkillChoices;
@@ -64,7 +66,7 @@ public class SkillsStepFragment extends Fragment {
 
         loadSkills();
 
-        nextButton.setOnClickListener(v -> {
+        binding.nextButton.setOnClickListener(v -> {
             viewModel.chosenSkillProficiencies.clear();
             for (int i = 0; i < checkBoxes.size(); i++) {
                 if (checkBoxes.get(i).isChecked()) {
@@ -80,9 +82,16 @@ public class SkillsStepFragment extends Fragment {
             }
             Navigation.findNavController(v).navigate(R.id.next_action);
         });
-        backButton.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
+        binding.backButton.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
     }
 
+    /**
+     * JAVADOC: skillsContainer is a dynamic layout populated at runtime.
+     * We use addView() to insert TextViews for known skills and CheckBoxes 
+     * for selectable skills. Since these views are generated programmatically 
+     * based on database content and are not defined in the XML, 
+     * View Binding cannot be used to reference them.
+     */
     private void loadSkills() {
         AppExecutors.getInstance().diskIO().execute(() -> {
             if (!isAdded()) return;
@@ -120,41 +129,41 @@ public class SkillsStepFragment extends Fragment {
             });
 
             AppExecutors.getInstance().mainThread().execute(() -> {
-                if (!isAdded()) return;
-                container.removeAllViews();
+                if (!isAdded() || binding == null) return;
+                binding.skillsContainer.removeAllViews();
                 checkBoxes.clear();
 
                 TextView knownHeader = new TextView(getContext());
                 knownHeader.setText("Skills already known (from background):");
-                knownHeader.setTypeface(ResourcesCompat.getFont(getContext(), R.font.cinzel_bold));
+                knownHeader.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.cinzel_bold));
                 knownHeader.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                 knownHeader.setPadding(0, dp(16), 0, dp(8));
-                container.addView(knownHeader);
+                binding.skillsContainer.addView(knownHeader);
 
                 if (knownNames.isEmpty()) {
                     TextView none = new TextView(getContext());
                     none.setText("None");
-                    none.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                    none.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
                     none.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
-                    container.addView(none);
+                    binding.skillsContainer.addView(none);
                 } else {
                     for (String skillName : knownNames) {
                         TextView tv = new TextView(getContext());
                         tv.setText("• " + skillName);
-                        tv.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                        tv.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
                         tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                         tv.setPadding(dp(32), dp(4), 0, dp(4));
-                        container.addView(tv);
+                        binding.skillsContainer.addView(tv);
                     }
                 }
 
                 if (maxSelections > 0) {
                     TextView selectHeader = new TextView(getContext());
                     selectHeader.setText("Select skills from class (max " + maxSelections + "):");
-                    selectHeader.setTypeface(ResourcesCompat.getFont(getContext(), R.font.cinzel_bold));
+                    selectHeader.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.cinzel_bold));
                     selectHeader.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                     selectHeader.setPadding(0, dp(24), 0, dp(8));
-                    container.addView(selectHeader);
+                    binding.skillsContainer.addView(selectHeader);
 
                     for (Object obj : allSkills) {
                         String name = (obj instanceof SkillEntity) ? ((SkillEntity) obj).name : ((CustomSkillEntity) obj).name;
@@ -162,7 +171,7 @@ public class SkillsStepFragment extends Fragment {
                         if (!allowedSkillNames.isEmpty() && !allowedSkillNames.contains(name)) continue;
                         CheckBox cb = new CheckBox(getContext());
                         cb.setText(name);
-                        cb.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                        cb.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
                         cb.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                         cb.setTag(obj);
                         cb.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -171,25 +180,25 @@ public class SkillsStepFragment extends Fragment {
                                 Toast.makeText(getContext(), "You can select only " + maxSelections + " skills", Toast.LENGTH_SHORT).show();
                             }
                         });
-                        container.addView(cb);
+                        binding.skillsContainer.addView(cb);
                         checkBoxes.add(cb);
                     }
 
                     if (checkBoxes.isEmpty()) {
                         TextView info = new TextView(getContext());
                         info.setText("No eligible skills to choose from class.");
-                        info.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                        info.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
                         info.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
                         info.setPadding(0, dp(16), 0, 0);
-                        container.addView(info);
+                        binding.skillsContainer.addView(info);
                     }
                 } else {
                     TextView info = new TextView(getContext());
                     info.setText("No additional skills to choose.");
-                    info.setTypeface(ResourcesCompat.getFont(getContext(), R.font.inter_regular));
+                    info.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
                     info.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
                     info.setPadding(0, dp(16), 0, 0);
-                    container.addView(info);
+                    binding.skillsContainer.addView(info);
                 }
             });
         });

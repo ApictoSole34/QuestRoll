@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
+import com.murkfeatherstudio.questroll.databinding.ActivityCampaignDetailBinding;
 import com.murkfeatherstudio.questroll.feature_campaign.ui.fragment.CampaignCharacterSheetFragment;
 import com.murkfeatherstudio.questroll.feature_campaign.ui.fragment.CampaignDiceFragment;
 import com.murkfeatherstudio.questroll.feature_campaign.ui.fragment.CampaignEquipmentFragment;
@@ -18,21 +19,24 @@ import com.murkfeatherstudio.questroll.feature_campaign.ui.fragment.CampaignNote
 import com.murkfeatherstudio.questroll.feature_campaign.ui.fragment.CampaignTraitsFragment;
 import com.murkfeatherstudio.questroll.feature_campaign.view_model.CampaignDetailViewModel;
 
+/**
+ * Activity coordinating the campaign dashboard and its various tabs.
+ */
 public class CampaignDetailActivity extends BaseActivity {
 
     public static final String EXTRA_CAMPAIGN_ID = "campaign_id";
 
     private CampaignDetailViewModel viewModel;
     private long campaignId;
-    private Button btnSheet, btnEquipment, btnTraits, btnNotes, btnDice;
+    private ActivityCampaignDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_campaign_detail);
+        binding = ActivityCampaignDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(binding.toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -55,23 +59,29 @@ public class CampaignDetailActivity extends BaseActivity {
             }
         });
 
-        btnSheet = findViewById(R.id.nav_sheet);
-        btnEquipment = findViewById(R.id.nav_equipment);
-        btnTraits = findViewById(R.id.nav_traits);
-        btnNotes = findViewById(R.id.nav_notes);
-        btnDice = findViewById(R.id.nav_dice);
-
-        btnSheet.setOnClickListener(v -> onNavItemSelected(R.id.nav_sheet));
-        btnEquipment.setOnClickListener(v -> onNavItemSelected(R.id.nav_equipment));
-        btnTraits.setOnClickListener(v -> onNavItemSelected(R.id.nav_traits));
-        btnNotes.setOnClickListener(v -> onNavItemSelected(R.id.nav_notes));
-        btnDice.setOnClickListener(v -> onNavItemSelected(R.id.nav_dice));
+        binding.navSheet.setOnClickListener(v -> onNavItemSelected(R.id.nav_sheet));
+        binding.navEquipment.setOnClickListener(v -> onNavItemSelected(R.id.nav_equipment));
+        binding.navTraits.setOnClickListener(v -> onNavItemSelected(R.id.nav_traits));
+        binding.navNotes.setOnClickListener(v -> onNavItemSelected(R.id.nav_notes));
+        binding.navDice.setOnClickListener(v -> onNavItemSelected(R.id.nav_dice));
 
         if (savedInstanceState == null) {
             onNavItemSelected(R.id.nav_sheet);
         }
     }
 
+    /**
+     * Switches between different campaign fragments.
+     *
+     * @param id The resource ID of the navigation item.
+     *
+     * JAVADOC: findViewById is used here because 'id' is passed dynamically to this method
+     * from various click listeners. View Binding provides static field access to views,
+     * but doesn't offer a clean way to select a view based on a runtime resource ID
+     * variable without using reflection or a large switch-case. Traditional
+     * findViewById is kept for this specific dynamic UI interaction where we need to
+     * find a button to highlight it.
+     */
     private void onNavItemSelected(int id) {
         Fragment fragment = null;
         if (id == R.id.nav_sheet) {
@@ -103,19 +113,24 @@ public class CampaignDetailActivity extends BaseActivity {
 
     private void resetNavButtonsStyle() {
         int defaultColor = getResources().getColor(R.color.threads_text_secondary, null);
-        btnSheet.setTextColor(defaultColor);
-        btnEquipment.setTextColor(defaultColor);
-        btnTraits.setTextColor(defaultColor);
-        btnNotes.setTextColor(defaultColor);
-        btnDice.setTextColor(defaultColor);
-        btnSheet.setAlpha(0.7f);
-        btnEquipment.setAlpha(0.7f);
-        btnTraits.setAlpha(0.7f);
-        btnNotes.setAlpha(0.7f);
-        btnDice.setAlpha(0.7f);
+        binding.navSheet.setTextColor(defaultColor);
+        binding.navEquipment.setTextColor(defaultColor);
+        binding.navTraits.setTextColor(defaultColor);
+        binding.navNotes.setTextColor(defaultColor);
+        binding.navDice.setTextColor(defaultColor);
+
+        binding.navSheet.setAlpha(0.7f);
+        binding.navEquipment.setAlpha(0.7f);
+        binding.navTraits.setAlpha(0.7f);
+        binding.navNotes.setAlpha(0.7f);
+        binding.navDice.setAlpha(0.7f);
     }
 
     private Fragment getCurrentFragment() {
+        /**
+         * JAVADOC: findViewById is used here as part of the fragment management API
+         * (findFragmentById) which requires the integer ID of the container.
+         */
         return getSupportFragmentManager().findFragmentById(R.id.fragment_container);
     }
 

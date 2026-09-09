@@ -3,22 +3,24 @@ package com.murkfeatherstudio.questroll.feature_item.item_set.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.feature_document.fragment.DocumentDetailDialogFragment;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.models.open5e.item_set.ItemSetEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityItemSetDetailBinding;
 import com.murkfeatherstudio.questroll.feature_item.ui.ItemDetailActivity;
 import io.noties.markwon.Markwon;
 
 public class ItemSetDetailActivity extends BaseActivity {
     private Markwon markwon;
+    private ActivityItemSetDetailBinding binding;
+
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_set_detail);
+        binding = ActivityItemSetDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
         markwon = Markwon.create(this);
         String key = getIntent().getStringExtra("ITEM_SET_KEY");
         if (key == null) { finish(); return; }
@@ -26,22 +28,28 @@ public class ItemSetDetailActivity extends BaseActivity {
             if (set != null) populateUI(set);
         });
     }
+
+    /**
+     * NOTE: Part of the UI (item list) is built dynamically at runtime (number of fields depends on the set content),
+     * there is no static XML layout for individual rows - in this place ViewBinding does not apply
+     * for elements inside items_container.
+     */
     private void populateUI(ItemSetEntity set) {
-        ((TextView) findViewById(R.id.tv_name)).setText(set.name);
-        TextView tvDesc = findViewById(R.id.tv_desc);
-        markwon.setMarkdown(tvDesc, set.desc != null ? set.desc : "");
-        TextView tvSource = findViewById(R.id.tv_source);
+        binding.tvName.setText(set.name);
+        markwon.setMarkdown(binding.tvDesc, set.desc != null ? set.desc : "");
+        
         String sourceText = "Source: " + (set.documentUrl != null ? set.documentUrl : "Unknown");
-        tvSource.setText(sourceText);
-        tvSource.setClickable(true);
-        tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
-        tvSource.setOnClickListener(v -> {
+        binding.tvSource.setText(sourceText);
+        binding.tvSource.setClickable(true);
+        binding.tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
+        binding.tvSource.setOnClickListener(v -> {
             String key = extractKeyFromUrl(set.documentUrl);
             if (key != null) {
                 DocumentDetailDialogFragment.newInstance(key).show(getSupportFragmentManager(), "doc");
             }
         });
-        LinearLayout itemsContainer = findViewById(R.id.items_container);
+
+        binding.itemsContainer.removeAllViews();
         if (set.itemKeys != null) {
             for (String itemKey : set.itemKeys) {
                 TextView tvItem = new TextView(this);
@@ -53,10 +61,10 @@ public class ItemSetDetailActivity extends BaseActivity {
                     i.putExtra("ITEM_KEY", itemKey);
                     startActivity(i);
                 });
-                itemsContainer.addView(tvItem);
+                binding.itemsContainer.addView(tvItem);
             }
         }
-        findViewById(R.id.btnManage).setVisibility(View.GONE);
+        binding.btnManage.setVisibility(View.GONE);
     }
 
     private String extractKeyFromUrl(String url) {

@@ -2,45 +2,45 @@
 <resources>
 
     <!-- Backgrounds -->
-    <color name="threads_dark">#0B0C0E</color>           <!-- główne tło -->
-    <color name="threads_surface">#111318</color>         <!-- karty, surface -->
-    <color name="threads_elevated">#1A1C22</color>        <!-- elementy podniesione -->
-    <color name="threads_elevated_2">#22252E</color>      <!-- jeszcze wyżej -->
+    <color name="threads_dark">#0B0C0E</color>           <!-- main background -->
+    <color name="threads_surface">#111318</color>         <!-- cards, surface -->
+    <color name="threads_elevated">#1A1C22</color>        <!-- elevated elements -->
+    <color name="threads_elevated_2">#22252E</color>      <!-- further elevated -->
 
-    <!-- Gold accent — jak w concept art -->
-    <color name="threads_gold">#C9A227</color>            <!-- złoty akcent -->
-    <color name="threads_gold_light">#D4B455</color>      <!-- jaśniejszy złoty -->
-    <color name="threads_gold_dark">#8C6E1A</color>       <!-- ciemniejszy złoty -->
-    <color name="threads_gold_subtle">#1AC9A227</color>   <!-- złoty 10% alpha -->
+    <!-- Gold accent — as in concept art -->
+    <color name="threads_gold">#C9A227</color>            <!-- gold accent -->
+    <color name="threads_gold_light">#D4B455</color>      <!-- lighter gold -->
+    <color name="threads_gold_dark">#8C6E1A</color>       <!-- darker gold -->
+    <color name="threads_gold_subtle">#1AC9A227</color>   <!-- gold 10% alpha -->
 
     <!-- Text -->
-    <color name="threads_text_primary">#EDEDED</color>    <!-- tekst główny -->
-    <color name="threads_text_secondary">#8A8E99</color>  <!-- tekst pomocniczy -->
+    <color name="threads_text_primary">#EDEDED</color>    <!-- main text -->
+    <color name="threads_text_secondary">#8A8E99</color>  <!-- secondary text -->
     <color name="threads_text_hint">#4A4E57</color>       <!-- placeholder -->
 
-    <!-- Thread lines — glow efekt -->
-    <color name="threads_line">#1AFFFFFF</color>          <!-- linie nici (biały 10%) -->
-    <color name="threads_line_gold">#15C9A227</color>     <!-- linie złote (8%) -->
-    <color name="threads_glow">#30C9A227</color>          <!-- blask na węzłach -->
+    <!-- Thread lines — glow effect -->
+    <color name="threads_line">#1AFFFFFF</color>          <!-- thread lines (white 10%) -->
+    <color name="threads_line_gold">#15C9A227</color>     <!-- gold lines (8%) -->
+    <color name="threads_glow">#30C9A227</color>          <!-- glow on nodes -->
 
     <!-- Borders / dividers -->
-    <color name="threads_border">#252830</color>          <!-- granica kart -->
-    <color name="threads_divider">#1AFFFFFF</color>       <!-- separator (biały 10%) -->
+    <color name="threads_border">#252830</color>          <!-- card border -->
+    <color name="threads_divider">#1AFFFFFF</color>       <!-- divider (white 10%) -->
 
     <!-- Status -->
-    <color name="threads_hp_green">#2E7D32</color>        <!-- HP zdrowie -->
-    <color name="threads_hp_orange">#E65100</color>       <!-- HP niskie -->
-    <color name="threads_hp_red">#B71C1C</color><!-- HP krytyczne -->
+    <color name="threads_hp_green">#2E7D32</color>        <!-- HP healthy -->
+    <color name="threads_hp_orange">#E65100</color>       <!-- HP low -->
+    <color name="threads_hp_red">#B71C1C</color><!-- HP critical -->
 
     <color name="threads_header">#8A7A55</color>
 
-    <!-- Legacy (wymagane przez Material Components) -->
+    <!-- Legacy (required by Material Components) -->
     <color name="purple_500">@color/threads_gold</color>
     <color name="purple_700">@color/threads_gold_dark</color>
     <color name="teal_200">@color/threads_gold_light</color>
     <color name="teal_700">@color/threads_gold_dark</color>
 
-    <!-- Aliasy dla kompatybilności (używane w theme) -->
+    <!-- Aliases for compatibility (used in theme) -->
     <color name="colorPrimary">@color/threads_gold</color>
     <color name="colorPrimaryDark">@color/threads_gold_dark</color>
     <color name="colorAccent">@color/threads_gold</color>
@@ -49,7 +49,7 @@
     <color name="outline">@color/threads_border</color>
     <color name="darker_gray">@color/threads_text_secondary</color>
 
-    <!-- Dla wygody -->
+    <!-- For convenience -->
     <color name="threads_accent">@color/threads_gold</color>
     <color name="threads_text">#EDEDED</color>
 </resources>

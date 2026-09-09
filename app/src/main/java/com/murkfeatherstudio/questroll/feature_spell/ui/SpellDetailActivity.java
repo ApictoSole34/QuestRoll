@@ -6,11 +6,11 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.feature_document.fragment.DocumentDetailDialogFragment;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.models.open5e.spell.SpellEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivitySpellDetailBinding;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -25,11 +25,13 @@ import io.noties.markwon.ext.tables.TablePlugin;
 public class SpellDetailActivity extends BaseActivity {
 
     private Markwon markwon;
+    private ActivitySpellDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_spell_detail);
+        binding = ActivitySpellDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         markwon = Markwon.builder(this)
                 .usePlugin(TablePlugin.create(this))
@@ -44,28 +46,27 @@ public class SpellDetailActivity extends BaseActivity {
     }
 
     private void populateUI(SpellEntity spell) {
-        ((TextView) findViewById(R.id.tv_spell_name)).setText(spell.name);
+        binding.tvSpellName.setText(spell.name);
 
         String levelSchool = (spell.level == 0 ? "Cantrip" : "Level " + spell.level)
                 + (spell.schoolName != null ? " • " + spell.schoolName : "");
-        ((TextView) findViewById(R.id.tv_level_school)).setText(levelSchool);
+        binding.tvLevelSchool.setText(levelSchool);
 
-        findViewById(R.id.chip_ritual).setVisibility(spell.ritual ? View.VISIBLE : View.GONE);
-        findViewById(R.id.chip_concentration).setVisibility(spell.concentration ? View.VISIBLE : View.GONE);
+        binding.chipRitual.setVisibility(spell.ritual ? View.VISIBLE : View.GONE);
+        binding.chipConcentration.setVisibility(spell.concentration ? View.VISIBLE : View.GONE);
 
-        setTextView(R.id.tv_casting_time, "Casting Time", spell.castingTime);
-        setTextView(R.id.tv_range, "Range", spell.rangeText);
-        setTextView(R.id.tv_duration, "Duration", spell.duration);
-        setTextView(R.id.tv_target, "Target", spell.targetType);
+        setTextView(binding.tvCastingTime, "Casting Time", spell.castingTime);
+        setTextView(binding.tvRange, "Range", spell.rangeText);
+        setTextView(binding.tvDuration, "Duration", spell.duration);
+        setTextView(binding.tvTarget, "Target", spell.targetType);
 
-        TextView tvSource = findViewById(R.id.tv_source);
         String sourceText = "Source: " + (spell.documentName != null ? spell.documentName : "Unknown");
-        tvSource.setText(sourceText);
-        tvSource.setVisibility(View.VISIBLE);
-        tvSource.setClickable(true);
-        tvSource.setFocusable(true);
-        tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
-        tvSource.setOnClickListener(v -> {
+        binding.tvSource.setText(sourceText);
+        binding.tvSource.setVisibility(View.VISIBLE);
+        binding.tvSource.setClickable(true);
+        binding.tvSource.setFocusable(true);
+        binding.tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
+        binding.tvSource.setOnClickListener(v -> {
             if (spell.documentKey != null && !spell.documentKey.isEmpty()) {
                 DocumentDetailDialogFragment fragment = DocumentDetailDialogFragment.newInstance(spell.documentKey);
                 fragment.show(getSupportFragmentManager(), "document_detail");
@@ -85,14 +86,14 @@ public class SpellDetailActivity extends BaseActivity {
                 components.append(" (").append(spell.materialSpecified).append(")");
             }
         }
-        setTextView(R.id.tv_components, "Components", components.toString());
+        setTextView(binding.tvComponents, "Components", components.toString());
 
         if (spell.savingThrowAbility != null && !spell.savingThrowAbility.isEmpty()) {
-            setTextView(R.id.tv_saving_throw, "Saving Throw",
+            setTextView(binding.tvSavingThrow, "Saving Throw",
                     capitalize(spell.savingThrowAbility));
-            findViewById(R.id.tv_saving_throw).setVisibility(View.VISIBLE);
+            binding.tvSavingThrow.setVisibility(View.VISIBLE);
         } else {
-            findViewById(R.id.tv_saving_throw).setVisibility(View.GONE);
+            binding.tvSavingThrow.setVisibility(View.GONE);
         }
 
         if (spell.damageRoll != null && !spell.damageRoll.isEmpty()) {
@@ -100,46 +101,42 @@ public class SpellDetailActivity extends BaseActivity {
             if (spell.damageTypes != null && !spell.damageTypes.isEmpty()) {
                 damageText += " " + String.join(", ", spell.damageTypes);
             }
-            setTextView(R.id.tv_damage, "Damage", damageText);
-            findViewById(R.id.tv_damage).setVisibility(View.VISIBLE);
+            setTextView(binding.tvDamage, "Damage", damageText);
+            binding.tvDamage.setVisibility(View.VISIBLE);
         } else {
-            findViewById(R.id.tv_damage).setVisibility(View.GONE);
+            binding.tvDamage.setVisibility(View.GONE);
         }
 
         if (spell.classes != null && !spell.classes.isEmpty()) {
-            setTextView(R.id.tv_classes, "Classes", String.join(", ", spell.classes));
-            findViewById(R.id.tv_classes).setVisibility(View.VISIBLE);
+            setTextView(binding.tvClasses, "Classes", String.join(", ", spell.classes));
+            binding.tvClasses.setVisibility(View.VISIBLE);
         } else {
-            findViewById(R.id.tv_classes).setVisibility(View.GONE);
+            binding.tvClasses.setVisibility(View.GONE);
         }
 
-        TextView tvDesc = findViewById(R.id.tv_desc);
         if (spell.desc != null && !spell.desc.isEmpty()) {
-            markwon.setMarkdown(tvDesc, spell.desc);
+            markwon.setMarkdown(binding.tvDesc, spell.desc);
         }
 
-        TextView tvHigherLevel = findViewById(R.id.tv_higher_level);
-        LinearLayout higherLevelSection = findViewById(R.id.higher_level_section);
         if (spell.higherLevel != null && !spell.higherLevel.isEmpty()) {
-            markwon.setMarkdown(tvHigherLevel, spell.higherLevel);
-            higherLevelSection.setVisibility(View.VISIBLE);
+            markwon.setMarkdown(binding.tvHigherLevel, spell.higherLevel);
+            binding.higherLevelSection.setVisibility(View.VISIBLE);
         } else {
-            higherLevelSection.setVisibility(View.GONE);
+            binding.higherLevelSection.setVisibility(View.GONE);
         }
 
         buildCastingOptions(spell);
-
-        if (spell.documentName != null) {
-            setTextView(R.id.tv_source, "Source", spell.documentName);
-        }
     }
 
+    /**
+     * JAVADOC: castingOptionsContainer is a dynamic layout managed via addView(). 
+     * Views for different casting options are created programmatically based on 
+     * the spell JSON content at runtime. Since these views are not defined in the 
+     * static XML layout, View Binding cannot be used to reference them.
+     */
     private void buildCastingOptions(SpellEntity spell) {
-        LinearLayout castingOptionsSection = findViewById(R.id.casting_options_section);
-        LinearLayout castingOptionsContainer = findViewById(R.id.casting_options_container);
-
         if (spell.castingOptionsJson == null || spell.castingOptionsJson.isEmpty()) {
-            castingOptionsSection.setVisibility(View.GONE);
+            binding.castingOptionsSection.setVisibility(View.GONE);
             return;
         }
 
@@ -158,22 +155,22 @@ public class SpellDetailActivity extends BaseActivity {
             }
 
             if (meaningfulOptions.isEmpty()) {
-                castingOptionsSection.setVisibility(View.GONE);
+                binding.castingOptionsSection.setVisibility(View.GONE);
                 return;
             }
 
-            castingOptionsSection.setVisibility(View.VISIBLE);
-            castingOptionsContainer.removeAllViews();
+            binding.castingOptionsSection.setVisibility(View.VISIBLE);
+            binding.castingOptionsContainer.removeAllViews();
 
             for (Map<String, Object> option : meaningfulOptions) {
                 View optionView = buildCastingOptionView(option);
                 if (optionView != null) {
-                    castingOptionsContainer.addView(optionView);
+                    binding.castingOptionsContainer.addView(optionView);
                 }
             }
 
         } catch (Exception e) {
-            castingOptionsSection.setVisibility(View.GONE);
+            binding.castingOptionsSection.setVisibility(View.GONE);
         }
     }
 
@@ -220,8 +217,7 @@ public class SpellDetailActivity extends BaseActivity {
         }
     }
 
-    private void setTextView(int viewId, String label, String value) {
-        TextView tv = findViewById(viewId);
+    private void setTextView(TextView tv, String label, String value) {
         if (value != null && !value.isEmpty()) {
             tv.setText(label + ": " + value);
             tv.setVisibility(View.VISIBLE);

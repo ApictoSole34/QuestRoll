@@ -3,12 +3,11 @@ package com.murkfeatherstudio.questroll.feature_condition.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
-import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.ItemConditionBinding;
 import com.murkfeatherstudio.questroll.feature_condition.model.CombinedCondition;
 
 public class ConditionAdapter extends ListAdapter<CombinedCondition, ConditionAdapter.ViewHolder> {
@@ -36,9 +35,9 @@ public class ConditionAdapter extends ListAdapter<CombinedCondition, ConditionAd
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_condition, parent, false);
-        return new ViewHolder(view);
+        ItemConditionBinding binding = ItemConditionBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -47,19 +46,17 @@ public class ConditionAdapter extends ListAdapter<CombinedCondition, ConditionAd
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvDesc, tvCustomBadge;
+        private final ItemConditionBinding binding;
 
-        ViewHolder(View v) {
-            super(v);
-            tvName = v.findViewById(R.id.tv_name);
-            tvDesc = v.findViewById(R.id.tv_desc);
-            tvCustomBadge = v.findViewById(R.id.tv_custom_badge);
+        ViewHolder(ItemConditionBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         void bind(CombinedCondition c, OnItemClickListener listener) {
-            tvName.setText(c.name);
-            tvDesc.setText(c.description != null ? c.description : "");
-            tvCustomBadge.setVisibility(c.isCustom ? View.VISIBLE : View.GONE);
+            binding.tvName.setText(c.name);
+            binding.tvDesc.setText(c.description != null ? c.description : "");
+            binding.tvCustomBadge.setVisibility(c.isCustom ? View.VISIBLE : View.GONE);
             itemView.setOnClickListener(v -> listener.onItemClick(c));
         }
     }

@@ -14,19 +14,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
 import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.FragmentWizardImageBinding;
 import com.murkfeatherstudio.questroll.feature_character.view_model.WizardViewModel;
 import com.yalantis.ucrop.UCrop;
 
@@ -40,8 +41,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class ImageStepFragment extends Fragment {
 
     private static final String ASSETS_IMAGES_DIR     = "characters_images";
@@ -50,10 +49,7 @@ public class ImageStepFragment extends Fragment {
     private static final String DEFAULT_THUMB_ASSET = "ai-generated-9221232_1920_mini.png";
 
     private WizardViewModel viewModel;
-    private CircleImageView thumbnailPreview;
-    private ImageView fullImagePreview;
-    private Button selectThumbnailButton, selectFullImageButton,
-            selectFromAssetsButton, skipButton, nextButton, backButton;
+    private FragmentWizardImageBinding binding;
 
     private boolean waitingForThumbnail = false;
     private boolean waitingForFullImage  = false;
@@ -76,12 +72,19 @@ public class ImageStepFragment extends Fragment {
             });
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_wizard_image, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentWizardImageBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(WizardViewModel.class);
 
@@ -92,47 +95,39 @@ public class ImageStepFragment extends Fragment {
         ensureDir(thumbnailsDir);
         ensureDir(tempDir);
 
-        thumbnailPreview       = view.findViewById(R.id.thumbnail_preview);
-        fullImagePreview       = view.findViewById(R.id.full_image_preview);
-        selectThumbnailButton  = view.findViewById(R.id.select_thumbnail_button);
-        selectFullImageButton  = view.findViewById(R.id.select_full_image_button);
-        selectFromAssetsButton = view.findViewById(R.id.select_from_assets_button);
-        skipButton             = view.findViewById(R.id.skip_button);
-        nextButton             = view.findViewById(R.id.next_button);
-        backButton             = view.findViewById(R.id.back_button);
-
         loadOrCopyDefaultImages();
 
-        selectThumbnailButton.setOnClickListener(v -> {
+        binding.selectThumbnailButton.setOnClickListener(v -> {
             waitingForThumbnail = true;
             waitingForFullImage  = false;
             checkPermissionAndOpenGallery();
         });
 
-        selectFullImageButton.setOnClickListener(v -> {
+        binding.selectFullImageButton.setOnClickListener(v -> {
             waitingForFullImage  = true;
             waitingForThumbnail = false;
             checkPermissionAndOpenGallery();
         });
 
-        selectFromAssetsButton.setOnClickListener(v -> showAssetImagePickerDialog());
+        binding.selectFromAssetsButton.setOnClickListener(v -> showAssetImagePickerDialog());
 
-        skipButton.setOnClickListener(v -> {
+        binding.skipButton.setOnClickListener(v -> {
             copyDefaultAssetsToPrivateStorage();
             showDefaultImagesFromFiles();
         });
 
-        nextButton.setOnClickListener(v -> goToNext());
-        backButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.back_action));
+        binding.nextButton.setOnClickListener(v -> goToNext());
+        binding.backButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.back_action));
     }
 
     private void loadOrCopyDefaultImages() {
+        if (binding == null) return;
         boolean hasThumb = viewModel.characterThumbnailPath != null && new File(viewModel.characterThumbnailPath).exists();
         boolean hasFull   = viewModel.characterImagePath != null && new File(viewModel.characterImagePath).exists();
 
         if (hasThumb && hasFull) {
-            thumbnailPreview.setImageURI(Uri.fromFile(new File(viewModel.characterThumbnailPath)));
-            fullImagePreview.setImageURI(Uri.fromFile(new File(viewModel.characterImagePath)));
+            binding.thumbnailPreview.setImageURI(Uri.fromFile(new File(viewModel.characterThumbnailPath)));
+            binding.fullImagePreview.setImageURI(Uri.fromFile(new File(viewModel.characterImagePath)));
         } else {
             copyDefaultAssetsToPrivateStorage();
             showDefaultImagesFromFiles();
@@ -150,8 +145,9 @@ public class ImageStepFragment extends Fragment {
     }
 
     private void showDefaultImagesFromFiles() {
-        if (viewModel.characterImagePath != null) fullImagePreview.setImageURI(Uri.fromFile(new File(viewModel.characterImagePath)));
-        if (viewModel.characterThumbnailPath != null) thumbnailPreview.setImageURI(Uri.fromFile(new File(viewModel.characterThumbnailPath)));
+        if (binding == null) return;
+        if (viewModel.characterImagePath != null) binding.fullImagePreview.setImageURI(Uri.fromFile(new File(viewModel.characterImagePath)));
+        if (viewModel.characterThumbnailPath != null) binding.thumbnailPreview.setImageURI(Uri.fromFile(new File(viewModel.characterThumbnailPath)));
     }
 
     private void showAssetImagePickerDialog() {
@@ -199,16 +195,17 @@ public class ImageStepFragment extends Fragment {
     }
 
     private void applyAssetImages(String imageFileName) {
+        if (binding == null) return;
         File destImage = new File(fullImagesDir, UUID.randomUUID() + "_" + imageFileName);
         File destThumb = new File(thumbnailsDir, UUID.randomUUID() + "_" + buildThumbnailName(imageFileName));
 
         if (copyAssetToFile(ASSETS_IMAGES_DIR + "/" + imageFileName, destImage)) {
             viewModel.characterImagePath = destImage.getAbsolutePath();
-            fullImagePreview.setImageURI(Uri.fromFile(destImage));
+            binding.fullImagePreview.setImageURI(Uri.fromFile(destImage));
         }
         if (copyAssetToFile(ASSETS_THUMBNAILS_DIR + "/" + buildThumbnailName(imageFileName), destThumb)) {
             viewModel.characterThumbnailPath = destThumb.getAbsolutePath();
-            thumbnailPreview.setImageURI(Uri.fromFile(destThumb));
+            binding.thumbnailPreview.setImageURI(Uri.fromFile(destThumb));
         }
     }
 
@@ -256,13 +253,13 @@ public class ImageStepFragment extends Fragment {
                     File dest = new File(thumbnailsDir, UUID.randomUUID() + "_mini.jpg");
                     if (copyFile(tempFile, dest)) {
                         viewModel.characterThumbnailPath = dest.getAbsolutePath();
-                        thumbnailPreview.setImageURI(Uri.fromFile(dest));
+                        if (binding != null) binding.thumbnailPreview.setImageURI(Uri.fromFile(dest));
                     }
                 } else if (waitingForFullImage) {
                     File dest = new File(fullImagesDir, UUID.randomUUID() + ".jpg");
                     if (copyFile(tempFile, dest)) {
                         viewModel.characterImagePath = dest.getAbsolutePath();
-                        fullImagePreview.setImageURI(Uri.fromFile(dest));
+                        if (binding != null) binding.fullImagePreview.setImageURI(Uri.fromFile(dest));
                         // BUG FIX: Automatically create thumbnail from full image if not set
                         createThumbnailFromFullImage(dest);
                     }
@@ -283,7 +280,7 @@ public class ImageStepFragment extends Fragment {
             try (FileOutputStream out = new FileOutputStream(thumbFile)) {
                 thumbBitmap.compress(Bitmap.CompressFormat.JPEG, 85, out);
                 viewModel.characterThumbnailPath = thumbFile.getAbsolutePath();
-                thumbnailPreview.setImageURI(Uri.fromFile(thumbFile));
+                if (binding != null) binding.thumbnailPreview.setImageURI(Uri.fromFile(thumbFile));
             }
         } catch (Exception e) { e.printStackTrace(); }
     }

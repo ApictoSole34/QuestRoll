@@ -3,14 +3,13 @@ package com.murkfeatherstudio.questroll.feature_environment.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.ItemEnvironmentBinding;
 import com.murkfeatherstudio.questroll.feature_environment.model.CombinedEnvironment;
 
 public class EnvironmentAdapter extends ListAdapter<CombinedEnvironment, EnvironmentAdapter.ViewHolder> {
@@ -32,8 +31,9 @@ public class EnvironmentAdapter extends ListAdapter<CombinedEnvironment, Environ
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_environment, parent, false);
-        return new ViewHolder(view);
+        ItemEnvironmentBinding binding = ItemEnvironmentBinding.inflate(
+                LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -42,24 +42,23 @@ public class EnvironmentAdapter extends ListAdapter<CombinedEnvironment, Environ
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvType, tvDesc, tvCustomBadge;
-        ViewHolder(View v) {
-            super(v);
-            tvName = v.findViewById(R.id.tv_name);
-            tvType = v.findViewById(R.id.tv_type);
-            tvDesc = v.findViewById(R.id.tv_desc);
-            tvCustomBadge = v.findViewById(R.id.tv_custom_badge);
+        private final ItemEnvironmentBinding binding;
+
+        ViewHolder(ItemEnvironmentBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
+
         void bind(CombinedEnvironment e, OnItemClickListener listener) {
-            tvName.setText(e.name);
+            binding.tvName.setText(e.name);
             String type = "";
             if (e.aquatic) type = "Aquatic";
             else if (e.planar) type = "Planar";
             else if (e.interior) type = "Interior";
             else type = "Land";
-            tvType.setText(type);
-            tvDesc.setText(e.desc != null ? (e.desc.length() > 80 ? e.desc.substring(0, 80) + "…" : e.desc) : "");
-            tvCustomBadge.setVisibility(e.isCustom ? View.VISIBLE : View.GONE);
+            binding.tvType.setText(type);
+            binding.tvDesc.setText(e.desc != null ? (e.desc.length() > 80 ? e.desc.substring(0, 80) + "…" : e.desc) : "");
+            binding.tvCustomBadge.setVisibility(e.isCustom ? View.VISIBLE : View.GONE);
             itemView.setOnClickListener(v -> listener.onItemClick(e));
         }
     }

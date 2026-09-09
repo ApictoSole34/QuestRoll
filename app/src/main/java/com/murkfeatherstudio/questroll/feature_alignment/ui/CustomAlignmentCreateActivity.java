@@ -5,13 +5,11 @@ import android.widget.Toast;
 
 import androidx.lifecycle.ViewModelProvider;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_alignment.CustomAlignmentEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityCustomAlignmentCreateBinding;
 import com.murkfeatherstudio.questroll.feature_alignment.view_model.CustomAlignmentCreateViewModel;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.concurrent.Executors;
 
@@ -20,13 +18,14 @@ public class CustomAlignmentCreateActivity extends BaseActivity {
     public static final String EXTRA_EDIT_ID = "edit_alignment_id";
 
     private CustomAlignmentCreateViewModel viewModel;
-    private TextInputEditText etName, etShortName, etMorality, etAttitude, etDescription;
+    private ActivityCustomAlignmentCreateBinding binding;
     private long editId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_custom_alignment_create);
+        binding = ActivityCustomAlignmentCreateBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         editId = getIntent().getLongExtra(EXTRA_EDIT_ID, -1);
         viewModel = new ViewModelProvider(this,
@@ -36,29 +35,20 @@ public class CustomAlignmentCreateActivity extends BaseActivity {
                         Executors.newSingleThreadExecutor()
                 )).get(CustomAlignmentCreateViewModel.class);
 
-        initViews();
         setupObservers();
         setTitle(editId == -1 ? "Create Alignment" : "Edit Alignment");
-        ((MaterialButton) findViewById(R.id.btnSave)).setText(editId == -1 ? "Save" : "Update");
-        findViewById(R.id.btnSave).setOnClickListener(v -> save());
-    }
-
-    private void initViews() {
-        etName = findViewById(R.id.etName);
-        etShortName = findViewById(R.id.etShortName);
-        etMorality = findViewById(R.id.etMorality);
-        etAttitude = findViewById(R.id.etAttitude);
-        etDescription = findViewById(R.id.etDescription);
+        binding.btnSave.setText(editId == -1 ? "Save" : "Update");
+        binding.btnSave.setOnClickListener(v -> save());
     }
 
     private void setupObservers() {
         viewModel.getEditData().observe(this, alignment -> {
             if (alignment == null) return;
-            etName.setText(alignment.name);
-            etShortName.setText(alignment.shortName);
-            etMorality.setText(alignment.morality);
-            etAttitude.setText(alignment.societalAttitude);
-            etDescription.setText(alignment.description);
+            binding.etName.setText(alignment.name);
+            binding.etShortName.setText(alignment.shortName);
+            binding.etMorality.setText(alignment.morality);
+            binding.etAttitude.setText(alignment.societalAttitude);
+            binding.etDescription.setText(alignment.description);
         });
 
         viewModel.getSaveResult().observe(this, success -> {
@@ -73,18 +63,18 @@ public class CustomAlignmentCreateActivity extends BaseActivity {
     }
 
     private void save() {
-        String name = etName.getText().toString().trim();
+        String name = binding.etName.getText() != null ? binding.etName.getText().toString().trim() : "";
         if (name.isEmpty()) {
-            etName.setError("Required");
+            binding.etName.setError("Required");
             return;
         }
 
         CustomAlignmentEntity entity = new CustomAlignmentEntity();
         entity.name = name;
-        entity.shortName = etShortName.getText().toString().trim();
-        entity.morality = etMorality.getText().toString().trim();
-        entity.societalAttitude = etAttitude.getText().toString().trim();
-        entity.description = etDescription.getText().toString().trim();
+        entity.shortName = binding.etShortName.getText() != null ? binding.etShortName.getText().toString().trim() : "";
+        entity.morality = binding.etMorality.getText() != null ? binding.etMorality.getText().toString().trim() : "";
+        entity.societalAttitude = binding.etAttitude.getText() != null ? binding.etAttitude.getText().toString().trim() : "";
+        entity.description = binding.etDescription.getText() != null ? binding.etDescription.getText().toString().trim() : "";
 
         viewModel.save(entity);
     }

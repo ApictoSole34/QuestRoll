@@ -2,20 +2,21 @@ package com.murkfeatherstudio.questroll.feature_item.item_rarity.ui;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 
-import androidx.appcompat.app.AppCompatActivity;
-
-import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.models.open5e.item_rarity.ItemRarityEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityItemRarityDetailBinding;
 
-public class ItemRarityDetailActivity extends AppCompatActivity {
+public class ItemRarityDetailActivity extends BaseActivity {
+
+    private ActivityItemRarityDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_rarity_detail);
+        binding = ActivityItemRarityDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         String key = getIntent().getStringExtra("ITEM_RARITY_KEY");
         if (key == null) {
@@ -30,9 +31,9 @@ public class ItemRarityDetailActivity extends AppCompatActivity {
     }
 
     private void populateUI(ItemRarityEntity r) {
-        ((TextView) findViewById(R.id.tv_name)).setText(r.name);
-        ((TextView) findViewById(R.id.tv_rank)).setText("Rank: " + r.rank);
-        ((TextView) findViewById(R.id.tv_description)).setText("");
-        findViewById(R.id.btnManage).setVisibility(View.GONE);
+        binding.tvName.setText(r.name);
+        binding.tvRank.setText("Rank: " + r.rank);
+        binding.tvDescription.setText("");
+        binding.btnManage.setVisibility(View.GONE);
     }
 }

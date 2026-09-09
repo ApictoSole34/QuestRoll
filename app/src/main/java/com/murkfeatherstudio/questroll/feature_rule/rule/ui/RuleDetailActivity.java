@@ -2,14 +2,12 @@ package com.murkfeatherstudio.questroll.feature_rule.rule.ui;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.TextView;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.feature_document.fragment.DocumentDetailDialogFragment;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.models.open5e.rule.RuleEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityRuleDetailBinding;
 
 import io.noties.markwon.Markwon;
 import io.noties.markwon.ext.tables.TablePlugin;
@@ -17,17 +15,19 @@ import io.noties.markwon.ext.tables.TablePlugin;
 public class RuleDetailActivity extends BaseActivity {
 
     private Markwon markwon;
+    private ActivityRuleDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_rule_detail);
+        binding = ActivityRuleDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         markwon = Markwon.builder(this)
                 .usePlugin(TablePlugin.create(this))
                 .build();
 
-        String ruleKey = getIntent().getStringExtra("RULE_KEY");  // zmiana: RULE_KEY
+        String ruleKey = getIntent().getStringExtra("RULE_KEY");
 
         if (ruleKey == null) {
             finish();
@@ -36,7 +36,7 @@ public class RuleDetailActivity extends BaseActivity {
 
         Open5eDatabase.getInstance(this)
                 .ruleDao()
-                .getByKey(ruleKey)           // zmiana: getByKey
+                .getByKey(ruleKey)
                 .observe(this, rule -> {
                     if (rule != null) {
                         populateUI(rule);
@@ -54,21 +54,17 @@ public class RuleDetailActivity extends BaseActivity {
     }
 
     private void populateUI(RuleEntity rule) {
-        TextView tvName = findViewById(R.id.tv_name);
-        TextView tvDesc = findViewById(R.id.tv_desc);
-        TextView tvSource = findViewById(R.id.tv_source);
-
-        tvName.setText(rule.name);
-        markwon.setMarkdown(tvDesc, rule.desc);
+        binding.tvName.setText(rule.name);
+        markwon.setMarkdown(binding.tvDesc, rule.desc);
 
         String sourceText = "Source: " + (rule.documentUrl != null ? rule.documentUrl : "");
-        tvSource.setText(sourceText);
-        tvSource.setVisibility(View.VISIBLE);
-        tvSource.setClickable(true);
-        tvSource.setFocusable(true);
-        tvSource.setBackgroundColor(Color.TRANSPARENT);
+        binding.tvSource.setText(sourceText);
+        binding.tvSource.setVisibility(android.view.View.VISIBLE);
+        binding.tvSource.setClickable(true);
+        binding.tvSource.setFocusable(true);
+        binding.tvSource.setBackgroundColor(Color.TRANSPARENT);
 
-        tvSource.setOnClickListener(v -> {
+        binding.tvSource.setOnClickListener(v -> {
             String docKey = extractKeyFromUrl(rule.documentUrl);
             if (docKey != null && !docKey.isEmpty()) {
                 DocumentDetailDialogFragment fragment = DocumentDetailDialogFragment.newInstance(docKey);

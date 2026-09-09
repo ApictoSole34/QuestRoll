@@ -2,20 +2,22 @@ package com.murkfeatherstudio.questroll.feature_damage_types.ui;
 
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.feature_document.fragment.DocumentDetailDialogFragment;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.models.open5e.damage_type.DamageTypeEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityDamageTypeDetailBinding;
 
 public class DamageTypeDetailActivity extends BaseActivity {
+
+    private ActivityDamageTypeDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_damage_type_detail);
+        binding = ActivityDamageTypeDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         String key = getIntent().getStringExtra("DAMAGE_TYPE_KEY");
         if (key == null) {
@@ -47,11 +49,10 @@ public class DamageTypeDetailActivity extends BaseActivity {
     }
 
     private void populateUI(DamageTypeEntity type) {
-        ((TextView) findViewById(R.id.tv_name)).setText(type.name);
-        ((TextView) findViewById(R.id.tv_description)).setText(type.description != null ? type.description : "No description.");
-        findViewById(R.id.btnManage).setVisibility(View.GONE);
+        binding.tvName.setText(type.name);
+        binding.tvDescription.setText(type.description != null ? type.description : "No description.");
+        binding.btnManage.setVisibility(View.GONE);
 
-        TextView tvSource = findViewById(R.id.tv_source);
         String sourceDisplay = "Source: ";
         String docKey;
         if (type.document != null && !type.document.isEmpty()) {
@@ -62,12 +63,12 @@ public class DamageTypeDetailActivity extends BaseActivity {
             docKey = null;
             sourceDisplay += "Unknown";
         }
-        tvSource.setText(sourceDisplay);
-        tvSource.setVisibility(View.VISIBLE);
-        tvSource.setClickable(true);
-        tvSource.setFocusable(true);
-        tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
-        tvSource.setOnClickListener(v -> {
+        binding.tvSource.setText(sourceDisplay);
+        binding.tvSource.setVisibility(View.VISIBLE);
+        binding.tvSource.setClickable(true);
+        binding.tvSource.setFocusable(true);
+        binding.tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
+        binding.tvSource.setOnClickListener(v -> {
             if (docKey != null && !docKey.isEmpty()) {
                 DocumentDetailDialogFragment fragment = DocumentDetailDialogFragment.newInstance(docKey);
                 fragment.show(getSupportFragmentManager(), "document_detail");

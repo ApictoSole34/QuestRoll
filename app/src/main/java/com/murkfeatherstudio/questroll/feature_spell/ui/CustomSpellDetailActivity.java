@@ -10,11 +10,11 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_spell.CustomCastingOption;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_spell.CustomSpellEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivitySpellDetailBinding;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -25,14 +25,16 @@ import io.noties.markwon.Markwon;
 
 public class CustomSpellDetailActivity extends BaseActivity {
 
-    public static final String EXTRA_SPELL_ID = "CUSTOM_SPELL_ID";
+    public static final String EXTRA_SPELL_ID = "CUSTOM_SPECELL_ID";
 
     private Markwon markwon;
+    private ActivitySpellDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_spell_detail);
+        binding = ActivitySpellDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         markwon = Markwon.create(this);
 
@@ -48,23 +50,20 @@ public class CustomSpellDetailActivity extends BaseActivity {
     }
 
     private void populateUI(CustomSpellEntity spell) {
-        ((TextView) findViewById(R.id.tv_spell_name)).setText(spell.name);
+        binding.tvSpellName.setText(spell.name);
 
         String levelSchool = (spell.level == 0 ? "Cantrip" : "Level " + spell.level)
                 + (spell.schoolName != null && !spell.schoolName.isEmpty()
                 ? " • " + spell.schoolName : "");
-        ((TextView) findViewById(R.id.tv_level_school)).setText(levelSchool);
+        binding.tvLevelSchool.setText(levelSchool);
 
-        findViewById(R.id.chip_ritual)
-                .setVisibility(spell.ritual ? View.VISIBLE : View.GONE);
-        findViewById(R.id.chip_concentration)
-                .setVisibility(spell.concentration ? View.VISIBLE : View.GONE);
+        binding.chipRitual.setVisibility(spell.ritual ? View.VISIBLE : View.GONE);
+        binding.chipConcentration.setVisibility(spell.concentration ? View.VISIBLE : View.GONE);
 
-        setTextView(R.id.tv_casting_time, "Casting Time", spell.castingTime);
-        setTextView(R.id.tv_range, "Range", spell.rangeText);
-        setTextView(R.id.tv_duration, "Duration", spell.duration);
-        setTextView(R.id.tv_target, "Target", null); // custom nie ma target_type
-        findViewById(R.id.tv_target).setVisibility(View.GONE);
+        setTextView(binding.tvCastingTime, "Casting Time", spell.castingTime);
+        setTextView(binding.tvRange, "Range", spell.rangeText);
+        setTextView(binding.tvDuration, "Duration", spell.duration);
+        binding.tvTarget.setVisibility(View.GONE);
 
         StringBuilder components = new StringBuilder();
         if (spell.verbal) components.append("V");
@@ -76,14 +75,14 @@ public class CustomSpellDetailActivity extends BaseActivity {
                 components.append(" (").append(spell.materialSpecified).append(")");
             }
         }
-        setTextView(R.id.tv_components, "Components", components.toString());
+        setTextView(binding.tvComponents, "Components", components.toString());
 
         if (spell.savingThrowAbility != null && !spell.savingThrowAbility.isEmpty()) {
-            setTextView(R.id.tv_saving_throw, "Saving Throw",
+            setTextView(binding.tvSavingThrow, "Saving Throw",
                     capitalize(spell.savingThrowAbility));
-            findViewById(R.id.tv_saving_throw).setVisibility(View.VISIBLE);
+            binding.tvSavingThrow.setVisibility(View.VISIBLE);
         } else {
-            findViewById(R.id.tv_saving_throw).setVisibility(View.GONE);
+            binding.tvSavingThrow.setVisibility(View.GONE);
         }
 
         if (spell.damageRoll != null && !spell.damageRoll.isEmpty()) {
@@ -91,43 +90,42 @@ public class CustomSpellDetailActivity extends BaseActivity {
             if (spell.damageTypes != null && !spell.damageTypes.isEmpty()) {
                 dmg += " " + String.join(", ", spell.damageTypes);
             }
-            setTextView(R.id.tv_damage, "Damage", dmg);
-            findViewById(R.id.tv_damage).setVisibility(View.VISIBLE);
+            setTextView(binding.tvDamage, "Damage", dmg);
+            binding.tvDamage.setVisibility(View.VISIBLE);
         } else {
-            findViewById(R.id.tv_damage).setVisibility(View.GONE);
+            binding.tvDamage.setVisibility(View.GONE);
         }
 
-        findViewById(R.id.tv_classes).setVisibility(View.GONE);
+        binding.tvClasses.setVisibility(View.GONE);
 
-        TextView tvDesc = findViewById(R.id.tv_desc);
         if (spell.desc != null && !spell.desc.isEmpty()) {
-            markwon.setMarkdown(tvDesc, spell.desc);
+            markwon.setMarkdown(binding.tvDesc, spell.desc);
         } else {
-            tvDesc.setText("");
+            binding.tvDesc.setText("");
         }
 
-        LinearLayout higherLevelSection = findViewById(R.id.higher_level_section);
-        TextView tvHigherLevel = findViewById(R.id.tv_higher_level);
         if (spell.higherLevel != null && !spell.higherLevel.isEmpty()) {
-            markwon.setMarkdown(tvHigherLevel, spell.higherLevel);
-            higherLevelSection.setVisibility(View.VISIBLE);
+            markwon.setMarkdown(binding.tvHigherLevel, spell.higherLevel);
+            binding.higherLevelSection.setVisibility(View.VISIBLE);
         } else {
-            higherLevelSection.setVisibility(View.GONE);
+            binding.higherLevelSection.setVisibility(View.GONE);
         }
 
         buildCastingOptions(spell);
 
-        setTextView(R.id.tv_source, "Source", "Custom");
+        setTextView(binding.tvSource, "Source", "Custom");
 
         setupEditButton(spell.id);
     }
 
+    /**
+     * NOTE: casting_options_container is built dynamically at runtime (number of options depends on JSON data),
+     * there is no static XML layout for individual rows - in this place ViewBinding does not apply
+     * for elements inside castingOptionsContainer.
+     */
     private void buildCastingOptions(CustomSpellEntity spell) {
-        LinearLayout castingOptionsSection = findViewById(R.id.casting_options_section);
-        LinearLayout castingOptionsContainer = findViewById(R.id.casting_options_container);
-
         if (spell.castingOptionsJson == null || spell.castingOptionsJson.isEmpty()) {
-            castingOptionsSection.setVisibility(View.GONE);
+            binding.castingOptionsSection.setVisibility(View.GONE);
             return;
         }
 
@@ -137,12 +135,12 @@ public class CustomSpellDetailActivity extends BaseActivity {
             List<CustomCastingOption> options = gson.fromJson(spell.castingOptionsJson, type);
 
             if (options == null || options.isEmpty()) {
-                castingOptionsSection.setVisibility(View.GONE);
+                binding.castingOptionsSection.setVisibility(View.GONE);
                 return;
             }
 
-            castingOptionsSection.setVisibility(View.VISIBLE);
-            castingOptionsContainer.removeAllViews();
+            binding.castingOptionsSection.setVisibility(View.VISIBLE);
+            binding.castingOptionsContainer.removeAllViews();
 
             for (CustomCastingOption option : options) {
                 LinearLayout layout = new LinearLayout(this);
@@ -178,19 +176,16 @@ public class CustomSpellDetailActivity extends BaseActivity {
                     layout.addView(tvDetails);
                 }
 
-                castingOptionsContainer.addView(layout);
+                binding.castingOptionsContainer.addView(layout);
             }
         } catch (Exception e) {
-            castingOptionsSection.setVisibility(View.GONE);
+            binding.castingOptionsSection.setVisibility(View.GONE);
         }
     }
 
     private void setupEditButton(long spellId) {
-        View btnManage = findViewById(R.id.btnManage);
-        if (btnManage != null) {
-            btnManage.setVisibility(View.VISIBLE);
-            btnManage.setOnClickListener(v -> showManageMenu(v, spellId));
-        }
+        binding.btnManage.setVisibility(View.VISIBLE);
+        binding.btnManage.setOnClickListener(v -> showManageMenu(v, spellId));
     }
 
     private void showManageMenu(View anchor, long spellId) {
@@ -231,8 +226,7 @@ public class CustomSpellDetailActivity extends BaseActivity {
                 .show();
     }
 
-    private void setTextView(int viewId, String label, String value) {
-        TextView tv = findViewById(viewId);
+    private void setTextView(TextView tv, String label, String value) {
         if (value != null && !value.isEmpty()) {
             tv.setText(label + ": " + value);
             tv.setVisibility(View.VISIBLE);

@@ -2,17 +2,14 @@ package com.murkfeatherstudio.questroll.feature_item.item_rarity.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.SearchView;
-import android.widget.TextView;
 
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
+import com.murkfeatherstudio.questroll.databinding.ActivityItemRarityListBinding;
 import com.murkfeatherstudio.questroll.feature_item.item_rarity.adapter.ItemRarityAdapter;
 import com.murkfeatherstudio.questroll.feature_item.item_rarity.view_model.ItemRarityListViewModel;
 
@@ -20,12 +17,14 @@ public class ItemRarityListActivity extends BaseActivity {
 
     private ItemRarityListViewModel viewModel;
     private ItemRarityAdapter adapter;
-    private RecyclerView rv;
+    private ActivityItemRarityListBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_item_rarity_list);
+        binding = ActivityItemRarityListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        setTitle("Rarities");
 
         Open5eDatabase open5eDb = Open5eDatabase.getInstance(this);
         UserContentDatabase customDb = UserContentDatabase.getInstance(this);
@@ -39,7 +38,7 @@ public class ItemRarityListActivity extends BaseActivity {
         setupRecyclerView();
         setupSearch();
 
-        findViewById(R.id.fabCreate).setOnClickListener(v ->
+        binding.fabCreate.setOnClickListener(v ->
                 startActivity(new Intent(this, CustomItemRarityCreateActivity.class)));
     }
 
@@ -55,15 +54,12 @@ public class ItemRarityListActivity extends BaseActivity {
                 startActivity(i);
             }
         });
-        rv = findViewById(R.id.recycler_rarities);
-        rv.setLayoutManager(new LinearLayoutManager(this));
-        rv.setAdapter(adapter);
-        rv.setSaveEnabled(false);
+        binding.recyclerRarities.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerRarities.setAdapter(adapter);
     }
 
     private void setupSearch() {
-        SearchView searchView = findViewById(R.id.search_view);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        binding.searchView.setOnQueryTextListener(new android.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String q) {
                 viewModel.setQuery(q);
@@ -83,7 +79,7 @@ public class ItemRarityListActivity extends BaseActivity {
         super.onResume();
         viewModel.getRarities().observe(this, list -> {
             adapter.submitList(list);
-            ((TextView) findViewById(R.id.tv_count)).setText(list.size() + " rarities");
+            binding.tvCount.setText(list.size() + " rarities");
         });
     }
 }

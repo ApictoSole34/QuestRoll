@@ -3,14 +3,13 @@ package com.murkfeatherstudio.questroll.feature_item.item_rarity.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
+import com.murkfeatherstudio.questroll.databinding.ItemItemRarityBinding;
 import com.murkfeatherstudio.questroll.feature_item.item_rarity.model.CombinedItemRarity;
 
 public class ItemRarityAdapter extends ListAdapter<CombinedItemRarity, ItemRarityAdapter.ViewHolder> {
@@ -39,9 +38,8 @@ public class ItemRarityAdapter extends ListAdapter<CombinedItemRarity, ItemRarit
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_item_rarity, parent, false);
-        return new ViewHolder(view);
+        ItemItemRarityBinding binding = ItemItemRarityBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
@@ -50,26 +48,23 @@ public class ItemRarityAdapter extends ListAdapter<CombinedItemRarity, ItemRarit
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvRank, tvDescription, tvCustomBadge;
+        private final ItemItemRarityBinding binding;
 
-        ViewHolder(View v) {
-            super(v);
-            tvName = v.findViewById(R.id.tv_name);
-            tvRank = v.findViewById(R.id.tv_rank);
-            tvDescription = v.findViewById(R.id.tv_description);
-            tvCustomBadge = v.findViewById(R.id.tv_custom_badge);
+        ViewHolder(ItemItemRarityBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
 
         void bind(CombinedItemRarity r, OnItemClickListener listener) {
-            tvName.setText(r.name);
-            tvRank.setText("Rank: " + r.rank);
+            binding.tvName.setText(r.name);
+            binding.tvRank.setText("Rank: " + r.rank);
             if (r.description != null && !r.description.isEmpty()) {
-                tvDescription.setText(r.description);
-                tvDescription.setVisibility(View.VISIBLE);
+                binding.tvDescription.setText(r.description);
+                binding.tvDescription.setVisibility(View.VISIBLE);
             } else {
-                tvDescription.setVisibility(View.GONE);
+                binding.tvDescription.setVisibility(View.GONE);
             }
-            tvCustomBadge.setVisibility(r.isCustom ? View.VISIBLE : View.GONE);
+            binding.tvCustomBadge.setVisibility(r.isCustom ? View.VISIBLE : View.GONE);
             itemView.setOnClickListener(v -> listener.onItemClick(r));
         }
     }

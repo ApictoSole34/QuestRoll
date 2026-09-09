@@ -5,26 +5,22 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
-import android.widget.SearchView;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
+import com.murkfeatherstudio.questroll.databinding.ActivitySpellListBinding;
+import com.murkfeatherstudio.questroll.databinding.DialogSpellFilterBinding;
 import com.murkfeatherstudio.questroll.feature_spell.spell_school.ui.SpellSchoolListActivity;
 import com.murkfeatherstudio.questroll.feature_spell.view_model.SpellListViewModel;
 import com.murkfeatherstudio.questroll.feature_spell.adapter.SpellAdapter;
 import com.murkfeatherstudio.questroll.feature_spell.model.SpellFilter;
 import com.google.android.material.chip.Chip;
-import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,13 +29,13 @@ public class SpellListActivity extends BaseActivity {
 
     private SpellListViewModel viewModel;
     private SpellAdapter adapter;
-    private TextView tvActiveFilters;
-    private ChipGroup chipGroupSources;
+    private ActivitySpellListBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_spell_list);
+        binding = ActivitySpellListBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
         Open5eDatabase open5eDb = Open5eDatabase.getInstance(this);
         UserContentDatabase customDb = UserContentDatabase.getInstance(this);
@@ -52,23 +48,20 @@ public class SpellListActivity extends BaseActivity {
                         customDb.customSpellSchoolDao()
                 )).get(SpellListViewModel.class);
 
-        chipGroupSources = findViewById(R.id.chip_group_sources);
-
         setupRecyclerView();
         setupSearch();
         setupObservers();
         viewModel.loadSchools();
         viewModel.loadSources();
 
-        findViewById(R.id.btnFilter).setOnClickListener(v -> showFilterDialog());
-        findViewById(R.id.btnManageSchools).setOnClickListener(v ->
+        binding.btnFilter.setOnClickListener(v -> showFilterDialog());
+        binding.btnManageSchools.setOnClickListener(v ->
                 startActivity(new Intent(this, SpellSchoolListActivity.class)));
-        findViewById(R.id.fabCreateSpell).setOnClickListener(v ->
+        binding.fabCreateSpell.setOnClickListener(v ->
                 startActivity(new Intent(this, CustomSpellCreateActivity.class)));
     }
 
     private void setupRecyclerView() {
-        RecyclerView recyclerView = findViewById(R.id.recycler_spells);
         adapter = new SpellAdapter(spell -> {
             if (spell.isCustom) {
                 Intent intent = new Intent(this, CustomSpellDetailActivity.class);
@@ -80,13 +73,12 @@ public class SpellListActivity extends BaseActivity {
                 startActivity(intent);
             }
         });
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(adapter);
+        binding.recyclerSpells.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerSpells.setAdapter(adapter);
     }
 
     private void setupSearch() {
-        SearchView searchView = findViewById(R.id.search_view);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        binding.searchView.setOnQueryTextListener(new android.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 viewModel.setQuery(query);
@@ -101,20 +93,17 @@ public class SpellListActivity extends BaseActivity {
     }
 
     private void setupObservers() {
-        tvActiveFilters = findViewById(R.id.tv_active_filters);
-
         viewModel.getSpells().observe(this, spells -> {
             adapter.submitList(spells);
-            ((TextView) findViewById(R.id.tv_spell_count))
-                    .setText(spells.size() + " spells");
+            binding.tvSpellCount.setText(spells.size() + " spells");
         });
 
         viewModel.getFilter().observe(this, filter -> {
             if (filter.isEmpty()) {
-                tvActiveFilters.setVisibility(View.GONE);
+                binding.tvActiveFilters.setVisibility(View.GONE);
             } else {
-                tvActiveFilters.setVisibility(View.VISIBLE);
-                tvActiveFilters.setText(buildFilterSummary(filter));
+                binding.tvActiveFilters.setVisibility(View.VISIBLE);
+                binding.tvActiveFilters.setText(buildFilterSummary(filter));
             }
         });
 
@@ -124,9 +113,14 @@ public class SpellListActivity extends BaseActivity {
         });
     }
 
+    /**
+     * JAVADOC: chipGroupSources is a dynamic container. We use removeViews() and addView() 
+     * to manage Material Chips programmatically because the spell sources are loaded 
+     * from the database at runtime. Static View Binding is not applicable here.
+     */
     private void buildSourceChips(List<String> sources) {
-        int chipCount = chipGroupSources.getChildCount();
-        if (chipCount > 1) chipGroupSources.removeViews(1, chipCount - 1);
+        int chipCount = binding.chipGroupSources.getChildCount();
+        if (chipCount > 1) binding.chipGroupSources.removeViews(1, chipCount - 1);
 
         for (String source : sources) {
             Chip chip = new Chip(this);
@@ -138,25 +132,21 @@ public class SpellListActivity extends BaseActivity {
 
             chip.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (isChecked) {
-                    Chip chipAll = findViewById(R.id.chip_all);
-                    if (chipAll != null) chipAll.setChecked(false);
+                    binding.chipAll.setChecked(false);
                     viewModel.setSource((String) buttonView.getTag());
                 }
             });
-            chipGroupSources.addView(chip);
+            binding.chipGroupSources.addView(chip);
         }
 
-        Chip chipAll = findViewById(R.id.chip_all);
-        if (chipAll != null) {
-            chipAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                if (isChecked) {
-                    for (int i = 1; i < chipGroupSources.getChildCount(); i++) {
-                        ((Chip) chipGroupSources.getChildAt(i)).setChecked(false);
-                    }
-                    viewModel.setSource("");
+        binding.chipAll.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            if (isChecked) {
+                for (int i = 1; i < binding.chipGroupSources.getChildCount(); i++) {
+                    ((Chip) binding.chipGroupSources.getChildAt(i)).setChecked(false);
                 }
-            });
-        }
+                viewModel.setSource("");
+            }
+        });
     }
 
     private String formatSourceName(String source) {
@@ -185,21 +175,17 @@ public class SpellListActivity extends BaseActivity {
         SpellFilter current = viewModel.getFilter().getValue();
         if (current == null) current = new SpellFilter();
 
-        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_spell_filter, null);
-        Spinner spinnerLevel = dialogView.findViewById(R.id.spinner_level);
-        Spinner spinnerSchool = dialogView.findViewById(R.id.spinner_school);
-        CheckBox cbRitual = dialogView.findViewById(R.id.cb_ritual);
-        CheckBox cbConcentration = dialogView.findViewById(R.id.cb_concentration);
+        DialogSpellFilterBinding filterBinding = DialogSpellFilterBinding.inflate(getLayoutInflater());
 
         List<String> levelLabels = new ArrayList<>();
         List<Integer> levelValues = new ArrayList<>();
         levelLabels.add("All Levels"); levelValues.add(-1);
         levelLabels.add("Cantrip"); levelValues.add(0);
         for (int i = 1; i <= 9; i++) { levelLabels.add("Level " + i); levelValues.add(i); }
-        spinnerLevel.setAdapter(new ArrayAdapter<>(this,
+        filterBinding.spinnerLevel.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, levelLabels));
         int li = levelValues.indexOf(current.level);
-        if (li >= 0) spinnerLevel.setSelection(li);
+        if (li >= 0) filterBinding.spinnerLevel.setSelection(li);
 
         List<String> schoolLabels = new ArrayList<>();
         List<String> schoolKeys = new ArrayList<>();
@@ -211,22 +197,22 @@ public class SpellListActivity extends BaseActivity {
                 schoolKeys.add(name.toLowerCase());
             }
         }
-        spinnerSchool.setAdapter(new ArrayAdapter<>(this,
+        filterBinding.spinnerSchool.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_item, schoolLabels));
         int si = schoolKeys.indexOf(current.schoolKey);
-        if (si >= 0) spinnerSchool.setSelection(si);
+        if (si >= 0) filterBinding.spinnerSchool.setSelection(si);
 
-        cbRitual.setChecked(current.ritualOnly);
-        cbConcentration.setChecked(current.concentrationOnly);
+        filterBinding.cbRitual.setChecked(current.ritualOnly);
+        filterBinding.cbConcentration.setChecked(current.concentrationOnly);
 
         new AlertDialog.Builder(this)
                 .setTitle("Filter Spells")
-                .setView(dialogView)
+                .setView(filterBinding.getRoot())
                 .setPositiveButton("Apply", (d, w) -> {
-                    viewModel.setLevel(levelValues.get(spinnerLevel.getSelectedItemPosition()));
-                    viewModel.setSchool(schoolKeys.get(spinnerSchool.getSelectedItemPosition()));
-                    viewModel.setRitualOnly(cbRitual.isChecked());
-                    viewModel.setConcentrationOnly(cbConcentration.isChecked());
+                    viewModel.setLevel(levelValues.get(filterBinding.spinnerLevel.getSelectedItemPosition()));
+                    viewModel.setSchool(schoolKeys.get(filterBinding.spinnerSchool.getSelectedItemPosition()));
+                    viewModel.setRitualOnly(filterBinding.cbRitual.isChecked());
+                    viewModel.setConcentrationOnly(filterBinding.cbConcentration.isChecked());
                 })
                 .setNeutralButton("Clear", (d, w) -> viewModel.clearFilters())
                 .setNegativeButton("Cancel", null)

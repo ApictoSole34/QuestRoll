@@ -3,11 +3,10 @@ package com.murkfeatherstudio.questroll.feature_campaign.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.models.campaign.CampaignEntity;
+import com.murkfeatherstudio.questroll.databinding.ItemCampaignBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,20 +38,20 @@ public class CampaignAdapter extends RecyclerView.Adapter<CampaignAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_campaign, parent, false);
-        return new ViewHolder(view);
+        ItemCampaignBinding binding = ItemCampaignBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
+        return new ViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         CampaignEntity campaign = campaigns.get(position);
-        holder.tvName.setText(campaign.name);
-        holder.tvGameSystem.setText(campaign.gameSystem);
+        holder.binding.tvCampaignName.setText(campaign.name);
+        holder.binding.tvGameSystem.setText(campaign.gameSystem);
         if (campaign.description != null && !campaign.description.isEmpty()) {
-            holder.tvDescription.setText(campaign.description);
-            holder.tvDescription.setVisibility(View.VISIBLE);
+            holder.binding.tvDescriptionPreview.setText(campaign.description);
+            holder.binding.tvDescriptionPreview.setVisibility(View.VISIBLE);
         } else {
-            holder.tvDescription.setVisibility(View.GONE);
+            holder.binding.tvDescriptionPreview.setVisibility(View.GONE);
         }
 
         holder.itemView.setOnClickListener(v -> clickListener.onItemClick(campaign));
@@ -71,12 +70,10 @@ public class CampaignAdapter extends RecyclerView.Adapter<CampaignAdapter.ViewHo
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvName, tvGameSystem, tvDescription;
-        ViewHolder(View itemView) {
-            super(itemView);
-            tvName = itemView.findViewById(R.id.tv_campaign_name);
-            tvGameSystem = itemView.findViewById(R.id.tv_game_system);
-            tvDescription = itemView.findViewById(R.id.tv_description_preview);
+        final ItemCampaignBinding binding;
+        ViewHolder(ItemCampaignBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 }

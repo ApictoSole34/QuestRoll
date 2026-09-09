@@ -6,12 +6,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -31,6 +30,7 @@ import com.murkfeatherstudio.questroll.core.models.open5e.character_class.Charac
 import com.murkfeatherstudio.questroll.core.models.open5e.character_class.feature.FeatureEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.character_class.saving_throw.SavingThrowEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.character_class.table_data.TableData;
+import com.murkfeatherstudio.questroll.databinding.FragmentWizardClassBinding;
 import com.murkfeatherstudio.questroll.feature_character.utils.ClassCastingAbility;
 import com.murkfeatherstudio.questroll.feature_character.utils.ClassStartingGold;
 import com.murkfeatherstudio.questroll.feature_character.view_model.WizardViewModel;
@@ -46,27 +46,30 @@ import java.util.Set;
 public class ClassStepFragment extends Fragment {
 
     private WizardViewModel viewModel;
-    private Spinner classSpinner;
+    private FragmentWizardClassBinding binding;
     private List<Object> combinedClasses = new ArrayList<>();
     private Object currentClassObj;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_wizard_class, container, false);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        binding = FragmentWizardClassBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
-    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         viewModel = new ViewModelProvider(requireActivity()).get(WizardViewModel.class);
 
-        classSpinner = view.findViewById(R.id.class_spinner);
-        Button nextButton = view.findViewById(R.id.next_button);
-        Button backButton = view.findViewById(R.id.back_button);
-
         loadClasses();
 
-        classSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        binding.classSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position >= 0 && position < combinedClasses.size()) {
@@ -81,7 +84,7 @@ public class ClassStepFragment extends Fragment {
             @Override public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        nextButton.setOnClickListener(v -> {
+        binding.nextButton.setOnClickListener(v -> {
             if (viewModel.classAssignments.isEmpty()) {
                 Toast.makeText(getContext(), "Please select a class", Toast.LENGTH_SHORT).show();
                 return;
@@ -96,7 +99,7 @@ public class ClassStepFragment extends Fragment {
             }
         });
 
-        backButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.back_action));
+        binding.backButton.setOnClickListener(v -> Navigation.findNavController(v).navigate(R.id.back_action));
     }
 
     private void loadClasses() {
@@ -114,7 +117,7 @@ public class ClassStepFragment extends Fragment {
 
             if (!isAdded()) return;
             AppExecutors.getInstance().mainThread().execute(() -> {
-                if (!isAdded()) return;
+                if (!isAdded() || binding == null) return;
                 ArrayAdapter<Object> adapter = new ArrayAdapter<Object>(requireContext(),
                         android.R.layout.simple_spinner_item, combinedClasses) {
                     @NonNull
@@ -135,8 +138,8 @@ public class ClassStepFragment extends Fragment {
                         return tv;
                     }
                 };
-                classSpinner.setAdapter(adapter);
-                if (!combinedClasses.isEmpty()) classSpinner.setSelection(0);
+                binding.classSpinner.setAdapter(adapter);
+                if (!combinedClasses.isEmpty()) binding.classSpinner.setSelection(0);
             });
         });
     }
@@ -285,7 +288,6 @@ public class ClassStepFragment extends Fragment {
             if (!isAdded()) return;
             AppExecutors.getInstance().mainThread().execute(() -> {
                 if (!isAdded()) return;
-                // FIX: Remove old CLASS traits before adding new ones
                 viewModel.characterTraits.removeIf(t -> "CLASS".equals(t.sourceType));
                 viewModel.characterTraits.addAll(traits);
             });
@@ -326,7 +328,6 @@ public class ClassStepFragment extends Fragment {
             if (!isAdded()) return;
             AppExecutors.getInstance().mainThread().execute(() -> {
                 if (!isAdded()) return;
-                // FIX: Unified cleanup for standard classes too
                 viewModel.characterTraits.removeIf(t -> "CLASS".equals(t.sourceType));
                 viewModel.characterTraits.addAll(classTraits);
             });

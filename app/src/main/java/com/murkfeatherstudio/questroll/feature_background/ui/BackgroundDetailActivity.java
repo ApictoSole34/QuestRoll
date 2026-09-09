@@ -14,6 +14,7 @@ import com.murkfeatherstudio.questroll.core.feature_document.fragment.DocumentDe
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.models.open5e.background.BackgroundDto;
 import com.murkfeatherstudio.questroll.core.models.open5e.background.BackgroundEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityBackgroundDetailBinding;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -27,11 +28,14 @@ import io.noties.markwon.html.HtmlPlugin;
 public class BackgroundDetailActivity extends BaseActivity {
 
     private Markwon markwon;
+    private ActivityBackgroundDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_background_detail);
+        binding = ActivityBackgroundDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
         markwon = Markwon.builder(this)
                 .usePlugin(HtmlPlugin.create())
                 .usePlugin(TablePlugin.create(this))
@@ -43,39 +47,40 @@ public class BackgroundDetailActivity extends BaseActivity {
     }
 
     private void populateUI(BackgroundEntity b) {
-        ((TextView) findViewById(R.id.tv_background_name)).setText(b.name);
+        binding.tvBackgroundName.setText(b.name);
 
-        TextView tvSource = findViewById(R.id.tv_source);
         if (b.documentName != null && !b.documentName.isEmpty()) {
-            tvSource.setText(b.documentName);
-            tvSource.setVisibility(View.VISIBLE);
-            tvSource.setClickable(true);
-            tvSource.setFocusable(true);
-            tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
-            tvSource.setOnClickListener(v -> {
+            binding.tvSource.setText(b.documentName);
+            binding.tvSource.setVisibility(View.VISIBLE);
+            binding.tvSource.setClickable(true);
+            binding.tvSource.setFocusable(true);
+            binding.tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
+            binding.tvSource.setOnClickListener(v -> {
                 if (b.documentKey != null && !b.documentKey.isEmpty()) {
                     DocumentDetailDialogFragment fragment = DocumentDetailDialogFragment.newInstance(b.documentKey);
                     fragment.show(getSupportFragmentManager(), "document_detail");
                 }
             });
         } else {
-            tvSource.setVisibility(View.GONE);
+            binding.tvSource.setVisibility(View.GONE);
         }
 
-        TextView tvDesc = findViewById(R.id.tv_desc);
         if (b.desc != null && !b.desc.isEmpty()) {
-            markwon.setMarkdown(tvDesc, b.desc);
-            tvDesc.setVisibility(View.VISIBLE);
+            markwon.setMarkdown(binding.tvDesc, b.desc);
+            binding.tvDesc.setVisibility(View.VISIBLE);
         } else {
-            tvDesc.setVisibility(View.GONE);
+            binding.tvDesc.setVisibility(View.GONE);
         }
 
         buildBenefits(b.benefitsJson);
     }
 
+    /**
+     * NOTE: Benefits UI is built dynamically at runtime based on JSON, 
+     * it does not have a static XML layout for individual list items.
+     */
     private void buildBenefits(String json) {
-        LinearLayout container = findViewById(R.id.benefits_container);
-        container.removeAllViews();
+        binding.benefitsContainer.removeAllViews();
 
         if (json == null || json.isEmpty()) return;
 
@@ -85,7 +90,7 @@ public class BackgroundDetailActivity extends BaseActivity {
             if (benefits == null || benefits.isEmpty()) return;
 
             for (BackgroundDto.BenefitDto benefit : benefits) {
-                addBenefitView(container, benefit.name, benefit.desc);
+                addBenefitView(binding.benefitsContainer, benefit.name, benefit.desc);
             }
         } catch (Exception ignored) {}
     }

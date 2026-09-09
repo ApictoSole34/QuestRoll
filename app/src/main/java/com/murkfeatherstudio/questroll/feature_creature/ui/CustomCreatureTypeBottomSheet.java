@@ -4,20 +4,19 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_creature.CustomCreatureDao;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_creature.CustomCreatureEntity;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_creature_type.CustomCreatureTypeDao;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_creature_type.CustomCreatureTypeEntity;
+import com.murkfeatherstudio.questroll.databinding.BottomSheetCustomCreatureTypesBinding;
+import com.murkfeatherstudio.questroll.databinding.DialogCustomSchoolBinding;
 import com.murkfeatherstudio.questroll.feature_creature.adapter.CustomCreatureTypeAdapter;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
@@ -27,6 +26,7 @@ import java.util.concurrent.Executors;
 
 public class CustomCreatureTypeBottomSheet extends BottomSheetDialogFragment {
 
+    private BottomSheetCustomCreatureTypesBinding binding;
     private CustomCreatureTypeDao typeDao;
     private CustomCreatureDao creatureDao;
     private Executor executor;
@@ -35,7 +35,8 @@ public class CustomCreatureTypeBottomSheet extends BottomSheetDialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.bottom_sheet_custom_creature_types, container, false);
+        binding = BottomSheetCustomCreatureTypesBinding.inflate(inflater, container, false);
+        return binding.getRoot();
     }
 
     @Override
@@ -47,37 +48,39 @@ public class CustomCreatureTypeBottomSheet extends BottomSheetDialogFragment {
         creatureDao = db.customCreatureDao();
         executor = Executors.newSingleThreadExecutor();
 
-        RecyclerView rv = view.findViewById(R.id.rv_creature_types);
-        rv.setLayoutManager(new LinearLayoutManager(requireContext()));
+        binding.rvCreatureTypes.setLayoutManager(new LinearLayoutManager(requireContext()));
 
         CustomCreatureTypeAdapter adapter = new CustomCreatureTypeAdapter(
                 this::showEditDialog,
                 this::confirmDelete
         );
-        rv.setAdapter(adapter);
+        binding.rvCreatureTypes.setAdapter(adapter);
 
-        typeDao.getAll().observe(getViewLifecycleOwner(), types -> adapter.submitList(types));
+        typeDao.getAll().observe(getViewLifecycleOwner(), adapter::submitList);
 
-        view.findViewById(R.id.btnAddType).setOnClickListener(v -> showAddDialog());
+        binding.btnAddType.setOnClickListener(v -> showAddDialog());
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     private void showAddDialog() {
-        View dv = LayoutInflater.from(requireContext())
-                .inflate(R.layout.dialog_custom_school, null);
-        EditText etName = dv.findViewById(R.id.etSchoolName);
-        EditText etDesc = dv.findViewById(R.id.etSchoolDesc);
+        DialogCustomSchoolBinding dialogBinding = DialogCustomSchoolBinding.inflate(LayoutInflater.from(requireContext()));
 
         new AlertDialog.Builder(requireContext())
                 .setTitle("Add Creature Type")
-                .setView(dv)
+                .setView(dialogBinding.getRoot())
                 .setPositiveButton("Add", (d, w) -> {
-                    String name = etName.getText().toString().trim();
+                    String name = dialogBinding.etSchoolName.getText().toString().trim();
                     if (name.isEmpty()) return;
                     executor.execute(() -> {
                         if (typeDao.countByName(name) > 0) return;
                         CustomCreatureTypeEntity t = new CustomCreatureTypeEntity();
                         t.name = name;
-                        t.description = etDesc.getText().toString().trim();
+                        t.description = dialogBinding.etSchoolDesc.getText().toString().trim();
                         typeDao.insert(t);
                     });
                 })
@@ -85,21 +88,18 @@ public class CustomCreatureTypeBottomSheet extends BottomSheetDialogFragment {
     }
 
     private void showEditDialog(CustomCreatureTypeEntity type) {
-        View dv = LayoutInflater.from(requireContext())
-                .inflate(R.layout.dialog_custom_school, null);
-        EditText etName = dv.findViewById(R.id.etSchoolName);
-        EditText etDesc = dv.findViewById(R.id.etSchoolDesc);
-        etName.setText(type.name);
-        etDesc.setText(type.description);
+        DialogCustomSchoolBinding dialogBinding = DialogCustomSchoolBinding.inflate(LayoutInflater.from(requireContext()));
+        dialogBinding.etSchoolName.setText(type.name);
+        dialogBinding.etSchoolDesc.setText(type.description);
 
         new AlertDialog.Builder(requireContext())
                 .setTitle("Edit Creature Type")
-                .setView(dv)
+                .setView(dialogBinding.getRoot())
                 .setPositiveButton("Save", (d, w) -> {
-                    String name = etName.getText().toString().trim();
+                    String name = dialogBinding.etSchoolName.getText().toString().trim();
                     if (name.isEmpty()) return;
                     type.name = name;
-                    type.description = etDesc.getText().toString().trim();
+                    type.description = dialogBinding.etSchoolDesc.getText().toString().trim();
                     executor.execute(() -> typeDao.update(type));
                 })
                 .setNegativeButton("Cancel", null).show();

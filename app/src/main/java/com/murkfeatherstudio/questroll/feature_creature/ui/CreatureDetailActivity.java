@@ -5,6 +5,8 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.res.ResourcesCompat;
 
 import com.murkfeatherstudio.questroll.R;
@@ -13,6 +15,7 @@ import com.murkfeatherstudio.questroll.core.feature_document.fragment.DocumentDe
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.models.open5e.creature.CreatureDto;
 import com.murkfeatherstudio.questroll.core.models.open5e.creature.CreatureEntity;
+import com.murkfeatherstudio.questroll.databinding.ActivityCreatureDetailBinding;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -29,13 +32,15 @@ import io.noties.markwon.html.HtmlPlugin;
 public class CreatureDetailActivity extends BaseActivity {
 
     private Markwon markwon;
+    private ActivityCreatureDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_creature_detail);
+        binding = ActivityCreatureDetailBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        // 🔥 Markwon z tabelami
+        // Markwon with tables
         markwon = Markwon.builder(this)
                 .usePlugin(TablePlugin.create(this))
                 .usePlugin(HtmlPlugin.create())
@@ -52,69 +57,62 @@ public class CreatureDetailActivity extends BaseActivity {
     private void populateUI(CreatureEntity c) {
         Gson gson = new Gson();
 
-        TextView tvName = findViewById(R.id.tv_creature_name);
-        tvName.setText(c.name);
-        tvName.setTypeface(ResourcesCompat.getFont(this, R.font.cinzel_bold));
-        tvName.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        binding.tvCreatureName.setText(c.name);
+        binding.tvCreatureName.setTypeface(ResourcesCompat.getFont(this, R.font.cinzel_bold));
+        binding.tvCreatureName.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
 
-        TextView tvSizeType = findViewById(R.id.tv_size_type_alignment);
-        tvSizeType.setText(join(" ", c.sizeName, c.typeName, "•", c.alignment));
-        tvSizeType.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
-        tvSizeType.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
+        binding.tvSizeTypeAlignment.setText(join(" ", c.sizeName, c.typeName, "•", c.alignment));
+        binding.tvSizeTypeAlignment.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvSizeTypeAlignment.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
 
-        TextView tvCr = findViewById(R.id.tv_cr);
-        tvCr.setText("CR " + (c.challengeRatingText != null ? c.challengeRatingText : "?")
+        binding.tvCr.setText("CR " + (c.challengeRatingText != null ? c.challengeRatingText : "?")
                 + " (" + c.experiencePoints + " XP)");
-        tvCr.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
-        tvCr.setTextColor(getResources().getColor(R.color.threads_gold, null));
+        binding.tvCr.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvCr.setTextColor(getResources().getColor(R.color.threads_gold, null));
 
-        TextView tvAc = findViewById(R.id.tv_ac);
-        tvAc.setText("Armor Class: " + c.armorClass
+        binding.tvAc.setText("Armor Class: " + c.armorClass
                 + (c.armorDetail != null && !c.armorDetail.isEmpty()
                 ? " (" + c.armorDetail + ")" : ""));
-        tvAc.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
-        tvAc.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        binding.tvAc.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvAc.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
 
-        TextView tvHp = findViewById(R.id.tv_hp);
-        tvHp.setText("Hit Points: " + c.hitPoints
+        binding.tvHp.setText("Hit Points: " + c.hitPoints
                 + (c.hitDice != null ? " (" + c.hitDice + ")" : ""));
-        tvHp.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
-        tvHp.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        binding.tvHp.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvHp.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
 
         buildSpeedText(c.speedJson);
         setStatBlock(c);
-        buildKeyValueSection(R.id.tv_saving_throws, "Saving Throws", c.savingThrowsJson, true);
-        buildKeyValueSection(R.id.tv_skills, "Skills", c.skillBonusesJson, true);
+        buildKeyValueSection(binding.tvSavingThrows, "Saving Throws", c.savingThrowsJson, true);
+        buildKeyValueSection(binding.tvSkills, "Skills", c.skillBonusesJson, true);
         buildSenses(c);
 
         if (c.languages != null && !c.languages.isEmpty()) {
-            TextView tvLang = findViewById(R.id.tv_languages);
-            tvLang.setText("Languages: " + c.languages);
-            tvLang.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
-            tvLang.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
-            show(R.id.tv_languages);
+            binding.tvLanguages.setText("Languages: " + c.languages);
+            binding.tvLanguages.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+            binding.tvLanguages.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+            binding.tvLanguages.setVisibility(View.VISIBLE);
         } else {
-            hide(R.id.tv_languages);
+            binding.tvLanguages.setVisibility(View.GONE);
         }
 
-        setIfNotEmpty(R.id.tv_damage_immunities, "Damage Immunities: ", c.damageImmunities);
-        setIfNotEmpty(R.id.tv_damage_resistances, "Damage Resistances: ", c.damageResistances);
-        setIfNotEmpty(R.id.tv_damage_vulnerabilities, "Damage Vulnerabilities: ", c.damageVulnerabilities);
-        setIfNotEmpty(R.id.tv_condition_immunities, "Condition Immunities: ", c.conditionImmunities);
+        setIfNotEmpty(binding.tvDamageImmunities, "Damage Immunities: ", c.damageImmunities);
+        setIfNotEmpty(binding.tvDamageResistances, "Damage Resistances: ", c.damageResistances);
+        setIfNotEmpty(binding.tvDamageVulnerabilities, "Damage Vulnerabilities: ", c.damageVulnerabilities);
+        setIfNotEmpty(binding.tvConditionImmunities, "Condition Immunities: ", c.conditionImmunities);
 
         buildTraits(c.traitsJson, gson);
         buildActions(c.actionsJson, gson);
 
-        TextView tvSource = findViewById(R.id.tv_source);
         String sourceText = "Source: " + (c.documentName != null ? c.documentName : "");
-        tvSource.setText(sourceText);
-        tvSource.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
-        tvSource.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
-        tvSource.setVisibility(View.VISIBLE);
-        tvSource.setClickable(true);
-        tvSource.setFocusable(true);
-        tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
-        tvSource.setOnClickListener(v -> {
+        binding.tvSource.setText(sourceText);
+        binding.tvSource.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvSource.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
+        binding.tvSource.setVisibility(View.VISIBLE);
+        binding.tvSource.setClickable(true);
+        binding.tvSource.setFocusable(true);
+        binding.tvSource.setBackgroundResource(android.R.drawable.list_selector_background);
+        binding.tvSource.setOnClickListener(v -> {
             if (c.documentKey != null && !c.documentKey.isEmpty()) {
                 DocumentDetailDialogFragment fragment = DocumentDetailDialogFragment.newInstance(c.documentKey);
                 fragment.show(getSupportFragmentManager(), "document_detail");
@@ -123,7 +121,7 @@ public class CreatureDetailActivity extends BaseActivity {
     }
 
     private void buildSpeedText(String speedJson) {
-        if (speedJson == null) { hide(R.id.tv_speed); return; }
+        if (speedJson == null) { binding.tvSpeed.setVisibility(View.GONE); return; }
         try {
             Gson gson = new Gson();
             CreatureDto.CreatureSpeedDto speed = gson.fromJson(speedJson,
@@ -141,43 +139,62 @@ public class CreatureDetailActivity extends BaseActivity {
             if (speed.climb != null && speed.climb > 0)
                 sb.append(", climb ").append((int)(float)speed.climb).append(" ft.");
 
-            TextView tvSpeed = findViewById(R.id.tv_speed);
-            tvSpeed.setText(sb.toString());
-            tvSpeed.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
-            tvSpeed.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
-            show(R.id.tv_speed);
+            binding.tvSpeed.setText(sb.toString());
+            binding.tvSpeed.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+            binding.tvSpeed.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+            binding.tvSpeed.setVisibility(View.VISIBLE);
         } catch (Exception e) {
-            hide(R.id.tv_speed);
+            binding.tvSpeed.setVisibility(View.GONE);
         }
     }
 
     private void setStatBlock(CreatureEntity c) {
-        int[] valueIds = {
-                R.id.tv_str, R.id.tv_str_mod,
-                R.id.tv_dex, R.id.tv_dex_mod,
-                R.id.tv_con, R.id.tv_con_mod,
-                R.id.tv_int, R.id.tv_int_mod,
-                R.id.tv_wis, R.id.tv_wis_mod,
-                R.id.tv_cha, R.id.tv_cha_mod
-        };
-        for (int id : valueIds) {
-            TextView tv = findViewById(id);
-            tv.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
-            tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
-        }
+        /**
+         * JAVADOC: The stat block views (STR, DEX, CON, INT, WIS, CHA and their modifiers) 
+         * are accessed directly via binding. These views are part of the static XML layout.
+         */
+        binding.tvStr.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvStr.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        binding.tvStrMod.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvStrMod.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        
+        binding.tvDex.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvDex.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        binding.tvDexMod.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvDexMod.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
 
-        setText(R.id.tv_str, String.valueOf(c.str));
-        setText(R.id.tv_str_mod, formatMod(c.strMod));
-        setText(R.id.tv_dex, String.valueOf(c.dex));
-        setText(R.id.tv_dex_mod, formatMod(c.dexMod));
-        setText(R.id.tv_con, String.valueOf(c.con));
-        setText(R.id.tv_con_mod, formatMod(c.conMod));
-        setText(R.id.tv_int, String.valueOf(c.intScore));
-        setText(R.id.tv_int_mod, formatMod(c.intMod));
-        setText(R.id.tv_wis, String.valueOf(c.wis));
-        setText(R.id.tv_wis_mod, formatMod(c.wisMod));
-        setText(R.id.tv_cha, String.valueOf(c.cha));
-        setText(R.id.tv_cha_mod, formatMod(c.chaMod));
+        binding.tvCon.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvCon.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        binding.tvConMod.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvConMod.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+
+        binding.tvInt.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvInt.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        binding.tvIntMod.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvIntMod.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+
+        binding.tvWis.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvWis.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        binding.tvWisMod.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvWisMod.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+
+        binding.tvCha.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvCha.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        binding.tvChaMod.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvChaMod.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+
+        binding.tvStr.setText(String.valueOf(c.str));
+        binding.tvStrMod.setText(formatMod(c.strMod));
+        binding.tvDex.setText(String.valueOf(c.dex));
+        binding.tvDexMod.setText(formatMod(c.dexMod));
+        binding.tvCon.setText(String.valueOf(c.con));
+        binding.tvConMod.setText(formatMod(c.conMod));
+        binding.tvInt.setText(String.valueOf(c.intScore));
+        binding.tvIntMod.setText(formatMod(c.intMod));
+        binding.tvWis.setText(String.valueOf(c.wis));
+        binding.tvWisMod.setText(formatMod(c.wisMod));
+        binding.tvCha.setText(String.valueOf(c.cha));
+        binding.tvChaMod.setText(formatMod(c.chaMod));
     }
 
     private void buildSenses(CreatureEntity c) {
@@ -208,16 +225,15 @@ public class CreatureDetailActivity extends BaseActivity {
             sb = new StringBuilder("passive Perception " + c.passivePerception);
         }
 
-        TextView tvSenses = findViewById(R.id.tv_senses);
-        tvSenses.setText(sb.toString());
-        tvSenses.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
-        tvSenses.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
-        show(R.id.tv_senses);
+        binding.tvSenses.setText(sb.toString());
+        binding.tvSenses.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+        binding.tvSenses.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+        binding.tvSenses.setVisibility(View.VISIBLE);
     }
 
-    private void buildKeyValueSection(int viewId, String label,
+    private void buildKeyValueSection(TextView textView, String label,
                                       String json, boolean skipZeroes) {
-        if (json == null || json.isEmpty()) { hide(viewId); return; }
+        if (json == null || json.isEmpty()) { textView.setVisibility(View.GONE); return; }
         try {
             Gson gson = new Gson();
             Map<String, Object> map = gson.fromJson(json,
@@ -232,50 +248,59 @@ public class CreatureDetailActivity extends BaseActivity {
                 sb.append(" ").append(val > 0 ? "+" : "").append((int) val);
                 first = false;
             }
-            if (first) { hide(viewId); return; }
+            if (first) { textView.setVisibility(View.GONE); return; }
 
-            TextView tv = findViewById(viewId);
-            tv.setText(sb.toString());
-            tv.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
-            tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
-            show(viewId);
+            textView.setText(sb.toString());
+            textView.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+            textView.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+            textView.setVisibility(View.VISIBLE);
         } catch (Exception e) {
-            hide(viewId);
+            textView.setVisibility(View.GONE);
         }
     }
 
     private void buildTraits(String traitsJson, Gson gson) {
-        LinearLayout traitsContainer = findViewById(R.id.traits_container);
-        traitsContainer.removeAllViews();
+        /**
+         * JAVADOC: traitsContainer is a dynamic layout managed via addView(). 
+         * Text sections are created programmatically based on the creature's trait data 
+         * found in the JSON. Since these views are generated at runtime and their 
+         * number varies, View Binding is not applicable to these dynamic children.
+         */
+        binding.traitsContainer.removeAllViews();
 
         if (traitsJson == null || traitsJson.isEmpty()) {
-            hide(R.id.traits_section);
+            binding.traitsSection.setVisibility(View.GONE);
             return;
         }
 
         try {
             Type type = new TypeToken<List<CreatureDto.CreatureTraitDto>>(){}.getType();
             List<CreatureDto.CreatureTraitDto> traits = gson.fromJson(traitsJson, type);
-            if (traits == null || traits.isEmpty()) { hide(R.id.traits_section); return; }
+            if (traits == null || traits.isEmpty()) { binding.traitsSection.setVisibility(View.GONE); return; }
 
-            show(R.id.traits_section);
+            binding.traitsSection.setVisibility(View.VISIBLE);
             for (CreatureDto.CreatureTraitDto trait : traits) {
-                addTextSection(traitsContainer, trait.name, trait.desc, false);
+                addTextSection(binding.traitsContainer, trait.name, trait.desc);
             }
         } catch (Exception e) {
-            hide(R.id.traits_section);
+            binding.traitsSection.setVisibility(View.GONE);
         }
     }
 
     private void buildActions(String actionsJson, Gson gson) {
-        LinearLayout actionsContainer = findViewById(R.id.actions_container);
-        LinearLayout legendaryContainer = findViewById(R.id.legendary_actions_container);
-        actionsContainer.removeAllViews();
-        legendaryContainer.removeAllViews();
+        /**
+         * JAVADOC: actionsContainer and legendaryActionsContainer are dynamic layouts. 
+         * We use removeAllViews() and addTextSection() because the actions and 
+         * legendary actions are generated programmatically based on the JSON content 
+         * at runtime. View Binding cannot be used for views that do not exist 
+         * in the static XML layout.
+         */
+        binding.actionsContainer.removeAllViews();
+        binding.legendaryActionsContainer.removeAllViews();
 
         if (actionsJson == null || actionsJson.isEmpty()) {
-            hide(R.id.actions_section);
-            hide(R.id.legendary_actions_section);
+            binding.actionsSection.setVisibility(View.GONE);
+            binding.legendaryActionsSection.setVisibility(View.GONE);
             return;
         }
 
@@ -283,8 +308,8 @@ public class CreatureDetailActivity extends BaseActivity {
             Type type = new TypeToken<List<CreatureDto.CreatureActionDto>>(){}.getType();
             List<CreatureDto.CreatureActionDto> actions = gson.fromJson(actionsJson, type);
             if (actions == null || actions.isEmpty()) {
-                hide(R.id.actions_section);
-                hide(R.id.legendary_actions_section);
+                binding.actionsSection.setVisibility(View.GONE);
+                binding.legendaryActionsSection.setVisibility(View.GONE);
                 return;
             }
 
@@ -293,25 +318,24 @@ public class CreatureDetailActivity extends BaseActivity {
 
             for (CreatureDto.CreatureActionDto action : actions) {
                 if ("LEGENDARY_ACTION".equals(action.actionType)) {
-                    addTextSection(legendaryContainer, action.name, action.desc, true);
+                    addTextSection(binding.legendaryActionsContainer, action.name, action.desc);
                     hasLegendary = true;
                 } else {
-                    addTextSection(actionsContainer, action.name, action.desc, false);
+                    addTextSection(binding.actionsContainer, action.name, action.desc);
                     hasActions = true;
                 }
             }
 
-            if (hasActions) show(R.id.actions_section); else hide(R.id.actions_section);
-            if (hasLegendary) show(R.id.legendary_actions_section);
-            else hide(R.id.legendary_actions_section);
+            binding.actionsSection.setVisibility(hasActions ? View.VISIBLE : View.GONE);
+            binding.legendaryActionsSection.setVisibility(hasLegendary ? View.VISIBLE : View.GONE);
 
         } catch (Exception e) {
-            hide(R.id.actions_section);
-            hide(R.id.legendary_actions_section);
+            binding.actionsSection.setVisibility(View.GONE);
+            binding.legendaryActionsSection.setVisibility(View.GONE);
         }
     }
 
-    private void addTextSection(LinearLayout container, String name, String desc, boolean isLegendary) {
+    private void addTextSection(LinearLayout container, String name, String desc) {
         LinearLayout section = new LinearLayout(this);
         section.setOrientation(LinearLayout.VERTICAL);
         section.setPadding(0, dpToPx(8), 0, dpToPx(4));
@@ -350,27 +374,16 @@ public class CreatureDetailActivity extends BaseActivity {
                 .collect(Collectors.joining(sep));
     }
 
-    private void setText(int id, String text) {
-        TextView tv = findViewById(id);
-        tv.setText(text != null ? text : "");
-        tv.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
-        tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
-    }
-
-    private void setIfNotEmpty(int id, String prefix, String value) {
+    private void setIfNotEmpty(TextView textView, String prefix, String value) {
         if (value != null && !value.isEmpty()) {
-            TextView tv = findViewById(id);
-            tv.setText(prefix + value);
-            tv.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
-            tv.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
-            show(id);
+            textView.setText(prefix + value);
+            textView.setTypeface(ResourcesCompat.getFont(this, R.font.inter_regular));
+            textView.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
+            textView.setVisibility(View.VISIBLE);
         } else {
-            hide(id);
+            textView.setVisibility(View.GONE);
         }
     }
-
-    private void show(int id) { findViewById(id).setVisibility(View.VISIBLE); }
-    private void hide(int id) { findViewById(id).setVisibility(View.GONE); }
 
     private int dpToPx(int dp) {
         return (int) (dp * getResources().getDisplayMetrics().density);

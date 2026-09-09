@@ -5,14 +5,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -32,6 +29,7 @@ import com.murkfeatherstudio.questroll.core.models.character.CharacterTraitEntit
 import com.murkfeatherstudio.questroll.core.models.character.CharacterWithRelations;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_character_class.CustomCharacterClassEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.character_class.CharacterClassEntity;
+import com.murkfeatherstudio.questroll.databinding.FragmentCampaignCharacterSheetBinding;
 import com.murkfeatherstudio.questroll.feature_campaign.adapter.BackgroundRaceTraitAdapter;
 import com.murkfeatherstudio.questroll.feature_campaign.adapter.SimpleTextAdapter;
 import com.murkfeatherstudio.questroll.feature_campaign.engine.CharacterEngine;
@@ -54,40 +52,8 @@ public class CampaignCharacterSheetFragment extends Fragment {
     private long campaignId;
     private CampaignDetailViewModel viewModel;
     private CharacterEngine engine;
+    private FragmentCampaignCharacterSheetBinding binding;
 
-    private ImageView ivCharacterImage;
-
-    // ── Content visibility ─────────────────────────────
-    private View contentGroup;
-    private Button btnAssignCharacter;
-
-    // ── Header ─────────────────────────────────────────
-    private TextView tvName, tvClassLevel, tvRaceBackground;
-
-    // ── HP ─────────────────────────────────────────────
-    private TextView tvHp, tvTempHp;
-    private ProgressBar pbHp;
-
-    // ── Quick stats ────────────────────────────────────
-    private TextView tvProfBonus, tvInitiative, tvAc, tvPassivePerception;
-
-    // ── Attributes ─────────────────────────────────────
-    private TextView tvStr, tvStrMod, tvDex, tvDexMod,
-            tvCon, tvConMod, tvInt, tvIntMod,
-            tvWis, tvWisMod, tvCha, tvChaMod;
-
-    // ── Saving throws ──────────────────────────────────
-    private TextView tvSaveStr, tvSaveDex, tvSaveCon,
-            tvSaveInt, tvSaveWis, tvSaveCha;
-
-    // ── Misc ───────────────────────────────────────────
-    private TextView tvExhaustion;
-    private Button btnExhaustionMinus, btnExhaustionPlus;
-    private CheckBox cbInspiration;
-
-    // ── Accordion: containers + arrows ────────────────
-    private View containerSkills, containerLanguages, containerBackgroundRace;
-    private TextView arrowSkills, arrowLanguages, arrowBackgroundRace;
     private static final int SECTION_SKILLS          = 0;
     private static final int SECTION_LANGUAGES       = 1;
     private static final int SECTION_BACKGROUND_RACE = 2;
@@ -118,92 +84,59 @@ public class CampaignCharacterSheetFragment extends Fragment {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_campaign_character_sheet, container, false);
+        binding = FragmentCampaignCharacterSheetBinding.inflate(inflater, container, false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        binding = null;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        bindViews(view);
         setupAdapters();
         setupAccordion();
         setupHpButtons();
         setupExhaustionButtons();
         setupInspirationCheckbox();
-        Button btnLevelUp = view.findViewById(R.id.btn_level_up);
-        btnLevelUp.setOnClickListener(v -> showLevelUpDialog());
+        binding.btnLevelUp.setOnClickListener(v -> showLevelUpDialog());
 
-        btnAssignCharacter.setOnClickListener(v -> showCharacterPickerDialog());
+        binding.btnAssignCharacter.setOnClickListener(v -> showCharacterPickerDialog());
 
         viewModel.characterWithRelations.observe(getViewLifecycleOwner(), this::updateUI);
 
         viewModel.getEffectiveAc().observe(getViewLifecycleOwner(), ac -> {
+            if (binding == null) return;
             if (ac != null) {
-                tvAc.setText(String.valueOf(ac));
+                binding.tvAc.setText(String.valueOf(ac));
             } else {
-                tvAc.setText("10");
+                binding.tvAc.setText("10");
             }
         });
-    }
-
-    private void bindViews(View v) {
-        ivCharacterImage = v.findViewById(R.id.iv_character_image);
-        contentGroup        = v.findViewById(R.id.content_group);
-        btnAssignCharacter  = v.findViewById(R.id.btn_assign_character);
-        tvName              = v.findViewById(R.id.tv_character_name);
-        tvClassLevel        = v.findViewById(R.id.tv_class_level);
-        tvRaceBackground    = v.findViewById(R.id.tv_race_background);
-        tvHp                = v.findViewById(R.id.tv_hp);
-        tvTempHp            = v.findViewById(R.id.tv_temp_hp);
-        pbHp                = v.findViewById(R.id.pb_hp);
-        tvProfBonus         = v.findViewById(R.id.tv_prof_bonus);
-        tvInitiative        = v.findViewById(R.id.tv_initiative);
-        tvAc                = v.findViewById(R.id.tv_ac);
-        tvPassivePerception = v.findViewById(R.id.tv_passive_perception);
-        tvStr = v.findViewById(R.id.tv_str); tvStrMod = v.findViewById(R.id.tv_str_mod);
-        tvDex = v.findViewById(R.id.tv_dex); tvDexMod = v.findViewById(R.id.tv_dex_mod);
-        tvCon = v.findViewById(R.id.tv_con); tvConMod = v.findViewById(R.id.tv_con_mod);
-        tvInt = v.findViewById(R.id.tv_int); tvIntMod = v.findViewById(R.id.tv_int_mod);
-        tvWis = v.findViewById(R.id.tv_wis); tvWisMod = v.findViewById(R.id.tv_wis_mod);
-        tvCha = v.findViewById(R.id.tv_cha); tvChaMod = v.findViewById(R.id.tv_cha_mod);
-        tvSaveStr = v.findViewById(R.id.tv_save_str);
-        tvSaveDex = v.findViewById(R.id.tv_save_dex);
-        tvSaveCon = v.findViewById(R.id.tv_save_con);
-        tvSaveInt = v.findViewById(R.id.tv_save_int);
-        tvSaveWis = v.findViewById(R.id.tv_save_wis);
-        tvSaveCha = v.findViewById(R.id.tv_save_cha);
-        tvExhaustion       = v.findViewById(R.id.tv_exhaustion);
-        btnExhaustionMinus = v.findViewById(R.id.btn_exhaustion_minus);
-        btnExhaustionPlus  = v.findViewById(R.id.btn_exhaustion_plus);
-        cbInspiration      = v.findViewById(R.id.cb_inspiration);
-        containerSkills    = v.findViewById(R.id.container_skills);
-        containerLanguages = v.findViewById(R.id.container_languages);
-        containerBackgroundRace = v.findViewById(R.id.container_background_race);
-        arrowSkills        = v.findViewById(R.id.arrow_skills);
-        arrowLanguages     = v.findViewById(R.id.arrow_languages);
-        arrowBackgroundRace = v.findViewById(R.id.arrow_background_race);
     }
 
     private void setupAdapters() {
         skillsAdapter    = new SimpleTextAdapter();
         languagesAdapter = new SimpleTextAdapter();
         backgroundRaceAdapter = new BackgroundRaceTraitAdapter();
-        setupRv(R.id.rv_skills,    skillsAdapter);
-        setupRv(R.id.rv_languages, languagesAdapter);
-        setupRv(R.id.rv_background_race, backgroundRaceAdapter);
+        setupRv(binding.rvSkills,    skillsAdapter);
+        setupRv(binding.rvLanguages, languagesAdapter);
+        setupRv(binding.rvBackgroundRace, backgroundRaceAdapter);
     }
 
-    private void setupRv(int id, RecyclerView.Adapter<?> adapter) {
-        RecyclerView rv = requireView().findViewById(id);
+    private void setupRv(RecyclerView rv, RecyclerView.Adapter<?> adapter) {
         rv.setLayoutManager(new LinearLayoutManager(requireContext()));
         rv.setAdapter(adapter);
         rv.setNestedScrollingEnabled(false);
     }
 
     private void setupAccordion() {
-        requireView().findViewById(R.id.header_skills).setOnClickListener(v -> toggleSection(SECTION_SKILLS));
-        requireView().findViewById(R.id.header_languages).setOnClickListener(v -> toggleSection(SECTION_LANGUAGES));
-        requireView().findViewById(R.id.header_background_race).setOnClickListener(v -> toggleSection(SECTION_BACKGROUND_RACE));
+        binding.headerSkills.setOnClickListener(v -> toggleSection(SECTION_SKILLS));
+        binding.headerLanguages.setOnClickListener(v -> toggleSection(SECTION_LANGUAGES));
+        binding.headerBackgroundRace.setOnClickListener(v -> toggleSection(SECTION_BACKGROUND_RACE));
     }
 
     private void toggleSection(int tapped) {
@@ -220,92 +153,102 @@ public class CampaignCharacterSheetFragment extends Fragment {
     }
 
     private void setSection(int section, boolean open) {
+        if (binding == null) return;
         View container;
         TextView arrow;
         switch (section) {
-            case SECTION_SKILLS: container = containerSkills; arrow = arrowSkills; break;
-            case SECTION_LANGUAGES: container = containerLanguages; arrow = arrowLanguages; break;
-            case SECTION_BACKGROUND_RACE: container = containerBackgroundRace; arrow = arrowBackgroundRace; break;
+            case SECTION_SKILLS: 
+                container = binding.containerSkills; 
+                arrow = binding.arrowSkills; 
+                break;
+            case SECTION_LANGUAGES: 
+                container = binding.containerLanguages; 
+                arrow = binding.arrowLanguages; 
+                break;
+            case SECTION_BACKGROUND_RACE: 
+                container = binding.containerBackgroundRace; 
+                arrow = binding.arrowBackgroundRace; 
+                break;
             default: return;
         }
-        if (container == null) return;
         container.setVisibility(open ? View.VISIBLE : View.GONE);
-        if (arrow != null) arrow.setText(open ? "▲" : "▼");
+        arrow.setText(open ? "▲" : "▼");
     }
 
     private void setupHpButtons() {
-        requireView().findViewById(R.id.btn_hp_minus).setOnClickListener(v -> {
+        binding.btnHpMinus.setOnClickListener(v -> {
             CharacterEntity c = currentCharacter();
             if (c != null) viewModel.setCurrentHp(Math.max(0, c.currentHp - 1));
         });
-        requireView().findViewById(R.id.btn_hp_plus).setOnClickListener(v -> {
+        binding.btnHpPlus.setOnClickListener(v -> {
             CharacterEntity c = currentCharacter();
             if (c != null) viewModel.setCurrentHp(Math.min(c.maxHp, c.currentHp + 1));
         });
-        requireView().findViewById(R.id.btn_set_max_hp).setOnClickListener(v -> showSetHpDialog());
+        binding.btnSetMaxHp.setOnClickListener(v -> showSetHpDialog());
     }
 
     private void setupExhaustionButtons() {
-        btnExhaustionMinus.setOnClickListener(v -> {
+        binding.btnExhaustionMinus.setOnClickListener(v -> {
             CharacterEntity c = currentCharacter();
             if (c != null) viewModel.setExhaustion(Math.max(0, c.exhaustionLevel - 1));
         });
-        btnExhaustionPlus.setOnClickListener(v -> {
+        binding.btnExhaustionPlus.setOnClickListener(v -> {
             CharacterEntity c = currentCharacter();
             if (c != null) viewModel.setExhaustion(Math.min(6, c.exhaustionLevel + 1));
         });
     }
 
     private void setupInspirationCheckbox() {
-        cbInspiration.setOnCheckedChangeListener((btn, checked) -> {
+        binding.cbInspirationQuick.setOnCheckedChangeListener((btn, checked) -> {
             CharacterEntity c = currentCharacter();
             if (c != null) viewModel.setInspiration(checked);
         });
     }
 
     private void updateUI(CharacterWithRelations cwr) {
+        if (binding == null) return;
         if (cwr == null || cwr.character == null) {
-            contentGroup.setVisibility(View.GONE);
-            btnAssignCharacter.setVisibility(View.VISIBLE);
+            binding.contentGroup.setVisibility(View.GONE);
+            binding.btnAssignCharacter.setVisibility(View.VISIBLE);
             return;
         }
-        contentGroup.setVisibility(View.VISIBLE);
-        btnAssignCharacter.setVisibility(View.GONE);
+        binding.contentGroup.setVisibility(View.VISIBLE);
+        binding.btnAssignCharacter.setVisibility(View.GONE);
 
         CharacterEntity c = cwr.character;
-        tvName.setText(c.name != null ? c.name : "—");
-        tvClassLevel.setText(buildClassString(cwr.classAssignments, c.totalLevel));
-        tvRaceBackground.setText(str(c.speciesKey) + " · " + str(c.backgroundKey));
+        binding.tvCharacterName.setText(c.name != null ? c.name : "—");
+        binding.tvClassLevel.setText(buildClassString(cwr.classAssignments, c.totalLevel));
+        binding.tvRaceBackground.setText(str(c.speciesKey) + " · " + str(c.backgroundKey));
 
         updateHpDisplay(c);
 
         int prof = CharacterEngine.getProficiencyBonus(c.totalLevel);
-        tvProfBonus.setText("+" + prof);
+        binding.tvProfBonus.setText("+" + prof);
 
         if (cwr.attributes != null) {
             CharacterAttributesEntity a = cwr.attributes;
-            setAttr(tvStr, tvStrMod, a.strength, a.strengthMod);
-            setAttr(tvDex, tvDexMod, a.dexterity, a.dexterityMod);
-            setAttr(tvCon, tvConMod, a.constitution, a.constitutionMod);
-            setAttr(tvInt, tvIntMod, a.intelligence, a.intelligenceMod);
-            setAttr(tvWis, tvWisMod, a.wisdom, a.wisdomMod);
-            setAttr(tvCha, tvChaMod, a.charisma, a.charismaMod);
-            tvInitiative.setText(fmtMod(a.dexterityMod));
+            setAttr(binding.tvStr, binding.tvStrMod, a.strength, a.strengthMod);
+            setAttr(binding.tvDex, binding.tvDexMod, a.dexterity, a.dexterityMod);
+            setAttr(binding.tvCon, binding.tvConMod, a.constitution, a.constitutionMod);
+            setAttr(binding.tvInt, binding.tvIntMod, a.intelligence, a.intelligenceMod);
+            setAttr(binding.tvWis, binding.tvWisMod, a.wisdom, a.wisdomMod);
+            setAttr(binding.tvCha, binding.tvChaMod, a.charisma, a.charismaMod);
+            binding.tvInitiative.setText(fmtMod(a.dexterityMod));
 
             boolean percProf = cwr.skillProficiencies != null &&
                     cwr.skillProficiencies.stream().anyMatch(sp -> "perception".equals(sp.skillKey));
             int passive = 10 + a.wisdomMod + (percProf ? prof : 0);
-            tvPassivePerception.setText(String.valueOf(passive));
+            binding.tvPassivePerception.setText(String.valueOf(passive));
         }
 
         if (cwr.attributes != null && cwr.savingThrows != null) {
             Map<String, Integer> st = engine.getSavingThrowBonuses(cwr.attributes, cwr.savingThrows, c.totalLevel);
-            tvSaveStr.setText("STR " + fmtMod(st.getOrDefault("STR", 0)));
-            tvSaveDex.setText("DEX " + fmtMod(st.getOrDefault("DEX", 0)));
-            tvSaveCon.setText("CON " + fmtMod(st.getOrDefault("CON", 0)));
-            tvSaveInt.setText("INT " + fmtMod(st.getOrDefault("INT", 0)));
-            tvSaveWis.setText("WIS " + fmtMod(st.getOrDefault("WIS", 0)));
-            tvSaveCha.setText("CHA " + fmtMod(st.getOrDefault("CHA", 0)));
+            binding.tvSaveStr.setText("STR " + fmtMod(st.getOrDefault("STR", 0)));
+            binding.tvSaveDex.setText("DEX " + fmtMod(st.getOrDefault("DEX", 0)));
+            binding.tvSaveCon.setText("CON " + fmtMod(st.getOrDefault("CON", 0)));
+            binding.tvSaveInt.setText("INT " + fmtMod(st.getOrDefault("INT", 0)));
+            binding.tvSaveWis.setText("WIS " + fmtMod(st.getOrDefault("WIS", 0)));
+            binding.tvSaveCha.setText("CHA " + fmtMod(st.getOrDefault("CHA", 0)));
         }
 
         if (cwr.attributes != null && cwr.skillProficiencies != null) {
@@ -336,30 +279,31 @@ public class CampaignCharacterSheetFragment extends Fragment {
         }
         backgroundRaceAdapter.setItems(bgRaceTraits);
 
-        tvExhaustion.setText(String.valueOf(c.exhaustionLevel));
-        cbInspiration.setChecked(c.hasInspiration);
+        binding.tvExhaustion.setText(String.valueOf(c.exhaustionLevel));
+        binding.cbInspirationQuick.setChecked(c.hasInspiration);
 
-        if (ivCharacterImage != null) {
+        if (binding.ivCharacterImage != null) {
             String imagePath = c.imagePath;
             if (imagePath != null && !imagePath.isEmpty()) {
                 File imageFile = new File(imagePath);
-                if (imageFile.exists()) ivCharacterImage.setImageURI(Uri.fromFile(imageFile));
-                else ivCharacterImage.setImageResource(android.R.drawable.ic_menu_my_calendar);
+                if (imageFile.exists()) binding.ivCharacterImage.setImageURI(Uri.fromFile(imageFile));
+                else binding.ivCharacterImage.setImageResource(android.R.drawable.ic_menu_my_calendar);
             } else {
-                ivCharacterImage.setImageResource(android.R.drawable.ic_menu_my_calendar);
+                binding.ivCharacterImage.setImageResource(android.R.drawable.ic_menu_my_calendar);
             }
         }
     }
 
     private void updateHpDisplay(CharacterEntity c) {
-        tvHp.setText(c.currentHp + " / " + c.maxHp);
-        tvTempHp.setText("Temp HP: " + c.temporaryHp);
-        if (pbHp != null) {
+        if (binding == null) return;
+        binding.tvHp.setText(c.currentHp + " / " + c.maxHp);
+        binding.tvTempHp.setText("Temp HP: " + c.temporaryHp);
+        if (binding.pbHp != null) {
             int pct = (c.maxHp > 0) ? Math.round(c.currentHp * 100f / c.maxHp) : 0;
-            pbHp.setProgress(Math.max(0, Math.min(100, pct)));
+            binding.pbHp.setProgress(Math.max(0, Math.min(100, pct)));
             int color;
             if (pct > 50) color = 0xFF4CAF50; else if (pct > 25) color = 0xFFFF9800; else color = 0xFFF44336;
-            pbHp.setProgressTintList(android.content.res.ColorStateList.valueOf(color));
+            binding.pbHp.setProgressTintList(android.content.res.ColorStateList.valueOf(color));
         }
     }
 
