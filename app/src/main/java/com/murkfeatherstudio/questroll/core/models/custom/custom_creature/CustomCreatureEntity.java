@@ -61,4 +61,7 @@ public class CustomCreatureEntity {
 
     @ColumnInfo(name = "experience_points") public int experiencePoints = 0;
     @ColumnInfo(name = "initiative_bonus") public int initiativeBonus = 0;
+
+    @ColumnInfo(name = "game_system")
+    public String gameSystem = "5e-2014";
 }

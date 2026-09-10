@@ -15,7 +15,9 @@ public class CustomBackgroundEntity {
     public String key;
     public String name;
     public String desc;
-    public String gameSystem;
+    
+    @ColumnInfo(name = "game_system")
+    public String gameSystem = "5e-2014";
 
     @ColumnInfo(name = "equipment_json")
     public String equipmentJson;

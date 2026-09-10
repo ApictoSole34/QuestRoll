@@ -40,6 +40,9 @@ public class CustomFeatureEntity implements Parcelable {
     public String description;
     public String type;
 
+    @ColumnInfo(name = "game_system")
+    public String gameSystem = "5e-2014";
+
     @TypeConverters(CustomConverters.class)
     public List<CustomGainedAt> customGainedAt = new ArrayList<>();
 
@@ -52,6 +55,7 @@ public class CustomFeatureEntity implements Parcelable {
         name = in.readString();
         description = in.readString();
         type = in.readString();
+        gameSystem = in.readString();
         customGainedAt = in.createTypedArrayList(CustomGainedAt.CREATOR);
         customTableData = in.createTypedArrayList(CustomTableData.CREATOR);
     }
@@ -82,6 +86,7 @@ public class CustomFeatureEntity implements Parcelable {
         dest.writeString(name);
         dest.writeString(description);
         dest.writeString(type);
+        dest.writeString(gameSystem);
         dest.writeTypedList(customGainedAt);
         dest.writeTypedList(customTableData);
     }

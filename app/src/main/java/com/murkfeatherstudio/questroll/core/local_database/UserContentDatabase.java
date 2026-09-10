@@ -88,7 +88,7 @@ import com.murkfeatherstudio.questroll.core.models.custom.pdf.CustomPdfEntity;
         CustomItemSetEntity.class,
         CustomPdfEntity.class
         },
-        version = 42,
+        version = 43,
         exportSchema = false
 )
 @TypeConverters({CustomConverters.class})

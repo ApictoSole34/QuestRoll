@@ -10,7 +10,9 @@ import androidx.lifecycle.MutableLiveData;
 import com.murkfeatherstudio.questroll.core.config.SubclassLevelConfig;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.local_database.PlayerCharacterDatabase;
+import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
 import com.murkfeatherstudio.questroll.core.models.character.*;
+import com.murkfeatherstudio.questroll.core.models.custom.custom_spell.CustomSpellEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.character_class.CharacterClassEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.character_class.feature.FeatureEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.character_class.gained_at.GainedAt;
@@ -21,8 +23,11 @@ import com.murkfeatherstudio.questroll.feature_character.engine.CharacterEngine;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 /**
  * ViewModel for the Level Up Wizard.
@@ -59,6 +64,7 @@ public class LevelUpWizardViewModel extends AndroidViewModel {
     public boolean needsAsi      = false;
     public boolean needsSpells   = false;
     public String  className     = "";
+    public String  gameSystem    = "5e-2014";
 
     public int    chosenHpGain       = 0;
     public int    lastRollValue      = 0;
@@ -76,6 +82,7 @@ public class LevelUpWizardViewModel extends AndroidViewModel {
 
     private final PlayerCharacterDatabase playerDb;
     private final Open5eDatabase          open5eDb;
+    private final UserContentDatabase     userDb;
     private final ExecutorService         executor = Executors.newSingleThreadExecutor();
     private final Random rng = new Random();
 
@@ -83,6 +90,7 @@ public class LevelUpWizardViewModel extends AndroidViewModel {
         super(application);
         playerDb = PlayerCharacterDatabase.getInstance(application);
         open5eDb = Open5eDatabase.getInstance(application);
+        userDb = UserContentDatabase.getInstance(application);
     }
 
     public void init(long characterId, String classKey, boolean isNewClass) {
@@ -97,6 +105,11 @@ public class LevelUpWizardViewModel extends AndroidViewModel {
         isLoading.postValue(true);
         executor.execute(() -> {
             try {
+                CharacterEntity character = playerDb.characterDao().getCharacterSync(characterId);
+                if (character != null) {
+                    this.gameSystem = character.gameSystem != null ? character.gameSystem : "5e-2014";
+                }
+
                 List<CharacterClassAssignmentEntity> assignments =
                         playerDb.classAssignmentDao().getByCharacterId(characterId);
                 int currentClassLevel = 0;
@@ -182,20 +195,51 @@ public class LevelUpWizardViewModel extends AndroidViewModel {
 
     private void loadAvailableSpells(String classKey, int maxSpellLevel) {
         executor.execute(() -> {
-            String gameSystem = getCurrentGameSystem();
-            List<SpellEntity> allSpells = open5eDb.spellDao().getAllByGameSystem(gameSystem);
+            // 0. Get already known spells to filter them out
+            List<CharacterSpellEntity> knownSpells = playerDb.spellDao().getByCharacterId(characterId);
+            Set<String> knownKeys = knownSpells != null 
+                ? knownSpells.stream().map(s -> s.spellKey).collect(Collectors.toSet())
+                : new HashSet<>();
+
+            // 1. Filter spells by the character's selected game system
+            List<SpellEntity> systemSpells = open5eDb.spellDao().getAllByGameSystem(gameSystem);
+            
+            // 2. Get Custom spells
+            List<CustomSpellEntity> customSpells = userDb.customSpellDao().getAllByGameSystemSync(gameSystem);
+            
             List<SpellEntity> available = new ArrayList<>();
-            for (SpellEntity spell : allSpells) {
-                if (spell.level <= maxSpellLevel && spell.classes != null && spell.classes.contains(classKey)) {
-                    available.add(spell);
+            
+            // Add official spells for the current game system
+            if (systemSpells != null) {
+                for (SpellEntity spell : systemSpells) {
+                    // Use case-insensitive check and check both classKey and className
+                    boolean classMatches = spell.classes != null && spell.classes.stream().anyMatch(c -> 
+                        c.equalsIgnoreCase(classKey) || c.equalsIgnoreCase(className));
+                        
+                    if (spell.level <= maxSpellLevel && classMatches && !knownKeys.contains(spell.key)) {
+                        available.add(spell);
+                    }
                 }
             }
+            
+            // Add custom homebrew spells
+            if (customSpells != null) {
+                for (CustomSpellEntity cs : customSpells) {
+                    String customKey = "custom_" + cs.id;
+                    if (cs.level <= maxSpellLevel && !knownKeys.contains(customKey)) {
+                        SpellEntity se = new SpellEntity();
+                        se.key = customKey;
+                        se.name = cs.name + " (Custom)";
+                        se.level = cs.level;
+                        se.classes = new ArrayList<>();
+                        se.classes.add(classKey);
+                        available.add(se);
+                    }
+                }
+            }
+            
             availableSpellsLive.postValue(available);
         });
-    }
-
-    private String getCurrentGameSystem() {
-        return "5e-2014";
     }
 
     public void setSelectedSpells(List<String> keys) { this.selectedSpellKeys = keys; }
@@ -205,6 +249,10 @@ public class LevelUpWizardViewModel extends AndroidViewModel {
     private int getMaxSpellLevelForClass(String classKey, int classLevel) {
         CharacterClassEntity cls = open5eDb.characterClassDao().getClassByKeySync(classKey);
         if (cls == null || cls.casterType == null || "NONE".equals(cls.casterType)) return 0;
+        
+        // Handling for Warlock / Pact Magic and other casters
+        // Standard formula: (level + 1) / 2 works for most full casters.
+        // For Warlock, they reach level 5 spells at level 9.
         int maxSpellLevel = (classLevel + 1) / 2;
         return Math.min(maxSpellLevel, 9);
     }

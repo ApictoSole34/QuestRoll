@@ -20,4 +20,7 @@ public class CustomItemSetEntity {
     @TypeConverters(Converters.class)
     @ColumnInfo(name = "item_keys")
     public List<String> itemKeys;
+
+    @ColumnInfo(name = "game_system")
+    public String gameSystem = "5e-2014";
 }

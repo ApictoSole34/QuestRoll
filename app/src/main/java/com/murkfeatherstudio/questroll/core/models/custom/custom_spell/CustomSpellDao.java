@@ -41,6 +41,12 @@ public interface CustomSpellDao {
     List<CustomSpellEntity> getAllSync();
 
     /**
+     * Retrieves all custom spells for a specific game system.
+     */
+    @Query("SELECT * FROM custom_spells WHERE game_system = :gameSystem ORDER BY level ASC, name ASC")
+    List<CustomSpellEntity> getAllByGameSystemSync(String gameSystem);
+
+    /**
      * Retrieves a specific custom spell by its ID.
      */
     @Query("SELECT * FROM custom_spells WHERE id = :id")

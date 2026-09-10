@@ -1,5 +1,6 @@
 package com.murkfeatherstudio.questroll.core.models.custom.custom_environment;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -14,4 +15,7 @@ public class CustomEnvironmentEntity {
     public boolean aquatic;
     public boolean planar;
     public boolean interior;
+
+    @ColumnInfo(name = "game_system")
+    public String gameSystem = "5e-2014";
 }

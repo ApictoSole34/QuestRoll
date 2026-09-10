@@ -4,6 +4,7 @@ import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
 import com.murkfeatherstudio.questroll.core.local_database.PlayerCharacterDatabase;
@@ -33,52 +34,60 @@ public class CharacterListViewModel extends AndroidViewModel {
     private final MutableLiveData<List<CharacterDisplay>> displays = new MutableLiveData<>();
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
+    // Store references to the source LiveData and the observer so we can
+    // properly unregister it in onCleared, preventing RejectedExecutionException.
+    private final LiveData<List<CharacterEntity>> charactersSource;
+    private final Observer<List<CharacterEntity>> charactersObserver;
+
     public CharacterListViewModel(Application app) {
         super(app);
         pcDb = PlayerCharacterDatabase.getInstance(app);
         open5eDb = Open5eDatabase.getInstance(app);
-        loadCharacters();
+
+        charactersSource = pcDb.characterDao().getAllCharacters();
+        charactersObserver = this::processCharacters;
+        charactersSource.observeForever(charactersObserver);
     }
 
     /**
-     * Observes the list of characters from the database and processes them on a background
+     * Processes the list of characters from the database on a background
      * thread to include information from the Open5e compendium (like species and class names).
      */
-    private void loadCharacters() {
-        pcDb.characterDao().getAllCharacters().observeForever(characters -> {
-            executor.execute(() -> {
-                List<CharacterDisplay> list = new ArrayList<>();
-                for (CharacterEntity c : characters) {
-                    CharacterDisplay d = new CharacterDisplay();
-                    d.id = c.id;
-                    d.name = c.name;
-                    d.gameSystem = c.gameSystem;
-                    d.thumbnailPath = c.thumbnailPath; // may be null – adapter will show default icon
+    private void processCharacters(List<CharacterEntity> characters) {
+        if (characters == null || executor.isShutdown()) return;
 
-                    // Race
-                    if (c.speciesKey != null) {
-                        SpeciesEntity species = open5eDb.speciesDao().getByKeySync(c.speciesKey);
-                        d.raceName = species != null ? species.name : "?";
-                    } else {
-                        d.raceName = "?";
-                    }
+        executor.execute(() -> {
+            List<CharacterDisplay> list = new ArrayList<>();
+            for (CharacterEntity c : characters) {
+                CharacterDisplay d = new CharacterDisplay();
+                d.id = c.id;
+                d.name = c.name;
+                d.gameSystem = c.gameSystem;
+                d.thumbnailPath = c.thumbnailPath; // may be null – adapter will show default icon
 
-                    // Classes and levels
-                    List<CharacterClassAssignmentEntity> assignments = pcDb.classAssignmentDao().getByCharacterId(c.id);
-                    if (!assignments.isEmpty()) {
-                        int totalLevel = assignments.stream().mapToInt(a -> a.level).sum();
-                        CharacterClassAssignmentEntity first = assignments.get(0);
-                        CharacterClassEntity cls = open5eDb.characterClassDao().getClassByKeySync(first.classKey);
-                        String className = cls != null ? cls.name : "?";
-                        d.className = className + " " + totalLevel;
-                    } else {
-                        d.className = "?";
-                    }
-
-                    list.add(d);
+                // Race
+                if (c.speciesKey != null) {
+                    SpeciesEntity species = open5eDb.speciesDao().getByKeySync(c.speciesKey);
+                    d.raceName = species != null ? species.name : "?";
+                } else {
+                    d.raceName = "?";
                 }
-                displays.postValue(list);
-            });
+
+                // Classes and levels
+                List<CharacterClassAssignmentEntity> assignments = pcDb.classAssignmentDao().getByCharacterId(c.id);
+                if (!assignments.isEmpty()) {
+                    int totalLevel = assignments.stream().mapToInt(a -> a.level).sum();
+                    CharacterClassAssignmentEntity first = assignments.get(0);
+                    CharacterClassEntity cls = open5eDb.characterClassDao().getClassByKeySync(first.classKey);
+                    String className = cls != null ? cls.name : "?";
+                    d.className = className + " " + totalLevel;
+                } else {
+                    d.className = "?";
+                }
+
+                list.add(d);
+            }
+            displays.postValue(list);
         });
     }
 
@@ -94,6 +103,8 @@ public class CharacterListViewModel extends AndroidViewModel {
     @Override
     protected void onCleared() {
         super.onCleared();
+        // Remove the observer and shut down the executor to prevent memory leaks and crashes.
+        charactersSource.removeObserver(charactersObserver);
         executor.shutdown();
     }
 }

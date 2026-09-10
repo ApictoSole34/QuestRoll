@@ -90,32 +90,7 @@
                             android:layout_height="wrap_content"
                             android:text="—"
                             android:layout_marginTop="2dp" />
-
-                        <TextView
-                            android:id="@+id/tv_gold"
-                            style="@style/QuestRollBody"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Gold: 0"
-                            android:textColor="#FFD700"
-                            android:layout_marginTop="4dp"
-                            android:textStyle="bold"
-                            android:drawableStart="@android:drawable/ic_menu_my_calendar"
-                            android:drawablePadding="4dp"
-                            android:gravity="center_vertical" />
                     </LinearLayout>
-
-                    <CheckBox
-                        android:id="@+id/cb_inspiration_quick"
-                        style="@style/QuestRollBody"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:button="@null"
-                        android:drawableTop="@android:drawable/btn_star_big_off"
-                        android:text="Insp."
-                        android:textSize="10sp"
-                        android:gravity="center" />
 
                     <Button
                         android:id="@+id/btn_level_up"

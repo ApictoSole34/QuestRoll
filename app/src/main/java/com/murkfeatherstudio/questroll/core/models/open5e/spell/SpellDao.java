@@ -30,6 +30,12 @@ public interface SpellDao extends BaseDao<SpellEntity> {
     List<SpellEntity> getAllByGameSystem(String gameSystem);
 
     /**
+     * Retrieves all spells from a specific document key.
+     */
+    @Query("SELECT * FROM spells WHERE document_key = :documentKey ORDER BY level ASC, name ASC")
+    List<SpellEntity> getAllByDocumentSync(String documentKey);
+
+    /**
      * Searches and filters spells based on multiple criteria.
      */
     @Query("SELECT * FROM spells WHERE " +

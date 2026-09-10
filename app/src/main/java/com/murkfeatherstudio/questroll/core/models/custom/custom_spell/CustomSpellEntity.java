@@ -65,6 +65,9 @@ public class CustomSpellEntity implements Parcelable {
     @ColumnInfo(name = "casting_options_json")
     public String castingOptionsJson = "";
 
+    @ColumnInfo(name = "game_system")
+    public String gameSystem = "5e-2014"; // Default to 2014
+
     public CustomSpellEntity() {}
 
     protected CustomSpellEntity(Parcel in) {
@@ -88,6 +91,7 @@ public class CustomSpellEntity implements Parcelable {
         damageTypes = in.createStringArrayList();
         higherLevel = in.readString();
         castingOptionsJson = in.readString();
+        gameSystem = in.readString();
     }
 
     public static final Creator<CustomSpellEntity> CREATOR = new Creator<CustomSpellEntity>() {
@@ -126,5 +130,6 @@ public class CustomSpellEntity implements Parcelable {
         dest.writeStringList(damageTypes);
         dest.writeString(higherLevel);
         dest.writeString(castingOptionsJson);
+        dest.writeString(gameSystem);
     }
 }

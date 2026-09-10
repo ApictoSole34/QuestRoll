@@ -17,6 +17,8 @@ import androidx.navigation.Navigation;
 
 import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.local_database.Open5eDatabase;
+import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
+import com.murkfeatherstudio.questroll.core.models.custom.custom_spell.CustomSpellEntity;
 import com.murkfeatherstudio.questroll.core.models.open5e.spell.SpellEntity;
 import com.murkfeatherstudio.questroll.databinding.FragmentWizardSpellsBinding;
 import com.murkfeatherstudio.questroll.feature_character.view_model.WizardViewModel;
@@ -90,18 +92,35 @@ public class SpellsStepFragment extends Fragment {
         binding.backButton.setOnClickListener(v -> Navigation.findNavController(v).navigateUp());
     }
 
-    /**
-     * JAVADOC: spellsContainer is a dynamic layout. We use addView() to add CheckBoxes 
-     * for available spells and TextViews for headers because the content is 
-     * generated based on the character's class and level at runtime. 
-     * View Binding is not suitable for views not present in the XML.
-     */
     private void loadSpells() {
         new Thread(() -> {
-            List<SpellEntity> allSpells = Open5eDatabase.getInstance(requireContext())
+            // 1. Get spells for the currently selected game system (official compendium)
+            List<SpellEntity> systemSpells = Open5eDatabase.getInstance(requireContext())
                     .spellDao()
-                    .getAllSync();
-            if (allSpells == null) allSpells = new ArrayList<>();
+                    .getAllByGameSystem(viewModel.gameSystem);
+            
+            // 2. Get Custom spells for the same game system
+            List<CustomSpellEntity> customSpells = UserContentDatabase.getInstance(requireContext())
+                    .customSpellDao()
+                    .getAllByGameSystemSync(viewModel.gameSystem);
+
+            List<SpellEntity> combined = new ArrayList<>();
+            if (systemSpells != null) combined.addAll(systemSpells);
+            
+            if (customSpells != null) {
+                for (CustomSpellEntity cs : customSpells) {
+                    SpellEntity se = new SpellEntity();
+                    se.key = "custom_" + cs.id;
+                    se.name = cs.name + " (Custom)";
+                    se.level = cs.level;
+                    // For custom spells, we make them available to the current class in the picker
+                    se.classes = new ArrayList<>();
+                    if (viewModel.classAssignments.size() > 0) {
+                        se.classes.add(viewModel.classAssignments.get(0).className);
+                    }
+                    combined.add(se);
+                }
+            }
 
             if (viewModel.classAssignments.isEmpty()) return;
             String className = viewModel.classAssignments.get(0).className;
@@ -109,7 +128,7 @@ public class SpellsStepFragment extends Fragment {
             List<SpellEntity> cantrips = new ArrayList<>();
             List<SpellEntity> firstLevelSpells = new ArrayList<>();
 
-            for (SpellEntity spell : allSpells) {
+            for (SpellEntity spell : combined) {
                 if (spell.classes != null && spell.classes.stream().anyMatch(c -> c.equalsIgnoreCase(className))) {
                     if (spell.level == 0) {
                         cantrips.add(spell);
@@ -127,7 +146,7 @@ public class SpellsStepFragment extends Fragment {
 
                 if (cantrips.isEmpty() && firstLevelSpells.isEmpty()) {
                     TextView info = new TextView(getContext());
-                    info.setText("No spells available for this class (or data missing).");
+                    info.setText("No spells available for this class in " + viewModel.gameSystem + ".");
                     info.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
                     info.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
                     info.setPadding(0, dp(16), 0, 0);
@@ -149,12 +168,6 @@ public class SpellsStepFragment extends Fragment {
                         cb.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
                         cb.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                         cb.setTag(spell.key);
-                        cb.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                            if (isChecked && getCheckedCount(cantripCheckboxes) > maxCantrips) {
-                                cb.setChecked(false);
-                                Toast.makeText(getContext(), "You can select only " + maxCantrips + " cantrips", Toast.LENGTH_SHORT).show();
-                            }
-                        });
                         binding.spellsContainer.addView(cb);
                         cantripCheckboxes.add(cb);
                     }
@@ -174,25 +187,9 @@ public class SpellsStepFragment extends Fragment {
                         cb.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
                         cb.setTextColor(getResources().getColor(R.color.threads_text_primary, null));
                         cb.setTag(spell.key);
-                        cb.setOnCheckedChangeListener((buttonView, isChecked) -> {
-                            if (isChecked && getCheckedCount(spellCheckboxes) > maxSpells) {
-                                cb.setChecked(false);
-                                Toast.makeText(getContext(), "You can select only " + maxSpells + " spells", Toast.LENGTH_SHORT).show();
-                            }
-                        });
                         binding.spellsContainer.addView(cb);
                         spellCheckboxes.add(cb);
                     }
-                }
-
-                if (cantrips.isEmpty() && firstLevelSpells.isEmpty()) {
-                } else if (maxCantrips == 0 && maxSpells == 0) {
-                    TextView info = new TextView(getContext());
-                    info.setText("This class does not cast spells at 1st level.");
-                    info.setTypeface(ResourcesCompat.getFont(requireContext(), R.font.inter_regular));
-                    info.setTextColor(getResources().getColor(R.color.threads_text_secondary, null));
-                    info.setPadding(0, dp(16), 0, 0);
-                    binding.spellsContainer.addView(info);
                 }
             });
         }).start();

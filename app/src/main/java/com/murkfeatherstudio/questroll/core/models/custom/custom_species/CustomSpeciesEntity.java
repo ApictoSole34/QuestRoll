@@ -39,5 +39,5 @@ public class CustomSpeciesEntity {
     public String otherTraitsJson = "[]";
 
     @ColumnInfo(name = "game_system")
-    public String gameSystem = "";
+    public String gameSystem = "5e-2014";
 }

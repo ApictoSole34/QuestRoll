@@ -15,6 +15,7 @@ public class CustomLanguageEntity {
     @ColumnInfo(name = "is_exotic", defaultValue = "false") public boolean isExotic;
     @ColumnInfo(name = "is_secret", defaultValue = "false") public boolean isSecret;
     @Nullable @ColumnInfo(name = "script_language") public String scriptLanguageId;
+    @ColumnInfo(name = "game_system") public String gameSystem = "5e-2014";
     @Ignore public String DocumentUrl;
 
 

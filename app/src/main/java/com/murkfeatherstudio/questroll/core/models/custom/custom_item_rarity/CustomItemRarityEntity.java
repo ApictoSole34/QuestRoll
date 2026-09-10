@@ -1,5 +1,6 @@
 package com.murkfeatherstudio.questroll.core.models.custom.custom_item_rarity;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -12,4 +13,7 @@ public class CustomItemRarityEntity {
     public String name;
     public int rank;
     public String description;
+
+    @ColumnInfo(name = "game_system")
+    public String gameSystem = "5e-2014";
 }

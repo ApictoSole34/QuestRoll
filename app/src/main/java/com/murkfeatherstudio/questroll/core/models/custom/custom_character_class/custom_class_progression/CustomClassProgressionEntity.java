@@ -19,4 +19,7 @@ public class CustomClassProgressionEntity {
 
     @ColumnInfo(name = "progression_data")
     public String progressionData;
+
+    @ColumnInfo(name = "game_system")
+    public String gameSystem = "5e-2014";
 }

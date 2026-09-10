@@ -46,9 +46,9 @@ public class GenericItemAdapter<T> extends RecyclerView.Adapter<GenericItemAdapt
         T item = items.get(position);
         holder.textView.setText(toStringConverter.toString(item));
         holder.itemView.setOnLongClickListener(v -> {
+            // We call the external removal logic. 
+            // In this project, that logic usually calls setItems() which refreshes the whole list.
             onRemove.accept(item);
-            items.remove(position);
-            notifyItemRemoved(position);
             return true;
         });
     }

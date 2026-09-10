@@ -43,4 +43,7 @@ public class CustomItemEntity {
     public boolean requiresAttunement;
     @ColumnInfo(name = "attunement_detail")
     public String attunementDetail;
+
+    @ColumnInfo(name = "game_system")
+    public String gameSystem = "5e-2014";
 }

@@ -1,5 +1,6 @@
 package com.murkfeatherstudio.questroll.core.models.custom.custom_alignment;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -14,4 +15,7 @@ public class CustomAlignmentEntity {
     public String morality;
     public String societalAttitude;
     public String description;
+
+    @ColumnInfo(name = "game_system")
+    public String gameSystem = "5e-2014";
 }

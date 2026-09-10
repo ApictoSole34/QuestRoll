@@ -57,13 +57,11 @@ public class CampaignCharacterSheetFragment extends Fragment {
     private static final int SECTION_SKILLS          = 0;
     private static final int SECTION_LANGUAGES       = 1;
     private static final int SECTION_BACKGROUND_RACE = 2;
-    private int expandedSection = -1; // none open by default
+    private int expandedSection = -1;
 
-    // ── Adapters ───────────────────────────────────────
     private SimpleTextAdapter skillsAdapter, languagesAdapter;
     private BackgroundRaceTraitAdapter backgroundRaceAdapter;
 
-    // ──────────────────────────────────────────────────
     public static CampaignCharacterSheetFragment newInstance(long campaignId) {
         Bundle args = new Bundle();
         args.putLong(ARG_CAMPAIGN_ID, campaignId);
@@ -103,18 +101,13 @@ public class CampaignCharacterSheetFragment extends Fragment {
         setupExhaustionButtons();
         setupInspirationCheckbox();
         binding.btnLevelUp.setOnClickListener(v -> showLevelUpDialog());
-
         binding.btnAssignCharacter.setOnClickListener(v -> showCharacterPickerDialog());
 
         viewModel.characterWithRelations.observe(getViewLifecycleOwner(), this::updateUI);
 
         viewModel.getEffectiveAc().observe(getViewLifecycleOwner(), ac -> {
             if (binding == null) return;
-            if (ac != null) {
-                binding.tvAc.setText(String.valueOf(ac));
-            } else {
-                binding.tvAc.setText("10");
-            }
+            binding.tvAc.setText(String.valueOf(ac != null ? ac : "10"));
         });
     }
 
@@ -157,18 +150,9 @@ public class CampaignCharacterSheetFragment extends Fragment {
         View container;
         TextView arrow;
         switch (section) {
-            case SECTION_SKILLS: 
-                container = binding.containerSkills; 
-                arrow = binding.arrowSkills; 
-                break;
-            case SECTION_LANGUAGES: 
-                container = binding.containerLanguages; 
-                arrow = binding.arrowLanguages; 
-                break;
-            case SECTION_BACKGROUND_RACE: 
-                container = binding.containerBackgroundRace; 
-                arrow = binding.arrowBackgroundRace; 
-                break;
+            case SECTION_SKILLS: container = binding.containerSkills; arrow = binding.arrowSkills; break;
+            case SECTION_LANGUAGES: container = binding.containerLanguages; arrow = binding.arrowLanguages; break;
+            case SECTION_BACKGROUND_RACE: container = binding.containerBackgroundRace; arrow = binding.arrowBackgroundRace; break;
             default: return;
         }
         container.setVisibility(open ? View.VISIBLE : View.GONE);
@@ -199,7 +183,7 @@ public class CampaignCharacterSheetFragment extends Fragment {
     }
 
     private void setupInspirationCheckbox() {
-        binding.cbInspirationQuick.setOnCheckedChangeListener((btn, checked) -> {
+        binding.cbInspiration.setOnCheckedChangeListener((btn, checked) -> {
             CharacterEntity c = currentCharacter();
             if (c != null) viewModel.setInspiration(checked);
         });
@@ -218,7 +202,7 @@ public class CampaignCharacterSheetFragment extends Fragment {
         CharacterEntity c = cwr.character;
         binding.tvCharacterName.setText(c.name != null ? c.name : "—");
         binding.tvClassLevel.setText(buildClassString(cwr.classAssignments, c.totalLevel));
-        binding.tvRaceBackground.setText(str(c.speciesKey) + " · " + str(c.backgroundKey));
+        binding.tvRaceBackground.setText(formatKey(c.speciesKey) + " · " + formatKey(c.backgroundKey));
 
         updateHpDisplay(c);
 
@@ -256,7 +240,7 @@ public class CampaignCharacterSheetFragment extends Fragment {
             Map<String, Integer> bonuses = engine.getSkillBonuses(cwr.attributes, profKeys, c.totalLevel);
             List<String> lines = new ArrayList<>();
             for (Map.Entry<String, Integer> e : bonuses.entrySet()) {
-                lines.add(e.getKey() + ":  " + fmtMod(e.getValue()));
+                lines.add(formatKey(e.getKey()) + ":  " + fmtMod(e.getValue()));
             }
             skillsAdapter.setItems(lines);
         } else {
@@ -264,7 +248,9 @@ public class CampaignCharacterSheetFragment extends Fragment {
         }
 
         if (cwr.languages != null && !cwr.languages.isEmpty()) {
-            languagesAdapter.setItems(cwr.languages.stream().map(l -> l.languageName != null ? l.languageName : l.languageKey).collect(Collectors.toList()));
+            languagesAdapter.setItems(cwr.languages.stream()
+                .map(l -> l.languageName != null ? l.languageName : formatKey(l.languageKey))
+                .collect(Collectors.toList()));
         } else {
             languagesAdapter.setItems(List.of("—"));
         }
@@ -280,7 +266,7 @@ public class CampaignCharacterSheetFragment extends Fragment {
         backgroundRaceAdapter.setItems(bgRaceTraits);
 
         binding.tvExhaustion.setText(String.valueOf(c.exhaustionLevel));
-        binding.cbInspirationQuick.setChecked(c.hasInspiration);
+        binding.cbInspiration.setChecked(c.hasInspiration);
 
         if (binding.ivCharacterImage != null) {
             String imagePath = c.imagePath;
@@ -301,8 +287,7 @@ public class CampaignCharacterSheetFragment extends Fragment {
         if (binding.pbHp != null) {
             int pct = (c.maxHp > 0) ? Math.round(c.currentHp * 100f / c.maxHp) : 0;
             binding.pbHp.setProgress(Math.max(0, Math.min(100, pct)));
-            int color;
-            if (pct > 50) color = 0xFF4CAF50; else if (pct > 25) color = 0xFFFF9800; else color = 0xFFF44336;
+            int color = (pct > 50) ? 0xFF4CAF50 : (pct > 25 ? 0xFFFF9800 : 0xFFF44336);
             binding.pbHp.setProgressTintList(android.content.res.ColorStateList.valueOf(color));
         }
     }
@@ -349,8 +334,7 @@ public class CampaignCharacterSheetFragment extends Fragment {
             if (!isAdded()) return;
             List<CharacterEntity> chars = PlayerCharacterDatabase.getInstance(requireContext()).characterDao().getAllCharactersSync();
             AppExecutors.getInstance().mainThread().execute(() -> {
-                if (!isAdded()) return;
-                if (chars.isEmpty()) return;
+                if (!isAdded() || chars.isEmpty()) return;
                 String[] names = chars.stream().map(c -> c.name).toArray(String[]::new);
                 new AlertDialog.Builder(requireContext())
                         .setTitle("Assign character to campaign")
@@ -364,12 +348,11 @@ public class CampaignCharacterSheetFragment extends Fragment {
     private void showLevelUpDialog() {
         CharacterWithRelations cwr = viewModel.characterWithRelations.getValue();
         if (cwr == null || cwr.character == null) return;
-        List<CharacterClassAssignmentEntity> classes = cwr.classAssignments;
-        if (classes == null) classes = new ArrayList<>();
+        List<CharacterClassAssignmentEntity> classes = cwr.classAssignments != null ? cwr.classAssignments : new ArrayList<>();
         List<String> options = new ArrayList<>();
         List<String> classKeys = new ArrayList<>();
         for (CharacterClassAssignmentEntity ca : classes) {
-            options.add(ca.classKey + " (level " + ca.level + ") → level " + (ca.level + 1));
+            options.add(formatKey(ca.classKey) + " (level " + ca.level + ") → level " + (ca.level + 1));
             classKeys.add(ca.classKey);
         }
         options.add("➕ Add new class");
@@ -406,8 +389,6 @@ public class CampaignCharacterSheetFragment extends Fragment {
                 attrs.put("CHA", cwr.attributes.charisma);
 
                 List<String> currentClassKeys = cwr.classAssignments.stream().map(ca -> ca.classKey).collect(Collectors.toList());
-
-                // Prepare custom prerequisites map
                 Map<String, Map<String, Integer>> customPrereqsMap = new HashMap<>();
                 Gson gson = new Gson();
                 Type type = new TypeToken<Map<String, Integer>>(){}.getType();
@@ -427,7 +408,6 @@ public class CampaignCharacterSheetFragment extends Fragment {
                 for (Object obj : allPossible) {
                     String key = (obj instanceof CharacterClassEntity) ? ((CharacterClassEntity)obj).key : "custom_" + ((CustomCharacterClassEntity)obj).id;
                     String name = (obj instanceof CharacterClassEntity) ? ((CharacterClassEntity)obj).name : ((CustomCharacterClassEntity)obj).name;
-
                     if (MulticlassPrerequisiteConfig.meetsMulticlassPrerequisites(currentClassKeys, key, attrs, customPrereqsMap)) {
                         available.add(obj);
                     } else {
@@ -472,14 +452,31 @@ public class CampaignCharacterSheetFragment extends Fragment {
     }
 
     private String fmtMod(int mod) { return mod >= 0 ? "+" + mod : String.valueOf(mod); }
-    private String str(String s) { return s != null ? s : "?"; }
+
+    private String formatKey(String key) {
+        if (key == null || key.isEmpty()) return "—";
+        String result = key;
+        if (key.startsWith("srd_")) result = key.substring(4);
+        else if (key.startsWith("a5e-ag_")) result = key.substring(7);
+        else if (key.startsWith("custom_")) result = key.substring(7);
+
+        String[] words = result.split("[_\\-]");
+        StringBuilder sb = new StringBuilder();
+        for (String w : words) {
+            if (w.isEmpty()) continue;
+            if (sb.length() > 0) sb.append(" ");
+            sb.append(Character.toUpperCase(w.charAt(0)));
+            if (w.length() > 1) sb.append(w.substring(1).toLowerCase());
+        }
+        return sb.toString();
+    }
 
     private String buildClassString(List<CharacterClassAssignmentEntity> assignments, int totalLevel) {
         if (assignments == null || assignments.isEmpty()) return "Level " + totalLevel;
         StringBuilder sb = new StringBuilder();
         for (CharacterClassAssignmentEntity ca : assignments) {
             if (sb.length() > 0) sb.append(" / ");
-            sb.append(ca.classKey).append(" ").append(ca.level);
+            sb.append(formatKey(ca.classKey)).append(" ").append(ca.level);
         }
         return sb + "  (total " + totalLevel + ")";
     }

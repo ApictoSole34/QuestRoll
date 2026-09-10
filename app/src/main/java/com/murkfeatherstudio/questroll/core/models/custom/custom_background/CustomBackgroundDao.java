@@ -18,10 +18,10 @@ public interface CustomBackgroundDao {
     @Update
     void update(CustomBackgroundEntity background);
 
-    @Query("SELECT * FROM custom_backgrounds WHERE gameSystem = :gameSystem ORDER BY name ASC")
+    @Query("SELECT * FROM custom_backgrounds WHERE game_system = :gameSystem ORDER BY name ASC")
     LiveData<List<CustomBackgroundEntity>> getByGameSystem(String gameSystem);
 
-    @Query("SELECT * FROM custom_backgrounds WHERE gameSystem = :gameSystem ORDER BY name ASC")
+    @Query("SELECT * FROM custom_backgrounds WHERE game_system = :gameSystem ORDER BY name ASC")
     List<CustomBackgroundEntity> getByGameSystemSync(String gameSystem);
 
     @Query("DELETE FROM custom_backgrounds WHERE id = :id")

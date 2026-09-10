@@ -1,5 +1,6 @@
 package com.murkfeatherstudio.questroll.core.models.custom.custom_service;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -13,4 +14,7 @@ public class CustomServiceEntity {
     public String desc;
     public String cost;
     public String detail;
+
+    @ColumnInfo(name = "game_system")
+    public String gameSystem = "5e-2014";
 }
