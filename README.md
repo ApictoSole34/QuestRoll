@@ -2,6 +2,13 @@
 
 QuestRoll is a native Android application for Dungeons & Dragons 5th Edition players and Dungeon Masters. It combines a full character creation wizard, campaign management tools, an offline-first rules/reference library, and everyday utilities like a dice roller — all backed by the [Open5e API](https://api.open5e.com/).
 
+## 🎥 Highlights
+
+[![Watch Short](https://img.youtube.com/vi/viJoKf4yjuk/hqdefault.jpg)](https://youtube.com/shorts/viJoKf4yjuk)
+
+[![Watch Video](https://img.youtube.com/vi/6JkVR4css44/hqdefault.jpg)](https://youtu.be/6JkVR4css44)
+
+
 ## ✨ Features
 
 ### Character Management
