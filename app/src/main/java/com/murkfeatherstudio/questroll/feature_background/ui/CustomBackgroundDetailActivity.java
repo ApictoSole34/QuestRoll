@@ -13,7 +13,6 @@ import androidx.appcompat.app.AlertDialog;
 import com.murkfeatherstudio.questroll.R;
 import com.murkfeatherstudio.questroll.core.base.BaseActivity;
 import com.murkfeatherstudio.questroll.core.local_database.UserContentDatabase;
-import com.murkfeatherstudio.questroll.core.models.character.CharacterCreationDTO;
 import com.murkfeatherstudio.questroll.core.models.character.CharacterTraitEntity;
 import com.murkfeatherstudio.questroll.core.models.custom.custom_background.CustomBackgroundEntity;
 import com.murkfeatherstudio.questroll.databinding.ActivityBackgroundDetailBinding;
@@ -74,14 +73,16 @@ public class CustomBackgroundDetailActivity extends BaseActivity {
 
         // Equipment
         if (b.equipmentJson != null && !b.equipmentJson.isEmpty()) {
-            Type type = new TypeToken<List<CharacterCreationDTO.InventoryItemDTO>>(){}.getType();
-            List<CharacterCreationDTO.InventoryItemDTO> items = new Gson().fromJson(b.equipmentJson, type);
-            if (items != null && !items.isEmpty()) {
-                addHeader(binding.benefitsContainer, "Equipment");
-                for (CharacterCreationDTO.InventoryItemDTO item : items) {
-                    addSimpleRow(binding.benefitsContainer, null, "• " + item.customName + " (x" + item.quantity + ", " + item.customWeight + " lb)");
+            try {
+                Type type = new TypeToken<List<String>>(){}.getType();
+                List<String> items = new Gson().fromJson(b.equipmentJson, type);
+                if (items != null && !items.isEmpty()) {
+                    addHeader(binding.benefitsContainer, "Equipment");
+                    for (String item : items) {
+                        addSimpleRow(binding.benefitsContainer, null, "• " + item);
+                    }
                 }
-            }
+            } catch (Exception e) {}
         }
 
         // Languages
